@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.maxtree</groupId>
+	<artifactId>trackbe4</artifactId>
+	<version>0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+	<name>trackbe4</name>
+	<description>Demo project for Spring Boot</description>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.2.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<vaadin.version>8.2.0</vaadin.version>
+		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
+	</properties>
+	
+	<repositories>
+		<repository>
+			<id>vaadin-addons</id>
+			<url>http://maven.vaadin.com/vaadin-addons</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<!-- Vaadin -->
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>javax.servlet-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-push</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-client-compiled</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-themes</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>18.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.vaadin.addons</groupId>
+			<artifactId>googleanalyticstracker</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+		<dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-context-menu</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+		    <groupId>org.vaadin.addons</groupId>
+		    <artifactId>autocomplete</artifactId>
+		    <version>0.2.5-SNAPSHOT</version>
+		</dependency>
+        <!-- Addons -->
+        <!-- https://mvnrepository.com/artifact/com.wcs.wcslib/wcslib-vaadin-widget-multifileupload -->
+		<dependency>
+		    <groupId>com.wcs.wcslib</groupId>
+		    <artifactId>wcslib-vaadin-widget-multifileupload</artifactId>
+		    <version>4.0</version>
+		</dependency>
+		
+        <!--
+        <dependency>
+			<groupId>org.tepi.imageviewer</groupId>
+			<artifactId>imageviewer</artifactId>
+			<version>0.6.0.v8</version>
+		</dependency>
+        -->
+        
+        <!-- Image processor -->
+        <dependency>
+	         <groupId>com.maxtree</groupId>
+	         <artifactId>maxtree-imageprocessor</artifactId>
+	         <scope>system</scope>
+	         <version>0.0.1-SNAPSHOT</version>
+	         <systemPath>${project.basedir}/lib/maxtree-imageprocessor.jar</systemPath>
+	    </dependency>
+        <!-- Jasper reports -->
+        <dependency>
+	         <groupId>net.sf.jasperreports</groupId>
+	         <artifactId>jasperreports</artifactId>
+	         <scope>system</scope>
+	         <version>0.0.1-SNAPSHOT</version>
+	         <systemPath>${project.basedir}/lib/tb4beans-0.0.1-SNAPSHOT.jar</systemPath>
+	    </dependency>
+	     <!-- report JavaBeans -->
+        <dependency>
+	         <groupId>com.maxtree</groupId>
+	         <artifactId>tb4beans</artifactId>
+	         <scope>system</scope>
+	         <version>6.5.1</version>
+	         <systemPath>${project.basedir}/lib/jasperreports-6.5.1.jar</systemPath>
+	    </dependency>
+	    <!-- barcode generator -->
+	    <!-- https://mvnrepository.com/artifact/net.sourceforge.barbecue/barbecue -->
+		<dependency>
+		    <groupId>net.sourceforge.barbecue</groupId>
+		    <artifactId>barbecue</artifactId>
+		    <version>1.5-beta1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.lowagie/itext   ireport generates PDF-->
+		<dependency>
+		    <groupId>com.lowagie</groupId>
+		    <artifactId>itext</artifactId>
+		    <version>2.1.7</version>
+		</dependency>
+	 	<!-- https://mvnrepository.com/artifact/com.itextpdf/itext-asian -->
+		<dependency>
+			<groupId>com.lowagie</groupId>
+	         <artifactId>textpdf</artifactId>
+	         <scope>system</scope>
+	         <version>1.0</version>
+	         <systemPath>${project.basedir}/lib/iTextAsian.jar</systemPath>
+	    </dependency>
+	 	<!-- https://mvnrepository.com/artifact/com.itextpdf/itext-asiancmaps -->
+		<dependency>
+		    <groupId>com.itextpdf</groupId>
+		    <artifactId>itext-asiancmaps</artifactId>
+		    <version>5.1.1</version>
+		</dependency>
+	 	
+		 
+		
+		
+		<!-- External interface -->
+	 
+		<!-- https://mvnrepository.com/artifact/xfire/xfire-jsr181-api -->
+		<dependency>
+		    <groupId>xfire</groupId>
+		    <artifactId>xfire-jsr181-api</artifactId>
+		    <version>1.0-M1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.ws.commons/XmlSchema -->
+		<dependency>
+		    <groupId>org.apache.ws.commons</groupId>
+		    <artifactId>XmlSchema</artifactId>
+		    <version>1.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.codehaus.xfire/xfire-core -->
+		<dependency>
+		    <groupId>org.codehaus.xfire</groupId>
+		    <artifactId>xfire-core</artifactId>
+		    <version>1.2.6</version>
+		</dependency>
+		 <!-- https://mvnrepository.com/artifact/org.codehaus.xfire/xfire-aegis -->
+		<dependency>
+		    <groupId>org.codehaus.xfire</groupId>
+		    <artifactId>xfire-aegis</artifactId>
+		    <version>1.2.6</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.codehaus.xfire/xfire-annotations -->
+		<dependency>
+		    <groupId>org.codehaus.xfire</groupId>
+		    <artifactId>xfire-annotations</artifactId>
+		    <version>1.2.6</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.codehaus.xfire/xfire-jaxb2 -->
+		<dependency>
+		    <groupId>org.codehaus.xfire</groupId>
+		    <artifactId>xfire-jaxb2</artifactId>
+		    <version>1.2.6</version>
+		</dependency>
+		
+		
+		
+		
+
+		
+		
+		
+	    
+	    <dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		 <dependency>
+			<groupId>commons-digester</groupId>
+			<artifactId>commons-digester</artifactId>
+			<scope>compile</scope>
+		</dependency>
+        
+        <!-- VFS  -->
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-vfs2 -->
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-vfs2</artifactId>
+		    <version>2.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
+		<dependency>
+		    <groupId>commons-net</groupId>
+		    <artifactId>commons-net</artifactId>
+		    <version>3.6</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.jcraft/jsch -->
+		<dependency>
+		    <groupId>com.jcraft</groupId>
+		    <artifactId>jsch</artifactId>
+		    <version>0.1.54</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-httpclient/commons-httpclient -->
+		<dependency>
+		    <groupId>commons-httpclient</groupId>
+		    <artifactId>commons-httpclient</artifactId>
+		    <version>3.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
+		<dependency>
+		    <groupId>commons-logging</groupId>
+		    <artifactId>commons-logging</artifactId>
+		    <version>1.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+		<dependency>
+		    <groupId>commons-codec</groupId>
+		    <artifactId>commons-codec</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		<dependency>
+		    <groupId>commons-io</groupId>
+		    <artifactId>commons-io</artifactId>
+		    <version>2.5</version>
+		</dependency>
+ 		<!-- https://mvnrepository.com/artifact/de.schlichtherle.truelicense/truelicense-core -->
+		<dependency>
+			<groupId>de.schlichtherle.truelicense</groupId>
+			<artifactId>truelicense-core</artifactId>
+			<version>1.33</version>
+		</dependency>
+		
+		
+		
+		<!-- RabbitMQ -->
+		<!-- https://mvnrepository.com/artifact/com.rabbitmq/amqp-client
+		<dependency>
+		    <groupId>com.rabbitmq</groupId>
+		    <artifactId>amqp-client</artifactId>
+		    <version>5.2.0</version>
+		</dependency>
+		 -->
+		 
+		 <!-- Shiro 
+		<dependency>
+		    <groupId>org.apache.shiro</groupId>
+		    <artifactId>shiro-core</artifactId>
+		    <version>1.4.0</version>
+		</dependency>
+		 -->
+		<!-- jbcrypt -->
+		<!-- https://mvnrepository.com/artifact/org.mindrot/jbcrypt -->
+		<dependency>
+		    <groupId>org.mindrot</groupId>
+		    <artifactId>jbcrypt</artifactId>
+		    <version>0.4</version>
+		</dependency>
+		<!-- caffeine -->
+		<!-- https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine -->
+		<dependency>
+		    <groupId>com.github.ben-manes.caffeine</groupId>
+		    <artifactId>caffeine</artifactId>
+		    <version>2.6.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.6.3</version>
+		</dependency>
+		<dependency>
+	        <groupId>com.fasterxml.jackson.dataformat</groupId>
+	        <artifactId>jackson-dataformat-yaml</artifactId>
+	    </dependency>
+		
+		
+		 
+		
+		<!-- Spring boot -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- 
+		 Since the Tomcat is default in the spring boot,you should add the following two dependencies to switch to Jetty if you want.
+		 Note: if you want to deploy the final war file to a real server,you should comment out the following two dependencies.
+		 The final generated war is supported in both Jetty and tomcat. -->
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-web</artifactId>
+		    <exclusions>
+		        <exclusion>
+		            <groupId>org.springframework.boot</groupId>
+		            <artifactId>spring-boot-starter-tomcat</artifactId>
+		        </exclusion>
+		    </exclusions>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-jetty</artifactId>
+		</dependency>
+		
+		<!-- H2 Database -->
+		<dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+        
+		<!-- postgresql -->
+		<dependency>
+		    <groupId>postgresql</groupId>
+		    <artifactId>postgresql</artifactId>
+		    <version>9.1-901-1.jdbc4</version>
+		</dependency>
+		
+
+		
+		
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.vaadin</groupId>
+				<artifactId>vaadin-bom</artifactId>
+				<version>${vaadin.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<plugins>
+	
+		<!-- Copy local jar to the war -->
+		<plugin>  
+	        <groupId>org.apache.maven.plugins</groupId>  
+	        <artifactId>maven-war-plugin</artifactId>  
+	        <configuration>  
+	            <webResources>    
+	                <resource>    
+	                    <directory>lib/</directory>    
+	                    <targetPath>WEB-INF/lib</targetPath>    
+	                    <includes>    
+	                        <include>**/*.jar</include>    
+	                    </includes>    
+	                </resource>    
+	           </webResources>  
+	        </configuration>  
+	    </plugin>  
+			
+		
+			<plugin>
+				<groupId>com.vaadin</groupId>
+				<artifactId>vaadin-maven-plugin</artifactId>
+				<version>${vaadin.plugin.version}</version>
+				<executions>
+					<execution>
+						<configuration>
+						</configuration>
+						<goals>
+							<goal>resources</goal>
+							<goal>update-widgetset</goal>
+							<goal>compile</goal>
+							<goal>compile-theme</goal>
+							<goal>update-theme</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		
+			 
+		
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				
+			</plugin>
+		</plugins>
+	</build>
+</project>

@@ -1,0 +1,335 @@
+@mixin dashboard-admin-view {
+   	.searchpane {
+        background-color: #3367D6;
+        height:56px !important;
+        width:100%;
+        white-space: 20px;
+//        position: fixed;
+//        @include animation(animate-in-scale-up 500ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
+    }
+    
+    .adminmainview-item {
+        margin: 5px;
+    }
+    
+    
+    .menu-button {
+        cursor: pointer;
+        margin-bottom: 19px;
+        margin-left: 25px;
+        margin-right: 12px;
+        margin-top: 21px;
+    }
+    .search-settings-label {
+        cursor: text;
+      position: relative;
+	  color:white;
+      font-weight: bold;
+      font-family: Microsoft YaHei;
+      text-shadow: 0 0 12px black;
+    }
+    .search-settings-field {
+        cursor: text;
+        justify-content: center;
+        background-color: #2850A7;
+        height:40px;
+        width:680px;
+        border-radius: 2px;
+        margin-left: 0px;
+//        margin-top: 50%;
+        margin-top: 8px;
+//        margin-bottom: 19px;
+        position:absolute;
+        left:50%;
+        transform:translateX(-50%);
+         
+    }
+    .search-button {
+        cursor: pointer;
+        margin-bottom: 19px;
+        margin-left: 11px;
+        margin-right: 12px;
+        margin-top: 9px;
+    }
+     .search-text-field {
+        cursor: text;
+        background-color: transparent;
+        border-color: transparent;
+        border-width: 0px;
+        border-style: none;
+        border: none;
+        box-shadow: none;
+        width: 618px;
+        height:40px;
+        caret-color:white;
+        font-size: 15px;
+        font-weight: bold;
+        color: white;
+         -webkit-input-placeholder:white;
+         -moz-placeholder: white;
+    }
+    .search-settings-field .v-textfield {
+        padding: 0;
+    }
+    .search-settings-field .v-textfield:focus{
+        border-color: transparent;
+        webkit-box-shadow: none;
+        box-shadow: none;
+    }
+     /* do not group these rules */
+    *::-webkit-input-placeholder {
+        color: #BECAE4;
+    }
+    *:-moz-placeholder {
+        /* FF 4-18 */
+        color: #BECAE4;
+    }
+    *::-moz-placeholder {
+        /* FF 19+ */
+        color: #BECAE4;
+    }
+    *:-ms-input-placeholder {
+        /* IE 10+ */
+        color: #BECAE4;
+    }
+    .v-menubar-menuitem:hover {
+        outline: none;
+    }
+    
+    .admin-menu-window-labelh1 {
+	  color:gray;
+      font-weight: bold;
+      font-family: Microsoft YaHei;
+      margin-left: 24px;
+      margin-top: 16px;
+      height:35px;
+    }
+    .admin-menu-window-verticallayout {
+//        height:100%;
+        white-space: 20px;
+//        @include animation(animate-in-scale-up 500ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
+    }
+    .createMenuItem {
+        height: 65px;
+        color: #898989;
+        font-size: 13px;
+        font-weight: bold;
+        font-family: Microsoft YaHei;
+        cursor: pointer;
+        white-space: 20px;
+        margin-left: 24px;
+        margin-top: 0px;
+        margin-bottom: 20px;
+    }
+    
+ 
+    .detail-setting-text {
+        width: 630px;
+        font-size: 12px;
+        font-weight: normal;
+        font-family: Microsoft YaHei;
+    }
+ 
+    .detail-hlayout {
+        cursor: pointer;
+        border: #F0F0F0 solid 1px;
+        border-top-color: transparent;
+        padding-top: 1px;
+        padding-right: 15px;
+        padding-bottom: 1px;
+        padding-left: 15px;
+    }
+    .myhr {
+        width: 677px;
+        margin-top: -20px;
+        padding: 0px;
+    }
+     
+    .left-arrow-image {
+       cursor:pointer;
+       margin-top: 2px;
+    }
+ 
+    
+    .detail-pane-with-padding20 {
+        padding: 20px;
+        background-color: white;
+        @include box-shadow(0 2px 7px 1px rgba(0,0,0,.5));
+//        @include animation(animate-in-scale-up 500ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
+        @include animation(valo-animate-in-slide-up 300ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
+    }
+    
+    .detail-pane-with-padding20 .v-textfield {
+        webkit-box-shadow: none;
+        box-shadow: none;
+        font-size: 13px;
+        color: #666666;
+        border-radius: 0px;
+        border-color: transparent;
+        border-bottom-color : #666666;
+        padding: 0px;
+        margin-top: -3px;
+    }
+ 
+    .parent-title {
+        font-size: 13px;
+        font-weight: bold !important;
+        color: #666666 !important;
+    }
+    
+    .grid-title {
+        color:#9D9D9D;
+        font-weight: bold;
+        font-size: 13px;
+        cursor:text;
+    }
+    
+    .manage-bussiness-types .v-label {
+        color:#666666;
+        font-size: 12px;
+        font-weight: normal;
+        font-family: Microsoft YaHei;
+        margin-left: 20px;
+    }
+    .manage-bussiness-types .v-textfield {
+        font-size: 12px;
+        caret-color: #898989;
+        margin-left: 5px;
+        padding: 0;
+    }
+    
+    .grid-header-line {
+        cursor:text;
+        border: #F0F0F0 solid 1px;
+        border-top-color: transparent;
+        border-left-color: transparent;
+        border-right-color: transparent;
+        min-height: 50px !important;
+//        line-height: 0px;
+    }
+    
+    .grid-body-without-border {
+        background-color: white;
+        border-color: transparent;
+        webkit-box-shadow: none;
+        box-shadow: none;
+    }
+    
+    .grid-body-without-border .v-label {
+        font-size: 13px;
+        color: black;
+    }
+    
+    .grid-body-without-border .v-checkbox {
+        font-size: 13px;
+        color: black;
+    }
+    
+    .grid-body-without-border .v-image {
+        cursor:pointer;
+    }
+    
+    .grid-button-without-border {
+        border-radius: 0px;
+        border-color: transparent;
+        webkit-box-shadow: none;
+        box-shadow: none;
+        background-color: white;
+        font-weight: bold;
+        font-size: 14px;
+        font-family: Microsoft YaHei;
+        color: #9D9D9D;
+        outline: none;
+    }
+    
+   
+    .edit-window {
+        
+    }
+    .edit-window .v-textfield {
+        webkit-box-shadow: none;
+        box-shadow: none;
+        font-size: 13px;
+        font-family: Microsoft YaHei;
+        color: #666666;
+        border-radius: 0px;
+        border-color: transparent;
+        border-bottom-color : #666666;
+        padding: 0px;
+    } 
+    
+    .edit-window .v-window-header {
+        font-weight: bold;
+        font-size: 13px;
+        color: #666666;
+        font-family: Microsoft YaHei;
+    }
+    
+    .edit-window .v-verticallayout {
+        padding: 20px;
+        padding-top: 0px;
+//        padding-bottom: 0px;
+    }
+    
+    .edit-window .v-button {
+        border-radius: 0px;
+        border-color: transparent;
+        webkit-box-shadow: none;
+        box-shadow: none;
+        background-color: white;
+        font-weight: bold;
+        font-size: 14px;
+        font-family: Microsoft YaHei;
+        color: #9D9D9D;
+        outline: none;
+    }    
+    
+  
+    .setting-text {
+        font-size: 12px;
+        font-weight: bold;
+        font-family: Microsoft YaHei;
+        height: 30px;
+    }
+    
+    .setting-layout-shadow{
+        background-color: white;
+        @include box-shadow(0 2px 7px 1px rgba(0,0,0,.5));
+    }
+    /// In ManageAdmin.java
+    .image-cursor {
+        cursor:pointer;
+    }
+     
+    /// SetPermissionsToRoleWindow
+     // 拖拽上传
+    .denseframecomponent-border{
+        cursor: pointer;
+        background-color: transparent;
+        border-radius: 0px;
+        border-color: #A4A4A2;
+        border: 1px dashed #A4A4A2;
+        border-spacing: 2px;
+        padding: 3px;
+        margin: 3px;
+    }
+    
+    
+    .csslayout-overflow {
+        overflow: visible;
+    }
+    
+    //文件盒空状态
+    .fileboxcomponent-background0 .v-button-wrap {
+        background: #A4A4A2;
+    }
+    //文件盒有空状态
+    .fileboxcomponent-background1 .v-button-wrap {
+        background: #00C800;
+    }
+    // 文件盒已满
+    .fileboxcomponent-background2 .v-button-wrap {
+        background: #C80000;
+    }
+    
+}
