@@ -338,7 +338,7 @@ public class EditBroadCastWindow extends Window {
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
         		String viewName = "";// 如果viewName等于空，则表示消息将发送到对方的首个view上
-        		new TB4MessagingSystem().resendMessageTo(msg.getMessageUniqueId(), w.nameSets, viewName);
+        		new TB4MessagingSystem().resendMessageTo(msg.getMessageUniqueId(), w.nameSets, viewName, ui);
         		
         		
         		String subject = w.message.getSubject();

@@ -59,6 +59,14 @@ public class Message {
 	public void setReminderFrequencyId(Integer reminderFrequencyId) {
 		this.reminderFrequencyId = reminderFrequencyId;
 	}
+	
+	public Integer getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Integer deleted) {
+		this.deleted = deleted;
+	}
 
 	public Integer getReadRate() {
 		return readRate;
@@ -81,5 +89,6 @@ public class Message {
 	private Date dateCreated; // 创建日期
 	private Integer sentTimes = 0; // 已发送次数
 	private Integer reminderFrequencyId = 0; // 发送频率ID
-	private Integer readRate = 0; // 读取率
+	private Integer deleted = 0; // 删除标识，1-删除 0-未删除
+	private Integer readRate = 0; // 读取率(非数据库字段)
 }

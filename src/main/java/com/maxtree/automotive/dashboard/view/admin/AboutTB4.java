@@ -50,7 +50,7 @@ public class AboutTB4 extends VerticalLayout {
 		Label gridTitle = new Label("TB4系统信息");
 		gridTitle.addStyleName("grid-title");
 		// 表格
-		TB4SystemInformation grid = new TB4SystemInformation();
+		AboutTB4Grid grid = new AboutTB4Grid();
 		content.addComponents(searchHLayout, gridTitle, grid);
 		content.setComponentAlignment(grid, Alignment.TOP_CENTER);
 		addComponents(content);

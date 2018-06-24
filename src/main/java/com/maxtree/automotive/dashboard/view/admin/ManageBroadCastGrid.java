@@ -2,6 +2,7 @@ package com.maxtree.automotive.dashboard.view.admin;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Timer;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
@@ -13,6 +14,7 @@ import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.MessageRecipient;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.Menu.Command;
 import com.vaadin.contextmenu.MenuItem;
@@ -197,6 +199,12 @@ public class ManageBroadCastGrid extends VerticalLayout {
 						Callback event = new Callback() {
 							@Override
 							public void onSuccessful() {
+								
+								Timer timer = TB4MessagingSystem.SCHEDULED.get(message.getMessageUniqueId());
+								if (timer != null) {
+									timer.cancel();
+								}
+								
 								ui.messagingService.deleteMessage(message.getMessageUniqueId());
 								refreshTable();
 							}

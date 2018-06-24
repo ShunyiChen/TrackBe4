@@ -9,14 +9,14 @@ import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-public class TB4SystemInformation extends VerticalLayout {
+public class AboutTB4Grid extends VerticalLayout {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public TB4SystemInformation() {
+	public AboutTB4Grid() {
 		
 		initComponents();
 	}

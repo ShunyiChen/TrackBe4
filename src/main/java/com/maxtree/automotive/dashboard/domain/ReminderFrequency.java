@@ -28,14 +28,6 @@ public class ReminderFrequency {
 		this.frequency = frequency;
 	}
 
-	public Integer getActive() {
-		return active;
-	}
-
-	public void setActive(Integer active) {
-		this.active = active;
-	}
-
 	public Date getStartingTime() {
 		return startingTime;
 	}
@@ -52,12 +44,12 @@ public class ReminderFrequency {
 		this.endingTime = endingTime;
 	}
 
-	public Date getNextReminderTime() {
-		return nextReminderTime;
+	public Integer getEnabled() {
+		return enabled;
 	}
 
-	public void setNextReminderTime(Date nextReminderTime) {
-		this.nextReminderTime = nextReminderTime;
+	public void setEnabled(Integer enabled) {
+		this.enabled = enabled;
 	}
 
 	@Override
@@ -68,9 +60,8 @@ public class ReminderFrequency {
 	private Integer frequencyUniqueId = 0;
 	private String name; // 计划名称
 	private Integer frequency = 0; // 1-每天 7-每周
-	private Integer active = 0; // 0未激活，1已激活
+	private Integer enabled = 1; // 1-启用 0-禁用
 	private Date startingTime;// 其实时间
 	private Date endingTime;// 结束时间
-	private Date nextReminderTime; // 下次提醒时间
 
 }

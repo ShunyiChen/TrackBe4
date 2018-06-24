@@ -1,5 +1,9 @@
 package com.maxtree.automotive.dashboard;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +67,9 @@ public class TB4Application extends SpringBootServletInitializer implements Comm
 //			log.info(rr.getRoleRightUniqueId()+"");
 //		}
     }
-
+    
+    
+    
     public static final String PERMISSION_DENIED_MESSAGE = "没有权限。";
     public static final String NAME = "TrackBe4";
 	public static final String VERSION = "1.0 for beta";

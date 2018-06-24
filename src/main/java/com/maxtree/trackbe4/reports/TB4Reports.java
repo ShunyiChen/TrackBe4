@@ -5,7 +5,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
@@ -117,7 +121,36 @@ public class TB4Reports {
 	}
 
 	public static void main(String[] args) {
-		 
+		/// next
+//		
+//		Calendar calendar1 = Calendar.getInstance();    
+//        int year1 = calendar1.get(Calendar.YEAR);    
+//        int month1 = calendar1.get(Calendar.MONTH);    
+//        int day1 =calendar1.get(Calendar.DAY_OF_MONTH);//每天   
+//        calendar1.set(year1, month1, day1, 00, 05, 00);
+//        Date date1 = calendar1.getTime();    
+//		
+//		
+//		
+//		Calendar calendar = Calendar.getInstance();    
+//        int year = calendar.get(Calendar.YEAR);    
+//        int month = calendar.get(Calendar.MONTH);    
+//        int day =calendar.get(Calendar.DAY_OF_MONTH);//每天   
+//        calendar.set(year, month, day, 00, 06, 00);
+//        Date date = calendar.getTime();    
+//        System.out.println("====="+date);
+//        
+//        Timer newTimer = new Timer();
+//		TimerTask task = new TimerTask() {
+//			@Override
+//			public void run() {
+//				System.out.println("sss");
+//				  
+//			}
+//    	};
+//    	newTimer.schedule(task, date, 1000);
+//    	
+		
 //		List<ResultsBean> beans = new ArrayList<ResultsBean>();
 //		ResultsBean bean = new ResultsBean();
 //		bean.setBasicInformation("号牌种类：1-小型汽车\n车牌号：辽BB8K57\nVIN：1222102203DR\n");

@@ -1,9 +1,11 @@
 package com.maxtree.trackbe4.messagingsystem;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.Message;
@@ -47,7 +49,7 @@ public class TB4MessagingSystem {
 	 * @param viewName
 	 */
 	public void sendMessageTo(int messageUniqueId, Set<Name> names, String viewName) {
-		
+		List<Integer> sent = new ArrayList<>();
 		List<MessageRecipient> recipients = new ArrayList<MessageRecipient>();
 		for (Name n : names) {
 			MessageRecipient mr = null;
@@ -59,8 +61,14 @@ public class TB4MessagingSystem {
     			// details
     			List<SendDetails> list = new ArrayList<SendDetails>();
     			for (User u : users) {
-    				SendDetails sd = user2SendDetails(messageUniqueId, u, viewName);
-    				list.add(sd);
+    				// 一个用户只发送一次
+    				if (!sent.contains(u.getUserUniqueId())) {
+    					SendDetails sd = user2SendDetails(messageUniqueId, u, viewName);
+        				list.add(sd);
+        				
+        				sent.add(u.getUserUniqueId());
+    				}
+    				
     			}
     			ui.messagingService.insertSendDetails(list);
     			
@@ -72,8 +80,12 @@ public class TB4MessagingSystem {
     			// details
     			List<SendDetails> list = new ArrayList<SendDetails>();
     			for (User u : users) {
-    				SendDetails sd = user2SendDetails(messageUniqueId, u, viewName);
-    				list.add(sd);
+    				if (!sent.contains(u.getUserUniqueId())) {
+    					SendDetails sd = user2SendDetails(messageUniqueId, u, viewName);
+        				list.add(sd);
+        				
+        				sent.add(u.getUserUniqueId());
+    				}
     			}
     			ui.messagingService.insertSendDetails(list);
     			
@@ -82,8 +94,13 @@ public class TB4MessagingSystem {
     			
     			List<SendDetails> list = new ArrayList<SendDetails>();
     			User u = ui.userService.findById(n.getUniqueId());
-    			SendDetails sd = user2SendDetails(messageUniqueId, u, viewName);
-				list.add(sd);
+    			
+    			if (!sent.contains(u.getUserUniqueId())) {
+    				SendDetails sd = user2SendDetails(messageUniqueId, u, viewName);
+    				list.add(sd);
+    				
+    				sent.add(u.getUserUniqueId());
+    			}
 				ui.messagingService.insertSendDetails(list);
 				
     		}
@@ -98,7 +115,7 @@ public class TB4MessagingSystem {
 	 * @param names
 	 * @param viewName
 	 */
-	public void resendMessageTo(int messageUniqueId, Set<Name> names, String viewName) {
+	public void resendMessageTo(int messageUniqueId, Set<Name> names, String viewName, DashboardUI ui) {
 		for (Name n : names) {
 			MessageRecipient mr = null;
     		if (n.getType() == Name.COMMUNITY) {
@@ -129,8 +146,8 @@ public class TB4MessagingSystem {
     			
     		} else if (n.getType() == Name.USER) {
     			mr = name2MessageRecipient(n, Name.USER, messageUniqueId);
-    			
     			List<SendDetails> list = new ArrayList<SendDetails>();
+    			
     			User u = ui.userService.findById(n.getUniqueId());
     			SendDetails sd = user2SendDetails(messageUniqueId, u, viewName);
 				list.add(sd);
@@ -236,5 +253,7 @@ public class TB4MessagingSystem {
 //		return messageUniqueId;
 	}
 	
+	// 定时发送消息
+    public static Map<Integer, Timer> SCHEDULED = new HashMap<Integer, Timer>();
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 }

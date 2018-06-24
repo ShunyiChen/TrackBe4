@@ -39,7 +39,7 @@ public class MessagingService {
 	 */
 	public int insertMessage(Message message) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		String sql = "INSERT INTO MESSAGES(SUBJECT,MESSAGEBODY,CREATORUNIQUEID,DATECREATED,SENTTIMES,REMINDERFREQUENCYID) VALUES(?,?,?,?,?,?)";
+		String sql = "INSERT INTO MESSAGES(SUBJECT,MESSAGEBODY,CREATORUNIQUEID,DATECREATED,SENTTIMES,REMINDERFREQUENCYID,DELETED) VALUES(?,?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -53,6 +53,7 @@ public class MessagingService {
 				ps.setTimestamp(4, new Timestamp(millis));
 				ps.setInt(5, message.getSentTimes());
 				ps.setInt(6, message.getReminderFrequencyId());
+				ps.setInt(7, message.getDeleted());
 //				long millis = System.currentTimeMillis();
 //				ps.setTimestamp(4, new Timestamp(millis));
 //				ps.setInt(5, message.getParentMessageUniqueId());
@@ -103,7 +104,7 @@ public class MessagingService {
 	 */
 	public int insertReminderFrequency(ReminderFrequency frequencry) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		String sql = "INSERT INTO REMINDERFREQUENCY(NAME,FREQUENCY,ACTIVE,STARTINGTIME,ENDINGTIME,NEXTREMINDERTIME) VALUES(?,?,?,?,?,?)";
+		String sql = "INSERT INTO REMINDERFREQUENCY(NAME,FREQUENCY,ENABLED,STARTINGTIME,ENDINGTIME) VALUES(?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -112,13 +113,11 @@ public class MessagingService {
 						sql, new String[] {"frequencyuniqueid"});
 				ps.setString(1, frequencry.getName());
 				ps.setInt(2, frequencry.getFrequency());
-				ps.setInt(3, frequencry.getActive());
+				ps.setInt(3, frequencry.getEnabled());
 				long start = frequencry.getStartingTime().getTime();
 				ps.setTimestamp(4, new Timestamp(start));
 				long end = frequencry.getEndingTime().getTime();
 				ps.setTimestamp(5, new Timestamp(end));
-				long nexttime = frequencry.getNextReminderTime().getTime();
-				ps.setTimestamp(6, new Timestamp(nexttime));
 				return ps;
 			}
 			
@@ -217,8 +216,15 @@ public class MessagingService {
 	 * @return
 	 */
 	public List<Message> findAll(int userUniqueId) {
-		String sql = "SELECT A.*,ROUND(CAST((SELECT COUNT(*) FROM SENDDETAILS WHERE MARKEDASREAD=? AND MESSAGEUNIQUEID=A.MESSAGEUNIQUEID) AS NUMERIC) /CAST(COUNT(B.MARKEDASREAD) AS NUMERIC ) * 100,2) AS READRATE FROM MESSAGES AS A LEFT JOIN SENDDETAILS AS B ON A.MESSAGEUNIQUEID=B.MESSAGEUNIQUEID GROUP BY A.MESSAGEUNIQUEID"; 
-		List<Message> results = jdbcTemplate.query(sql,new Object[] {userUniqueId}, new BeanPropertyRowMapper<Message>(Message.class));
+		StringBuilder complexSQL = new StringBuilder();
+		complexSQL.append("SELECT A.*,");
+		complexSQL.append("CASE COUNT(B.MARKEDASREAD) ");
+		complexSQL.append("WHEN 0 THEN (0)");
+		complexSQL.append(" ELSE (ROUND(CAST((SELECT COUNT(*) FROM SENDDETAILS WHERE MARKEDASREAD= 1 AND MESSAGEUNIQUEID=A.MESSAGEUNIQUEID) AS NUMERIC) /CAST(COUNT(B.MARKEDASREAD) AS NUMERIC ) * 100,2))");
+		complexSQL.append(" END AS READRATE ");
+		complexSQL.append(" FROM MESSAGES AS A LEFT JOIN SENDDETAILS AS B ON A.MESSAGEUNIQUEID=B.MESSAGEUNIQUEID");
+		complexSQL.append(" GROUP BY A.MESSAGEUNIQUEID HAVING A.CREATORUNIQUEID=? AND A.DELETED=0 ORDER BY MESSAGEUNIQUEID DESC");
+		List<Message> results = jdbcTemplate.query(complexSQL.toString(), new Object[] {userUniqueId}, new BeanPropertyRowMapper<Message>(Message.class));
 		
 		return results;
 	}
@@ -242,14 +248,14 @@ public class MessagingService {
 	 * @param messageUniqueId
 	 */
 	public void deleteMessage(int messageUniqueId) {
-		String sql = "DELETE FROM MESSAGERECIPIENT WHERE MESSAGEUNIQUEID=?";
-		jdbcTemplate.update(sql, new Object[] {messageUniqueId});
+//		String sql = "DELETE FROM MESSAGERECIPIENT WHERE MESSAGEUNIQUEID=?";
+//		jdbcTemplate.update(sql, new Object[] {messageUniqueId});
+//		
+//		sql = "DELETE FROM REMINDERFREQUENCY AS A WHERE A.FREQUENCYUNIQUEID = (SELECT B.REMINDERFREQUENCYID FROM MESSAGES AS B WHERE A.FREQUENCYUNIQUEID=B.REMINDERFREQUENCYID AND B.MESSAGEUNIQUEID=?)";
+//		jdbcTemplate.update(sql, new Object[] {messageUniqueId});
 		
-		sql = "DELETE FROM REMINDERFREQUENCY AS A WHERE A.FREQUENCYUNIQUEID = (SELECT B.REMINDERFREQUENCYID FROM MESSAGES AS B WHERE A.FREQUENCYUNIQUEID=B.REMINDERFREQUENCYID AND B.MESSAGEUNIQUEID=?)";
-		jdbcTemplate.update(sql, new Object[] {messageUniqueId});
-		
-		sql = "DELETE FROM MESSAGES WHERE MESSAGEUNIQUEID=?";
-		jdbcTemplate.update(sql, new Object[] {messageUniqueId});
+		String sql = "UPDATE MESSAGES SET DELETED=? WHERE MESSAGEUNIQUEID=?";
+		jdbcTemplate.update(sql, new Object[] {1, messageUniqueId});
 	}
 	
 	/**
@@ -273,14 +279,13 @@ public class MessagingService {
 	 * @return
 	 */
 	public void updateReminderFrequency(ReminderFrequency frequencry) {
-		String sql = "UPDATE REMINDERFREQUENCY SET NAME=?,FREQUENCY=?,ACTIVE=?,STARTINGTIME=?,ENDINGTIME=?,NEXTREMINDERTIME=? WHERE FREQUENCYUNIQUEID=?";
+		String sql = "UPDATE REMINDERFREQUENCY SET NAME=?,FREQUENCY=?,ENABLED=?,STARTINGTIME=?,ENDINGTIME=?,NEXTREMINDERTIME=? WHERE FREQUENCYUNIQUEID=?";
 		jdbcTemplate.update(sql, new Object[] {
 				frequencry.getName(),
 				frequencry.getFrequency(),
-				frequencry.getActive(), 
+				frequencry.getEnabled(), 
 				frequencry.getStartingTime(),
 				frequencry.getEndingTime(),
-				frequencry.getNextReminderTime(),
 				frequencry.getFrequencyUniqueId()});
 	}
 	
