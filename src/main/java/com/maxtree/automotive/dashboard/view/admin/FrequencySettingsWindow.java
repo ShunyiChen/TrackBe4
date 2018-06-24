@@ -112,58 +112,61 @@ public class FrequencySettingsWindow extends Window {
 	public static void open(Message message, Callback callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         FrequencySettingsWindow w = new FrequencySettingsWindow();
-        
         if (message.getReminderFrequencyId() != 0) {
         	ReminderFrequency rf = ui.messagingService.findByFrequencyId(message.getReminderFrequencyId());
         	w.titleField.setValue(rf.getName());
         	w.frequencyBox.setSelectedItem(rf.getFrequency() == 1?"每天":"每周");
         	w.activeBox.setSelectedItem(rf.getActive() == 1?"激活":"禁用");
+        	
+        	LocalDateTime startDatetime = LocalDateTime.ofInstant(rf.getStartingTime().toInstant(), ZoneId.systemDefault());
+        	w.startDate.setValue(startDatetime);
+        	LocalDateTime endDatetime = LocalDateTime.ofInstant(rf.getEndingTime().toInstant(), ZoneId.systemDefault());
+        	w.expiryDate.setValue(endDatetime);
         }
-        
         w.btnOk.addClickListener(e -> {
         	int reminderFrequencyId = message.getReminderFrequencyId();
+        	ReminderFrequency frequencry = new ReminderFrequency();
+        	frequencry.setName(w.titleField.getValue());
+        	frequencry.setFrequency(w.frequencyBox.getValue().equals("每天")?1:7);
+        	frequencry.setActive(w.activeBox.getValue().equals("激活")?1:0);
+        	frequencry.setFrequencyUniqueId(reminderFrequencyId);
         	
-        	if (reminderFrequencyId != 0) {
-            	ReminderFrequency frequencry = new ReminderFrequency();
-            	frequencry.setName(w.titleField.getValue());
-            	frequencry.setFrequency(w.frequencyBox.getValue().equals("每天")?1:7);
-            	frequencry.setActive(w.activeBox.getValue().equals("激活")?1:0);
-            	frequencry.setFrequencyUniqueId(reminderFrequencyId);
-            
- 
-            	ui.messagingService.updateReminderFrequency(frequencry);
-            	
-            } else {
-            	ReminderFrequency frequencry = new ReminderFrequency();
-            	frequencry.setName(w.titleField.getValue());
-            	frequencry.setFrequency(w.frequencyBox.getValue().equals("每天")?1:7);
-            	frequencry.setActive(w.activeBox.getValue().equals("激活")?1:0);
-            	
-            	reminderFrequencyId = ui.messagingService.insertReminderFrequency(frequencry);
-            }
+        	ZonedDateTime zdt1 = w.startDate.getValue().atZone(ZoneId.systemDefault());
+        	Date startDateTime = Date.from(zdt1.toInstant());
         	
-			Date nextDate = new Date(); // 取下一次提醒时间
+        	ZonedDateTime zdt2 = w.expiryDate.getValue().atZone(ZoneId.systemDefault());
+        	Date endDateTime = Date.from(zdt2.toInstant());
+
+        	frequencry.setStartingTime(startDateTime);
+        	frequencry.setEndingTime(endDateTime);
+        	
+        	Date nextDate = new Date(); // 取下一次提醒时间
 			if (w.frequencyBox.getValue().equals("每天")) {
 				Calendar calendar = new GregorianCalendar();
 				calendar.setTime(nextDate);
 				calendar.add(calendar.DATE, 1); // 把日期往后增加一天.整数往后推,负数往前移动
 				nextDate = calendar.getTime();
-			} else {
+				
+			} else if(w.frequencyBox.getValue().equals("每周")){
 				Calendar calendar = new GregorianCalendar();
 				calendar.setTime(nextDate);
 				calendar.add(calendar.DATE, 7);
 				nextDate = calendar.getTime();
+				
 			}
-		
-//			message.setNextRemindDate(nextDate);
-//        	message.setReminderFrequencyId(reminderFrequencyId);
-//        	
-//        	ZonedDateTime zdt = w.expiryDate.getValue().atZone(ZoneId.systemDefault());
-//        	Date output = Date.from(zdt.toInstant());
-//        	message.setExpiryDate(output);
-//        	
-//        	ui.messagingService.updateMessage(message);
+			// 设置下次提醒时间
+			frequencry.setNextReminderTime(nextDate);
         	
+        	// 更新
+        	if (reminderFrequencyId != 0) {
+            	ui.messagingService.updateReminderFrequency(frequencry);
+            } 
+        	// 插入新值
+        	else {
+            	reminderFrequencyId = ui.messagingService.insertReminderFrequency(frequencry);
+            	message.setReminderFrequencyId(reminderFrequencyId);
+            	ui.messagingService.updateMessage(message);
+            }
 			w.close();
 		});
         UI.getCurrent().addWindow(w);

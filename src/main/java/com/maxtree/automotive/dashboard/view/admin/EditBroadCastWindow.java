@@ -1,8 +1,11 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.util.StringUtils;
@@ -10,13 +13,16 @@ import org.vaadin.addons.autocomplete.AutocompleteExtension;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.Message;
+import com.maxtree.automotive.dashboard.domain.MessageRecipient;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
+import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.messagingsystem.Name;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.data.Binder;
@@ -79,8 +85,7 @@ public class EditBroadCastWindow extends Window {
 		planetExtension.addSuggestionSelectListener(event -> {
 			Name selectedName = event.getSelectedItem().get();
 //		    event.getSelectedItem().ifPresent(Notification::show);
-			selectedList.add(selectedName);
-			
+			nameSets.add(selectedName);
 			
 			String init = toField.getValue();
 			if (init.contains(";")) {
@@ -103,22 +108,17 @@ public class EditBroadCastWindow extends Window {
 		
 		form.addComponents(toField, subjectField, descArea);
 		HorizontalLayout buttonPane = new HorizontalLayout();
-		buttonPane.setSizeFull();
+		buttonPane.setWidthUndefined();
 		buttonPane.setSpacing(false);
 		buttonPane.setMargin(false);
 		Button btnCancel = new Button("取消");
 		btnAdd = new Button("添加");
-		HorizontalLayout subButtonPane = new HorizontalLayout();
-		subButtonPane.setSpacing(false);
-		subButtonPane.setMargin(false);
-		subButtonPane.setWidth("128px");
-		subButtonPane.setHeight("100%");
-		subButtonPane.addComponents(btnCancel, btnAdd);
-		subButtonPane.setComponentAlignment(btnCancel, Alignment.BOTTOM_LEFT);
-		subButtonPane.setComponentAlignment(btnAdd, Alignment.BOTTOM_CENTER);
-		buttonPane.addComponent(subButtonPane);
-		buttonPane.setComponentAlignment(subButtonPane, Alignment.BOTTOM_RIGHT);
+		buttonPane.addComponents(btnCancel, Box.createHorizontalBox(5), btnAdd);
+		buttonPane.setComponentAlignment(btnCancel, Alignment.MIDDLE_CENTER);
+		buttonPane.setComponentAlignment(btnAdd, Alignment.MIDDLE_CENTER);
 		mainLayout.addComponents(form, buttonPane);
+		
+		mainLayout.setComponentAlignment(buttonPane, Alignment.BOTTOM_RIGHT);
 		this.setContent(mainLayout);
 		
 		btnCancel.addClickListener(e -> {
@@ -142,17 +142,17 @@ public class EditBroadCastWindow extends Window {
 	private void initNames() {
 		List<Community> lstCommunities = ui.communityService.findAll();
 		for (Community community : lstCommunities) {
-			list.add(new Name(community.getCommunityUniqueId(), "community", community.getCommunityName(), "../VAADIN/themes/dashboard/img/broadcast/community.png"));
+			list.add(new Name(community.getCommunityUniqueId(), Name.COMMUNITY, community.getCommunityName(), "../VAADIN/themes/dashboard/img/broadcast/community.png"));
 		}
 		
 		List<Company> lstCompanies = ui.companyService.findAll();
 		for (Company company : lstCompanies) {
-			list.add(new Name(company.getCompanyUniqueId(), "company", company.getCompanyName(), "../VAADIN/themes/dashboard/img/broadcast/company.png"));
+			list.add(new Name(company.getCompanyUniqueId(), Name.COMPANY, company.getCompanyName(), "../VAADIN/themes/dashboard/img/broadcast/company.png"));
 		}
 		
 		List<User> lstUsers = ui.userService.findAll(true);
 		for (User user : lstUsers) {
-			list.add(new Name(user.getUserUniqueId(), "user", user.getUserName(), "../VAADIN/themes/dashboard/img/broadcast/individual.png"));
+			list.add(new Name(user.getUserUniqueId(), Name.USER, user.getUserName(), "../VAADIN/themes/dashboard/img/broadcast/individual.png"));
 		}
 	}
 	
@@ -207,7 +207,6 @@ public class EditBroadCastWindow extends Window {
 	private void bindFields() {
 		// Bind nameField to the Person.name property
 		// by specifying its getter and setter
-//		binder.bind(toField, Message::getRecipientName, Message::setRecipientName);
 		binder.bind(subjectField, Message::getSubject, Message::setSubject);
 		binder.bind(descArea, Message::getMessageBody, Message::setMessageBody);
 	}
@@ -217,19 +216,14 @@ public class EditBroadCastWindow extends Window {
 	 */
 	private void validatingFieldValues () {
 		// Validating Field Values
-	    binder.forField(toField).withValidator(new StringLengthValidator(
-	        "接收者名称为1~20个字符",
-	        1, 20)) .bind(Message::getSubject, Message::setSubject);
-		
-		// Validating Field Values
 		binder.forField(subjectField).withValidator(new StringLengthValidator(
 	        "标题长度范围在1~20个字符",
 	        1, 20)) .bind(Message::getSubject, Message::setSubject);
 		
 		// Validating Field Values
 		binder.forField(descArea).withValidator(new StringLengthValidator(
-	        "消息体长度范围在1~160个字符",
-	        1, 160)) .bind(Message::getMessageBody, Message::setMessageBody);
+	        "消息体长度范围在1~200个字符",
+	        1, 200)) .bind(Message::getMessageBody, Message::setMessageBody);
 	}
 	
 	/**
@@ -241,7 +235,10 @@ public class EditBroadCastWindow extends Window {
 			Notification notification = new Notification("提示：", "标题不能为空", Type.WARNING_MESSAGE);
 			notification.setDelayMsec(2000);
 			notification.show(Page.getCurrent());
-			
+			return false;
+		}
+		if (subjectField.getErrorMessage() != null) {
+			subjectField.setComponentError(subjectField.getErrorMessage());
 			return false;
 		}
 		if (subjectField.getErrorMessage() != null) {
@@ -249,24 +246,16 @@ public class EditBroadCastWindow extends Window {
 			return false;
 		}
 		
-//		if (StringUtils.isEmpty(message.getRecipientName())) {
-//			Notification notification = new Notification("提示：", "接收者名称不能为空", Type.WARNING_MESSAGE);
-//			notification.setDelayMsec(2000);
-//			notification.show(Page.getCurrent());
-//			
-//			return false;
-//		}
-		if (subjectField.getErrorMessage() != null) {
-			subjectField.setComponentError(subjectField.getErrorMessage());
-			return false;
-		}
-		if (selectedList.size() == 0) {
-			Notification notification = new Notification("提示：", "请至少选择一个接收者。", Type.WARNING_MESSAGE);
+		if(descArea.getValue().length() > 200) {
+			Notification notification = new Notification("提示：", "消息内容不能超出200个字符。", Type.WARNING_MESSAGE);
 			notification.setDelayMsec(2000);
 			notification.show(Page.getCurrent());
-		} else {
+			return false;
+		}
+		
+		if (nameSets.size() != 0) {
 			String[] items = toField.getValue().split(";");
-			Iterator<Name> iter = selectedList.iterator();
+			Iterator<Name> iter = nameSets.iterator();
 			while(iter.hasNext()) {
 				Name n = iter.next();
 				// 用文本框上的值与selectedList里的值做比对
@@ -277,11 +266,17 @@ public class EditBroadCastWindow extends Window {
 						break;
 					}
 				}
-				// 文本上不存在的，直接从list里删除
+				// list里的值与文本框输入的不匹配，则直接从list里删除
 				if (!exist) {
 					iter.remove();
 				}
 			}
+		}
+		if (nameSets.size() == 0) {
+			Notification notification = new Notification("提示：", "请至少选择一个有效的接收者。", Type.WARNING_MESSAGE);
+			notification.setDelayMsec(2000);
+			notification.show(Page.getCurrent());
+			return false;
 		}
 		
 		return true;
@@ -298,28 +293,15 @@ public class EditBroadCastWindow extends Window {
         			Notifications.warning("内容不能超过160个字符。");
         			return;
         		}
-        		
-//        		int communityUniqueId = 0;
-//        		int companyUniqueId = 0;
-//        		int userUniqueId = 0;
-//        		String recipientName = w.selectedName.getName();
-//        		if (w.selectedName.getType().equals("community")) {
-//        			communityUniqueId = w.selectedName.getUniqueId();
-//        		} else if (w.selectedName.getType().equals("company")) {
-//        			companyUniqueId = w.selectedName.getUniqueId();
-//        		} else if (w.selectedName.getType().equals("user")) {
-//        			userUniqueId = w.selectedName.getUniqueId();
-//        		}
-        		
-        		
-        		
         		User creator = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
         		TB4MessagingSystem messagingSystem = new TB4MessagingSystem();
         		String subject = w.message.getSubject();
         		String messageBody = "{\"type\":\"text\", \"message\":\""+w.descArea.getValue()+"\"}";
+        		
         		Message newMessage = messagingSystem.createNewMessage(creator, subject, messageBody);
+        		
         		String viewName = "";// 如果viewName等于空，则表示消息将发送到对方的首个view上
-        		new TB4MessagingSystem().sendMessageTo(newMessage.getMessageUniqueId(), w.selectedList, viewName);
+        		new TB4MessagingSystem().sendMessageTo(newMessage.getMessageUniqueId(), w.nameSets, viewName);
         		
     			w.close();
     			callback.onSuccessful();
@@ -328,10 +310,56 @@ public class EditBroadCastWindow extends Window {
         UI.getCurrent().addWindow(w);
         w.center();
     }
- 
 	
-//	private Name selectedName;
-	private List<Name> selectedList = new ArrayList<Name>();
+	/**
+	 * 
+	 * @param msg
+	 */
+	public static void edit(Message msg, Callback callback) {
+        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
+        EditBroadCastWindow w = new EditBroadCastWindow();
+        w.btnAdd.setCaption("重新发送");
+        w.subjectField.setValue(msg.getSubject());
+        w.toField.setEnabled(false);
+        StringBuilder stb = new StringBuilder();
+        List<MessageRecipient> list = ui.messagingService.findRecipientsByMessageId(msg.getMessageUniqueId());
+        for (MessageRecipient mr : list) {
+        	stb.append(mr.getRecipientName());
+        	stb.append(";");
+        	
+        	Name n = new Name(mr.getRecipientUniqueId(), mr.getRecipientType(), mr.getRecipientName(), "");
+        	w.nameSets.add(n);
+        }
+        w.toField.setValue(stb.toString());
+        MessageBodyParser parser = new MessageBodyParser();
+        Map<String, String> map = parser.json2Map(msg.getMessageBody());
+        String content = map.get("message");
+        w.descArea.setValue(content);
+        w.btnAdd.addClickListener(e -> {
+        	if (w.checkEmptyValues()) {
+        		String viewName = "";// 如果viewName等于空，则表示消息将发送到对方的首个view上
+        		new TB4MessagingSystem().resendMessageTo(msg.getMessageUniqueId(), w.nameSets, viewName);
+        		
+        		
+        		String subject = w.message.getSubject();
+        		String messageBody = "{\"type\":\"text\", \"message\":\""+w.descArea.getValue()+"\"}";
+        		msg.setSubject(subject);
+        		msg.setMessageBody(messageBody);
+        		msg.setSentTimes(msg.getSentTimes()+1);
+        		msg.setDateCreated(new Date());
+        		ui.messagingService.updateMessage(msg);
+        		
+        		w.close();
+        		
+        		callback.onSuccessful();
+        	}
+        });
+        
+        UI.getCurrent().addWindow(w);
+        w.center();
+    }
+ 
+	private LinkedHashSet<Name> nameSets = new LinkedHashSet<Name>();
 	private List<Name> list = new ArrayList<Name>();
 	private TextField toField;
 	private TextField subjectField;

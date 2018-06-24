@@ -3,6 +3,7 @@ package com.maxtree.trackbe4.messagingsystem;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.Message;
@@ -39,13 +40,19 @@ public class TB4MessagingSystem {
 		return newMessage;
 	}
 	
-	public void sendMessageTo(int messageUniqueId, List<Name> names, String viewName) {
+	/**
+	 * 
+	 * @param messageUniqueId
+	 * @param names
+	 * @param viewName
+	 */
+	public void sendMessageTo(int messageUniqueId, Set<Name> names, String viewName) {
 		
 		List<MessageRecipient> recipients = new ArrayList<MessageRecipient>();
 		for (Name n : names) {
 			MessageRecipient mr = null;
-    		if (n.getType().equals("community")) {
-    			mr = name2MessageRecipient(n, 1, messageUniqueId);
+    		if (n.getType() == Name.COMMUNITY) {
+    			mr = name2MessageRecipient(n, Name.COMMUNITY, messageUniqueId);
     			
     			int communityUniqueId = n.getUniqueId();
     			List<User> users = ui.communityService.findAllUsers(communityUniqueId);
@@ -57,8 +64,8 @@ public class TB4MessagingSystem {
     			}
     			ui.messagingService.insertSendDetails(list);
     			
-    		} else if (n.getType().equals("company")) {
-    			mr = name2MessageRecipient(n, 2, messageUniqueId);
+    		} else if (n.getType() == Name.COMPANY) {
+    			mr = name2MessageRecipient(n, Name.COMPANY, messageUniqueId);
     			
     			int companyUniqueId = n.getUniqueId();
     			List<User> users = ui.companyService.findAllUsers(companyUniqueId);
@@ -70,8 +77,8 @@ public class TB4MessagingSystem {
     			}
     			ui.messagingService.insertSendDetails(list);
     			
-    		} else if (n.getType().equals("user")) {
-    			mr = name2MessageRecipient(n, 3, messageUniqueId);
+    		} else if (n.getType() == Name.USER) {
+    			mr = name2MessageRecipient(n, Name.USER, messageUniqueId);
     			
     			List<SendDetails> list = new ArrayList<SendDetails>();
     			User u = ui.userService.findById(n.getUniqueId());
@@ -82,13 +89,54 @@ public class TB4MessagingSystem {
     		}
     		recipients.add(mr);
 		}
-		
 		ui.messagingService.insertMessageRecipients(recipients);
-		
 	}
 	
-	public void receiveMessage(User receiver) {
-		
+	/**
+	 * 
+	 * @param messageUniqueId
+	 * @param names
+	 * @param viewName
+	 */
+	public void resendMessageTo(int messageUniqueId, Set<Name> names, String viewName) {
+		for (Name n : names) {
+			MessageRecipient mr = null;
+    		if (n.getType() == Name.COMMUNITY) {
+    			mr = name2MessageRecipient(n, Name.COMMUNITY, messageUniqueId);
+    			
+    			int communityUniqueId = n.getUniqueId();
+    			List<User> users = ui.communityService.findAllUsers(communityUniqueId);
+    			// details
+    			List<SendDetails> list = new ArrayList<SendDetails>();
+    			for (User u : users) {
+    				SendDetails sd = user2SendDetails(messageUniqueId, u, viewName);
+    				list.add(sd);
+    			}
+    			ui.messagingService.insertSendDetails(list);
+    			
+    		} else if (n.getType() == Name.COMPANY) {
+    			mr = name2MessageRecipient(n, Name.COMPANY, messageUniqueId);
+    			
+    			int companyUniqueId = n.getUniqueId();
+    			List<User> users = ui.companyService.findAllUsers(companyUniqueId);
+    			// details
+    			List<SendDetails> list = new ArrayList<SendDetails>();
+    			for (User u : users) {
+    				SendDetails sd = user2SendDetails(messageUniqueId, u, viewName);
+    				list.add(sd);
+    			}
+    			ui.messagingService.insertSendDetails(list);
+    			
+    		} else if (n.getType() == Name.USER) {
+    			mr = name2MessageRecipient(n, Name.USER, messageUniqueId);
+    			
+    			List<SendDetails> list = new ArrayList<SendDetails>();
+    			User u = ui.userService.findById(n.getUniqueId());
+    			SendDetails sd = user2SendDetails(messageUniqueId, u, viewName);
+				list.add(sd);
+				ui.messagingService.insertSendDetails(list);
+    		}
+		}
 	}
 	
 	/**

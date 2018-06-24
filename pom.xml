@@ -3,10 +3,10 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.maxtree</groupId>
-	<artifactId>trackbe4</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<artifactId>TrackBe4</artifactId>
+	<version>1.0</version>
 	<packaging>war</packaging>
-	<name>trackbe4</name>
+	<name>TrackBe4</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>

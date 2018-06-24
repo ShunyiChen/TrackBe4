@@ -1,18 +1,18 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Map;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.PermissionCodes;
 import com.maxtree.automotive.dashboard.TB4Application;
 import com.maxtree.automotive.dashboard.component.Box;
+import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.MessageRecipient;
 import com.maxtree.automotive.dashboard.domain.User;
-import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.Menu.Command;
 import com.vaadin.contextmenu.MenuItem;
@@ -142,9 +142,9 @@ public class ManageBroadCastGrid extends VerticalLayout {
 		}
 		Label columnSubject = new Label(message.getSubject());
 		Label columnSentTo = new Label(names.toString());
-		Label columnDate = new Label(message.getDateCreated().toString());
+		Label columnDate = new Label(format.format(message.getDateCreated()));
 		Label columnSent = new Label(message.getSentTimes()+"");
-		Label columnRead = new Label("0%");
+		Label columnRead = new Label(message.getReadRate()+"%");
 		
 		Image moreImg = new Image(null, new ThemeResource("img/adminmenu/more.png"));
 		moreImg.addStyleName("mycursor");
@@ -174,17 +174,18 @@ public class ManageBroadCastGrid extends VerticalLayout {
 				}
 			});
 			
-			menu.addItem("重发", new Command() {
-				@Override
-				public void menuSelected(MenuItem selectedItem) {
-					
-				}
-			});
 			menu.addSeparator();
-			menu.addItem("查看内容", new Command() {
+			menu.addItem("编辑", new Command() {
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-					
+					Callback callback = new Callback() {
+
+						@Override
+						public void onSuccessful() {
+							refreshTable();
+						}
+					};
+					EditBroadCastWindow.edit(message, callback);
 				}
 			});
 			menu.addItem("从列表删除", new Command() {
@@ -192,8 +193,16 @@ public class ManageBroadCastGrid extends VerticalLayout {
 				public void menuSelected(MenuItem selectedItem) {
 					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 					if (loginUser.isPermitted(PermissionCodes.L4)) {
-						ui.messagingService.deleteMessage(message.getMessageUniqueId());
-						refreshTable();
+						
+						Callback event = new Callback() {
+							@Override
+							public void onSuccessful() {
+								ui.messagingService.deleteMessage(message.getMessageUniqueId());
+								refreshTable();
+							}
+						};
+						
+						MessageBox.showMessage("提示", "请确定是否删除当前消息。", MessageBox.WARNING, event, "删除");
 					}
 					else {
 		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
@@ -205,9 +214,9 @@ public class ManageBroadCastGrid extends VerticalLayout {
 		
 		columnSubject.setWidth("112px");
 		columnSentTo.setWidth("113px");
-		columnDate.setWidth("125px");
-		columnSent.setWidth("115px");
-		columnRead.setWidth("96px");
+		columnDate.setWidth("145px");
+		columnSent.setWidth("95px");
+		columnRead.setWidth("66px");
 		row.addComponents(columnSubject, columnSentTo, columnDate, columnSent, columnRead ,moreImg);
 		row.setComponentAlignment(columnSubject, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(columnSentTo, Alignment.MIDDLE_LEFT);
@@ -234,4 +243,6 @@ public class ManageBroadCastGrid extends VerticalLayout {
 	
 	private VerticalLayout tableBody;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
+	private String pattern = "yyyy年MM月dd日 HH:mm:ss";
+	private SimpleDateFormat format = new SimpleDateFormat(pattern);
 }

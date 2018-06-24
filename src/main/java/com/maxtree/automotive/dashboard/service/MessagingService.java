@@ -93,7 +93,7 @@ public class MessagingService {
 				return recipients.size();
 			}
 		});
-		log.info("Batch update has done.");
+		log.info("InsertMessageRecipients has done.");
 	}
 	
 	/**
@@ -149,7 +149,7 @@ public class MessagingService {
 				return detailsList.size();
 			}
 		});
-		log.info("Batch update has done.");
+		log.info("InsertSendDetails has done.");
 	}
 	
 	/**
@@ -217,8 +217,9 @@ public class MessagingService {
 	 * @return
 	 */
 	public List<Message> findAll(int userUniqueId) {
-		String sql = "SELECT * FROM MESSAGES WHERE CREATORUNIQUEID=? ORDER BY MESSAGEUNIQUEID";
+		String sql = "SELECT A.*,ROUND(CAST((SELECT COUNT(*) FROM SENDDETAILS WHERE MARKEDASREAD=? AND MESSAGEUNIQUEID=A.MESSAGEUNIQUEID) AS NUMERIC) /CAST(COUNT(B.MARKEDASREAD) AS NUMERIC ) * 100,2) AS READRATE FROM MESSAGES AS A LEFT JOIN SENDDETAILS AS B ON A.MESSAGEUNIQUEID=B.MESSAGEUNIQUEID GROUP BY A.MESSAGEUNIQUEID"; 
 		List<Message> results = jdbcTemplate.query(sql,new Object[] {userUniqueId}, new BeanPropertyRowMapper<Message>(Message.class));
+		
 		return results;
 	}
 	
@@ -253,12 +254,17 @@ public class MessagingService {
 	
 	/**
 	 * 
-	 * @param frequencyUniqueId
 	 * @param message
 	 */
-	public void updateMessage(int frequencyUniqueId, Message message) {
-		String sql = "UPDATE MESSAGES SET REMINDERFREQUENCYID=? WHERE MESSAGEUNIQUEID=?";
-		jdbcTemplate.update(sql, new Object[] {frequencyUniqueId, message.getMessageUniqueId()});
+	public void updateMessage(Message message) {
+		String sql = "UPDATE MESSAGES SET SUBJECT=?,MESSAGEBODY=?,DATECREATED=?,SENTTIMES=?,REMINDERFREQUENCYID=? WHERE MESSAGEUNIQUEID=?";
+		jdbcTemplate.update(sql, new Object[] {
+				message.getSubject(),
+				message.getMessageBody(),
+				message.getDateCreated(),
+				message.getSentTimes(),
+				message.getReminderFrequencyId(),
+				message.getMessageUniqueId()});
 	}
 	
 	/**
