@@ -134,7 +134,7 @@ public class AssigningUsersToRoleWindow extends Window {
 		// 更新缓存
 		for (User user : list) {
 			// update the cache
-		    CacheManager.INSTANCE.getCacheData().refresh(user.getUserUniqueId());
+		    CacheManager.getInstance().getPermissionCache().refresh(user.getUserUniqueId());
 		}
 	}
 	

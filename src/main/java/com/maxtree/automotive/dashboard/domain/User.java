@@ -122,7 +122,7 @@ public class User {
 	}
 
 	public boolean isPermitted(PermissionCodes code) {
-		DataObject dataObj = CacheManager.INSTANCE.getCacheData().get(userUniqueId);
+		DataObject dataObj = CacheManager.getInstance().getPermissionCache().get(userUniqueId);
 		return dataObj.isPermitted(code.code) || "root".equals(userName);
 	}
 	

@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.dashboard;
+package com.maxtree.automotive.dashboard.view.front;
 
 import java.io.IOException;
 import java.io.InputStream;

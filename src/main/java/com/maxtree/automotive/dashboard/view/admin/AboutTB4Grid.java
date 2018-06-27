@@ -25,7 +25,7 @@ public class AboutTB4Grid extends VerticalLayout {
 		this.setSpacing(false);
 		this.setMargin(false);
 		this.setWidth("100%");
-		
+		this.setHeight("100%");
 		HorizontalLayout hLayout1 = new HorizontalLayout();
 		hLayout1.setMargin(false);
 		hLayout1.setSpacing(false);

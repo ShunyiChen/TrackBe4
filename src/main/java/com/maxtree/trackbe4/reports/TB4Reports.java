@@ -122,6 +122,10 @@ public class TB4Reports {
 
 	public static void main(String[] args) {
 		/// next
+		String vin = "LGB12YEA9DY001226";
+		int number = Integer.parseInt(vin.substring(vin.length() - 6));
+		
+		System.out.println(number);
 //		
 //		Calendar calendar1 = Calendar.getInstance();    
 //        int year1 = calendar1.get(Calendar.YEAR);    

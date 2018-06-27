@@ -157,7 +157,7 @@ public class MessagingService {
 	 * @param recipientUniqueId
 	 */
 	public void markAsRead(int messageUniqueId, int recipientUniqueId) {
-		String sql = "UPDATE MESSAGERECIPIENT SET MARKEDASREAD=? WHERE MESSAGEUNIQUEID=? AND RECIPIENTUNIQUEID=?";
+		String sql = "UPDATE SENDDETAILS SET MARKEDASREAD=? WHERE MESSAGEUNIQUEID=? AND RECIPIENTUNIQUEID=?";
 		jdbcTemplate.update(sql, new Object[] {1, messageUniqueId, recipientUniqueId});
 	}
 	
@@ -178,23 +178,29 @@ public class MessagingService {
 	 * @return
 	 */
 	public List<Map<String, Object>> findAllMessagesByUser(User user, String viewName) {
-		String sql = "SELECT B.*,A.MARKEDASREAD,A.VIEWNAME,C.USERNAME,D.PICTURE FROM MESSAGERECIPIENT AS A LEFT JOIN MESSAGES AS B ON A.MESSAGEUNIQUEID=B.MESSAGEUNIQUEID LEFT JOIN USERS AS C ON C.USERUNIQUEID=B.CREATORUNIQUEID LEFT JOIN USERPROFILES AS D ON D.USERUNIQUEID=C.USERUNIQUEID WHERE A.RECIPIENTUNIQUEID=? AND A.VIEWNAME IN('', ?) ORDER BY B.MESSAGEUNIQUEID DESC";
-		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, new Object[] {user.getUserUniqueId(), viewName});
+//		String sql = "SELECT B.*,A.MARKEDASREAD,A.VIEWNAME,C.USERNAME,D.PICTURE FROM MESSAGERECIPIENT AS A LEFT JOIN MESSAGES AS B ON A.MESSAGEUNIQUEID=B.MESSAGEUNIQUEID LEFT JOIN USERS AS C ON C.USERUNIQUEID=B.CREATORUNIQUEID LEFT JOIN USERPROFILES AS D ON D.USERUNIQUEID=C.USERUNIQUEID WHERE A.RECIPIENTUNIQUEID=? AND A.VIEWNAME IN('', ?) ORDER BY B.MESSAGEUNIQUEID DESC";
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT B.*,A.MARKEDASREAD,A.VIEWNAME,C.USERNAME,D.PICTURE");
+		sql.append(" FROM SENDDETAILS AS A ");
+		sql.append("  LEFT JOIN MESSAGES AS B ON A.MESSAGEUNIQUEID=B.MESSAGEUNIQUEID ");
+		sql.append("  LEFT JOIN USERS AS C ON C.USERUNIQUEID=B.CREATORUNIQUEID ");
+		sql.append("  LEFT JOIN USERPROFILES AS D ON D.USERUNIQUEID=C.USERUNIQUEID WHERE A.RECIPIENTUNIQUEID=? AND A.VIEWNAME IN('',?)ORDER BY B.MESSAGEUNIQUEID DESC ");
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql.toString(), new Object[] {user.getUserUniqueId(), viewName});
 		return rows;
 	}
 	
-	/**
-	 * 
-	 * @param user
-	 * @param viewName
-	 * @return
-	 */
-	public int getUnreadCount(User user, String viewName) {
-		String sql = "SELECT COUNT(*) FROM MESSAGERECIPIENT WHERE RECIPIENTUNIQUEID=? AND MARKEDASREAD=? AND VIEWNAME=?";
-		int count = jdbcTemplate.queryForObject(
-                sql, new Object[] {user.getUserUniqueId(),0,viewName}, Integer.class);
-		return count;
-	}
+//	/**
+//	 * 
+//	 * @param user
+//	 * @param viewName
+//	 * @return
+//	 */
+//	public int getUnreadCount(User user, String viewName) {
+//		String sql = "SELECT COUNT(*) FROM MESSAGERECIPIENT WHERE RECIPIENTUNIQUEID=? AND MARKEDASREAD=? AND VIEWNAME=?";
+//		int count = jdbcTemplate.queryForObject(
+//                sql, new Object[] {user.getUserUniqueId(),0,viewName}, Integer.class);
+//		return count;
+//	}
 	
 	/**
 	 * 
@@ -225,6 +231,18 @@ public class MessagingService {
 		complexSQL.append(" FROM MESSAGES AS A LEFT JOIN SENDDETAILS AS B ON A.MESSAGEUNIQUEID=B.MESSAGEUNIQUEID");
 		complexSQL.append(" GROUP BY A.MESSAGEUNIQUEID HAVING A.CREATORUNIQUEID=? AND A.DELETED=0 ORDER BY MESSAGEUNIQUEID DESC");
 		List<Message> results = jdbcTemplate.query(complexSQL.toString(), new Object[] {userUniqueId}, new BeanPropertyRowMapper<Message>(Message.class));
+		
+		return results;
+	}
+	
+	/**
+	 * 
+	 * @param userUniqueId
+	 * @return
+	 */
+	public List<SendDetails> findUnreadSendDetails(int userUniqueId) {
+		String sql = "SELECT * FROM SENDDETAILS WHERE MARKEDASREAD=? AND RECIPIENTUNIQUEID=? ORDER BY MESSAGERECIPIENTUNIQUEID DESC";
+		List<SendDetails> results = jdbcTemplate.query(sql, new Object[] {0, userUniqueId}, new BeanPropertyRowMapper<SendDetails>(SendDetails.class));
 		
 		return results;
 	}

@@ -4,8 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -17,7 +16,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @SpringBootApplication
 public class TB4Application extends SpringBootServletInitializer implements CommandLineRunner {
 
-    private static final Logger log = LoggerFactory.getLogger(TB4Application.class);
+	// define the logger
+    private static Logger log = Logger.getLogger(TB4Application.class);
     
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -28,7 +28,12 @@ public class TB4Application extends SpringBootServletInitializer implements Comm
     }
     
     public static void main(String args[]) {
+    	
+    	log.info("Logger enabled: Entering main \n\n");
+    	
         SpringApplication.run(TB4Application.class, args);
+        
+        log.info("Exiting main");
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.maxtree.automotive.dashboard.view;
 
 import com.maxtree.automotive.dashboard.view.business.BusinessCheckView;
-import com.maxtree.automotive.dashboard.view.dashboard.DashboardView;
+import com.maxtree.automotive.dashboard.view.front.FrontView;
 import com.maxtree.automotive.dashboard.view.qc.QCView;
 import com.maxtree.automotive.dashboard.view.search.SearchView;
 import com.maxtree.automotive.dashboard.view.shelf.ShelfView;
@@ -12,7 +12,7 @@ import com.vaadin.icons.VaadinIcons;
 
 public enum DashboardViewType {
     
-	DASHBOARD("扫描录入", DashboardView.class, FontAwesome.HOME, true),
+	DASHBOARD("扫描录入", FrontView.class, FontAwesome.HOME, true),
     SENDBACK("质量检查", QCView.class, FontAwesome.BAR_CHART_O, true),
     HISTORY("业务审核", BusinessCheckView.class, FontAwesome.TABLE, true),
 	SEARCH("数据查询", SearchView.class, FontAwesome.SEARCH, true),

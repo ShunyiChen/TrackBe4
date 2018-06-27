@@ -126,7 +126,7 @@ public class AssigningRolesToPermissionWindow extends Window {
 		// 更新缓存
 		List<User> assignedUsers = ui.permissionService.getPermissionAssignedUserIDs(permission.getPermissionUniqueId());
 		for (User user : assignedUsers) {
-			CacheManager.INSTANCE.getCacheData().refresh(user.getUserUniqueId());
+			CacheManager.getInstance().getPermissionCache().refresh(user.getUserUniqueId());
 		}
 	}
 	

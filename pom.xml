@@ -299,8 +299,6 @@
 	    </dependency>
 		
 		
-		 
-		
 		<!-- Spring boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -315,6 +313,25 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+		</dependency>
+		
+	 	<!-- Log4j -->
+		<dependency>
+	      <groupId>org.springframework.boot</groupId>
+	      <artifactId>spring-boot-starter-log4j</artifactId>
+	      <version>1.2.5.RELEASE</version>
+	    </dependency>
+	 
+	    
 		<!-- 
 		 Since the Tomcat is default in the spring boot,you should add the following two dependencies to switch to Jetty if you want.
 		 Note: if you want to deploy the final war file to a real server,you should comment out the following two dependencies.
@@ -340,14 +357,19 @@
             <artifactId>h2</artifactId>
         </dependency>
         
-		<!-- postgresql -->
+		<!-- postgresql 
 		<dependency>
 		    <groupId>postgresql</groupId>
 		    <artifactId>postgresql</artifactId>
 		    <version>9.1-901-1.jdbc4</version>
 		</dependency>
-		
-
+		-->
+		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <version>42.2.2</version>
+</dependency>
 		
 		
 	</dependencies>

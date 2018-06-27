@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.dashboard;
+package com.maxtree.automotive.dashboard.view.front;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +14,7 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.Status;
+import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.Test;
@@ -26,6 +27,7 @@ import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.DataItem;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Queue;
+import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
@@ -72,11 +74,11 @@ import de.schlichtherle.license.LicenseContent;
  *
  */
 @SuppressWarnings("serial")
-public final class DashboardView extends Panel implements View, FrontendViewIF {
+public final class FrontView extends Panel implements View, FrontendViewIF {
     
-	private static final Logger log = LoggerFactory.getLogger(DashboardView.class);
+	private static final Logger log = LoggerFactory.getLogger(FrontView.class);
 	
-    public DashboardView() {
+    public FrontView() {
         addStyleName(ValoTheme.PANEL_BORDERLESS);
         setSizeFull();
         DashboardEventBus.register(this);
@@ -285,7 +287,7 @@ public final class DashboardView extends Panel implements View, FrontendViewIF {
             notificationLayout.setMargin(false);
             notificationLayout.setSpacing(false);
             notificationLayout.addStyleName("notification-item");
-            String readStr = m.get("read").toString().equals("0")?"(未读)":"(已读)";
+            String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"(已读)";
             Label titleLabel = new Label(m.get("subject")+readStr);
             titleLabel.addStyleName("notification-title");
             
@@ -301,17 +303,17 @@ public final class DashboardView extends Panel implements View, FrontendViewIF {
             Label contentLabel = new Label(messageContent);
             contentLabel.addStyleName("notification-content");
 
-            // 自动删除已过时的消息
-            if ("transaction".equals(type)) {
-            	int transId = Integer.parseInt(map.get("transactionUniqueId").toString());
-            	Transaction trans = ui.transactionService.findById(transId);
-	            long time1 = trans.getDateModified().getTime();
-				long time2 = dateCreated.getTime();
-				if (time1 > time2) {
-					ui.messagingService.deleteMessageRecipient(messageUniqueId, currentUser.getUserUniqueId());
-					continue;
-				}
-            }
+//            // 自动删除已过时的消息
+//            if ("transaction".equals(type)) {
+//            	int transId = Integer.parseInt(map.get("transactionUniqueId").toString());
+//            	Transaction trans = ui.transactionService.findById(transId);
+//	            long time1 = trans.getDateModified().getTime();
+//				long time2 = dateCreated.getTime();
+//				if (time1 > time2) {
+//					ui.messagingService.deleteMessageRecipient(messageUniqueId, currentUser.getUserUniqueId());
+//					continue;
+//				}
+//            }
             
             notificationLayout.addComponents(titleLabel, timeLabel, contentLabel);
             listLayout.addComponent(notificationLayout);
@@ -337,6 +339,9 @@ public final class DashboardView extends Panel implements View, FrontendViewIF {
 //    				MessageWrapper wrapper = new MessageWrapper(messageUniqueId, senderPicture+" "+senderUserName, senderPicture, subject, messageContent, transactionUniqueId, read, dateCreated, type, status);
     				// 标记已读
     				ui.messagingService.markAsRead(messageUniqueId, currentUser.getUserUniqueId());
+    				
+    				CacheManager.getInstance().refreshSendDetailsCache();
+    				
     				getUnreadCount();
     				
     				openTransaction(transactionUniqueId, dateCreated);
@@ -573,69 +578,69 @@ public final class DashboardView extends Panel implements View, FrontendViewIF {
      * @param messageDateCreated
      */
     private void openTransaction(int transactionUniqueId, Date messageDateCreated) {
-    	// 1.取得业务
-    	editableTrans = ui.transactionService.findById(transactionUniqueId);
-		if (editableTrans != null) {
-			long time1 = editableTrans.getDateModified().getTime();
-			long time2 = messageDateCreated.getTime();
-			if (time1 > time2) {
-				Notifications.warning("该业务已过时。");
-				return;
-			}
-			// 2.重置文本框
-			this.resetComponents();
-			
-			// 初始化更改信息
-			User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-			editableCompany = ui.companyService.findById(loginUser.getCompanyUniqueId());
-			editableType.setSelected(editableTrans.getBusinessUniqueId());
-			editableType.setSelectorEnabled(false);
-			informationGrid.setFieldValues(editableTrans);
-			editableSite = ui.siteService.findById(editableTrans.getSiteUniqueId());
-			uuid = editableTrans.getUuid();
-			
-			// 获取主要材料
-			Business business = editableType.getSelector().getValue();
-			List<Document> documentList = ui.documentService.findPrimary(uuid, business.getBusinessUniqueId());
-			List<Document> filledDocumentList = new ArrayList<Document>();
-			for (DataItem item : business.getItems()) {
-				Document doc = existCheck(item.getItemName(), documentList);
-				if (doc == null) {
-					doc = new Document();
-					doc.setAlias(item.getItemName());
-					doc.setFileName("");
-					doc.setFileFullPath("");
-					doc.setCategory(0); 
-        			// 文件类别0：主要图片,1：次要图片
-					doc.setBusinessUniqueId(business.getBusinessUniqueId());
-					doc.setUuid(editableTrans.getUuid());
-				}
-				filledDocumentList.add(doc);
-			}
-			// 加载主要材料
-    		primaryGrid.addUploadCells(editableSite, filledDocumentList.toArray(new Document[filledDocumentList.size()]));
-
-    		// 初始化次要材料
-    		secondaryGrid.setBusinessUniqueId(business.getBusinessUniqueId());
-    		secondaryGrid.setEnabledForUploadComponent(true);//如果业务类型已选，则可以启用选择上传组件
-    		secondaryGrid.setSite(editableSite);
-    		secondaryGrid.setUuid(uuid);
-        	List<Document> doc2 = ui.documentService.findSecondary(uuid, business.getBusinessUniqueId());
-        	// 加载次要材料
-        	secondaryGrid.addUploadCells(editableSite, doc2.toArray(new Document[doc2.size()]));
-        	
-        	
-        	if (editableTrans.getStatus().equals(Status.S4.name)) {
-  	    		
-  	    		// 打印文件标签和车辆标签
-  	    		PrintingConfirmationWindow.open("打印确认", editableTrans.getTransactionUniqueId()); 
-  	    		
-  	    	} else if (editableTrans.getStatus().equals(Status.ReturnedToThePrint.name) 
-  	    			|| editableTrans.getStatus().equals(Status.S3.name)) {
-  	    		// 打印审核结果单
-  	    		PrintingResultsWindow.open("打印确认", editableTrans.getTransactionUniqueId()); 
-  	    	}
-		}
+//    	// 1.取得业务
+//    	editableTrans = ui.transactionService.findById(transactionUniqueId);
+//		if (editableTrans != null) {
+//			long time1 = editableTrans.getDateModified().getTime();
+//			long time2 = messageDateCreated.getTime();
+//			if (time1 > time2) {
+//				Notifications.warning("该业务已过时。");
+//				return;
+//			}
+//			// 2.重置文本框
+//			this.resetComponents();
+//			
+//			// 初始化更改信息
+//			User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+//			editableCompany = ui.companyService.findById(loginUser.getCompanyUniqueId());
+//			editableType.setSelected(editableTrans.getBusinessUniqueId());
+//			editableType.setSelectorEnabled(false);
+//			informationGrid.setFieldValues(editableTrans);
+//			editableSite = ui.siteService.findById(editableTrans.getSiteUniqueId());
+//			uuid = editableTrans.getUuid();
+//			
+//			// 获取主要材料
+//			Business business = editableType.getSelector().getValue();
+//			List<Document> documentList = ui.documentService.findPrimary(uuid, business.getBusinessUniqueId());
+//			List<Document> filledDocumentList = new ArrayList<Document>();
+//			for (DataItem item : business.getItems()) {
+//				Document doc = existCheck(item.getItemName(), documentList);
+//				if (doc == null) {
+//					doc = new Document();
+//					doc.setAlias(item.getItemName());
+//					doc.setFileName("");
+//					doc.setFileFullPath("");
+//					doc.setCategory(0); 
+//        			// 文件类别0：主要图片,1：次要图片
+//					doc.setBusinessUniqueId(business.getBusinessUniqueId());
+//					doc.setUuid(editableTrans.getUuid());
+//				}
+//				filledDocumentList.add(doc);
+//			}
+//			// 加载主要材料
+//    		primaryGrid.addUploadCells(editableSite, filledDocumentList.toArray(new Document[filledDocumentList.size()]));
+//
+//    		// 初始化次要材料
+//    		secondaryGrid.setBusinessUniqueId(business.getBusinessUniqueId());
+//    		secondaryGrid.setEnabledForUploadComponent(true);//如果业务类型已选，则可以启用选择上传组件
+//    		secondaryGrid.setSite(editableSite);
+//    		secondaryGrid.setUuid(uuid);
+//        	List<Document> doc2 = ui.documentService.findSecondary(uuid, business.getBusinessUniqueId());
+//        	// 加载次要材料
+//        	secondaryGrid.addUploadCells(editableSite, doc2.toArray(new Document[doc2.size()]));
+//        	
+//        	
+//        	if (editableTrans.getStatus().equals(Status.S4.name)) {
+//  	    		
+//  	    		// 打印文件标签和车辆标签
+//  	    		PrintingConfirmationWindow.open("打印确认", editableTrans.getTransactionUniqueId()); 
+//  	    		
+//  	    	} else if (editableTrans.getStatus().equals(Status.ReturnedToThePrint.name) 
+//  	    			|| editableTrans.getStatus().equals(Status.S3.name)) {
+//  	    		// 打印审核结果单
+//  	    		PrintingResultsWindow.open("打印确认", editableTrans.getTransactionUniqueId()); 
+//  	    	}
+//		}
     }
     
     /**
@@ -715,7 +720,15 @@ public final class DashboardView extends Panel implements View, FrontendViewIF {
 	@Override
 	public void getUnreadCount() {
 		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		int unreadCount = ui.messagingService.getUnreadCount(loginUser, DashboardViewType.DASHBOARD.getViewName());
+		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loginUser.getUserUniqueId());
+		int unreadCount = 0;
+		for (SendDetails sd : sendDetailsList) {
+			
+			if (sd.getViewName().equals(DashboardViewType.DASHBOARD.getViewName())
+					|| sd.getViewName().equals("")) {
+				unreadCount++;
+			}
+		}
 		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
 		event.setCount(unreadCount);
 		notificationsButton.updateNotificationsCount(event);

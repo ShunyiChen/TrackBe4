@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.Timer;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.MessageRecipient;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
@@ -107,6 +108,9 @@ public class TB4MessagingSystem {
     		recipients.add(mr);
 		}
 		ui.messagingService.insertMessageRecipients(recipients);
+		
+		// 更新缓存
+		CacheManager.getInstance().refreshSendDetailsCache();
 	}
 	
 	/**
@@ -154,6 +158,9 @@ public class TB4MessagingSystem {
 				ui.messagingService.insertSendDetails(list);
     		}
 		}
+		
+		// 更新缓存
+		CacheManager.getInstance().refreshSendDetailsCache();
 	}
 	
 	/**

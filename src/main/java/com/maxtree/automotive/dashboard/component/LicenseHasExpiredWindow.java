@@ -41,7 +41,7 @@ public class LicenseHasExpiredWindow extends Window {
         
         Label msg = new Label(message);
         vlayout.addComponents(msg, Box.createVerticalBox(15), btnOk);
-        
+        btnOk.focus();
         vlayout.setComponentAlignment(msg, Alignment.MIDDLE_LEFT);
         vlayout.setComponentAlignment(btnOk, Alignment.MIDDLE_CENTER);
         

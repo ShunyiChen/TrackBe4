@@ -117,7 +117,7 @@ public class AssigningRolesToUserWindow extends Window {
 		// update database
 		ui.userService.updateRoles(user.getUserUniqueId(), list);
 		// update the cache
-		CacheManager.INSTANCE.getCacheData().refresh(user.getUserUniqueId());
+		CacheManager.getInstance().getPermissionCache().refresh(user.getUserUniqueId());
 	}
 	
 	public static void open(Callback callback, User usr) {

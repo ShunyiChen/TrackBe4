@@ -12,6 +12,7 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.Status;
+import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.Hr;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -21,6 +22,7 @@ import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Audit;
 import com.maxtree.automotive.dashboard.domain.Queue;
+import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
@@ -30,7 +32,7 @@ import com.maxtree.automotive.dashboard.exception.DataException;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
-import com.maxtree.automotive.dashboard.view.dashboard.MessageInboxWindow;
+import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.automotive.dashboard.view.qc.ConfirmInformationGrid;
 import com.maxtree.automotive.dashboard.view.qc.EditFeedbackWindow;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
@@ -210,7 +212,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
             notificationLayout.setMargin(false);
             notificationLayout.setSpacing(false);
             notificationLayout.addStyleName("notification-item");
-            String readStr = m.get("read").toString().equals("0")?"(未读)":"";
+            String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
             Label titleLabel = new Label(m.get("subject")+readStr);
             titleLabel.addStyleName("notification-title");
             
@@ -225,18 +227,18 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
             String messageContent = map.get("message");
             Label contentLabel = new Label(messageContent);
             contentLabel.addStyleName("notification-content");
-            // 自动删除已过时的消息
-            if ("transaction".equals(type)) {
-            	int transId = Integer.parseInt(map.get("transactionUniqueId").toString());
-            	Transaction trans = ui.transactionService.findById(transId);
-	            long time1 = trans.getDateModified().getTime();
-				long time2 = dateCreated.getTime();
-				if (time1 > time2) {
-					int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-					ui.messagingService.deleteMessageRecipient(messageUniqueId, currentUser.getUserUniqueId());
-					continue;
-				}
-            }
+//            // 自动删除已过时的消息
+//            if ("transaction".equals(type)) {
+//            	int transId = Integer.parseInt(map.get("transactionUniqueId").toString());
+//            	Transaction trans = ui.transactionService.findById(transId);
+//	            long time1 = trans.getDateModified().getTime();
+//				long time2 = dateCreated.getTime();
+//				if (time1 > time2) {
+//					int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
+//					ui.messagingService.deleteMessageRecipient(messageUniqueId, currentUser.getUserUniqueId());
+//					continue;
+//				}
+//            }
 
             notificationLayout.addComponents(titleLabel, timeLabel, contentLabel);
             listLayout.addComponent(notificationLayout);
@@ -492,46 +494,46 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
      * @param Transaction
      */
     private void fetchTransaction() {
-    	User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-    	int serial = 2;//1:质检 2:审档
-    	Queue lockedQueue = ui.queueService.getLockedQueue(serial, loginUser.getUserUniqueId());
-    	if (lockedQueue.getQueueUniqueId() > 0) {
-    		
-			Notification notification = new Notification("提示：", "正在导入当前业务。", Type.WARNING_MESSAGE);
-			notification.setDelayMsec(1000);
-			notification.show(Page.getCurrent());
-			notification.addCloseListener(e -> {
-				transaction = ui.transactionService.findById(lockedQueue.getTransactionUniqueId());
-				resetComponents();
-			});
-
-    	} else {
-    		
-    		Queue availableQueue = ui.queueService.poll(serial, loginUser.getCommunityUniqueId());
-    		if (availableQueue.getQueueUniqueId() != 0) {
-    			availableQueue.setLockedByUser(loginUser.getUserUniqueId());
-    			ui.queueService.update(availableQueue, serial); // 锁定记录
-    			
-    			transaction = ui.transactionService.findById(availableQueue.getTransactionUniqueId());
-    			
-    			resetComponents();
-    			
-    			User sender = ui.userService.findById(availableQueue.getSentByUser());
-    			 // 发送消息
-    			String subject = "质检消息";
-    	        StringBuilder msg = new StringBuilder();
-    	        msg.append("收到了一笔业务，车牌号:"+transaction.getPlateNumber()+",车辆识别代码："+transaction.getVin()+"。");
-    	        String messageBody = "{\"type\":\"transaction\",\"status\":\""+Status.S2.name+"\",\"transactionUniqueId\":\""+transaction.getTransactionUniqueId()+"\",\"message\":\""+msg.toString()+"\"}";
-    	        new TB4MessagingSystem().sendMessageTo(sender, loginUser.getUserName(), 0, 0, loginUser.getUserUniqueId(), subject, messageBody, DashboardViewType.HISTORY.getViewName());
-    	    	// 获取未读数
-    	    	getUnreadCount();
-    	    	
-    	    	seeAvailableQueueSize();
-    		}
-    		else {
-    			Notifications.warning("没有可办的业务了。");
-    		}
-    	}
+//    	User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+//    	int serial = 2;//1:质检 2:审档
+//    	Queue lockedQueue = ui.queueService.getLockedQueue(serial, loginUser.getUserUniqueId());
+//    	if (lockedQueue.getQueueUniqueId() > 0) {
+//    		
+//			Notification notification = new Notification("提示：", "正在导入当前业务。", Type.WARNING_MESSAGE);
+//			notification.setDelayMsec(1000);
+//			notification.show(Page.getCurrent());
+//			notification.addCloseListener(e -> {
+//				transaction = ui.transactionService.findById(lockedQueue.getTransactionUniqueId());
+//				resetComponents();
+//			});
+//
+//    	} else {
+//    		
+//    		Queue availableQueue = ui.queueService.poll(serial, loginUser.getCommunityUniqueId());
+//    		if (availableQueue.getQueueUniqueId() != 0) {
+//    			availableQueue.setLockedByUser(loginUser.getUserUniqueId());
+//    			ui.queueService.update(availableQueue, serial); // 锁定记录
+//    			
+//    			transaction = ui.transactionService.findById(availableQueue.getTransactionUniqueId());
+//    			
+//    			resetComponents();
+//    			
+//    			User sender = ui.userService.findById(availableQueue.getSentByUser());
+//    			 // 发送消息
+//    			String subject = "质检消息";
+//    	        StringBuilder msg = new StringBuilder();
+//    	        msg.append("收到了一笔业务，车牌号:"+transaction.getPlateNumber()+",车辆识别代码："+transaction.getVin()+"。");
+//    	        String messageBody = "{\"type\":\"transaction\",\"status\":\""+Status.S2.name+"\",\"transactionUniqueId\":\""+transaction.getTransactionUniqueId()+"\",\"message\":\""+msg.toString()+"\"}";
+//    	        new TB4MessagingSystem().sendMessageTo(sender, loginUser.getUserName(), 0, 0, loginUser.getUserUniqueId(), subject, messageBody, DashboardViewType.HISTORY.getViewName());
+//    	    	// 获取未读数
+//    	    	getUnreadCount();
+//    	    	
+//    	    	seeAvailableQueueSize();
+//    		}
+//    		else {
+//    			Notifications.warning("没有可办的业务了。");
+//    		}
+//    	}
     }
     
     /**
@@ -540,19 +542,19 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
      * @param messageDateCreated
      */
     public void openTransaction(int transactionUniqueId, Date messageDateCreated) {
-    	transaction = ui.transactionService.findById(transactionUniqueId);
-		if (transaction != null) {
-			long time1 = transaction.getDateModified().getTime();
-			long time2 = messageDateCreated.getTime();
-			if (time1 > time2) {
-				Notifications.warning("该行记录已过时。");
-				transaction = null;
-				return;
-			}
-			if (transaction.getStatus().equals(Status.S2.name)) {
-				this.resetComponents();
-			}
-		}
+//    	transaction = ui.transactionService.findById(transactionUniqueId);
+//		if (transaction != null) {
+//			long time1 = transaction.getDateModified().getTime();
+//			long time2 = messageDateCreated.getTime();
+//			if (time1 > time2) {
+//				Notifications.warning("该行记录已过时。");
+//				transaction = null;
+//				return;
+//			}
+//			if (transaction.getStatus().equals(Status.S2.name)) {
+//				this.resetComponents();
+//			}
+//		}
     }
     
     /**
@@ -652,7 +654,16 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     @Override
 	public void getUnreadCount() {
     	User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-   		int unreadCount = ui.messagingService.getUnreadCount(loginUser, DashboardViewType.HISTORY.getViewName());
+    	
+    	List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loginUser.getUserUniqueId());
+    	int unreadCount = 0;
+		for (SendDetails sd : sendDetailsList) {
+			if (sd.getViewName().equals(DashboardViewType.HISTORY.getViewName())
+					|| sd.getViewName().equals("")) {
+				unreadCount++;
+			}
+		}
+    	
    		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
    		event.setCount(unreadCount);
    		notificationsButton.updateNotificationsCount(event);

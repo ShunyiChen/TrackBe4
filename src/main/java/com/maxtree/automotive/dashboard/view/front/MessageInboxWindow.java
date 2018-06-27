@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.dashboard;
+package com.maxtree.automotive.dashboard.view.front;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.User;
@@ -60,7 +61,7 @@ public class MessageInboxWindow extends Window {
 				status = map.get("status").toString();
 			}
 			String message = map.get("message");
-			String read = m.get("read").toString().equals("1")?"已读":"未读";
+			String read = m.get("markedasread").toString().equals("1")?"已读":"未读";
 			Date dateCreated = (Date) m.get("datecreated");
 			
 			MessageWrapper wrapper = new MessageWrapper(messageUniqueId, senderPicture+" "+senderUserName, senderPicture, subject, message, transactionUniqueId, read, dateCreated, type, status);
@@ -100,6 +101,9 @@ public class MessageInboxWindow extends Window {
         	    selectreminders.get(0).setRead("已读");
         	    // 刷新提示数量
         	    updateUnreadEvent.onSuccessful();
+        	    
+        	    // 刷新缓存
+        	    CacheManager.getInstance().refreshSendDetailsCache();
         	    
     	    } 
     	});

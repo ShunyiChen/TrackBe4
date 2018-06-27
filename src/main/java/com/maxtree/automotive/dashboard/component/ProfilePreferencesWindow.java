@@ -22,7 +22,7 @@ import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
-import com.maxtree.automotive.dashboard.view.dashboard.DashboardView;
+import com.maxtree.automotive.dashboard.view.front.FrontView;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.annotations.PropertyId;
 import com.vaadin.event.ShortcutAction.KeyCode;

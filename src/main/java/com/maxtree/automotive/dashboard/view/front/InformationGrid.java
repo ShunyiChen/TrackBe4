@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.dashboard;
+package com.maxtree.automotive.dashboard.view.front;
 
 import java.util.Date;
 import java.util.List;
@@ -41,7 +41,7 @@ public class InformationGrid extends HorizontalLayout {
 	/**
 	 * 
 	 */
-	public InformationGrid(DashboardView view) {
+	public InformationGrid(FrontView view) {
 		HorizontalLayout hlayout = new HorizontalLayout();
 		hlayout.setSpacing(false);
 		hlayout.setMargin(false);
@@ -97,42 +97,42 @@ public class InformationGrid extends HorizontalLayout {
 			externalTrans.setVin("");
 			externalTrans.setPlateType("");
 			
-			Transaction trans = ui.transactionService.find(externalTrans.getPlateType(), externalTrans.getVin(), externalTrans.getPlateNumber());
-			if (trans != null) {
-				setFieldValues(trans);
-				// 更新条形码
-				trans.setBarcode(barCodeField.getValue());
-				trans.setStatus(Status.S4.name);
-				trans.setDateModified(new Date());
-				
-				if (trans.getCode() == null) {
-		        	Portfolio portfolio = ui.storehouseService.findAvailablePortfolio();
-		        	if (portfolio.getCode() == null) {
-		        		Notifications.warning("没有对应的上架号。");
-		        		return;
-		        	}
-		        	trans.setCode(portfolio.getCode());// 上架号
-		        	
-		        	portfolio.setVin(trans.getVin());
-		        	ui.storehouseService.updatePortfolio(portfolio);
-		        }
-			
-				Callback callback = new Callback() {
-					@Override
-					public void onSuccessful() {
-						ui.transactionService.update(trans);
-						view.cleanStage();
-						
-						// 提示信息
-						Notification success = new Notification("业务流水号保存成功！");
-						success.setDelayMsec(2000);
-						success.setStyleName("bar success small");
-						success.setPosition(Position.BOTTOM_CENTER);
-						success.show(Page.getCurrent());
-					}
-				};
-				MessageBox.showMessage("提示", "是否补充条形码:"+barCodeField.getValue()+"？", MessageBox.INFO, callback, "保存");
-			}
+//			Transaction trans = ui.transactionService.find(externalTrans.getPlateType(), externalTrans.getVin(), externalTrans.getPlateNumber());
+//			if (trans != null) {
+//				setFieldValues(trans);
+//				// 更新条形码
+//				trans.setBarcode(barCodeField.getValue());
+//				trans.setStatus(Status.S4.name);
+//				trans.setDateModified(new Date());
+//				
+//				if (trans.getCode() == null) {
+//		        	Portfolio portfolio = ui.storehouseService.findAvailablePortfolio();
+//		        	if (portfolio.getCode() == null) {
+//		        		Notifications.warning("没有对应的上架号。");
+//		        		return;
+//		        	}
+//		        	trans.setCode(portfolio.getCode());// 上架号
+//		        	
+//		        	portfolio.setVin(trans.getVin());
+//		        	ui.storehouseService.updatePortfolio(portfolio);
+//		        }
+//			
+//				Callback callback = new Callback() {
+//					@Override
+//					public void onSuccessful() {
+//						ui.transactionService.update(trans);
+//						view.cleanStage();
+//						
+//						// 提示信息
+//						Notification success = new Notification("业务流水号保存成功！");
+//						success.setDelayMsec(2000);
+//						success.setStyleName("bar success small");
+//						success.setPosition(Position.BOTTOM_CENTER);
+//						success.show(Page.getCurrent());
+//					}
+//				};
+//				MessageBox.showMessage("提示", "是否补充条形码:"+barCodeField.getValue()+"？", MessageBox.INFO, callback, "保存");
+//			}
 		});
 		this.addComponent(hlayout);
 	}
@@ -148,7 +148,7 @@ public class InformationGrid extends HorizontalLayout {
 		.bind(Transaction::getPlateType, Transaction::setPlateType);
 		binder.forField(plateNumberField).withValidator(new StringLengthValidator( "号码号牌长度应为7~8个字符", 7, 8))
 		.bind(Transaction::getPlateNumber, Transaction::setPlateNumber);
-		binder.forField(vinField).withValidator(new StringLengthValidator( "车辆识别码长度范围在2~20个字符", 2, 20))
+		binder.forField(vinField).withValidator(new StringLengthValidator( "车辆识别码长度是17个字符", 17, 17))
 		.bind(Transaction::getVin, Transaction::setVin);
 	}
 	
@@ -260,6 +260,6 @@ public class InformationGrid extends HorizontalLayout {
 	private TextField barCodeField = new TextField(); 	// 条形码文本框
 	private ComboBox<String> plateTypeField = new ComboBox<>();	// 号牌种类文本框
 	private TextField plateNumberField = new TextField(); // 号码号牌文本框
-	private TextField vinField = new TextField(); 			// 车辆识别码文本框
+	private TextField vinField = new TextField("","LGB12YEA9DY001226"); 			// 车辆识别码文本框
 	private String fieldHeight = "27px";
 }

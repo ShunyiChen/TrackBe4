@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.dashboard;
+package com.maxtree.automotive.dashboard.view.front;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -87,45 +87,45 @@ public class PrintingResultsWindow extends Window {
     		close();
     	});
     	radios.addValueChangeListener(e->{
-    		Transaction selectedTransaction = ui.transactionService.findById(transactionUniqueId);
-    		
-    		List<PrintableBean> beans = new ArrayList<PrintableBean>();
-			PrintableBean bean = new PrintableBean();
-			SystemConfiguration sc = Yaml.readSystemConfiguration();
-			SimpleDateFormat format = new SimpleDateFormat(sc.getDateformat());
-			bean.setDateCreated(format.format(selectedTransaction.getDateCreated()));
-			bean.setPlateType(selectedTransaction.getPlateType());
-			bean.setPlateNumber(selectedTransaction.getPlateNumber());
-			bean.setVin(selectedTransaction.getVin());
-			
-			StringBuilder info = new StringBuilder();
-			info.append("号码种类:"+selectedTransaction.getPlateType()+"\n");
-			info.append("号码号牌:"+selectedTransaction.getPlateNumber()+"\n");
-			info.append("车辆识别代码:"+selectedTransaction.getVin()+"\n");
-			bean.setBasicInformation(info.toString());// 基本信息
-			
-			Audit audit = ui.auditService.findLastAuditByTransID(selectedTransaction.getTransactionUniqueId());
-			bean.setObjection(audit.getAuditResults());
-			bean.setChecker(audit.getAuditorLastName()+""+audit.getAuditorFirstName());
-			bean.setDateChecked(format.format(audit.getAuditDate()));
-			beans.add(bean);
-			
-			Callback callback = new Callback() {
-				@Override
-				public void onSuccessful() {
-					opener = new BrowserWindowOpener(PrintUI.class);
-					opener.setFeatures("height=595,width=842,resizable");
-					opener.extend(btnOk);
-					opener.setParameter("htmlFilePath", "reports/generates/"+transactionUniqueId+"/report.html");
-					btnOk.setEnabled(true);
-				}
-			};
-			try {
-				new TB4Reports().jasperToHtml(beans, transactionUniqueId, "report1.jasper", callback);
-				
-			} catch (ReportException e1) {
-				e1.printStackTrace();
-			}
+//    		Transaction selectedTransaction = ui.transactionService.findById(transactionUniqueId);
+//    		
+//    		List<PrintableBean> beans = new ArrayList<PrintableBean>();
+//			PrintableBean bean = new PrintableBean();
+//			SystemConfiguration sc = Yaml.readSystemConfiguration();
+//			SimpleDateFormat format = new SimpleDateFormat(sc.getDateformat());
+//			bean.setDateCreated(format.format(selectedTransaction.getDateCreated()));
+//			bean.setPlateType(selectedTransaction.getPlateType());
+//			bean.setPlateNumber(selectedTransaction.getPlateNumber());
+//			bean.setVin(selectedTransaction.getVin());
+//			
+//			StringBuilder info = new StringBuilder();
+//			info.append("号码种类:"+selectedTransaction.getPlateType()+"\n");
+//			info.append("号码号牌:"+selectedTransaction.getPlateNumber()+"\n");
+//			info.append("车辆识别代码:"+selectedTransaction.getVin()+"\n");
+//			bean.setBasicInformation(info.toString());// 基本信息
+//			
+//			Audit audit = ui.auditService.findLastAuditByTransID(selectedTransaction.getTransactionUniqueId());
+//			bean.setObjection(audit.getAuditResults());
+//			bean.setChecker(audit.getAuditorLastName()+""+audit.getAuditorFirstName());
+//			bean.setDateChecked(format.format(audit.getAuditDate()));
+//			beans.add(bean);
+//			
+//			Callback callback = new Callback() {
+//				@Override
+//				public void onSuccessful() {
+//					opener = new BrowserWindowOpener(PrintUI.class);
+//					opener.setFeatures("height=595,width=842,resizable");
+//					opener.extend(btnOk);
+//					opener.setParameter("htmlFilePath", "reports/generates/"+transactionUniqueId+"/report.html");
+//					btnOk.setEnabled(true);
+//				}
+//			};
+//			try {
+//				new TB4Reports().jasperToHtml(beans, transactionUniqueId, "report1.jasper", callback);
+//				
+//			} catch (ReportException e1) {
+//				e1.printStackTrace();
+//			}
     	});
     	
     	this.addCloseListener(e -> {

@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.dashboard;
+package com.maxtree.automotive.dashboard.view.front;
 
 import java.io.OutputStream;
 
@@ -6,6 +6,7 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.springframework.util.StringUtils;
 
+import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Document;
@@ -21,6 +22,8 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Upload;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.Upload.FailedEvent;
 import com.vaadin.ui.Upload.FailedListener;
 import com.vaadin.ui.Upload.FinishedEvent;
@@ -31,16 +34,8 @@ import com.vaadin.ui.Upload.StartedEvent;
 import com.vaadin.ui.Upload.StartedListener;
 import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 
-/**
- * 上传主材料集合
- * 
- * @author chens
- *
- */
-public class UploadGridCell extends VerticalLayout implements Receiver, SucceededListener, ProgressListener, StartedListener, FailedListener, FinishedListener {
+public class ClosableUploadGridCell extends VerticalLayout implements Receiver, SucceededListener, ProgressListener, StartedListener, FailedListener, FinishedListener {
 
 	/**
 	 * 
@@ -52,7 +47,7 @@ public class UploadGridCell extends VerticalLayout implements Receiver, Succeede
 	 * @param document
 	 * @param site
 	 */
-	public UploadGridCell(Document document, Site site) {
+	public ClosableUploadGridCell(Document document, Site site) {
 		this.document = document;
 		this.site = site;
 		this.setSpacing(false);
@@ -85,16 +80,6 @@ public class UploadGridCell extends VerticalLayout implements Receiver, Succeede
 		
 		// 右键菜单
 		com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(this, true);
-		menu.addItem("高拍", new com.vaadin.contextmenu.Menu.Command() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
-			}
-		});
 		menu.addItem("查看", new com.vaadin.contextmenu.Menu.Command() {
 			/**
 			 * 
@@ -106,6 +91,31 @@ public class UploadGridCell extends VerticalLayout implements Receiver, Succeede
 				showFile(document.getAlias());
 			}
 		});
+		menu.addSeparator();
+		menu.addItem("删除", new com.vaadin.contextmenu.Menu.Command() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+				
+				ui.documentService.deleteById(document.getDocumentUniqueId());
+				
+				try {
+					new TB4FileSystem().deleteFile(site, document.getFileFullPath());
+				} catch (FileException e) {
+					e.printStackTrace();
+					Notifications.warning("删除文件"+document.getFileFullPath()+" 失败。");
+				}
+				
+				if (deleteCallback != null)
+					deleteCallback.onSuccessful();
+				
+			}
+		});
+		
 		content.addComponents(row2);
 		content.setComponentAlignment(row2, Alignment.MIDDLE_LEFT);
 		if (!document.getFileFullPath().equals("")) {
@@ -126,14 +136,11 @@ public class UploadGridCell extends VerticalLayout implements Receiver, Succeede
 	@Override
 	public void uploadStarted(StartedEvent event) {
 //		progressBar.setValue(0f);
-		
-	
 	}
 
 	@Override
 	public void updateProgress(long readBytes, long contentLength) {
 //		progressBar.setValue(readBytes / (float) contentLength);
-		System.out.println("FileLength=========="+contentLength);
 	}
 
 	@Override
@@ -147,18 +154,6 @@ public class UploadGridCell extends VerticalLayout implements Receiver, Succeede
 
 	@Override
 	public OutputStream receiveUpload(String filename, String mimeType) {
-		
-		if (filename.length() > 60) {
-			Notifications.warning("文件名不能超出60个字符。");
-			return null;
-		}
-		// 容量check
-		long usedSize = site.getSiteCapacity().getUsedSpace() + upload.getUploadSize();
-		if (usedSize >= site.getSiteCapacity().getCapacity()) {
-			Notifications.warning("站点("+site.getSiteName()+")容量已满，请联系管理员切换其它站点。");
-			return null;
-		}
-		
 		String oldPath = document.getFileFullPath();
 		try {
 			fileFullPath = document.getUuid() +"/"+document.getCategory()+"/"+System.currentTimeMillis()+"_"+filename;
@@ -175,10 +170,6 @@ public class UploadGridCell extends VerticalLayout implements Receiver, Succeede
 					e.printStackTrace();
 				}
 			}
-			
-			// 更新站点已用大小
-			new TB4FileSystem().checkAndUpdateDisk(site.getSiteUniqueId(), upload.getUploadSize());
-			
 		}
 		return null;
 	}
@@ -259,15 +250,20 @@ public class UploadGridCell extends VerticalLayout implements Receiver, Succeede
         w.center();
     }
 	
-	public boolean hasUploadFailed() {
-		return link == null;
+	public Callback getDeleteCallback() {
+		return deleteCallback;
 	}
-	
+
+	public void setDeleteCallback(Callback deleteCallback) {
+		this.deleteCallback = deleteCallback;
+	}
+
 	private Upload upload ;
 	private VerticalLayout content = new VerticalLayout();
 	private String fileFullPath;
-	private HorizontalLayout link = null;
+	private HorizontalLayout link;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private Document document;
 	private Site site;
+	private Callback deleteCallback;
 }

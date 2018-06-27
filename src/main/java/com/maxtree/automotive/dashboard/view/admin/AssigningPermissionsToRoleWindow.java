@@ -296,7 +296,7 @@ Of course - if you want to get both scrollbars and the content size can not be s
 		List<User> assignedUsers = ui.roleService.assignedUsers(role.getRoleUniqueId());
 		for (User user : assignedUsers) {
 			// update the cache
-		    CacheManager.INSTANCE.getCacheData().refresh(user.getUserUniqueId());
+		    CacheManager.getInstance().getPermissionCache().refresh(user.getUserUniqueId());
 		}
 	}
 	

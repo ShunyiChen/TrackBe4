@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.dashboard;
+package com.maxtree.automotive.dashboard.view.front;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;

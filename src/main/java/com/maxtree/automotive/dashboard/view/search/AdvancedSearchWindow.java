@@ -156,11 +156,11 @@ public class AdvancedSearchWindow extends Window {
 		// TODO 
 		// search
 		List<Transaction> rows = null;
-		try {
-			rows = ui.transactionService.advancedSearch(searchModel);
-		} catch (DataException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			rows = ui.transactionService.advancedSearch(searchModel);
+//		} catch (DataException e) {
+//			e.printStackTrace();
+//		}
 		return rows;
 	}
 	

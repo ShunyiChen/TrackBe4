@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.dashboard;
+package com.maxtree.automotive.dashboard.view.front;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,15 +61,15 @@ public class SearchAndPrintWindow extends Window {
         btnSearch.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         btnSearch.setDescription("按照条形码查找");
         btnSearch.addClickListener(e -> {
-        	List<Transaction> items = ui.transactionService.findAllByBarCode(barCodeField.getValue());
-        	grid.setItems(items);
+//        	List<Transaction> items = ui.transactionService.findAllByBarCode(barCodeField.getValue());
+//        	grid.setItems(items);
         });
         ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER,
 				null) {
 			@Override
 			public void handleAction(Object sender, Object target) {
-				List<Transaction> items = ui.transactionService.findAllByBarCode(barCodeField.getValue());
-	        	grid.setItems(items);
+//				List<Transaction> items = ui.transactionService.findAllByBarCode(barCodeField.getValue());
+//	        	grid.setItems(items);
 			}
 		};
         barCodeField.addShortcutListener(enterListener);

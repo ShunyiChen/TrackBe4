@@ -11,6 +11,7 @@ import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.Hr;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -19,6 +20,7 @@ import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Queue;
+import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
@@ -27,7 +29,7 @@ import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
-import com.maxtree.automotive.dashboard.view.dashboard.MessageInboxWindow;
+import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.automotive.dashboard.view.qc.ConfirmInformationGrid;
 import com.maxtree.automotive.dashboard.view.qc.ImageChecker;
 import com.maxtree.automotive.dashboard.view.qc.QCView;
@@ -201,7 +203,7 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
             notificationLayout.setMargin(false);
             notificationLayout.setSpacing(false);
             notificationLayout.addStyleName("notification-item");
-            String readStr = m.get("read").toString().equals("0")?"(未读)":"";
+            String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
             Label titleLabel = new Label(m.get("subject")+readStr);
             titleLabel.addStyleName("notification-title");
             
@@ -216,18 +218,18 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
             String messageContent = map.get("message");
             Label contentLabel = new Label(messageContent);
             contentLabel.addStyleName("notification-content");
-            // 自动删除已过时的消息
-            if ("transaction".equals(type)) {
-            	int transId = Integer.parseInt(map.get("transactionUniqueId").toString());
-            	Transaction trans = ui.transactionService.findById(transId);
-	            long time1 = trans.getDateModified().getTime();
-				long time2 = dateCreated.getTime();
-				if (time1 > time2) {
-					int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-					ui.messagingService.deleteMessageRecipient(messageUniqueId, currentUser.getUserUniqueId());
-					continue;
-				}
-            }
+//            // 自动删除已过时的消息
+//            if ("transaction".equals(type)) {
+//            	int transId = Integer.parseInt(map.get("transactionUniqueId").toString());
+//            	Transaction trans = ui.transactionService.findById(transId);
+//	            long time1 = trans.getDateModified().getTime();
+//				long time2 = dateCreated.getTime();
+//				if (time1 > time2) {
+//					int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
+//					ui.messagingService.deleteMessageRecipient(messageUniqueId, currentUser.getUserUniqueId());
+//					continue;
+//				}
+//            }
 
             notificationLayout.addComponents(titleLabel, timeLabel, contentLabel);
             listLayout.addComponent(notificationLayout);
@@ -452,15 +454,19 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
             }
         });
     }
-    
-   
-    
-    
   
     @Override
    	public void getUnreadCount() {
    		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-   		int unreadCount = ui.messagingService.getUnreadCount(loginUser, DashboardViewType.SENDBACK.getViewName());
+   		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loginUser.getUserUniqueId());
+    	int unreadCount = 0;
+		for (SendDetails sd : sendDetailsList) {
+			if (sd.getViewName().equals(DashboardViewType.SHELF.getViewName())
+					|| sd.getViewName().equals("")) {
+				unreadCount++;
+			}
+		}
+   		
    		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
    		event.setCount(unreadCount);
    		notificationsButton.updateNotificationsCount(event);

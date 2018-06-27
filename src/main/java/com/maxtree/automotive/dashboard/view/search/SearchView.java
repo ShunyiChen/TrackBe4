@@ -12,6 +12,7 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardNavigator;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.Hr;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -22,6 +23,7 @@ import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.Queue;
+import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
@@ -32,8 +34,8 @@ import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
-import com.maxtree.automotive.dashboard.view.dashboard.MessageInboxWindow;
-import com.maxtree.automotive.dashboard.view.dashboard.MessageWrapper;
+import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
+import com.maxtree.automotive.dashboard.view.front.MessageWrapper;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
@@ -214,7 +216,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
              notificationLayout.setMargin(false);
              notificationLayout.setSpacing(false);
              notificationLayout.addStyleName("notification-item");
-             String readStr = m.get("read").toString().equals("0")?"(未读)":"(已读)";
+             String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"(已读)";
              Label titleLabel = new Label(m.get("subject")+readStr);
              titleLabel.addStyleName("notification-title");
              
@@ -448,7 +450,14 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     @Override
 	public void getUnreadCount() {
 		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		int unreadCount = ui.messagingService.getUnreadCount(loginUser, DashboardViewType.SEARCH.getViewName());
+		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loginUser.getUserUniqueId());
+    	int unreadCount = 0;
+		for (SendDetails sd : sendDetailsList) {
+			if (sd.getViewName().equals(DashboardViewType.SEARCH.getViewName())
+					|| sd.getViewName().equals("")) {
+				unreadCount++;
+			}
+		}
 		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
 		event.setCount(unreadCount);
 		notificationsButton.updateNotificationsCount(event);
