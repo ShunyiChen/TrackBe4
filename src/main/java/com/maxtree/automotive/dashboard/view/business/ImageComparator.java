@@ -73,9 +73,9 @@ public class ImageComparator extends HorizontalSplitPanel {
         treeData.addItem(null, secondary);
 
         // 主要文件
-    	List<Document> primaryDocs = ui.documentService.findPrimary(transaction.getUuid(), transaction.getBusinessUniqueId());
+    	List<Document> primaryDocs = ui.documentService.findPrimary(transaction.getUuid(), transaction.getVin());
     	// 次要文件
-    	List<Document> secondaryDocs = ui.documentService.findSecondary(transaction.getUuid(), transaction.getBusinessUniqueId());
+    	List<Document> secondaryDocs = ui.documentService.findSecondary(transaction.getUuid(), transaction.getVin());
         
         for (Document d : primaryDocs) {
         	treeData.addItem(primary, d);
@@ -138,9 +138,9 @@ public class ImageComparator extends HorizontalSplitPanel {
         	
             
             // 主要文件
-        	List<Document> primaryDocuments = ui.documentService.findPrimary(historyTrans.getUuid(), historyTrans.getBusinessUniqueId());
+        	List<Document> primaryDocuments = ui.documentService.findPrimary(historyTrans.getUuid(), historyTrans.getVin());
         	// 次要文件
-        	List<Document> secondaryDocuments = ui.documentService.findSecondary(historyTrans.getUuid(), historyTrans.getBusinessUniqueId());
+        	List<Document> secondaryDocuments = ui.documentService.findSecondary(historyTrans.getUuid(), historyTrans.getVin());
             for (Document d : primaryDocuments) {
             	rightTreeData.addItem(primaryNode, d);
             }

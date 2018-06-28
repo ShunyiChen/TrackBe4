@@ -1,9 +1,6 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.springframework.util.StringUtils;
 
@@ -29,15 +26,16 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.PasswordField;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.themes.ValoTheme;
 
 public class EditSiteWindow extends Window {
 
@@ -55,16 +53,19 @@ public class EditSiteWindow extends Window {
 		VerticalLayout mainLayout = new VerticalLayout(); 
 		mainLayout.setSpacing(true);
 		mainLayout.setMargin(false);
+		// 分页面板
+		TabSheet tabSheet = new TabSheet();
+		tabSheet.setHeight(100.0f, Unit.PERCENTAGE);
+		tabSheet.addStyleName(ValoTheme.TABSHEET_FRAMED);
+		tabSheet.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
 		
 		FormLayout form = new FormLayout();
 		form.setSizeFull();
-		
 		textFieldName = new TextField("站点名称:");
 		textFieldName.setIcon(VaadinIcons.EDIT);
 		textFieldName.focus(); // 设置焦点
-		
 		// 站点类型
-		boxSiteType = new ComboBox<String>("站点类型");
+		boxSiteType = new ComboBox<String>("站点类型:");
 		boxSiteType.setTextInputAllowed(false);
 		boxSiteType.setIcon(VaadinIcons.SITEMAP);
 		boxSiteType.setEmptySelectionAllowed(false);
@@ -75,39 +76,48 @@ public class EditSiteWindow extends Window {
 		textHostAddr = new TextField("主机地址:");
 		textHostAddr.setIcon(VaadinIcons.EDIT);
 		textPort = new TextField("端口:");
-		textPort.setIcon(VaadinIcons.EDIT);
-		textRemoteDirectory = new TextField("默认远程目录");
+		textPort.setIcon(VaadinIcons.AIRPLANE);
+		textRemoteDirectory = new TextField("默认远程目录:");
 		textRemoteDirectory.setIcon(VaadinIcons.FOLDER);
 		userName = new TextField("用户名:");
 		userName.setIcon(VaadinIcons.USER);
 		password = new PasswordField("密码");
 		password.setIcon(VaadinIcons.PASSWORD);
 		form.addComponents(textFieldName, boxSiteType, textHostAddr, textPort, textRemoteDirectory, userName, password);
+		tabSheet.addTab(form, "基本信息");
 		
 		
-		HorizontalLayout capacityHLayout = new HorizontalLayout();
-		capacityHLayout.setWidthUndefined();
-		capacityHLayout.setHeight("35px");
-		capacityHLayout.setSpacing(false);
-		capacityHLayout.setMargin(false);
-		num.setWidth("60px");
+		FormLayout form2 = new FormLayout();
+		form2.setSizeFull();
+		maximum.setCaption("最大容量:");
+		units.setCaption("容量单位:");
+		maxBatch.setCaption("最大批次数:");
+		maxBusiness.setCaption("每批次业务数:");
+		form2.addComponents(maximum, units, maxBatch, maxBusiness);
+		tabSheet.addTab(form2, "容量");
 		
-		String[] unit = {"GB", "MB"};
-		units.setWidth("100px");
-		units.setTextInputAllowed(false);
-		units.setEmptySelectionAllowed(false);
-		units.setItems(unit);
-		units.setSelectedItem("GB");
 		
-//		Image img = new Image();
-//		img.setSource(VaadinIcons.ABACUS);
-		Label titleLabel = new Label("最大容量:");
-		titleLabel.setWidth("120px");
-		capacityHLayout.addComponents(titleLabel, Box.createHorizontalBox(5), num, Box.createHorizontalBox(5), units, Box.createHorizontalBox(5), infoLabel);
-		capacityHLayout.setComponentAlignment(titleLabel, Alignment.MIDDLE_LEFT);
-		capacityHLayout.setComponentAlignment(num, Alignment.MIDDLE_LEFT);
-		capacityHLayout.setComponentAlignment(units, Alignment.MIDDLE_LEFT);
-		capacityHLayout.setComponentAlignment(infoLabel, Alignment.MIDDLE_LEFT);
+//		HorizontalLayout capacityHLayout = new HorizontalLayout();
+//		capacityHLayout.setWidthUndefined();
+//		capacityHLayout.setHeight("35px");
+//		capacityHLayout.setSpacing(false);
+//		capacityHLayout.setMargin(false);
+//		num.setWidth("60px");
+//		
+//		String[] unit = {"GB", "MB"};
+//		units.setWidth("100px");
+//		units.setTextInputAllowed(false);
+//		units.setEmptySelectionAllowed(false);
+//		units.setItems(unit);
+//		units.setSelectedItem("GB");
+//		
+//		Label titleLabel = new Label("最大容量:");
+//		titleLabel.setWidth("120px");
+//		capacityHLayout.addComponents(titleLabel, Box.createHorizontalBox(5), num, Box.createHorizontalBox(5), units, Box.createHorizontalBox(5), usage);
+//		capacityHLayout.setComponentAlignment(titleLabel, Alignment.MIDDLE_LEFT);
+//		capacityHLayout.setComponentAlignment(num, Alignment.MIDDLE_LEFT);
+//		capacityHLayout.setComponentAlignment(units, Alignment.MIDDLE_LEFT);
+//		capacityHLayout.setComponentAlignment(usage, Alignment.MIDDLE_LEFT);
 		
 		HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setSizeFull();
@@ -127,7 +137,10 @@ public class EditSiteWindow extends Window {
 		subButtonPane.setComponentAlignment(btnTest, Alignment.BOTTOM_RIGHT);
 		buttonPane.addComponent(subButtonPane);
 		buttonPane.setComponentAlignment(subButtonPane, Alignment.BOTTOM_RIGHT);
-		mainLayout.addComponents(form, capacityHLayout, buttonPane);
+		
+		
+		
+		mainLayout.addComponents(tabSheet, buttonPane);
 		this.setContent(mainLayout);
 		
 		btnCancel.addClickListener(e -> {
@@ -162,6 +175,11 @@ public class EditSiteWindow extends Window {
 		binder.setBean(site);
 	}
 	
+	/**
+	 * 
+	 * @param w
+	 * @param h
+	 */
 	private void setComponentSize(int w, int h) {
 		textFieldName.setWidth(w+"px");
 		boxSiteType.setWidth(w+"px");
@@ -170,6 +188,10 @@ public class EditSiteWindow extends Window {
 		textRemoteDirectory.setWidth(w+"px");
 		userName.setWidth(w+"px");
 		password.setWidth(w+"px");
+		maximum.setWidth(h+"px");
+		units.setWidth(h+"px");
+		maxBatch.setWidth(h+"px");
+		maxBusiness.setWidth(h+"px");
 		
 		textFieldName.setHeight(h+"px");
 		boxSiteType.setHeight(h+"px");
@@ -178,6 +200,10 @@ public class EditSiteWindow extends Window {
 		textRemoteDirectory.setHeight(h+"px");
 		userName.setHeight(h+"px");
 		password.setHeight(h+"px");
+		maximum.setHeight(h+"px");
+		units.setHeight(h+"px");
+		maxBatch.setHeight(h+"px");
+		maxBusiness.setHeight(h+"px");
 	}
 	
 	/**
@@ -191,11 +217,15 @@ public class EditSiteWindow extends Window {
 		binder.bind(textHostAddr, Site::getHostAddr, Site::setHostAddr);
 		binder.forField(textPort)
 		  .withValidator(new EmptyValidator("端口不能为空"))
-		  .withConverter(new StringToIntegerConverter("Please enter a number"))
+		  .withConverter(new StringToIntegerConverter("请输入一个大于零的整数"))
 		  .bind(Site::getPort, Site::setPort);
 		binder.bind(textRemoteDirectory, Site::getDefaultRemoteDirectory, Site::setDefaultRemoteDirectory);
 		binder.bind(userName, Site::getUserName, Site::setUserName);
 		binder.bind(password, Site::getPassword, Site::setPassword);
+//		binder.forField(maximizeAllowed)
+//		  .withValidator(new EmptyValidator("最大文件夹数不能为空"))
+//		  .withConverter(new StringToIntegerConverter("请输入一个大于零的整数"))
+//		  .bind(Site::getMaximumNumberOfFolders, Site::setMaximumNumberOfFolders);
 	}
 	
 	/**
@@ -277,8 +307,8 @@ public class EditSiteWindow extends Window {
 			textRemoteDirectory.setComponentError(textRemoteDirectory.getErrorMessage());
 			return false;
 		}
-		else if (StringUtils.isEmpty(num.getValue())) {
-			num.setComponentError(new ErrorMessage() {
+		else if (StringUtils.isEmpty(maximum.getValue())) {
+			maximum.setComponentError(new ErrorMessage() {
 				@Override
 				public ErrorLevel getErrorLevel() {
 					return ErrorLevel.ERROR;
@@ -293,10 +323,10 @@ public class EditSiteWindow extends Window {
 		} else {
 			
 			try {
-				new Double(num.getValue());
+				new Double(maximum.getValue());
 		    } catch (NumberFormatException e) {
 		    	
-		    	num.setComponentError(new ErrorMessage() {
+		    	maximum.setComponentError(new ErrorMessage() {
 					@Override
 					public ErrorLevel getErrorLevel() {
 						return ErrorLevel.ERROR;
@@ -317,7 +347,7 @@ public class EditSiteWindow extends Window {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditSiteWindow w = new EditSiteWindow();
         
-        w.infoLabel.setValue("使用率: 0.00%");
+        w.usage.setValue("使用率: 0.00%");
         
         w.btnAdd.setCaption("添加");
         w.btnAdd.addClickListener(e -> {
@@ -325,20 +355,22 @@ public class EditSiteWindow extends Window {
         		
         		SiteCapacity siteCapacity = new SiteCapacity();
         		siteCapacity.setUnit(w.units.getValue());
-        		siteCapacity.setUnitNumber(w.num.getValue());
+        		siteCapacity.setUnitNumber(w.maximum.getValue());
         		siteCapacity.setUpdateTimeMillis(System.currentTimeMillis());
+        		siteCapacity.setMaxBatch(Integer.parseInt(w.maxBatch.getValue()));
+        		siteCapacity.setMaxBusiness(Integer.parseInt(w.maxBusiness.getValue()));
         		
         		long totalSize = 0L;
         		if (w.units.getValue().equals("GB")) {
-        			totalSize = (long) (new Double(w.num.getValue()) * 1024L * 1024L * 1024L); 
+        			totalSize = (long) (new Double(w.maximum.getValue()) * 1024L * 1024L * 1024L); 
         		} else if (w.units.getValue().equals("MB")) {
-        			totalSize = (long) (new Double(w.num.getValue()) * 1024L * 1024L); 
+        			totalSize = (long) (new Double(w.maximum.getValue()) * 1024L * 1024L); 
         		}
         		siteCapacity.setCapacity(totalSize);
         		siteCapacity.setUsedSpace(0L);
         		w.site.setSiteCapacity(siteCapacity);
         		
-        		ui.siteService.save(w.site);
+        		ui.siteService.insert(w.site);
     			w.close();
     			callback.onSuccessful();
         	}
@@ -347,16 +379,19 @@ public class EditSiteWindow extends Window {
         w.center();
     }
 	
+	/**
+	 * 
+	 * @param site
+	 * @param callback
+	 */
 	public static void edit(Site site, Callback callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditSiteWindow w = new EditSiteWindow();
-        
         double c = ((double)site.getSiteCapacity().getUsedSpace()/site.getSiteCapacity().getCapacity() * 100d);
         DecimalFormat dec = new DecimalFormat("0.00");
         String result = dec.format(c);
         
-        w.infoLabel.setValue("使用率: "+result+"%");
-        
+        w.usage.setValue("使用率: "+result+"%");
         w.site.setSiteUniqueId(site.getSiteUniqueId());
         w.textFieldName.setValue(site.getSiteName());
         w.boxSiteType.setValue(site.getSiteType());
@@ -366,12 +401,13 @@ public class EditSiteWindow extends Window {
         w.userName.setValue(site.getUserName());
         w.password.setValue(site.getPassword());
         w.units.setValue(site.getSiteCapacity().getUnit());
-        w.num.setValue(site.getSiteCapacity().getUnitNumber());
+        w.maximum.setValue(site.getSiteCapacity().getUnitNumber());
+        w.maxBatch.setValue(site.getSiteCapacity().getMaxBatch()+"");
+        w.maxBusiness.setValue(site.getSiteCapacity().getMaxBusiness()+"");
         
         w.btnAdd.setCaption("保存");
         w.setCaption("编辑站点");
         w.btnAdd.addClickListener(e -> {
-        	
         	
         	UI.getCurrent().access(() -> {
         		
@@ -380,18 +416,19 @@ public class EditSiteWindow extends Window {
             		if (testConnect) {
             			w.site.setRunningStatus(site.getRunningStatus());
             		}
-            		
             		SiteCapacity siteCapacity = site.getSiteCapacity();
             		siteCapacity.setUnit(w.units.getValue());
-            		siteCapacity.setUnitNumber(w.num.getValue());
+            		siteCapacity.setUnitNumber(w.maximum.getValue());
             		siteCapacity.setUpdateTimeMillis(System.currentTimeMillis());
             		long totalSize = 0L;
             		if (w.units.getValue().equals("GB")) {
-            			totalSize = (long) (new Double(w.num.getValue()) * 1024L * 1024L * 1024L); 
+            			totalSize = (long) (new Double(w.maximum.getValue()) * 1024L * 1024L * 1024L); 
             		} else if (w.units.getValue().equals("MB")) {
-            			totalSize = (long) (new Double(w.num.getValue()) * 1024L * 1024L); 
+            			totalSize = (long) (new Double(w.maximum.getValue()) * 1024L * 1024L); 
             		}
             		siteCapacity.setCapacity(totalSize);
+            		siteCapacity.setMaxBatch(Integer.parseInt(w.maxBatch.getValue()));
+            		siteCapacity.setMaxBusiness(Integer.parseInt(w.maxBusiness.getValue()));
             		w.site.setSiteCapacity(siteCapacity);
             		
         			ui.siteService.update(w.site);
@@ -426,6 +463,8 @@ public class EditSiteWindow extends Window {
 	private Site site = new Site();
 	private static final String[] fileSystems = {"BZIP2", "File", "FTP", "FTPS", "GZIP", "HDFS", "HTTP", "HTTPS", "Jar", "RAM", "RES", "SFTP", "Tar", "Temp", "WebDAV", "Zip", "CIFS", "mime"};//Supported File Systems
 	private ComboBox<String> units = new ComboBox<>();
-	private Label infoLabel = new Label();
-	private DoubleField num = new DoubleField();
+	private Label usage = new Label();
+	private DoubleField maximum = new DoubleField(); // 最大容量数
+	private DoubleField maxBatch = new DoubleField(); // 最大批次数
+	private DoubleField maxBusiness = new DoubleField(); // 每批次内最大业务数
 }

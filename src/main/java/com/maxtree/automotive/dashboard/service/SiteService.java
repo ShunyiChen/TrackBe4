@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.SiteCapacity;
+import com.maxtree.automotive.dashboard.domain.SiteFolder;
 
 @Component
 public class SiteService {
@@ -32,7 +33,7 @@ public class SiteService {
 	 * @return
 	 */
 	public List<Site> findAll() {
-		String sql = "SELECT * FROM SITE";
+		String sql = "SELECT * FROM SITE ORDER BY SITEUNIQUEID";
 		List<Site> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<Site>(Site.class));
 		for (Site site : results) {
 		
@@ -48,7 +49,7 @@ public class SiteService {
 	 * @return
 	 */
 	public Site findById(int siteUniqueId) {
-		String sql = "SELECT * FROM SITE WHERE SITEUNIQUEID = ?";
+		String sql = "SELECT * FROM SITE WHERE SITEUNIQUEID=?";
 		List<Site> results = jdbcTemplate.query(sql, new Object[] {siteUniqueId}, new BeanPropertyRowMapper<Site>(Site.class));
 		if (results.size() > 0) {
 			
@@ -108,7 +109,7 @@ public class SiteService {
 	 * @param site
 	 * @return
 	 */
-	public Site save(Site site) {
+	public Site insert(Site site) {
 		String INSERT_TRANS_SQL = "INSERT INTO SITE(SITENAME,SITETYPE,HOSTADDR,PORT,DEFAULTREMOTEDIRECTORY,USERNAME,PASSWORD,MODE,CHARSET,RUNNINGSTATUS) VALUES(?,?,?,?,?,?,?,?,?,?)";
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
@@ -131,14 +132,20 @@ public class SiteService {
 		}, keyHolder);
 		int siteUniqueId = keyHolder.getKey().intValue();
 		
-		String sql = "INSERT INTO SITECAPACITY(SITEUNIQUEID,CAPACITY,USEDSPACE,UPDATETIMEMILLIS,UNIT,UNITNUMBER) VALUES(?,?,?,?,?,?)";
-		int opt = jdbcTemplate.update(sql, new Object[] {
+		String sql = "INSERT INTO SITECAPACITY(SITEUNIQUEID,CAPACITY,USEDSPACE,UPDATETIMEMILLIS,UNIT,UNITNUMBER,MAXBATCH,MAXBUSINESS) VALUES(?,?,?,?,?,?,?,?)";
+		jdbcTemplate.update(sql, new Object[] {
 				siteUniqueId,
 				site.getSiteCapacity().getCapacity(),
 				site.getSiteCapacity().getUsedSpace(),
 				site.getSiteCapacity().getUpdateTimeMillis(),
 				site.getSiteCapacity().getUnit(),
-				site.getSiteCapacity().getUnitNumber()});
+				site.getSiteCapacity().getUnitNumber(),
+				site.getSiteCapacity().getMaxBatch(),
+				site.getSiteCapacity().getMaxBusiness()
+		});
+		
+		sql = "INSERT INTO SITEFOLDER(SITEUNIQUEID,BATCHCOUNT,BUSINESSCOUNT) VALUES(?,?,?)";
+		jdbcTemplate.update(sql, new Object[] { siteUniqueId, 1, 0});
 	 	return site;
 	}
 	
@@ -151,13 +158,15 @@ public class SiteService {
 		String sql = "UPDATE SITE SET SITENAME=?,SITETYPE=?,HOSTADDR=?,PORT=?,DEFAULTREMOTEDIRECTORY=?,USERNAME=?,PASSWORD=?,MODE=?,CHARSET=?,RUNNINGSTATUS=? WHERE SITEUNIQUEID=?";
 	 	int opt = jdbcTemplate.update(sql, new Object[] {site.getSiteName(), site.getSiteType(), site.getHostAddr(), site.getPort(), site.getDefaultRemoteDirectory(),site.getUserName(),site.getPassword(),site.getMode(),site.getCharset(),site.getRunningStatus(), site.getSiteUniqueId()});
 	 
-	 	sql = "UPDATE SITECAPACITY SET CAPACITY=?,USEDSPACE=?,UPDATETIMEMILLIS=?,UNIT=?,UNITNUMBER=? WHERE SITECAPACITYUNIQUEID=?";
+	 	sql = "UPDATE SITECAPACITY SET CAPACITY=?,USEDSPACE=?,UPDATETIMEMILLIS=?,UNIT=?,UNITNUMBER=?,MAXBATCH=?,MAXBUSINESS=? WHERE SITECAPACITYUNIQUEID=?";
 	 	opt = jdbcTemplate.update(sql, new Object[] {
 	 			site.getSiteCapacity().getCapacity(),
 	 			site.getSiteCapacity().getUsedSpace(),
 	 			site.getSiteCapacity().getUpdateTimeMillis(),
 	 			site.getSiteCapacity().getUnit(),
 	 			site.getSiteCapacity().getUnitNumber(),
+	 			site.getSiteCapacity().getMaxBatch(),
+	 			site.getSiteCapacity().getMaxBusiness(),
 	 			site.getSiteCapacity().getSiteCapacityUniqueId()});
 	 	log.info("Update result:"+opt);
 	 	return site;
@@ -215,7 +224,6 @@ public class SiteService {
 		log.info("updateSiteUsers batch update has done.");
 	}
 	
-	
 	/**
 	 * 
 	 * @param communityUniqueId
@@ -245,5 +253,26 @@ public class SiteService {
 		sql = "DELETE FROM SITE WHERE SITEUNIQUEID = ?";
 	 	int opt = jdbcTemplate.update(sql, new Object[] {siteUniqueId});
 	 	log.info("Delete result:"+opt);
+	 	
+	 	sql = "DELETE FROM SITEFOLDER WHERE SITEUNIQUEID = ?";
+	 	opt = jdbcTemplate.update(sql, new Object[] {siteUniqueId});
+	 	log.info("Deleted result:"+opt);
+	}
+	
+	/**
+	 * 
+	 * @param siteUniqueId
+	 */
+	public boolean updateFolders(Site site) {
+		String sql = "UPDATE SITEFOLDER SET BUSINESSCOUNT=BUSINESSCOUNT+1 WHERE SITEUNIQUEID=? AND BATCHCOUNT=(SELECT MAX(BATCHCOUNT) FROM SITEFOLDER WHERE SITEUNIQUEID=?) AND BUSINESSCOUNT<?";
+		int affected1 = jdbcTemplate.update(sql,site.getSiteUniqueId(),site.getSiteUniqueId(),site.getSiteCapacity().getMaxBusiness());
+		
+		sql = "INSERT INTO SITEFOLDER(SITEUNIQUEID,BATCHCOUNT,BUSINESSCOUNT) SELECT ?,BATCHCOUNT+1,0 FROM SITEFOLDER WHERE SITEUNIQUEID=? AND BUSINESSCOUNT>? AND BATCHCOUNT=(SELECT MAX(BATCHCOUNT) FROM SITEFOLDER WHERE SITEUNIQUEID=?) AND BATCHCOUNT<?";
+		int affected2 = jdbcTemplate.update(sql,site.getSiteUniqueId(),site.getSiteUniqueId(),site.getSiteCapacity().getMaxBusiness()-1,site.getSiteUniqueId(),site.getSiteCapacity().getMaxBatch());
+		
+		if (affected1 == 0 && affected2 == 0) {
+			return false;
+		}
+		return true;
 	}
 }

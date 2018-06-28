@@ -11,6 +11,7 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
+import com.maxtree.automotive.dashboard.domain.SiteFolder;
 import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.icons.VaadinIcons;
@@ -46,10 +47,12 @@ public class ClosableUploadGridCell extends VerticalLayout implements Receiver, 
 	 * 
 	 * @param document
 	 * @param site
+	 * @param vin
 	 */
-	public ClosableUploadGridCell(Document document, Site site) {
+	public ClosableUploadGridCell(Document document, Site site, String vin) {
 		this.document = document;
 		this.site = site;
+		this.vin = vin;
 		this.setSpacing(false);
 		this.setMargin(false);
 		this.setWidth("180px");
@@ -148,16 +151,31 @@ public class ClosableUploadGridCell extends VerticalLayout implements Receiver, 
 		if (upload.getComponentError() != null) {
 			upload.setComponentError(null);
 		}
-		updateDocument(event.getFilename(), fileFullPath);
+		updateDocument(event.getFilename());
 		displayLink(event.getFilename());
+		
+		// 更新已用存储大小
+		new TB4FileSystem().increaseUsedSize(site.getSiteUniqueId(), upload.getUploadSize());
 	}
 
 	@Override
 	public OutputStream receiveUpload(String filename, String mimeType) {
+		if (filename.length() > 60) {
+			Notifications.warning("文件名不能超出60个字符。");
+			return null;
+		}
+		// 容量check
+		long usedSize = site.getSiteCapacity().getUsedSpace() + upload.getUploadSize();
+		if (usedSize >= site.getSiteCapacity().getCapacity()) {
+			Notifications.warning("站点("+site.getSiteName()+")容量已满，请联系管理员切换其它站点。");
+			return null;
+		}
+		
 		String oldPath = document.getFileFullPath();
 		try {
-			fileFullPath = document.getUuid() +"/"+document.getCategory()+"/"+System.currentTimeMillis()+"_"+filename;
+			fileFullPath = document.getBatch() + "/"+document.getUuid()+"/"+System.currentTimeMillis()+"_"+filename;
 			document.setFileFullPath(fileFullPath);
+			
 			return new TB4FileSystem().receiveUpload(site, fileFullPath);
 		} catch (FileException e) {
 			Notifications.warning(e.getMessage());
@@ -190,11 +208,11 @@ public class ClosableUploadGridCell extends VerticalLayout implements Receiver, 
 		return hlayout;
 	}
 	
-	public void updateDocument(String fileName, String fileFullPath) {
+	public void updateDocument(String fileName) {
 		document.setFileName(fileName);
 		document.setFileFullPath(fileFullPath);
 		if (document.getDocumentUniqueId() == 0) {
-			int documentUniqueId = ui.documentService.create(document);
+			int documentUniqueId = ui.documentService.create(document, vin);
 			document.setDocumentUniqueId(documentUniqueId);
 		} else {
 			ui.documentService.update(document);
@@ -260,10 +278,11 @@ public class ClosableUploadGridCell extends VerticalLayout implements Receiver, 
 
 	private Upload upload ;
 	private VerticalLayout content = new VerticalLayout();
-	private String fileFullPath;
 	private HorizontalLayout link;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private Document document;
 	private Site site;
+	private String fileFullPath;
+	private String vin;
 	private Callback deleteCallback;
 }

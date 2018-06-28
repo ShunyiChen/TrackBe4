@@ -97,7 +97,7 @@ public class Site {
 	public void setSiteCapacity(SiteCapacity siteCapacity) {
 		this.siteCapacity = siteCapacity;
 	}
-
+	
 	@Override
 	public String toString() {
 		// return String.format(
@@ -109,16 +109,16 @@ public class Site {
 		return siteName;
 	}
 
-	private Integer siteUniqueId = 0; // Id
-	private String siteName; // 站点名称
-	private String siteType; // 站点类型
-	private String hostAddr; // 主机地址
-	private Integer port = 0; // 端口号
+	private Integer siteUniqueId = 0; 		// 自增长ID
+	private String siteName; 				// 站点名称
+	private String siteType; 				// 站点类型
+	private String hostAddr; 				// 主机地址
+	private Integer port = 0; 				// 端口号
 	private String defaultRemoteDirectory = "/"; // 默认远程目录
-	private String userName; // 用户名
-	private String password; // 密码
-	private String mode = "主动"; // 传输模式（主动，被动）
-	private String charset = "UTF-8"; // 字符集，默认UTF-8
-	private Integer runningStatus = 0; // 运行状态，0停止，1运行
-	private SiteCapacity siteCapacity; // 容量
+	private String userName; 				// 用户名
+	private String password; 				// 密码
+	private String mode = "主动"; 			// 传输模式（主动，被动）
+	private String charset = "UTF-8"; 		// 字符集，默认UTF-8
+	private Integer runningStatus = 0; 		// 运行状态 1运行  0停止
+	private SiteCapacity siteCapacity; 		// 数据容量及文件夹个数限制
 }

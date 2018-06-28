@@ -7,6 +7,7 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.PermissionCodes;
 import com.maxtree.automotive.dashboard.TB4Application;
 import com.maxtree.automotive.dashboard.component.Box;
+import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.User;
@@ -131,7 +132,7 @@ public class ManageSitesGrid extends VerticalLayout {
 		row.setWidthUndefined();
 		row.setHeightUndefined();
 		row.addStyleName("grid-header-line");
-		Label name = new Label(site.getSiteName()+"/"+site.getSiteType());
+		Label name = new Label(site.getSiteName()+"("+site.getSiteType()+")");
 		Label hostAddr = new Label(site.getHostAddr());
 		Label port = new Label(site.getPort()+"");
 		Image runStatus = null;
@@ -258,8 +259,17 @@ public class ManageSitesGrid extends VerticalLayout {
 				public void menuSelected(MenuItem selectedItem) {
 					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 					if (loginUser.isPermitted(PermissionCodes.K3)) {
-						ui.siteService.delete(site.getSiteUniqueId());
-						refreshTable();
+						
+						Callback okevent = new Callback() {
+
+							@Override
+							public void onSuccessful() {
+								ui.siteService.delete(site.getSiteUniqueId());
+								refreshTable();
+							}
+						};
+						MessageBox.showMessage("删除提示", "请确认是否彻底删除该站点。", MessageBox.WARNING, okevent, "删除");
+					
 					} else {
 		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
 		        	}

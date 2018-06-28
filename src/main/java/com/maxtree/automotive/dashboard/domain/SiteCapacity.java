@@ -57,6 +57,22 @@ public class SiteCapacity {
 	public void setUnitNumber(String unitNumber) {
 		this.unitNumber = unitNumber;
 	}
+	
+	public Integer getMaxBatch() {
+		return maxBatch;
+	}
+
+	public void setMaxBatch(Integer maxBatch) {
+		this.maxBatch = maxBatch;
+	}
+
+	public Integer getMaxBusiness() {
+		return maxBusiness;
+	}
+
+	public void setMaxBusiness(Integer maxBusiness) {
+		this.maxBusiness = maxBusiness;
+	}
 
 	private Integer siteCapacityUniqueId = 0;
 	private Integer siteUniqueId = 0;
@@ -65,4 +81,6 @@ public class SiteCapacity {
 	private Long updateTimeMillis = 0L;
 	private String unit;
 	private String unitNumber;
+	private Integer maxBatch = 0; // 最大批次数
+	private Integer maxBusiness = 0; // 最大业务数
 }

@@ -41,12 +41,15 @@ public class DocumentService {
 	 * 获取主要文件列表
 	 * 
 	 * @param uuid
-	 * @param businessUniqueId
+	 * @param vin
 	 * @return
 	 */
-	public List<Document> findPrimary(String uuid, int businessUniqueId) {
-		String sql = "SELECT * FROM DOCUMENTS_1 WHERE UUID=? AND BUSINESSUNIQUEID=? ORDER BY DOCUMENTUNIQUEID";
-		List<Document> result = jdbcTemplate.query(sql, new Object[] {uuid, businessUniqueId}, new BeanPropertyRowMapper<Document>(Document.class));
+	public List<Document> findPrimary(String uuid, String vin) {
+		int number = Integer.parseInt(vin.substring(vin.length() - 6));
+		int index = number % 256;
+		
+		String sql = "SELECT * FROM DOCUMENTS_1_"+index+" WHERE UUID=? ORDER BY DOCUMENTUNIQUEID";
+		List<Document> result = jdbcTemplate.query(sql, new Object[] {uuid}, new BeanPropertyRowMapper<Document>(Document.class));
 		return result;
 	}
 	
@@ -54,12 +57,15 @@ public class DocumentService {
 	 * 获取辅助文件列表
 	 * 
 	 * @param uuid
-	 * @param businessUniqueId
+	 * @param vin
 	 * @return
 	 */
-	public List<Document> findSecondary(String uuid, int businessUniqueId) {
-		String sql = "SELECT * FROM DOCUMENTS_2 WHERE UUID=? AND BUSINESSUNIQUEID=? ORDER BY DOCUMENTUNIQUEID";
-		List<Document> result = jdbcTemplate.query(sql, new Object[] {uuid, businessUniqueId}, new BeanPropertyRowMapper<Document>(Document.class));
+	public List<Document> findSecondary(String uuid, String vin) {
+		int number = Integer.parseInt(vin.substring(vin.length() - 6));
+		int index = number % 256;
+		
+		String sql = "SELECT * FROM DOCUMENTS_2_"+index+" WHERE UUID=? ORDER BY DOCUMENTUNIQUEID";
+		List<Document> result = jdbcTemplate.query(sql, new Object[] {uuid}, new BeanPropertyRowMapper<Document>(Document.class));
 		return result;
 	}
 	
@@ -69,7 +75,9 @@ public class DocumentService {
 	 * @param document
 	 * @return
 	 */
-	public int create(Document document) {
+	public int create(Document document, String vin) {
+		int number = Integer.parseInt(vin.substring(vin.length() - 6));
+		int index = number % 256;
 	 	GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
@@ -77,23 +85,21 @@ public class DocumentService {
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 				String SQL = "";
 				if (document.getCategory() == 0) {
-					SQL = "INSERT INTO DOCUMENTS_1(UUID,BUSINESSUNIQUEID,ALIAS,FILENAME,FILEFULLPATH,CATEGORY) VALUES(?,?,?,?,?,?)";
+					SQL = "INSERT INTO DOCUMENTS_1_"+index+"(UUID,ALIAS,FILENAME,FILEFULLPATH) VALUES(?,?,?,?)";
 				} else {
-					SQL = "INSERT INTO DOCUMENTS_2(UUID,BUSINESSUNIQUEID,ALIAS,FILENAME,FILEFULLPATH,CATEGORY) VALUES(?,?,?,?,?,?)";
+					SQL = "INSERT INTO DOCUMENTS_2_"+index+"(UUID,ALIAS,FILENAME,FILEFULLPATH) VALUES(?,?,?,?)";
 				}
 				PreparedStatement ps = con.prepareStatement(
 						SQL, new String[] {"documentuniqueid"});
 				ps.setString(1, document.getUuid());
-				ps.setInt(2, document.getBusinessUniqueId());
-				ps.setString(3, document.getAlias());
-				ps.setString(4, document.getFileName());
-				ps.setString(5, document.getFileFullPath());
-				ps.setInt(6, document.getCategory());
+				ps.setString(2, document.getAlias());
+				ps.setString(3, document.getFileName());
+				ps.setString(4, document.getFileFullPath());
 				return ps;
 			}
 		}, keyHolder);
 		int documentUniqueId  = keyHolder.getKey().intValue();
-		log.info("Created one document.Affected row id= "+documentUniqueId);
+		log.info("Affected row id= "+documentUniqueId);
 		return documentUniqueId;
 	}
 	
@@ -105,11 +111,11 @@ public class DocumentService {
 	public void update(Document document) {
 		String SQL = "";
 		if (document.getCategory() == 0) {
-			SQL = "UPDATE DOCUMENTS_1 SET FILENAME=?,FILEFULLPATH=?,CATEGORY=? WHERE DOCUMENTUNIQUEID=?";
+			SQL = "UPDATE DOCUMENTS_1 SET FILENAME=?,FILEFULLPATH=? WHERE DOCUMENTUNIQUEID=?";
 		} else {
-			SQL = "UPDATE DOCUMENTS_2 SET FILENAME=?,FILEFULLPATH=?,CATEGORY=? WHERE DOCUMENTUNIQUEID=?";
+			SQL = "UPDATE DOCUMENTS_2 SET FILENAME=?,FILEFULLPATH=? WHERE DOCUMENTUNIQUEID=?";
 		}
-	 	int opt = jdbcTemplate.update(SQL, new Object[] {document.getFileName(), document.getFileFullPath(), document.getCategory(), document.getDocumentUniqueId()});
+	 	int opt = jdbcTemplate.update(SQL, new Object[] {document.getFileName(), document.getFileFullPath(), document.getDocumentUniqueId()});
 	 	log.info("Document updated.Affected row="+opt);
 	}
 	

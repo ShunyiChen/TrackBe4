@@ -57,11 +57,9 @@ public class ImageChecker extends HorizontalSplitPanel {
         treeData.addItem(null, primary);
         treeData.addItem(null, secondary);
 
-        System.out.println(transaction.getUuid()+"   "+transaction.getBusinessUniqueId());
-        
-        List<Document> primaryDocs = ui.documentService.findPrimary(transaction.getUuid(), transaction.getBusinessUniqueId());
+        List<Document> primaryDocs = ui.documentService.findPrimary(transaction.getUuid(), transaction.getVin());
     	// 次要文件
-    	List<Document> secondaryDocs = ui.documentService.findSecondary(transaction.getUuid(), transaction.getBusinessUniqueId());
+    	List<Document> secondaryDocs = ui.documentService.findSecondary(transaction.getUuid(), transaction.getVin());
         for (Document d : primaryDocs) {
         	treeData.addItem(primary, d);
         }

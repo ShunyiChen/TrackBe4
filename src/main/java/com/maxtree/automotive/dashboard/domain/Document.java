@@ -2,9 +2,17 @@ package com.maxtree.automotive.dashboard.domain;
 
 public class Document {
 
+	/**
+	 * Constructor without any parameters
+	 */
 	public Document() {
 	}
 
+	/**
+	 * Constructor with alias
+	 * 
+	 * @param alias
+	 */
 	public Document(String alias) {
 		this.alias = alias;
 	}
@@ -23,14 +31,6 @@ public class Document {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
-	}
-
-	public Integer getBusinessUniqueId() {
-		return businessUniqueId;
-	}
-
-	public void setBusinessUniqueId(Integer businessUniqueId) {
-		this.businessUniqueId = businessUniqueId;
 	}
 
 	public String getAlias() {
@@ -56,13 +56,21 @@ public class Document {
 	public void setFileFullPath(String fileFullPath) {
 		this.fileFullPath = fileFullPath;
 	}
-
+	
 	public Integer getCategory() {
 		return category;
 	}
 
 	public void setCategory(Integer category) {
 		this.category = category;
+	}
+
+	public Integer getBatch() {
+		return batch;
+	}
+
+	public void setBatch(Integer batch) {
+		this.batch = batch;
 	}
 
 	@Override
@@ -73,11 +81,11 @@ public class Document {
 		return alias;
 	}
 
-	private Integer documentUniqueId = 0; // 文档ID
-	private String uuid;                  // 文件UUID
-	private Integer businessUniqueId = 0; // 业务类型ID
-	private String alias; 	 			// 别名,例如：身份证，托银莫
-	private String fileName; 			// 文件名
-	private String fileFullPath; 		// 文件实际存放全路径
-	private Integer category = 0; 		// 0:主要材料  1:次要材料
+	private Integer documentUniqueId = 0; 	// 文档ID
+	private String uuid;                  	// 文件UUID
+	private String alias; 	 				// 别名,例如：身份证，托银莫
+	private String fileName; 				// 文件名
+	private String fileFullPath; 			// 文件实际存放全路径
+	private Integer category = 0; 			// 1:主要材料  2:次要材料(非数据库字段)
+	private Integer batch = 0;          	// 批次号（非数据库字段）
 }

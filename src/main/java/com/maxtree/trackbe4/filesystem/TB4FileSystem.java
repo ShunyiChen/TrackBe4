@@ -191,18 +191,18 @@ public class TB4FileSystem {
 	}
 	
 	/**
-	 * 更新站点已用大小
+	 * 更新存储已用大小
 	 * 
 	 * @param siteUniqueId
 	 * @param increment     增量字节数
 	 */
-	public void checkAndUpdateDisk(int siteUniqueId, long increment) {
-		System.out.println("Checking Disk");
-		Site s = ui.siteService.findById(siteUniqueId);
-		long newUsedSize = s.getSiteCapacity().getUsedSpace() + increment;
-		int affectedRow = ui.siteService.updateCapacity(siteUniqueId, s.getSiteCapacity().getUpdateTimeMillis(), System.currentTimeMillis(), newUsedSize);
+	public void increaseUsedSize(int siteUniqueId, long increment) {
+		Site site = ui.siteService.findById(siteUniqueId);
+		long newUsedSize = site.getSiteCapacity().getUsedSpace() + increment;
+		int affectedRow = ui.siteService.updateCapacity(siteUniqueId, site.getSiteCapacity().getUpdateTimeMillis(), System.currentTimeMillis(), newUsedSize);
+		// 如果更新时间点不存在，怎递归执行，直到累加成功。
 		if (affectedRow == 0) {
-			checkAndUpdateDisk(siteUniqueId, increment);
+			increaseUsedSize(siteUniqueId, increment);
 		}
 	}
 	

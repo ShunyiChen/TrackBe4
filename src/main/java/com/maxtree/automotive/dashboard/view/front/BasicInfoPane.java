@@ -1,37 +1,27 @@
 package com.maxtree.automotive.dashboard.view.front;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.util.StringUtils;
 
-import com.maxtree.automotive.dashboard.Callback;
-import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.Status;
 import com.maxtree.automotive.dashboard.component.Box;
-import com.maxtree.automotive.dashboard.component.MessageBox;
-import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.data.Area;
 import com.maxtree.automotive.dashboard.data.Yaml;
-import com.maxtree.automotive.dashboard.domain.Portfolio;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.trackbe4.external.tmri.InterF;
 import com.vaadin.data.Binder;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.server.ErrorMessage;
-import com.vaadin.server.Page;
-import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.ErrorLevel;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
-public class InformationGrid extends HorizontalLayout {
+public class BasicInfoPane extends HorizontalLayout {
 
 	/**
 	 * 
@@ -41,7 +31,7 @@ public class InformationGrid extends HorizontalLayout {
 	/**
 	 * 
 	 */
-	public InformationGrid(FrontView view) {
+	public BasicInfoPane(FrontView view) {
 		HorizontalLayout hlayout = new HorizontalLayout();
 		hlayout.setSpacing(false);
 		hlayout.setMargin(false);
@@ -79,6 +69,7 @@ public class InformationGrid extends HorizontalLayout {
 		plateTypeField.setHeight(fieldHeight);
 		plateNumberField.setHeight(fieldHeight);
 		vinField.setHeight(fieldHeight);
+		vinField.setReadOnly(true);
 		
 		barCodeField.addBlurListener(e -> {
 			
@@ -91,7 +82,6 @@ public class InformationGrid extends HorizontalLayout {
 //			Transaction externalTrans = new EI().getInfoByBarcode(barCodeField.getValue());
 			
 			InterF interF = new InterF();
-			
 			Transaction externalTrans = new Transaction();
 			externalTrans.setPlateNumber("");
 			externalTrans.setVin("");
@@ -148,8 +138,8 @@ public class InformationGrid extends HorizontalLayout {
 		.bind(Transaction::getPlateType, Transaction::setPlateType);
 		binder.forField(plateNumberField).withValidator(new StringLengthValidator( "号码号牌长度应为7~8个字符", 7, 8))
 		.bind(Transaction::getPlateNumber, Transaction::setPlateNumber);
-		binder.forField(vinField).withValidator(new StringLengthValidator( "车辆识别码长度是17个字符", 17, 17))
-		.bind(Transaction::getVin, Transaction::setVin);
+//		binder.forField(vinField).withValidator(new StringLengthValidator( "车辆识别码长度是17个字符", 17, 17))
+//		.bind(Transaction::getVin, Transaction::setVin);
 	}
 	
 	public boolean checkEmptyValues() {
@@ -235,9 +225,16 @@ public class InformationGrid extends HorizontalLayout {
 		plateTypeField.clear();
 		plateNumberField.clear();
 		vinField.clear();
+		
+		
 		plateNumberField.setValue(area.getLicenseplate());
+		vinField.setValue("LGB12YEA9DY001226");
 	}
 	
+	/**
+	 * 
+	 * @param transaction
+	 */
 	public void setFieldValues(Transaction transaction) {
 		barCodeField.setValue(transaction.getBarcode());
 		plateTypeField.setValue(transaction.getPlateType());
@@ -245,11 +242,19 @@ public class InformationGrid extends HorizontalLayout {
 		vinField.setValue(transaction.getVin());
 	}
 
+	/**
+	 * 
+	 * @param transaction
+	 */
 	public void assignValues(Transaction transaction) {
 		transaction.setBarcode(barCodeField.getValue()==null?"":barCodeField.getValue());
 		transaction.setPlateType(plateTypeField.getValue());
 		transaction.setPlateNumber(plateNumberField.getValue());
 		transaction.setVin(vinField.getValue());
+	}
+	
+	public String getVIN() {
+		return vinField.getValue();
 	}
 	
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
@@ -260,6 +265,6 @@ public class InformationGrid extends HorizontalLayout {
 	private TextField barCodeField = new TextField(); 	// 条形码文本框
 	private ComboBox<String> plateTypeField = new ComboBox<>();	// 号牌种类文本框
 	private TextField plateNumberField = new TextField(); // 号码号牌文本框
-	private TextField vinField = new TextField("","LGB12YEA9DY001226"); 			// 车辆识别码文本框
+	private TextField vinField = new TextField(); 			// 车辆识别码文本框
 	private String fieldHeight = "27px";
 }

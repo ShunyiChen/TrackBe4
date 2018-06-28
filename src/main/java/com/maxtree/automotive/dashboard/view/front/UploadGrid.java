@@ -1,40 +1,22 @@
 package com.maxtree.automotive.dashboard.view.front;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.component.Box;
-import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
-import com.maxtree.automotive.dashboard.domain.Transaction;
-import com.maxtree.automotive.dashboard.exception.FileException;
-import com.maxtree.trackbe4.filesystem.TB4FileSystem;
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.Upload;
-import com.vaadin.ui.Upload.Receiver;
-import com.wcs.wcslib.vaadin.widget.multifileupload.ui.MultiFileUpload;
-import com.wcs.wcslib.vaadin.widget.multifileupload.ui.UploadFinishedHandler;
-import com.wcs.wcslib.vaadin.widget.multifileupload.ui.UploadStateWindow;
 
 public class UploadGrid extends Panel {
 
 	private static final Logger log = LoggerFactory.getLogger(UploadGrid.class);
+	
 	/**
 	 * 
 	 */
@@ -118,10 +100,10 @@ public class UploadGrid extends Panel {
 //		});
 //	}
 	
-	public void addUploadCells(Site site, Document... documents) {
+	public void addUploadCells(String vin, Site site, Document... documents) {
 		hLayout.removeAllComponents();
 		for (Document doc : documents) {
-			UploadGridCell cell = new UploadGridCell(doc, site);
+			UploadGridCell cell = new UploadGridCell(doc, site, vin);
 			hLayout.addComponents(cell);
 		}
 	}

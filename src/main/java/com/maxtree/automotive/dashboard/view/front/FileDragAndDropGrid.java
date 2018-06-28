@@ -8,12 +8,11 @@ import java.io.OutputStream;
 import org.apache.commons.io.IOUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
-import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
+import com.maxtree.automotive.dashboard.domain.SiteFolder;
 import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.icons.VaadinIcons;
@@ -114,7 +113,7 @@ public class FileDragAndDropGrid extends VerticalLayout implements Receiver, Suc
 						String fileFullPath = "";
 						@Override
 						public OutputStream getOutputStream() {
-							fileFullPath = uuid +"/"+1+"/"+System.currentTimeMillis()+"_"+fileName;
+							fileFullPath = uuid +"/"+2+"/"+System.currentTimeMillis()+"_"+fileName;
 							try {
 								return new TB4FileSystem().receiveUpload(site, fileFullPath);
 							} catch (FileException e) {
@@ -141,8 +140,8 @@ public class FileDragAndDropGrid extends VerticalLayout implements Receiver, Suc
 							
 							addDocument(fileName, fileFullPath);
 							
-							// 更新站点已用大小
-							new TB4FileSystem().checkAndUpdateDisk(site.getSiteUniqueId(), html5File.getFileSize());
+							// 更新已用存储大小
+							new TB4FileSystem().increaseUsedSize(site.getSiteUniqueId(), html5File.getFileSize());
 						}
 
 						@Override
@@ -223,10 +222,9 @@ public class FileDragAndDropGrid extends VerticalLayout implements Receiver, Suc
 				Notifications.warning("站点("+site.getSiteName()+")容量已满，请联系管理员切换其它站点。");
 				return;
 			}
-			
 			String filePath = "";
 			try {
-				filePath = uuid+"/1/"+System.currentTimeMillis()+"_"+fileName;
+				filePath = batch+"/"+uuid+"/"+System.currentTimeMillis()+"_"+fileName;
 				OutputStream out = new TB4FileSystem().receiveUpload(site, filePath);
 				IOUtils.copy(stream, out);
 				
@@ -237,12 +235,13 @@ public class FileDragAndDropGrid extends VerticalLayout implements Receiver, Suc
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
-			} finally {
-				// 更新站点已用大小
-				new TB4FileSystem().checkAndUpdateDisk(site.getSiteUniqueId(), length);
 			}
-			
+
 			addDocument(fileName, filePath);
+			
+			// 更新已用存储大小
+			new TB4FileSystem().increaseUsedSize(site.getSiteUniqueId(), length);
+			
 		}
 	}
 	
@@ -257,15 +256,14 @@ public class FileDragAndDropGrid extends VerticalLayout implements Receiver, Suc
 		document.setAlias(fileName);
 		document.setFileName(fileName);
 		document.setFileFullPath(filePath);
-		document.setCategory(1); // 文件类别0：主要图片,1：次要图片
-		document.setBusinessUniqueId(businessUniqueId);
+		document.setCategory(1); // 1：主要图片,2：次要图片
 		document.setUuid(uuid);
 		
-		int documentUniqueId = ui.documentService.create(document);
+		int documentUniqueId = ui.documentService.create(document, vin);
 		document.setDocumentUniqueId(documentUniqueId);
 		
 		if (documentUniqueId > 0) {
-			ClosableUploadGridCell cell = new ClosableUploadGridCell(document, site);
+			ClosableUploadGridCell cell = new ClosableUploadGridCell(document, site, vin);
 			Callback deleteCallback = new Callback() {
 				@Override
 				public void onSuccessful() {
@@ -293,17 +291,35 @@ public class FileDragAndDropGrid extends VerticalLayout implements Receiver, Suc
 	public void setSite(Site site) {
 		this.site = site;
 	}
+	
+	/**
+	 * 设置车辆识别代码
+	 * 
+	 * @param vin
+	 */
+	public void setVin(String vin) {
+		this.vin = vin;
+	}
+	
+	/**
+	 * 设置批次号
+	 * 
+	 * @param batch
+	 */
+	public void setBatch(int batch) {
+		this.batch = batch;
+	}
 
 	/**
 	 * 
+	 * @param vin
 	 * @param site
 	 * @param documents
 	 */
-	public void addUploadCells(Site site, Document... documents) {
+	public void addUploadCells(String vin, Site site, Document... documents) {
 		hLayout.removeAllComponents();
-		int i = 1;
 		for (Document doc : documents) {
-			ClosableUploadGridCell cell = new ClosableUploadGridCell(doc,  site);
+			ClosableUploadGridCell cell = new ClosableUploadGridCell(doc, site, vin);
 			Callback deleteCallback = new Callback() {
 				@Override
 				public void onSuccessful() {
@@ -312,7 +328,6 @@ public class FileDragAndDropGrid extends VerticalLayout implements Receiver, Suc
 			};
 			cell.setDeleteCallback(deleteCallback);
 			hLayout.addComponents(cell);
-			i++;
 		}
 	}
 	
@@ -321,7 +336,9 @@ public class FileDragAndDropGrid extends VerticalLayout implements Receiver, Suc
 	private Panel panel = new Panel();
 	private HorizontalLayout hLayout = new HorizontalLayout();
 	private String caption;
-	private String uuid;
+	private String uuid; // UUID
 	private int businessUniqueId;
-	private Site site;
+	private Site site;	// 站点
+	private String vin; // 车辆识别代码
+	private int batch = 0; // 批次号
 }

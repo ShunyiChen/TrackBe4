@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Callback;
@@ -108,12 +109,18 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
             }
         });
         editableType.getSelector().addValueChangeListener(e -> {
+        	
+        	if (StringUtils.isEmpty(basicInfo.getVIN())) {
+        		Notifications.warning("VIN不能为空");
+        		return;
+        	}
+        	
         	if (e.getValue() != null) {
         		Business business = e.getValue();
         		int businessUniqueId = business.getBusinessUniqueId();
         		if (editableTrans.getTransactionUniqueId() == 0) {
+        			// 产生新的UUID
         			uuid = UUID.randomUUID().toString();
-        			
             		int i = 0;
             		Document[] documents = new Document[business.getItems().size()];
             		for (DataItem item : business.getItems()) {
@@ -121,16 +128,15 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
             			documents[i].setAlias(item.getItemName());
             			documents[i].setFileName("");
             			documents[i].setFileFullPath("");
-            			documents[i].setCategory(0);
-            			documents[i].setBusinessUniqueId(business.getBusinessUniqueId());
+            			documents[i].setCategory(1); //1：主要图片,2：次要图片
             			documents[i].setUuid(uuid);
             			i++;
             		}
-            		primaryGrid.addUploadCells(editableSite, documents);
+            		primaryGrid.addUploadCells(basicInfo.getVIN(), editableSite, documents);
         			
         		} else {
         			uuid = editableTrans.getUuid();
-        			List<Document> documentList = ui.documentService.findPrimary(uuid, businessUniqueId);
+        			List<Document> documentList = ui.documentService.findPrimary(uuid, basicInfo.getVIN());
         			List<Document> filledDocumentList = new ArrayList<Document>();
         			for (DataItem item : business.getItems()) {
         				Document doc = existCheck(item.getItemName(), documentList);
@@ -139,25 +145,24 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         					doc.setAlias(item.getItemName());
         					doc.setFileName("");
         					doc.setFileFullPath("");
-        					doc.setCategory(0); 
-                			// 文件类别0：主要图片,1：次要图片
-        					doc.setBusinessUniqueId(business.getBusinessUniqueId());
+        					doc.setCategory(1);  //1：主要图片,2：次要图片
         					doc.setUuid(editableTrans.getUuid());
         				}
         				filledDocumentList.add(doc);
         			}
         			
         			// 初始化主要材料
-            		primaryGrid.addUploadCells(editableSite, filledDocumentList.toArray(new Document[filledDocumentList.size()]));
+            		primaryGrid.addUploadCells(basicInfo.getVIN(), editableSite, filledDocumentList.toArray(new Document[filledDocumentList.size()]));
         		}
         		
         		// 初始化次要材料
         		secondaryGrid.setBusinessUniqueId(businessUniqueId);
         		secondaryGrid.setEnabledForUploadComponent(true);//如果业务类型已选，则可以启用选择上传组件
         		secondaryGrid.setSite(editableSite);
+        		secondaryGrid.setVin(basicInfo.getVIN());
         		secondaryGrid.setUuid(uuid);
-            	List<Document> doc2 = ui.documentService.findSecondary(uuid, editableTrans.getBusinessUniqueId());
-            	secondaryGrid.addUploadCells(editableSite, doc2.toArray(new Document[doc2.size()]));
+            	List<Document> doc2 = ui.documentService.findSecondary(uuid, basicInfo.getVIN());
+            	secondaryGrid.addUploadCells(basicInfo.getVIN(), editableSite, doc2.toArray(new Document[doc2.size()]));
         	}
         });
         
@@ -430,6 +435,11 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         }
     }
     
+    /**
+     * 
+     * @param allMessages
+     * @param selectedMessageUniqueId
+     */
     private void showAll(List<Map<String, Object>> allMessages, int selectedMessageUniqueId) {
     	Callback2 event = new Callback2() {
 			@Override
@@ -444,13 +454,13 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
      * 
      */
     private void resetComponents() {
-    	informationGrid.reset();
+    	basicInfo.reset();
     	editableType.reset();
     	primaryGrid.reset();
     	secondaryGrid.reset();
     	dynamicallyVLayout.removeAllComponents();
     	dynamicallyVLayout.setHeightUndefined();
-	    dynamicallyVLayout.addComponents(informationGrid, editableType, primaryGrid, secondaryGrid);
+	    dynamicallyVLayout.addComponents(basicInfo, editableType, primaryGrid, secondaryGrid);
     }
     
     /**
@@ -532,17 +542,20 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
      * 
      */
     private void createTransaction() {
-    	editableTrans = new Transaction();
+    	if (editableTrans == null) {
+    		editableTrans = new Transaction();
+    	}
+    	
     	Area area = Yaml.readArea();
     	editableTrans = new Transaction();
     	editableTrans.setBarcode("");
     	editableTrans.setPlateType("");
     	editableTrans.setPlateNumber(area.getLicenseplate());
     	editableTrans.setVin("");
-    	informationGrid.setFieldValues(editableTrans);
+    	basicInfo.setFieldValues(editableTrans);
     	
     	// validating the transaction information
-    	informationGrid.validatingFieldValues(binder);
+    	basicInfo.validatingFieldValues(binder);
     	binder.setBean(editableTrans);
     	
     	User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
@@ -565,11 +578,17 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     		}
     	}
     	if (editableSite == null) {
-    		Notifications.warning("当前用户所在的社区不存在文件站点，请联系管理员进行分配。");
+    		Notifications.warning("当前用户所在的社区不存在文件站点，或站点已关闭。请联系管理员进行设置。");
     		return;
     	}
     	
     	resetComponents();
+    	// 如果站点文件夹装满则提醒用户
+    	boolean isFull = ui.siteService.updateFolders(editableSite);
+    	if (!isFull) {
+    		Notifications.warning("当前站点-"+editableSite.getSiteName()+"已满。请联系管理员进行重新分配。");
+    		return;
+    	}
     }
     
     /**
@@ -648,7 +667,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
      */
     public void commitTransaction() {
 		Business business = editableType.getSelector().getValue();
-		if (!informationGrid.checkEmptyValues() || business == null) {
+		if (!basicInfo.checkEmptyValues() || business == null) {
 			Notifications.warning("请将信息输入完整。");
 			return;
 		}
@@ -658,7 +677,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 		}
     	
     	User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-    	informationGrid.assignValues(editableTrans);
+    	basicInfo.assignValues(editableTrans);
     	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
     	editableTrans.setCommunityUniqueId(loginUser.getCommunityUniqueId());
     	editableTrans.setCompanyUniqueId(loginUser.getCompanyUniqueId());
@@ -734,9 +753,9 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 		notificationsButton.updateNotificationsCount(event);
 	}
     
-	private Transaction editableTrans = null; 	//前台创建的transaction
+	private Transaction editableTrans = null; 	//可编辑的编辑transaction
 	private Company editableCompany = null;	 	//前台所在机构
-	private Site editableSite = null;			//前台站点
+	private Site editableSite = null;			//站点
 	private BusinessTypeSelector editableType = new BusinessTypeSelector(); //业务类型
     private String uuid = null; 				//挂接文件的UUID
     private Label titleLabel;
@@ -747,7 +766,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     private VerticalLayout dynamicallyVLayout = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private Binder<Transaction> binder = new Binder<>();
-    private InformationGrid informationGrid = new InformationGrid(this);
+    private BasicInfoPane basicInfo = new BasicInfoPane(this);
     private UploadGrid primaryGrid = new UploadGrid("主要材料");
     private FileDragAndDropGrid secondaryGrid = new FileDragAndDropGrid("次要材料");
     private Button btnPrint = new Button();

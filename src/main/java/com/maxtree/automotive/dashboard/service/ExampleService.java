@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 //@Component
-public class CustomerService {
+public class ExampleService {
 //	private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
 //    @Autowired
 //    private JdbcTemplate jdbcTemplate;

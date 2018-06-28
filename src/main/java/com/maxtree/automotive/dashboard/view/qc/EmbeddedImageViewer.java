@@ -44,9 +44,9 @@ public class EmbeddedImageViewer extends Panel {
 		this.setCaption(null);
 		this.site = site;
 		// 主要材料
-		List<Document> primaryDocs = ui.documentService.findPrimary(transaction.getUuid(), transaction.getBusinessUniqueId());
+		List<Document> primaryDocs = ui.documentService.findPrimary(transaction.getUuid(), transaction.getVin());
     	// 次要文件
-    	List<Document> secondaryDoes = ui.documentService.findSecondary(transaction.getUuid(), transaction.getBusinessUniqueId());
+    	List<Document> secondaryDoes = ui.documentService.findSecondary(transaction.getUuid(), transaction.getVin());
 		
 		this.allDocuments.addAll(primaryDocs);
 		this.allDocuments.addAll(secondaryDoes);
@@ -93,7 +93,7 @@ public class EmbeddedImageViewer extends Panel {
 	/**
 	 * 
 	 * @param documentUniqueId
-	 * @param category // 0 - 主要材料  1-次要材料
+	 * @param category // 1 - 主要材料  2-次要材料
 	 */
 	public void showPicture(int documentUniqueId, int category) {
 		vlayout.removeAllComponents();
