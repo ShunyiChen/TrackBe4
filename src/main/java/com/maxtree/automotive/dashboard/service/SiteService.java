@@ -260,19 +260,37 @@ public class SiteService {
 	}
 	
 	/**
+	 * 更新业务笔数（子文件夹数）,并返回最大批次号（父文件夹数）
 	 * 
-	 * @param siteUniqueId
+	 * 
+	 * @param site
+	 * @return 最大批次号（父文件夹数）
 	 */
-	public boolean updateFolders(Site site) {
-		String sql = "UPDATE SITEFOLDER SET BUSINESSCOUNT=BUSINESSCOUNT+1 WHERE SITEUNIQUEID=? AND BATCHCOUNT=(SELECT MAX(BATCHCOUNT) FROM SITEFOLDER WHERE SITEUNIQUEID=?) AND BUSINESSCOUNT<?";
+	public int updateFolders(Site site) {
+				
+		String sql = "INSERT INTO SITEFOLDER(SITEUNIQUEID,BATCHCOUNT,BUSINESSCOUNT) SELECT ?,BATCHCOUNT+?,? FROM SITEFOLDER WHERE SITEUNIQUEID=? AND BUSINESSCOUNT>=? AND BATCHCOUNT=(SELECT MAX(BATCHCOUNT) FROM SITEFOLDER WHERE SITEUNIQUEID=?) AND BATCHCOUNT<?";
+		int affected2 = jdbcTemplate.update(sql,site.getSiteUniqueId(),1,0,site.getSiteUniqueId(),site.getSiteCapacity().getMaxBusiness(),site.getSiteUniqueId(),site.getSiteCapacity().getMaxBatch());
+		
+		sql = "UPDATE SITEFOLDER SET BUSINESSCOUNT=BUSINESSCOUNT+1 WHERE SITEUNIQUEID=? AND BATCHCOUNT=(SELECT MAX(BATCHCOUNT) FROM SITEFOLDER WHERE SITEUNIQUEID=?) AND BUSINESSCOUNT<?";
 		int affected1 = jdbcTemplate.update(sql,site.getSiteUniqueId(),site.getSiteUniqueId(),site.getSiteCapacity().getMaxBusiness());
 		
-		sql = "INSERT INTO SITEFOLDER(SITEUNIQUEID,BATCHCOUNT,BUSINESSCOUNT) SELECT ?,BATCHCOUNT+1,0 FROM SITEFOLDER WHERE SITEUNIQUEID=? AND BUSINESSCOUNT>? AND BATCHCOUNT=(SELECT MAX(BATCHCOUNT) FROM SITEFOLDER WHERE SITEUNIQUEID=?) AND BATCHCOUNT<?";
-		int affected2 = jdbcTemplate.update(sql,site.getSiteUniqueId(),site.getSiteUniqueId(),site.getSiteCapacity().getMaxBusiness()-1,site.getSiteUniqueId(),site.getSiteCapacity().getMaxBatch());
-		
 		if (affected1 == 0 && affected2 == 0) {
-			return false;
+			return 0;
 		}
-		return true;
+		sql = "SELECT MAX(BATCHCOUNT) FROM SITEFOLDER WHERE SITEUNIQUEID=?";
+		int batch = jdbcTemplate.queryForObject(sql, new Object[] {site.getSiteUniqueId()}, Integer.class);
+		return batch;
+	}
+	
+	/**
+	 * 
+	 * @param siteUniqueId
+	 * @return
+	 */
+	public float getUsageRates(int siteUniqueId) {
+		String sql = "SELECT ROUND(CAST(SUM(A.BUSINESSCOUNT) AS NUMERIC)/CAST(SUM(B.MAXBATCH) * SUM(B.MAXBUSINESS) AS NUMERIC), ?) AS P FROM SITEFOLDER AS A LEFT JOIN SITECAPACITY AS B ON A.SITEUNIQUEID=B.SITEUNIQUEID  WHERE A.SITEUNIQUEID=?";
+		// 保留6位小数
+		float p = jdbcTemplate.queryForObject(sql, new Object[] {6, siteUniqueId}, Float.class);
+		return p;
 	}
 }

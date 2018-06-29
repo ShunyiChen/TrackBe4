@@ -18,24 +18,10 @@ import com.maxtree.automotive.dashboard.domain.Document;
 
 @Component
 public class DocumentService {
-
 	private static final Logger log = LoggerFactory.getLogger(DocumentService.class);
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-	
-//	/**
-//	 * 
-//	 * @param uuid
-//	 * @return
-//	 */
-//	public int getMaxOrdinal(String uuid) {
-//		String sql = "SELECT COUNT(DOCUMENTUNIQUEID) FROM DOCUMENTS_2 WHERE UUID=?";
-//		int count = jdbcTemplate.queryForObject(
-//                sql, new Object[] {uuid}, Integer.class);
-//
-//		return count;
-//	}
 	
 	/**
 	 * 获取主要文件列表
@@ -75,7 +61,8 @@ public class DocumentService {
 	 * @param document
 	 * @return
 	 */
-	public int create(Document document, String vin) {
+	public int create(Document document) {
+		String vin = document.getVin();
 		int number = Integer.parseInt(vin.substring(vin.length() - 6));
 		int index = number % 256;
 	 	GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
@@ -84,11 +71,12 @@ public class DocumentService {
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 				String SQL = "";
-				if (document.getCategory() == 0) {
+				if (document.getCategory() == 1) {
 					SQL = "INSERT INTO DOCUMENTS_1_"+index+"(UUID,ALIAS,FILENAME,FILEFULLPATH) VALUES(?,?,?,?)";
 				} else {
 					SQL = "INSERT INTO DOCUMENTS_2_"+index+"(UUID,ALIAS,FILENAME,FILEFULLPATH) VALUES(?,?,?,?)";
 				}
+				System.out.println("SQL="+SQL);
 				PreparedStatement ps = con.prepareStatement(
 						SQL, new String[] {"documentuniqueid"});
 				ps.setString(1, document.getUuid());
@@ -109,14 +97,20 @@ public class DocumentService {
 	 * @param document
 	 */
 	public void update(Document document) {
+		String vin = document.getVin();
+		int number = Integer.parseInt(vin.substring(vin.length() - 6));
+		int index = number % 256;
+		
+		System.out.println("index="+index);
+		
 		String SQL = "";
-		if (document.getCategory() == 0) {
-			SQL = "UPDATE DOCUMENTS_1 SET FILENAME=?,FILEFULLPATH=? WHERE DOCUMENTUNIQUEID=?";
+		if (document.getCategory() == 1) {
+			SQL = "UPDATE DOCUMENTS_1_"+index+" SET FILENAME=?,FILEFULLPATH=? WHERE DOCUMENTUNIQUEID=?";
 		} else {
-			SQL = "UPDATE DOCUMENTS_2 SET FILENAME=?,FILEFULLPATH=? WHERE DOCUMENTUNIQUEID=?";
+			SQL = "UPDATE DOCUMENTS_2_"+index+" SET FILENAME=?,FILEFULLPATH=? WHERE DOCUMENTUNIQUEID=?";
 		}
 	 	int opt = jdbcTemplate.update(SQL, new Object[] {document.getFileName(), document.getFileFullPath(), document.getDocumentUniqueId()});
-	 	log.info("Document updated.Affected row="+opt);
+	 	log.info("Affected row="+opt);
 	}
 	
 //	/**

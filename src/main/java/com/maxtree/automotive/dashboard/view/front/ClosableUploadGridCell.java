@@ -11,7 +11,6 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
-import com.maxtree.automotive.dashboard.domain.SiteFolder;
 import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.icons.VaadinIcons;
@@ -49,10 +48,9 @@ public class ClosableUploadGridCell extends VerticalLayout implements Receiver, 
 	 * @param site
 	 * @param vin
 	 */
-	public ClosableUploadGridCell(Document document, Site site, String vin) {
+	public ClosableUploadGridCell(Document document, Site site) {
 		this.document = document;
 		this.site = site;
-		this.vin = vin;
 		this.setSpacing(false);
 		this.setMargin(false);
 		this.setWidth("180px");
@@ -212,7 +210,7 @@ public class ClosableUploadGridCell extends VerticalLayout implements Receiver, 
 		document.setFileName(fileName);
 		document.setFileFullPath(fileFullPath);
 		if (document.getDocumentUniqueId() == 0) {
-			int documentUniqueId = ui.documentService.create(document, vin);
+			int documentUniqueId = ui.documentService.create(document);
 			document.setDocumentUniqueId(documentUniqueId);
 		} else {
 			ui.documentService.update(document);
@@ -283,6 +281,5 @@ public class ClosableUploadGridCell extends VerticalLayout implements Receiver, 
 	private Document document;
 	private Site site;
 	private String fileFullPath;
-	private String vin;
 	private Callback deleteCallback;
 }

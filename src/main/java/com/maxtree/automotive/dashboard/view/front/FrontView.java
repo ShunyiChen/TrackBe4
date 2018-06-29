@@ -130,9 +130,11 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
             			documents[i].setFileFullPath("");
             			documents[i].setCategory(1); //1：主要图片,2：次要图片
             			documents[i].setUuid(uuid);
+            			documents[i].setVin(basicInfo.getVIN());
+            			documents[i].setBatch(batch);
             			i++;
             		}
-            		primaryGrid.addUploadCells(basicInfo.getVIN(), editableSite, documents);
+            		primaryGrid.addUploadCells(editableSite, documents);
         			
         		} else {
         			uuid = editableTrans.getUuid();
@@ -147,12 +149,14 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         					doc.setFileFullPath("");
         					doc.setCategory(1);  //1：主要图片,2：次要图片
         					doc.setUuid(editableTrans.getUuid());
+        					doc.setVin(basicInfo.getVIN());
+        					doc.setBatch(batch);
         				}
         				filledDocumentList.add(doc);
         			}
         			
         			// 初始化主要材料
-            		primaryGrid.addUploadCells(basicInfo.getVIN(), editableSite, filledDocumentList.toArray(new Document[filledDocumentList.size()]));
+            		primaryGrid.addUploadCells(editableSite, filledDocumentList.toArray(new Document[filledDocumentList.size()]));
         		}
         		
         		// 初始化次要材料
@@ -542,52 +546,59 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
      * 
      */
     private void createTransaction() {
+    	System.out.println("Add editableTrans="+editableTrans+"  editableSite="+editableSite);
     	if (editableTrans == null) {
     		editableTrans = new Transaction();
+    		
+    		User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+        	int companyUniqueId = currentUser.getCompanyUniqueId();
+        	int communityUniqueId = currentUser.getCommunityUniqueId();
+        	if (companyUniqueId == 0) {
+        		Notifications.warning("当前用户没有加入任何机构，请联系管理员进行分配。");
+        		return;
+        	}
+        	if (communityUniqueId == 0) {
+        		Notifications.warning("当前用户没有加入任何社区，请联系管理员进行分配。");
+        		return;
+        	}
+        	editableCompany = ui.companyService.findById(companyUniqueId);
+        	List<Site> allSites = ui.siteService.getSites(communityUniqueId);
+        	for (int i = 0; i < allSites.size(); i++) {
+        		if (allSites.get(i).getRunningStatus() == 1) {
+        			editableSite = allSites.get(i);
+        			break;
+        		}
+        	}
+        	if (editableSite == null) {
+        		Notifications.warning("当前用户所在的社区不存在文件站点，或站点已关闭。请联系管理员进行设置。");
+        		return;
+        	}
+    		
+    		// 如果站点文件夹装满则提醒用户
+        	batch = ui.siteService.updateFolders(editableSite);
+        	if (batch == 0) {
+        		Notifications.warning("当前站点-"+editableSite.getSiteName()+"已满。请联系管理员进行重新分配。");
+        		editableTrans = null;
+        		editableSite = null;
+        		return;
+        	}
+        	
+        	Area area = Yaml.readArea();
+        	editableTrans = new Transaction();
+        	editableTrans.setBarcode("");
+        	editableTrans.setPlateType("");
+        	editableTrans.setPlateNumber(area.getLicenseplate());
+        	editableTrans.setVin("");
+        	basicInfo.setFieldValues(editableTrans);
+        	
+        	// validating the transaction information
+        	basicInfo.validatingFieldValues(binder);
+        	binder.setBean(editableTrans);
+        	
+        	resetComponents();
     	}
-    	
-    	Area area = Yaml.readArea();
-    	editableTrans = new Transaction();
-    	editableTrans.setBarcode("");
-    	editableTrans.setPlateType("");
-    	editableTrans.setPlateNumber(area.getLicenseplate());
-    	editableTrans.setVin("");
-    	basicInfo.setFieldValues(editableTrans);
-    	
-    	// validating the transaction information
-    	basicInfo.validatingFieldValues(binder);
-    	binder.setBean(editableTrans);
-    	
-    	User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-    	int companyUniqueId = currentUser.getCompanyUniqueId();
-    	int communityUniqueId = currentUser.getCommunityUniqueId();
-    	if (companyUniqueId == 0) {
-    		Notifications.warning("当前用户没有加入任何机构，请联系管理员进行分配。");
-    		return;
-    	}
-    	if (communityUniqueId == 0) {
-    		Notifications.warning("当前用户没有加入任何社区，请联系管理员进行分配。");
-    		return;
-    	}
-    	editableCompany = ui.companyService.findById(companyUniqueId);
-    	List<Site> allSites = ui.siteService.getSites(communityUniqueId);
-    	for (int i = 0; i < allSites.size(); i++) {
-    		if (allSites.get(i).getRunningStatus() == 1) {
-    			editableSite = allSites.get(i);
-    			break;
-    		}
-    	}
-    	if (editableSite == null) {
-    		Notifications.warning("当前用户所在的社区不存在文件站点，或站点已关闭。请联系管理员进行设置。");
-    		return;
-    	}
-    	
-    	resetComponents();
-    	// 如果站点文件夹装满则提醒用户
-    	boolean isFull = ui.siteService.updateFolders(editableSite);
-    	if (!isFull) {
-    		Notifications.warning("当前站点-"+editableSite.getSiteName()+"已满。请联系管理员进行重新分配。");
-    		return;
+    	else {
+    		Notifications.warning("请提交当前业务再新建。");
     	}
     }
     
@@ -758,6 +769,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 	private Site editableSite = null;			//站点
 	private BusinessTypeSelector editableType = new BusinessTypeSelector(); //业务类型
     private String uuid = null; 				//挂接文件的UUID
+    private int batch = 0; 						//新建时的批次号
     private Label titleLabel;
     private Window notificationsWindow;
     public static final String EDIT_ID = "dashboard-edit";

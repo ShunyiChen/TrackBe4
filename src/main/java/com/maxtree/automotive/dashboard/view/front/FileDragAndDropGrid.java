@@ -258,12 +258,14 @@ public class FileDragAndDropGrid extends VerticalLayout implements Receiver, Suc
 		document.setFileFullPath(filePath);
 		document.setCategory(1); // 1：主要图片,2：次要图片
 		document.setUuid(uuid);
+		document.setVin(vin);
+		document.setBatch(batch);
 		
-		int documentUniqueId = ui.documentService.create(document, vin);
+		int documentUniqueId = ui.documentService.create(document);
 		document.setDocumentUniqueId(documentUniqueId);
 		
 		if (documentUniqueId > 0) {
-			ClosableUploadGridCell cell = new ClosableUploadGridCell(document, site, vin);
+			ClosableUploadGridCell cell = new ClosableUploadGridCell(document, site);
 			Callback deleteCallback = new Callback() {
 				@Override
 				public void onSuccessful() {
@@ -319,7 +321,7 @@ public class FileDragAndDropGrid extends VerticalLayout implements Receiver, Suc
 	public void addUploadCells(String vin, Site site, Document... documents) {
 		hLayout.removeAllComponents();
 		for (Document doc : documents) {
-			ClosableUploadGridCell cell = new ClosableUploadGridCell(doc, site, vin);
+			ClosableUploadGridCell cell = new ClosableUploadGridCell(doc, site);
 			Callback deleteCallback = new Callback() {
 				@Override
 				public void onSuccessful() {
@@ -336,9 +338,9 @@ public class FileDragAndDropGrid extends VerticalLayout implements Receiver, Suc
 	private Panel panel = new Panel();
 	private HorizontalLayout hLayout = new HorizontalLayout();
 	private String caption;
-	private String uuid; // UUID
 	private int businessUniqueId;
 	private Site site;	// 站点
-	private String vin; // 车辆识别代码
+	private String uuid; // 文件挂载UUID
 	private int batch = 0; // 批次号
+	private String vin; // 车辆识别代码
 }

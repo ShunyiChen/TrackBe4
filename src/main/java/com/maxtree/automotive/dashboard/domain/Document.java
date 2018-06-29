@@ -72,6 +72,14 @@ public class Document {
 	public void setBatch(Integer batch) {
 		this.batch = batch;
 	}
+	
+	public String getVin() {
+		return vin;
+	}
+
+	public void setVin(String vin) {
+		this.vin = vin;
+	}
 
 	@Override
 	public String toString() {
@@ -86,6 +94,7 @@ public class Document {
 	private String alias; 	 				// 别名,例如：身份证，托银莫
 	private String fileName; 				// 文件名
 	private String fileFullPath; 			// 文件实际存放全路径
-	private Integer category = 0; 			// 1:主要材料  2:次要材料(非数据库字段)
+	private Integer category = 1; 			// 1:主要材料  2:次要材料(非数据库字段)
 	private Integer batch = 0;          	// 批次号（非数据库字段）
+	private String vin;                     // 车辆识别代码（非数据库字段）
 }

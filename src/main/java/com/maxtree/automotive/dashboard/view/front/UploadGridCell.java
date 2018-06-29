@@ -10,7 +10,6 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
-import com.maxtree.automotive.dashboard.domain.SiteFolder;
 import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.icons.VaadinIcons;
@@ -54,10 +53,9 @@ public class UploadGridCell extends VerticalLayout implements Receiver, Succeede
 	 * @param site
 	 * @param vin
 	 */
-	public UploadGridCell(Document document, Site site, String vin) {
+	public UploadGridCell(Document document, Site site) {
 		this.document = document;
 		this.site = site;
-		this.vin = vin;
 		this.setSpacing(false);
 		this.setMargin(false);
 		this.setWidth("180px");
@@ -203,7 +201,7 @@ public class UploadGridCell extends VerticalLayout implements Receiver, Succeede
 		document.setFileName(fileName);
 		document.setFileFullPath(fileFullPath);
 		if (document.getDocumentUniqueId() == 0) {
-			int documentUniqueId = ui.documentService.create(document, vin);
+			int documentUniqueId = ui.documentService.create(document);
 			document.setDocumentUniqueId(documentUniqueId);
 		} else {
 			ui.documentService.update(document);
@@ -270,5 +268,4 @@ public class UploadGridCell extends VerticalLayout implements Receiver, Succeede
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private Document document;
 	private Site site;
-	private String vin;
 }

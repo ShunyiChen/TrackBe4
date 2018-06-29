@@ -76,9 +76,9 @@ public class SiteCapacity {
 
 	private Integer siteCapacityUniqueId = 0;
 	private Integer siteUniqueId = 0;
-	private Long capacity = 0L;
-	private Long usedSpace = 0L;
-	private Long updateTimeMillis = 0L;
+	private Long capacity = 0L;   // 总容量字节数
+	private Long usedSpace = 0L;  // 已用字节数
+	private Long updateTimeMillis = 0L; //更新时间点
 	private String unit;
 	private String unitNumber;
 	private Integer maxBatch = 0; // 最大批次数

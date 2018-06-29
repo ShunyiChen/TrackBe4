@@ -100,10 +100,10 @@ public class UploadGrid extends Panel {
 //		});
 //	}
 	
-	public void addUploadCells(String vin, Site site, Document... documents) {
+	public void addUploadCells(Site site, Document... documents) {
 		hLayout.removeAllComponents();
 		for (Document doc : documents) {
-			UploadGridCell cell = new UploadGridCell(doc, site, vin);
+			UploadGridCell cell = new UploadGridCell(doc, site);
 			hLayout.addComponents(cell);
 		}
 	}
