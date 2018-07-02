@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
+import com.maxtree.automotive.dashboard.CodeGenerator;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.DoubleField;
@@ -104,6 +105,13 @@ public class EditSiteWindow extends Window {
 		row2.setComponentAlignment(folderPercentage, Alignment.MIDDLE_LEFT);
 		form2.addComponents(maximum, units, maxBatch, maxBusiness,row1,row2);
 		tabSheet.addTab(form2, "容量");
+		
+		FormLayout form3 = new FormLayout();
+		form3.setSizeFull();
+		codeField.setCaption("快捷编码:");
+		codeField.setReadOnly(true);
+		form3.addComponents(codeField);
+		tabSheet.addTab(form3, "其它");
  
 		// 赋初始值
 		String[] unit = {"PB", "TB", "GB", "MB"};
@@ -216,6 +224,7 @@ public class EditSiteWindow extends Window {
 		binder.bind(textRemoteDirectory, Site::getDefaultRemoteDirectory, Site::setDefaultRemoteDirectory);
 		binder.bind(userName, Site::getUserName, Site::setUserName);
 		binder.bind(password, Site::getPassword, Site::setPassword);
+		binder.bind(codeField, Site::getCode, Site::setCode);
 //		binder.forField(maximizeAllowed)
 //		  .withValidator(new EmptyValidator("最大文件夹数不能为空"))
 //		  .withConverter(new StringToIntegerConverter("请输入一个大于零的整数"))
@@ -402,14 +411,15 @@ public class EditSiteWindow extends Window {
         w.folderPercentage.setValue(0);
         w.sizePercentage.setCaption(0+"%");
 		w.folderPercentage.setCaption(0+"%");
-        
+        w.codeField.setValue(CodeGenerator.generateSiteCode());
+		
         w.btnAdd.setCaption("添加");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
         		
         		SiteCapacity siteCapacity = new SiteCapacity();
         		siteCapacity.setUnit(w.units.getValue());
-        		siteCapacity.setUnitNumber(20+"");
+        		siteCapacity.setUnitNumber(w.maximum.getValue());
         		siteCapacity.setUpdateTimeMillis(System.currentTimeMillis());
         		siteCapacity.setMaxBatch(1000);
         		siteCapacity.setMaxBusiness(5000);
@@ -473,6 +483,7 @@ public class EditSiteWindow extends Window {
         w.maximum.setValue(site.getSiteCapacity().getUnitNumber());
         w.maxBatch.setValue(site.getSiteCapacity().getMaxBatch()+"");
         w.maxBusiness.setValue(site.getSiteCapacity().getMaxBusiness()+"");
+        w.codeField.setValue(site.getCode());
         
         w.btnAdd.setCaption("保存");
         w.setCaption("编辑站点");
@@ -545,6 +556,7 @@ public class EditSiteWindow extends Window {
 	private DoubleField maxBusiness = new DoubleField(); // 每批次内最大业务数
 	private ProgressBar sizePercentage = new ProgressBar();
 	private ProgressBar folderPercentage = new ProgressBar();
+	private TextField codeField = new TextField();
 	private static String diskRateTxt = "磁盘使用率:";
 	private static String folderRateTxt = "文件夹使用率:";
 }

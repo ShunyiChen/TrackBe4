@@ -15,7 +15,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
-import com.maxtree.automotive.dashboard.domain.DataItem;
+import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.exception.DataException;
 
 @Component
@@ -31,44 +31,44 @@ public class DataItemService {
 	 * @param dataItemUniqueId
 	 * @return
 	 */
-	public DataItem findById(int dataItemUniqueId) {
-		String sql = "SELECT * FROM DATAITEMS WHERE DATAITEMUNIQUEID = ?";
-		List<DataItem> results = jdbcTemplate.query(sql, new Object[] {dataItemUniqueId}, new BeanPropertyRowMapper<DataItem>(DataItem.class));
+	public DataDictionary findById(int dictionaryuniqueid) {
+		String sql = "SELECT * FROM DATADICTIONARY WHERE DICTIONARYUNIQUEID=?";
+		List<DataDictionary> results = jdbcTemplate.query(sql, new Object[] {dictionaryuniqueid}, new BeanPropertyRowMapper<DataDictionary>(DataDictionary.class));
 		if (results.size() > 0) {
 			return results.get(0);
 		}
-		return new DataItem();
+		return new DataDictionary();
 	}
 	
 	/**
 	 * 
 	 * @return
 	 */
-	public List<DataItem> findAll() {
-		String sql = "SELECT * FROM DATAITEMS ORDER BY DATAITEMUNIQUEID";
-		List<DataItem> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<DataItem>(DataItem.class));
+	public List<DataDictionary> findAll() {
+		String sql = "SELECT * FROM DATADICTIONARY ORDER BY ITEMTYPE,DICTIONARYUNIQUEID";
+		List<DataDictionary> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<DataDictionary>(DataDictionary.class));
 		return results;
 	}
 	
 	/**
 	 * 
-	 * @param categoryName
+	 * @param itemType
 	 * @return
 	 */
-	public List<DataItem> findAllByCategory(String categoryName) {
-		String sql = "SELECT * FROM DATAITEMS WHERE CATEGORYNAME=? ORDER BY DATAITEMUNIQUEID";
-		List<DataItem> results = jdbcTemplate.query(sql, new Object[] {categoryName}, new BeanPropertyRowMapper<DataItem>(DataItem.class));
+	public List<DataDictionary> findAllByType(int itemType) {
+		String sql = "SELECT * FROM DATADICTIONARY WHERE ITEMTYPE=? ORDER BY DICTIONARYUNIQUEID";
+		List<DataDictionary> results = jdbcTemplate.query(sql, new Object[] {itemType}, new BeanPropertyRowMapper<DataDictionary>(DataDictionary.class));
 		return results;
 	}
 	
 	/**
 	 * 
-	 * @param categoryName
+	 * @param itemType
 	 * @return
 	 */
-	public List<String> findAllByCategoryName(String categoryName) {
-		String sql = "SELECT ITEMNAME FROM DATAITEMS WHERE CATEGORYNAME=? ORDER BY DATAITEMUNIQUEID";
-		List<String> results = jdbcTemplate.queryForList(sql, new Object[] {categoryName}, String.class);
+	public List<String> findNamesByType(int itemType) {
+		String sql = "SELECT ITEMNAME FROM DATADICTIONARY WHERE ITEMTYPE=? ORDER BY DICTIONARYUNIQUEID";
+		List<String> results = jdbcTemplate.queryForList(sql, new Object[] {itemType}, String.class);
 		return results;
 	}
 	
@@ -77,47 +77,48 @@ public class DataItemService {
 	 * @param dataItem
 	 * @return
 	 */
-	public int create(DataItem dataItem) {
+	public int insert(DataDictionary dict) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		String sql = "INSERT INTO DATAITEMS(CATEGORYNAME,ITEMNAME) VALUES(?,?)";
-		
+		String sql = "INSERT INTO DATADICTIONARY(ITEMTYPE,ITEMNAME,CODE) VALUES(?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 				PreparedStatement ps = con.prepareStatement(
-						sql, new String[] {"dataitemuniqueid"});
-				ps.setString(1, dataItem.getCategoryName());
-				ps.setString(2, dataItem.getItemName());
+						sql, new String[] {"dictionaryuniqueid"});
+				ps.setInt(1, dict.getItemType());
+				ps.setString(2, dict.getItemName());
+				ps.setString(3, dict.getCode());
 				return ps;
 			}
 			
 		}, keyHolder);
-		int companyuniqueid  = keyHolder.getKey().intValue(); 
-		return companyuniqueid;
+		int dictuniqueid  = keyHolder.getKey().intValue(); 
+		return dictuniqueid;
 	}
 	
 	/**
 	 * 
-	 * @param dataItem
+	 * @param dict
 	 */
-	public void update(DataItem dataItem) {
-		String sql = "UPDATE DATAITEMS SET CATEGORYNAME=?,ITEMNAME=? WHERE DATAITEMUNIQUEID=?";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {dataItem.getCategoryName(),dataItem.getItemName(), dataItem.getDataItemUniqueId()});
+	public void update(DataDictionary dict) {
+		String sql = "UPDATE DATADICTIONARY SET ITEMTYPE=?,ITEMNAME=?,CODE=? WHERE DICTIONARYUNIQUEID=?";
+	 	int opt = jdbcTemplate.update(sql, new Object[] {dict.getItemType(),dict.getItemName(), dict.getCode(), dict.getDictionaryUniqueId()});
 	 	log.info("Updated row "+opt);
 	}
 	
 	/**
 	 * 
-	 * @param dataItem
+	 * @param dict
 	 * @throws DataException
 	 */
-	public void delete(DataItem dataItem) throws DataException {
+	public void delete(DataDictionary dict) throws DataException {
 		String sql = "";
-		sql = "DELETE FROM BUSINESSITEMS WHERE DATAITEMUNIQUEID=?";
-		jdbcTemplate.update(sql, new Object[] {dataItem.getDataItemUniqueId()});
-		sql = "DELETE FROM DATAITEMS WHERE DATAITEMUNIQUEID = ?";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {dataItem.getDataItemUniqueId()});
+		sql = "DELETE FROM BUSINESSITEMS WHERE DICTIONARYCODE=?";
+		jdbcTemplate.update(sql, new Object[] {dict.getCode()});
+		
+		sql = "DELETE FROM DATADICTIONARY WHERE DICTIONARYUNIQUEID = ?";
+	 	int opt = jdbcTemplate.update(sql, new Object[] {dict.getDictionaryUniqueId()});
 	 	log.info("Deleted row "+opt);
 	}
 }

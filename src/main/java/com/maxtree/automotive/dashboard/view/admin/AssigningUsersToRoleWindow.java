@@ -72,10 +72,8 @@ public class AssigningUsersToRoleWindow extends Window {
 		
 		List<User> allUsers = null;
 		User operator = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		if (operator.getUserName().equals("root")) {
+		if (operator.getUserName().equals("system")) {
 			allUsers = ui.userService.findAll(true);
-		} else if (operator.getUserName().equals("system")) {
-			allUsers = ui.userService.findAll(false);
 		} else {
 			allUsers = ui.userService.findAll(operator);
 		}

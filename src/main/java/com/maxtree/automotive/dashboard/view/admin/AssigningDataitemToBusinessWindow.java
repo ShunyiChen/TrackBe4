@@ -8,7 +8,7 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.domain.Business;
-import com.maxtree.automotive.dashboard.domain.DataItem;
+import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.server.ThemeResource;
@@ -61,9 +61,8 @@ public class AssigningDataitemToBusinessWindow extends Window {
 		hlayout.setSpacing(false);
 		hlayout.setMargin(false);
 		
-		List<DataItem> allItems = ui.dataItemService.findAllByCategory("业务材料");
-		
-		List<DataItem> assignItems = ui.businessService.assignedItems(business.getBusinessUniqueId());
+		List<DataDictionary> allItems = ui.dataItemService.findAllByType(2);
+		List<DataDictionary> assignItems = ui.businessService.assignedItems(business.getCode());
 		
 		select = new TwinColSelect<>(null, allItems);
 		select.setWidth("100%");
@@ -71,16 +70,16 @@ public class AssigningDataitemToBusinessWindow extends Window {
 		select.setLeftColumnCaption("未分配的材料");
 		select.setRightColumnCaption("已分配的材料");
 		
-		List<DataItem> selectedItems = new ArrayList<>();
-		for (DataItem item : allItems) {
-			for (DataItem assignItem : assignItems) {
-				if (assignItem.getDataItemUniqueId() == item.getDataItemUniqueId()) {
+		List<DataDictionary> selectedItems = new ArrayList<>();
+		for (DataDictionary item : allItems) {
+			for (DataDictionary assignItem : assignItems) {
+				if (assignItem.getDictionaryUniqueId() == item.getDictionaryUniqueId()) {
 					selectedItems.add(item);
 				}
 			}
 		}
 		// set select
-		select.select(selectedItems.toArray(new DataItem[selectedItems.size()]));
+		select.select(selectedItems.toArray(new DataDictionary[selectedItems.size()]));
 		
         hlayout.addComponent(select);
         hlayout.setComponentAlignment(select, Alignment.TOP_CENTER);
@@ -112,10 +111,10 @@ public class AssigningDataitemToBusinessWindow extends Window {
 	}
 	
 	private void apply(Business business) {
-		Set<DataItem> set = select.getSelectedItems();
-		List<DataItem> list = new ArrayList<>(set);
+		Set<DataDictionary> set = select.getSelectedItems();
+		List<DataDictionary> list = new ArrayList<>(set);
 		// update database
-		ui.businessService.updateDataItems(business.getBusinessUniqueId(), list);
+		ui.businessService.updateDataItems(business.getCode(), list);
 	}
 	
 	public static void open(Callback callback, Business b) {
@@ -134,7 +133,7 @@ public class AssigningDataitemToBusinessWindow extends Window {
         w.center();
     }
 	
-	private TwinColSelect<DataItem> select = null;
+	private TwinColSelect<DataDictionary> select = null;
 	private Button btnApply;
 	private Button btnOK;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();

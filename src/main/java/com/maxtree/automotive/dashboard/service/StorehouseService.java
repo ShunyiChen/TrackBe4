@@ -16,12 +16,12 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
+import com.maxtree.automotive.dashboard.CodeGenerator;
 import com.maxtree.automotive.dashboard.domain.DenseFrame;
 import com.maxtree.automotive.dashboard.domain.FileBox;
 import com.maxtree.automotive.dashboard.domain.Portfolio;
 import com.maxtree.automotive.dashboard.domain.Storehouse;
 import com.maxtree.automotive.dashboard.exception.DataException;
-import com.maxtree.automotive.dashboard.view.admin.storehouse.CodeGenerator;
 
 
 @Component

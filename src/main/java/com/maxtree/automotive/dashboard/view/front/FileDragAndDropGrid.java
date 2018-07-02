@@ -6,13 +6,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.postgresql.util.PSQLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
-import com.maxtree.automotive.dashboard.domain.SiteFolder;
+import com.maxtree.automotive.dashboard.exception.DataException;
 import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.icons.VaadinIcons;
@@ -50,7 +53,7 @@ public class FileDragAndDropGrid extends VerticalLayout implements Receiver, Suc
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	private static final Logger log = LoggerFactory.getLogger(FileDragAndDropGrid.class);
 	/**
 	 * 
 	 * @param caption
@@ -107,13 +110,12 @@ public class FileDragAndDropGrid extends VerticalLayout implements Receiver, Suc
 						return;
 					}
 					
-					
 					final ByteArrayOutputStream bas = new ByteArrayOutputStream();
 					final StreamVariable streamVariable = new StreamVariable() {
 						String fileFullPath = "";
 						@Override
 						public OutputStream getOutputStream() {
-							fileFullPath = uuid +"/"+2+"/"+System.currentTimeMillis()+"_"+fileName;
+							fileFullPath = batch+"/"+ uuid +"/"+System.currentTimeMillis()+"_"+fileName;
 							try {
 								return new TB4FileSystem().receiveUpload(site, fileFullPath);
 							} catch (FileException e) {
@@ -137,7 +139,6 @@ public class FileDragAndDropGrid extends VerticalLayout implements Receiver, Suc
 
 						@Override
 						public void streamingFinished(final StreamingEndEvent event) {
-							
 							addDocument(fileName, fileFullPath);
 							
 							// 更新已用存储大小
@@ -275,7 +276,6 @@ public class FileDragAndDropGrid extends VerticalLayout implements Receiver, Suc
 			cell.setDeleteCallback(deleteCallback);
 			hLayout.addComponents(cell);
 		}
-		
 	}
 	
 	public void reset() {

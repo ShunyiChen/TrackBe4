@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
+import com.maxtree.automotive.dashboard.CodeGenerator;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Hr;

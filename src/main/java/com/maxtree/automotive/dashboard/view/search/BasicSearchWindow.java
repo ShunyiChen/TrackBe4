@@ -117,8 +117,8 @@ public class BasicSearchWindow extends Window {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         BasicSearchWindow w = new BasicSearchWindow();
         w.btnSearch.addClickListener(e -> {
-			List<Transaction> results = ui.transactionService.executeBasicSearch(0, w.resultsPerPage.getValue().intValue(), w.selectList.getValue().getTenantName(), w.plateField.getValue());
-			callback.onSuccessful(results);
+//			List<Transaction> results = ui.transactionService.executeBasicSearch(0, w.resultsPerPage.getValue().intValue(), w.selectList.getValue().getTenantName(), w.plateField.getValue());
+//			callback.onSuccessful(results);
 			w.close();
 		});
         UI.getCurrent().addWindow(w);

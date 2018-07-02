@@ -25,7 +25,7 @@ import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Company;
-import com.maxtree.automotive.dashboard.domain.DataItem;
+import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
@@ -123,7 +123,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         			uuid = UUID.randomUUID().toString();
             		int i = 0;
             		Document[] documents = new Document[business.getItems().size()];
-            		for (DataItem item : business.getItems()) {
+            		for (DataDictionary item : business.getItems()) {
             			documents[i] = new Document();
             			documents[i].setAlias(item.getItemName());
             			documents[i].setFileName("");
@@ -140,7 +140,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         			uuid = editableTrans.getUuid();
         			List<Document> documentList = ui.documentService.findPrimary(uuid, basicInfo.getVIN());
         			List<Document> filledDocumentList = new ArrayList<Document>();
-        			for (DataItem item : business.getItems()) {
+        			for (DataDictionary item : business.getItems()) {
         				Document doc = existCheck(item.getItemName(), documentList);
         				if (doc == null) {
         					doc = new Document();
@@ -779,7 +779,9 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private Binder<Transaction> binder = new Binder<>();
     private BasicInfoPane basicInfo = new BasicInfoPane(this);
-    private UploadGrid primaryGrid = new UploadGrid("主要材料");
+//    private UploadGrid primaryGrid = new UploadGrid("主要材料");
+    private HighShootGrid primaryGrid = new HighShootGrid("主要材料");
+    
     private FileDragAndDropGrid secondaryGrid = new FileDragAndDropGrid("次要材料");
     private Button btnPrint = new Button();
     private Button btnAdd = new Button();

@@ -7,8 +7,9 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.PermissionCodes;
 import com.maxtree.automotive.dashboard.TB4Application;
 import com.maxtree.automotive.dashboard.component.Box;
+import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.domain.DataItem;
+import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.DataException;
 import com.vaadin.contextmenu.ContextMenu;
@@ -96,8 +97,8 @@ public class ManageDataDictionaryGrid extends VerticalLayout {
 		tableBody.setMargin(false);
 		tableBody.setSpacing(false);
 		
-		List<DataItem> data = ui.dataItemService.findAll();
-		for (DataItem d : data) {
+		List<DataDictionary> data = ui.dataItemService.findAll();
+		for (DataDictionary d : data) {
 			HorizontalLayout row1 = createDataRow(d);
 			tableBody.addComponents(row1);
 			tableBody.setComponentAlignment(row1, Alignment.MIDDLE_LEFT);
@@ -111,14 +112,14 @@ public class ManageDataDictionaryGrid extends VerticalLayout {
 	 * @param community
 	 * @return
 	 */
-	private HorizontalLayout createDataRow(DataItem dataItem) {
+	private HorizontalLayout createDataRow(DataDictionary dataItem) {
 		HorizontalLayout row = new HorizontalLayout();
 		row.setSpacing(false);
 		row.setMargin(false);
 		row.setWidthUndefined();
 		row.setHeightUndefined();
 		row.addStyleName("grid-header-line");
-		Label labelCategoryName = new Label(dataItem.getCategoryName());
+		Label labelCategoryName = new Label(dataItem.getItemType()==1?"号牌种类":"业务材料");
 		Label labelName = new Label(dataItem.getItemName());
 		Image moreImg = new Image(null, new ThemeResource("img/adminmenu/more.png"));
 		moreImg.addStyleName("mycursor");
@@ -142,7 +143,6 @@ public class ManageDataDictionaryGrid extends VerticalLayout {
 					else {
 		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
 		        	}
-					
 				}
 			});
 			
@@ -151,12 +151,20 @@ public class ManageDataDictionaryGrid extends VerticalLayout {
 				public void menuSelected(MenuItem selectedItem) {
 					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 					if (loginUser.isPermitted(PermissionCodes.M3)) {
-						try {
-							ui.dataItemService.delete(dataItem);
-						} catch (DataException e) {
-							Notifications.warning("无法删除该项目。");
-						}
-						refreshTable();
+						
+						Callback event = new Callback() {
+							@Override
+							public void onSuccessful() {
+								try {
+									ui.dataItemService.delete(dataItem);
+								} catch (DataException e) {
+									Notifications.warning("无法删除该项目。");
+								}
+								refreshTable();
+							}
+						};
+						
+						MessageBox.showMessage("提示", "请确认是否彻底删除当前数据？", MessageBox.WARNING, event, "删除");
 					}
 					else {
 		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
@@ -167,8 +175,8 @@ public class ManageDataDictionaryGrid extends VerticalLayout {
 			menu.open(e.getClientX(), e.getClientY());
 		});
 		
-		labelCategoryName.setWidth("287px");
-		labelName.setWidth("250px");
+		labelCategoryName.setWidth("107px");
+		labelName.setWidth("415px");
 		row.addComponents(labelCategoryName, labelName, moreImg);
 		row.setComponentAlignment(labelCategoryName, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(labelName, Alignment.MIDDLE_LEFT);
@@ -181,8 +189,8 @@ public class ManageDataDictionaryGrid extends VerticalLayout {
 	 */
 	private void refreshTable() {
 		tableBody.removeAllComponents();
-		List<DataItem> data = ui.dataItemService.findAll();
-		for (DataItem d : data) {
+		List<DataDictionary> data = ui.dataItemService.findAll();
+		for (DataDictionary d : data) {
 			HorizontalLayout row1 = createDataRow(d);
 			tableBody.addComponents(row1);
 			tableBody.setComponentAlignment(row1, Alignment.MIDDLE_LEFT);

@@ -414,18 +414,18 @@ public class TransactionService {
 //		return "";
 //	}
 	
-	/**
-	 * 
-	 * @param from
-	 * @param perSize
-	 * @param communityName
-	 * @param plate
-	 * @return
-	 */
-	public List<Transaction> executeBasicSearch(int from, int perSize, String communityName, String plate) {
-		String sql = "SELECT * FROM "+communityName+".TRANSACTION WHERE PLATENUMBER=? LIMIT ? OFFSET ?";
-		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {plate, perSize, from}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
-		return result;
-	}
+//	/**
+//	 * 
+//	 * @param from
+//	 * @param perSize
+//	 * @param communityName
+//	 * @param plate
+//	 * @return
+//	 */
+//	public List<Transaction> executeBasicSearch(int from, int perSize, String communityName, String plate) {
+//		String sql = "SELECT * FROM "+communityName+".TRANSACTION WHERE PLATENUMBER=? LIMIT ? OFFSET ?";
+//		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {plate, perSize, from}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
+//		return result;
+//	}
 	
 }

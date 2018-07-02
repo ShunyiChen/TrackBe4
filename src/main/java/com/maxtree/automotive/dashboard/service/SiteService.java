@@ -15,10 +15,10 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
+import com.maxtree.automotive.dashboard.CodeGenerator;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.SiteCapacity;
-import com.maxtree.automotive.dashboard.domain.SiteFolder;
 
 @Component
 public class SiteService {
@@ -110,7 +110,7 @@ public class SiteService {
 	 * @return
 	 */
 	public Site insert(Site site) {
-		String INSERT_TRANS_SQL = "INSERT INTO SITE(SITENAME,SITETYPE,HOSTADDR,PORT,DEFAULTREMOTEDIRECTORY,USERNAME,PASSWORD,MODE,CHARSET,RUNNINGSTATUS) VALUES(?,?,?,?,?,?,?,?,?,?)";
+		String INSERT_TRANS_SQL = "INSERT INTO SITE(SITENAME,SITETYPE,HOSTADDR,PORT,DEFAULTREMOTEDIRECTORY,USERNAME,PASSWORD,MODE,CHARSET,RUNNINGSTATUS,CODE) VALUES(?,?,?,?,?,?,?,?,?,?,?)";
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
@@ -127,6 +127,7 @@ public class SiteService {
 				ps.setString(8, site.getMode());
 				ps.setString(9, site.getCharset());
 				ps.setInt(10, site.getRunningStatus());
+				ps.setString(11, site.getCode());//快捷编码
 				return ps;
 			}
 		}, keyHolder);
@@ -155,8 +156,21 @@ public class SiteService {
 	 * @return
 	 */
 	public Site update(Site site) {
-		String sql = "UPDATE SITE SET SITENAME=?,SITETYPE=?,HOSTADDR=?,PORT=?,DEFAULTREMOTEDIRECTORY=?,USERNAME=?,PASSWORD=?,MODE=?,CHARSET=?,RUNNINGSTATUS=? WHERE SITEUNIQUEID=?";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {site.getSiteName(), site.getSiteType(), site.getHostAddr(), site.getPort(), site.getDefaultRemoteDirectory(),site.getUserName(),site.getPassword(),site.getMode(),site.getCharset(),site.getRunningStatus(), site.getSiteUniqueId()});
+		String sql = "UPDATE SITE SET SITENAME=?,SITETYPE=?,HOSTADDR=?,PORT=?,DEFAULTREMOTEDIRECTORY=?,USERNAME=?,PASSWORD=?,MODE=?,CHARSET=?,RUNNINGSTATUS=?,CODE=? WHERE SITEUNIQUEID=?";
+	 	int opt = jdbcTemplate.update(sql, new Object[] {
+	 			site.getSiteName(),
+	 			site.getSiteType(),
+	 			site.getHostAddr(),
+	 			site.getPort(),
+	 			site.getDefaultRemoteDirectory(),
+	 			site.getUserName(),
+	 			site.getPassword(),
+	 			site.getMode(),
+	 			site.getCharset(),
+	 			site.getRunningStatus(),
+	 			site.getCode(),
+	 			site.getSiteUniqueId()
+	 			});
 	 
 	 	sql = "UPDATE SITECAPACITY SET CAPACITY=?,USEDSPACE=?,UPDATETIMEMILLIS=?,UNIT=?,UNITNUMBER=?,MAXBATCH=?,MAXBUSINESS=? WHERE SITECAPACITYUNIQUEID=?";
 	 	opt = jdbcTemplate.update(sql, new Object[] {

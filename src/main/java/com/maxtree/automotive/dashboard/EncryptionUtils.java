@@ -1,56 +1,58 @@
 package com.maxtree.automotive.dashboard;
 
-import java.io.UnsupportedEncodingException;
-
-import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EncryptionUtils {
+	
 	private static final Logger logger = LoggerFactory.getLogger(EncryptionUtils.class);
 
-	private static final String UTF_8 = "UTF-8";
-
 	/**
-	 * 对给定的字符串进行base64解码操作
+	 * 
+	 * @param str
+	 * @return
 	 */
-	public static String decodeData(String inputData) {
-		try {
-			if (null == inputData) {
-				return null;
-			}
-			return new String(Base64.decodeBase64(inputData.getBytes(UTF_8)), UTF_8);
-		} catch (UnsupportedEncodingException e) {
-			logger.error(inputData, e);
+	public static String encryptString(String normalStr) {
+		char[] chs = normalStr.toCharArray();
+		StringBuilder encryptedStr = new StringBuilder();
+		for (char ch : chs) {
+			encryptedStr.append(ch+=17);
 		}
-
-		return null;
+		return encryptedStr.toString();
 	}
-
+	
 	/**
-	 * 对给定的字符串进行base64加密操作
+	 * 
+	 * @param encryptedStr
+	 * @return
 	 */
-	public static String encodeData(String inputData) {
-		try {
-			if (null == inputData) {
-				return null;
-			}
-			return new String(Base64.encodeBase64(inputData.getBytes(UTF_8)), UTF_8);
-		} catch (UnsupportedEncodingException e) {
-			logger.error(inputData, e);
+	public static String decryptString(String encryptedStr) {
+		char[] chs = encryptedStr.toCharArray();
+		StringBuilder decryptedStr = new StringBuilder();
+		for (char ch : chs) {
+			decryptedStr.append(ch-=17);
 		}
-
-		return null;
+		return decryptedStr.toString();
 	}
 
 	public static void main(String[] args) {
+		// 1/6caa4f23-c516-445e-941b-8c0c094b434a/1530325935206_0726_1 - Copy.jpg
 		
-		String encry = EncryptionUtils.encodeData("1/8090f21b-97ff-469c-80ae-a5a39874625bbbb/11111111112222222222333333333344444444445555555555666666.jpg");
+		String old = "1/6caa4f23-c516-445e-941b-8c0c094b434a/1530325935206_0726_1 - Copy.jpg";
 		
-		System.out.println(encry.length());
+//		String encry = "MS82Y2FhNGYyMy1jNTE2LTQ0NWUtOTQxYi04YzBjMDk0YjQzNGEvMTUzMDMyNTkzNTIwNl8wNzI2XzEgLSBDb3B5LmpwZw==";//EncryptionUtils.encodeData("1/8090f21b-97ff-469c-80ae-a5a39874625bbbb/11111111112222222222333333333344444444445555555555666666.jpg");
+		String encrypted = "B@CJJBFvDJ>HFHJ>EtrG>JIIG>FCwAsuwwEvDB@BFDADEFDIGFFEp佱妎?x";//encryptString(old);
+		 
+		System.out.println("Encrypted:");
+		System.out.println(encrypted);
 		
-		String decrypted = EncryptionUtils.decodeData(encry);
 		
-		System.out.println(decrypted);
+		System.out.println("Decrypted:");
+		System.out.println(decryptString(encrypted));
+		
+		
+//		String decrypted = EncryptionUtils.decodeData(encry);
+//		
+//		System.out.println(decrypted);
 	}
 }

@@ -1,5 +1,6 @@
 package com.maxtree.automotive.dashboard.view.admin.storehouse;
 
+import com.maxtree.automotive.dashboard.CodeGenerator;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.DenseFrame;
 import com.maxtree.automotive.dashboard.domain.FileBox;

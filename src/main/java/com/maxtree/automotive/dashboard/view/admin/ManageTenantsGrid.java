@@ -160,7 +160,7 @@ public class ManageTenantsGrid extends VerticalLayout {
 			menu.open(e.getClientX(), e.getClientY());
 		});
 		
-		labelName.setWidth("540px");
+		labelName.setWidth("530px");
 		row.addComponents(labelName, moreImg);
 		row.setComponentAlignment(labelName, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(moreImg, Alignment.MIDDLE_RIGHT);

@@ -5,7 +5,6 @@ import java.util.List;
 /**
  * 
  * @author chens
- *
  */
 public class Business {
 
@@ -33,11 +32,11 @@ public class Business {
 		this.fileCheck = fileCheck;
 	}
 
-	public List<DataItem> getItems() {
+	public List<DataDictionary> getItems() {
 		return items;
 	}
 
-	public void setItems(List<DataItem> items) {
+	public void setItems(List<DataDictionary> items) {
 		this.items = items;
 	}
 
@@ -57,18 +56,26 @@ public class Business {
 		this.localCheck = localCheck;
 	}
 
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 	@Override
 	public String toString() {
 		// return String.format(
 		// "Business[businessUniqueId=%d, name='%s']", businessUniqueId, name);
-
 		return name+"("+(fileCheck == 0 ? "不需要审档":"需要审档")+")";
 	}
 	
 	private Integer businessUniqueId = 0;
 	private String name;
 	private Integer fileCheck = 0; // 0-不需要审档，1-需要审档
-	private List<DataItem> items;
+	private List<DataDictionary> items;
 	private Integer hasFirstIndex = 0; // 0-不是第一个索引，1-是第一个索引
 	private Integer localCheck = 0; // 0-不用本机构审档员，1-用本机构内审档员审档
+	private String code; // 快捷编码
 }

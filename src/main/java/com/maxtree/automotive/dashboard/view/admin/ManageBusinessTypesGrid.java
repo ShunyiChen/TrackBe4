@@ -10,7 +10,7 @@ import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Business;
-import com.maxtree.automotive.dashboard.domain.DataItem;
+import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.DataException;
 import com.vaadin.contextmenu.ContextMenu;
@@ -84,16 +84,13 @@ public class ManageBusinessTypesGrid extends VerticalLayout {
 		columnName.addStyleName("grid-title");
 		Label colCheckFile = new Label("是否审档");
 		colCheckFile.addStyleName("grid-title");
-		Label colIndex= new Label("初始索引");
-		colIndex.addStyleName("grid-title");
 		Label colLocal= new Label("是否内部审档");
 		colLocal.addStyleName("grid-title");
 		Label colMaterials = new Label("业务材料");
 		colMaterials.addStyleName("grid-title");
-		header.addComponents(columnName,colCheckFile,colIndex,colLocal,colMaterials);
+		header.addComponents(columnName,colCheckFile,colLocal,colMaterials);
 		header.setComponentAlignment(columnName, Alignment.MIDDLE_LEFT);
 		header.setComponentAlignment(colCheckFile, Alignment.MIDDLE_LEFT);
-		header.setComponentAlignment(colIndex, Alignment.MIDDLE_LEFT);
 		header.setComponentAlignment(colLocal, Alignment.MIDDLE_LEFT);
 		header.setComponentAlignment(colMaterials, Alignment.MIDDLE_LEFT);
 		return header;
@@ -137,13 +134,11 @@ public class ManageBusinessTypesGrid extends VerticalLayout {
 		Label labelName = new Label(business.getName());
 		// 是否需要审档
 		Label labelFileCheck = new Label(business.getFileCheck() == 1 ? "是" : "否");
-		// 初始索引
-		Label labelIndex = new Label(business.getHasFirstIndex() == 1 ? "是" : "否");
 		// 内部审档
 		Label labelLocal = new Label(business.getLocalCheck() == 1 ? "是" : "否");
 		// 所需资料
 		StringBuilder materialStr = new StringBuilder("");
-		for (DataItem item : business.getItems()) {
+		for (DataDictionary item : business.getItems()) {
 			materialStr.append(item.getItemName());
 			materialStr.append(",");
 		}
@@ -226,15 +221,13 @@ public class ManageBusinessTypesGrid extends VerticalLayout {
 			menu.open(e.getClientX(), e.getClientY());
 		});
 		
-		labelName.setWidth("115px");
-		labelFileCheck.setWidth("115px");
-		labelIndex.setWidth("115px");
-		labelLocal.setWidth("80px");
-		labelMaterials.setWidth("110px");
-		row.addComponents(labelName,labelFileCheck,labelIndex,labelLocal,labelMaterials, moreImg);
+		labelName.setWidth("155px");
+		labelFileCheck.setWidth("130px");
+		labelLocal.setWidth("60px");
+		labelMaterials.setWidth("180px");
+		row.addComponents(labelName,labelFileCheck,labelLocal,labelMaterials, moreImg);
 		row.setComponentAlignment(labelName, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(labelFileCheck, Alignment.MIDDLE_LEFT);
-		row.setComponentAlignment(labelIndex, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(labelLocal, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(labelMaterials, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(moreImg, Alignment.MIDDLE_RIGHT);

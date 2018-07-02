@@ -98,6 +98,14 @@ public class Site {
 		this.siteCapacity = siteCapacity;
 	}
 	
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 	@Override
 	public String toString() {
 		// return String.format(
@@ -121,4 +129,5 @@ public class Site {
 	private String charset = "UTF-8"; 		// 字符集，默认UTF-8
 	private Integer runningStatus = 0; 		// 运行状态 1运行  0停止
 	private SiteCapacity siteCapacity; 		// 数据容量及文件夹个数限制
+	private String code;                    // 快捷编码
 }

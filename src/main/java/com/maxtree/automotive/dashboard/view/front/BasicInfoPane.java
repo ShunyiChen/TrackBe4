@@ -37,7 +37,7 @@ public class BasicInfoPane extends HorizontalLayout {
 		hlayout.setMargin(false);
 		hlayout.setHeightUndefined();
 		hlayout.setWidthUndefined();
-		List<String> data = ui.dataItemService.findAllByCategoryName("号牌种类");
+		List<String> data = ui.dataItemService.findNamesByType(1);
 		plateTypeField.setItems(data);
 		
 		plateTypeField.setEmptySelectionAllowed(false);

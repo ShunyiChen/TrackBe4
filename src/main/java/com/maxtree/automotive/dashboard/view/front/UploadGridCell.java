@@ -4,6 +4,9 @@ import java.io.OutputStream;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
+import org.postgresql.util.PSQLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
@@ -46,7 +49,7 @@ public class UploadGridCell extends VerticalLayout implements Receiver, Succeede
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	private static final Logger log = LoggerFactory.getLogger(UploadGridCell.class);
 	/**
 	 * 
 	 * @param document
@@ -164,6 +167,7 @@ public class UploadGridCell extends VerticalLayout implements Receiver, Succeede
 		try {
 			fileFullPath = document.getBatch()+"/"+document.getUuid() +"/"+System.currentTimeMillis()+"_"+filename;
 			document.setFileFullPath(fileFullPath);
+			
 			return new TB4FileSystem().receiveUpload(site, fileFullPath);
 		} catch (FileException e) {
 			Notifications.warning(e.getMessage());
