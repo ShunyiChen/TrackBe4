@@ -21,13 +21,13 @@ public class MyPopupUI extends UI {
     protected void init(VaadinRequest request) {
         getPage().setTitle("Popup Window");
         
-        Button close = new Button("Close Window", event -> {// Java 8
-            // Close the popup
-            JavaScript.eval("close()");
-
-            // Detach the UI from the session
-            getUI().close();
-        });
+//        Button close = new Button("Close Window", event -> {// Java 8
+//            // Close the popup
+//            JavaScript.eval("close()");
+//
+//            // Detach the UI from the session
+//            getUI().close();
+//        });
         
         String htmlFilePath = request.getParameter("htmlFilePath");
 		htmlFile = new File(htmlFilePath);//("reports/generates/"+transactionId+"/report.html");

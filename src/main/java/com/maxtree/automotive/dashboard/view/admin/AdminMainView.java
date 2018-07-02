@@ -437,63 +437,63 @@ public class AdminMainView extends VerticalLayout {
         	}
         	
         });
-        // 等待审批
-        HorizontalLayout row2 = new HorizontalLayout();
-        row2.setMargin(false);
-        row2.setSpacing(false);
-        row2.addStyleName("detail-hlayout");
-        row2.setWidth("100%");
-        row2.setHeight("48px");
-        Label manageApproval = new Label("等待审批");
-        manageApproval.addStyleName("detail-setting-text");
-        Image rightArrow2 = new Image(null, new ThemeResource("img/adminmenu/rightarrow.png"));
-        row2.addComponents(manageApproval, rightArrow2);
-        row2.setComponentAlignment(manageApproval, Alignment.MIDDLE_LEFT);
-        row2.setComponentAlignment(rightArrow2, Alignment.MIDDLE_RIGHT);
-        row2.addLayoutClickListener(e -> {
-        	showDetailPane(Commands.PENDING_APPROVAL);
-        	hidePanes();
-        });
-        // 邀请用户
-        HorizontalLayout row3 = new HorizontalLayout();
-        row3.setMargin(false);
-        row3.setSpacing(false);
-        row3.addStyleName("detail-hlayout");
-        row3.setWidth("100%");
-        row3.setHeight("48px");
-        Label manageInvitation = new Label("邀请用户");
-        manageInvitation.addStyleName("detail-setting-text");
-        Image rightArrow3 = new Image(null, new ThemeResource("img/adminmenu/rightarrow.png"));
-        row3.addComponents(manageInvitation, rightArrow3);
-        row3.setComponentAlignment(manageInvitation, Alignment.MIDDLE_LEFT);
-        row3.setComponentAlignment(rightArrow3, Alignment.MIDDLE_RIGHT);
-        row3.addLayoutClickListener(e -> {
-        	showDetailPane(Commands.INVITE_USRES);
-        	hidePanes();
-        });
-        // 社区邀请
-        HorizontalLayout row4 = new HorizontalLayout();
-        row4.setMargin(false);
-        row4.setSpacing(false);
-        row4.addStyleName("detail-hlayout");
-        row4.setWidth("100%");
-        row4.setHeight("48px");
-        Label communityInvitation = new Label("社区邀请");
-        communityInvitation.addStyleName("detail-setting-text");
-        Image rightArrow4 = new Image(null, new ThemeResource("img/adminmenu/rightarrow.png"));
-        row4.addComponents(communityInvitation, rightArrow4);
-        row4.setComponentAlignment(communityInvitation, Alignment.MIDDLE_LEFT);
-        row4.setComponentAlignment(rightArrow4, Alignment.MIDDLE_RIGHT);
-        row4.addLayoutClickListener(e -> {
-        	showDetailPane(Commands.COMMUNITY_INVITATION);
-        	hidePanes();
-        });
+//        // 等待审批
+//        HorizontalLayout row2 = new HorizontalLayout();
+//        row2.setMargin(false);
+//        row2.setSpacing(false);
+//        row2.addStyleName("detail-hlayout");
+//        row2.setWidth("100%");
+//        row2.setHeight("48px");
+//        Label manageApproval = new Label("等待审批");
+//        manageApproval.addStyleName("detail-setting-text");
+//        Image rightArrow2 = new Image(null, new ThemeResource("img/adminmenu/rightarrow.png"));
+//        row2.addComponents(manageApproval, rightArrow2);
+//        row2.setComponentAlignment(manageApproval, Alignment.MIDDLE_LEFT);
+//        row2.setComponentAlignment(rightArrow2, Alignment.MIDDLE_RIGHT);
+//        row2.addLayoutClickListener(e -> {
+//        	showDetailPane(Commands.PENDING_APPROVAL);
+//        	hidePanes();
+//        });
+//        // 邀请用户
+//        HorizontalLayout row3 = new HorizontalLayout();
+//        row3.setMargin(false);
+//        row3.setSpacing(false);
+//        row3.addStyleName("detail-hlayout");
+//        row3.setWidth("100%");
+//        row3.setHeight("48px");
+//        Label manageInvitation = new Label("邀请用户");
+//        manageInvitation.addStyleName("detail-setting-text");
+//        Image rightArrow3 = new Image(null, new ThemeResource("img/adminmenu/rightarrow.png"));
+//        row3.addComponents(manageInvitation, rightArrow3);
+//        row3.setComponentAlignment(manageInvitation, Alignment.MIDDLE_LEFT);
+//        row3.setComponentAlignment(rightArrow3, Alignment.MIDDLE_RIGHT);
+//        row3.addLayoutClickListener(e -> {
+//        	showDetailPane(Commands.INVITE_USRES);
+//        	hidePanes();
+//        });
+//        // 社区邀请
+//        HorizontalLayout row4 = new HorizontalLayout();
+//        row4.setMargin(false);
+//        row4.setSpacing(false);
+//        row4.addStyleName("detail-hlayout");
+//        row4.setWidth("100%");
+//        row4.setHeight("48px");
+//        Label communityInvitation = new Label("社区邀请");
+//        communityInvitation.addStyleName("detail-setting-text");
+//        Image rightArrow4 = new Image(null, new ThemeResource("img/adminmenu/rightarrow.png"));
+//        row4.addComponents(communityInvitation, rightArrow4);
+//        row4.setComponentAlignment(communityInvitation, Alignment.MIDDLE_LEFT);
+//        row4.setComponentAlignment(rightArrow4, Alignment.MIDDLE_RIGHT);
+//        row4.addLayoutClickListener(e -> {
+//        	showDetailPane(Commands.COMMUNITY_INVITATION);
+//        	hidePanes();
+//        });
         
-        vContent.addComponents(row1, row2, row3, row4);
+        vContent.addComponents(row1);//, row2, row3, row4);
         vContent.setComponentAlignment(row1, Alignment.TOP_CENTER);
-        vContent.setComponentAlignment(row2, Alignment.TOP_CENTER);
-        vContent.setComponentAlignment(row3, Alignment.TOP_CENTER);
-        vContent.setComponentAlignment(row4, Alignment.TOP_CENTER);
+//        vContent.setComponentAlignment(row2, Alignment.TOP_CENTER);
+//        vContent.setComponentAlignment(row3, Alignment.TOP_CENTER);
+//        vContent.setComponentAlignment(row4, Alignment.TOP_CENTER);
         
         vlayoutWithTitle.addComponents(label, vContent);
         vlayoutWithTitle.setComponentAlignment(label, Alignment.TOP_LEFT);

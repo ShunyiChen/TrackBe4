@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+import com.google.gson.JsonArray;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Document;
@@ -17,6 +18,7 @@ import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.BrowserWindowOpener;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.ui.Alignment;
@@ -24,6 +26,9 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
+import com.vaadin.ui.JavaScript;
+import com.vaadin.ui.JavaScriptFunction;
+import com.vaadin.ui.Link;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Upload;
@@ -83,20 +88,48 @@ public class HighShootGridCell extends VerticalLayout  {
 		row2.setWidth("100%");
 		row2.setWidthUndefined();
 		row2.setHeightUndefined();
+		
+		
+		
 		Button upload = new Button(document.getAlias());
 		upload.setStyleName(ValoTheme.BUTTON_LINK);
+//		// Create an opener extension
+//		BrowserWindowOpener opener = new BrowserWindowOpener(MyPopupUI.class);
+//		opener.setFeatures("height=600,width=400,resizable");
+//		
+//		opener.setParameter("htmlFilePath", "devices/Sample_CamOCX_HTML_Device_IE.html");
+//		// Attach it to a button
+//		opener.extend(upload);
 		
-		// Create an opener extension
-		BrowserWindowOpener opener = new BrowserWindowOpener(MyPopupUI.class);
-		opener.setFeatures("height=600,width=400,resizable");
-		opener.setParameter("htmlFilePath", "devices/Sample_CamOCX_HTML_Device_IE.html");
-
-		// Attach it to a button
-		opener.extend(upload);
+		upload.addClickListener(e->{
+			SSWindow.open();
+		});
+		
+		
+		
+		
+//		JavaScript.getCurrent().addFunction("com.example.foo.myfunc", new JavaScriptFunction() {
+//			@Override
+//			public void call(elemental.json.JsonArray arguments) {
+//				try {
+//					String message = arguments.getString(0);
+//					double value = arguments.getNumber(1);
+//					Notification.show("Message: " + message + ", value: " + value);
+//				} catch (Exception e) {
+//					Notification.show("Error: " + e.getMessage());
+//				}
+//			}
+//		});
+//		Link link = new Link("Send Message",
+//				new ExternalResource("javascript:com.example.foo.myfunc(prompt('Message'), 42)"));
+		
 		
 		
 		row2.addComponents(upload);
 		row2.setComponentAlignment(upload, Alignment.MIDDLE_CENTER);
+		
+		
+		
 		
 		// 右键菜单
 		com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(this, true);
