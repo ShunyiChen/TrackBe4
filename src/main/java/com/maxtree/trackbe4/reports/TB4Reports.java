@@ -1,9 +1,17 @@
 package com.maxtree.trackbe4.reports;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,6 +23,7 @@ import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.reader.UnicodeReader;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.exception.ReportException;
@@ -28,7 +37,12 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
-
+import java.io.BufferedReader;  
+import java.io.File;  
+import java.io.FileInputStream;  
+import java.io.IOException;  
+import java.io.InputStreamReader;  
+import java.nio.charset.Charset;  
 public class TB4Reports {
 
 	private static final Logger log = LoggerFactory.getLogger(TB4Reports.class);
@@ -120,12 +134,55 @@ public class TB4Reports {
 		}
 	}
 
-	public static void main(String[] args) {
-		/// next
-		String vin = "LGB12YEA9DY001226";
-		int number = Integer.parseInt(vin.substring(vin.length() - 6));
+	public static void main(String[] args) throws IOException {
+	 
 		
-		System.out.println(number);
+		
+//			BufferedReader br = new BufferedReader(new FileReader("devices/Sample_CamOCX_HTML_Device_IE.html"));
+//			String everything = "";
+//			try {
+//			    StringBuilder sb = new StringBuilder();
+//			    String line = br.readLine();
+//			    while (line != null) {
+//			        sb.append(line);
+//			        sb.append(System.lineSeparator());
+//			        line = br.readLine();
+//			    }
+//			    everything = sb.toString();
+//			    
+//			    System.out.println(everything);
+//			    
+//			} finally {
+//			    br.close();
+//			}
+		String everything = "";
+		 File f  = new File("devices/Sample_CamOCX_HTML_Device_IE.html");  
+	     FileInputStream in = new FileInputStream(f);  
+	        // 指定读取文件时以UTF-8的格式读取  
+//	      BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));  
+	        BufferedReader br = new BufferedReader(new UnicodeReader(in));  
+	        StringBuilder sb = new StringBuilder();
+	        String line = br.readLine();  
+	        while(line != null)  
+	        {  
+	            System.out.println(line); 
+	            sb.append(line);
+		        sb.append(System.lineSeparator());
+	            line = br.readLine();  
+	        }  
+	        everything = sb.toString();
+	        System.out.println(everything);
+ 
+	        br.close();
+	        in.close();
+	        
+ 
+		FileOutputStream outSTr = new FileOutputStream(new File("devices/new.html"));
+		BufferedOutputStream Buff = new BufferedOutputStream(outSTr);
+		Buff.write(everything.getBytes());
+        Buff.flush();
+        Buff.close();
+		
 //		
 //		Calendar calendar1 = Calendar.getInstance();    
 //        int year1 = calendar1.get(Calendar.YEAR);    

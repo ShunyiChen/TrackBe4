@@ -1,14 +1,21 @@
 package com.maxtree.automotive.dashboard.view.front;
 
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+import org.yaml.snakeyaml.reader.UnicodeReader;
 
 import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Callback;
@@ -49,16 +56,19 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
+import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
@@ -117,56 +127,67 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         	
         	if (e.getValue() != null) {
         		Business business = e.getValue();
-        		int businessUniqueId = business.getBusinessUniqueId();
-        		if (editableTrans.getTransactionUniqueId() == 0) {
-        			// 产生新的UUID
-        			uuid = UUID.randomUUID().toString();
-            		int i = 0;
-            		Document[] documents = new Document[business.getItems().size()];
-            		for (DataDictionary item : business.getItems()) {
-            			documents[i] = new Document();
-            			documents[i].setAlias(item.getItemName());
-            			documents[i].setFileName("");
-            			documents[i].setFileFullPath("");
-            			documents[i].setCategory(1); //1：主要图片,2：次要图片
-            			documents[i].setUuid(uuid);
-            			documents[i].setVin(basicInfo.getVIN());
-            			documents[i].setBatch(batch);
-            			i++;
-            		}
-            		primaryGrid.addUploadCells(editableSite, documents);
+        		List<DataDictionary> items = ui.businessService.assignedItems(business.getCode());
+        		for (DataDictionary dd : items) {
         			
-        		} else {
-        			uuid = editableTrans.getUuid();
-        			List<Document> documentList = ui.documentService.findPrimary(uuid, basicInfo.getVIN());
-        			List<Document> filledDocumentList = new ArrayList<Document>();
-        			for (DataDictionary item : business.getItems()) {
-        				Document doc = existCheck(item.getItemName(), documentList);
-        				if (doc == null) {
-        					doc = new Document();
-        					doc.setAlias(item.getItemName());
-        					doc.setFileName("");
-        					doc.setFileFullPath("");
-        					doc.setCategory(1);  //1：主要图片,2：次要图片
-        					doc.setUuid(editableTrans.getUuid());
-        					doc.setVin(basicInfo.getVIN());
-        					doc.setBatch(batch);
-        				}
-        				filledDocumentList.add(doc);
-        			}
+        			ThumbnailRow row = new ThumbnailRow(dd.getItemName());
+        			Thumbnail thumb = new Thumbnail();
+        			row.addThumbnail(thumb);
         			
-        			// 初始化主要材料
-            		primaryGrid.addUploadCells(editableSite, filledDocumentList.toArray(new Document[filledDocumentList.size()]));
+        			topGrid.addRow(row);
+        			
         		}
         		
-        		// 初始化次要材料
-        		secondaryGrid.setBusinessUniqueId(businessUniqueId);
-        		secondaryGrid.setEnabledForUploadComponent(true);//如果业务类型已选，则可以启用选择上传组件
-        		secondaryGrid.setSite(editableSite);
-        		secondaryGrid.setVin(basicInfo.getVIN());
-        		secondaryGrid.setUuid(uuid);
-            	List<Document> doc2 = ui.documentService.findSecondary(uuid, basicInfo.getVIN());
-            	secondaryGrid.addUploadCells(basicInfo.getVIN(), editableSite, doc2.toArray(new Document[doc2.size()]));
+        		
+        		
+//        		int businessUniqueId = business.getBusinessUniqueId();
+//        		if (editableTrans.getTransactionUniqueId() == 0) {
+//        			// 产生新的UUID
+//        			uuid = UUID.randomUUID().toString();
+//            		int i = 0;
+//            		Document[] documents = new Document[business.getItems().size()];
+//            		for (DataDictionary item : business.getItems()) {
+//            			documents[i] = new Document();
+//            			documents[i].setAlias(item.getItemName());
+//            			documents[i].setFileFullPath("");
+//            			documents[i].setCategory(1); //1：主要图片,2：次要图片
+//            			documents[i].setUuid(uuid);
+//            			documents[i].setVin(basicInfo.getVIN());
+//            			documents[i].setBatch(batch);
+//            			i++;
+//            		}
+//            		primaryGrid.addUploadCells(editableSite, documents);
+//        			
+//        		} else {
+//        			uuid = editableTrans.getUuid();
+//        			List<Document> documentList = ui.documentService.findPrimary(uuid, basicInfo.getVIN());
+//        			List<Document> filledDocumentList = new ArrayList<Document>();
+//        			for (DataDictionary item : business.getItems()) {
+//        				Document doc = existCheck(item.getItemName(), documentList);
+//        				if (doc == null) {
+//        					doc = new Document();
+//        					doc.setAlias(item.getItemName());
+//        					doc.setFileFullPath("");
+//        					doc.setCategory(1);  //1：主要图片,2：次要图片
+//        					doc.setUuid(editableTrans.getUuid());
+//        					doc.setVin(basicInfo.getVIN());
+//        					doc.setBatch(batch);
+//        				}
+//        				filledDocumentList.add(doc);
+//        			}
+//        			
+//        			// 初始化主要材料
+//            		primaryGrid.addUploadCells(editableSite, filledDocumentList.toArray(new Document[filledDocumentList.size()]));
+//        		}
+//        		
+//        		// 初始化次要材料
+//        		secondaryGrid.setBusinessUniqueId(businessUniqueId);
+//        		secondaryGrid.setEnabledForUploadComponent(true);//如果业务类型已选，则可以启用选择上传组件
+//        		secondaryGrid.setSite(editableSite);
+//        		secondaryGrid.setVin(basicInfo.getVIN());
+//        		secondaryGrid.setUuid(uuid);
+//            	List<Document> doc2 = ui.documentService.findSecondary(uuid, basicInfo.getVIN());
+//            	secondaryGrid.addUploadCells(basicInfo.getVIN(), editableSite, doc2.toArray(new Document[doc2.size()]));
         	}
         });
         
@@ -460,12 +481,83 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     private void resetComponents() {
     	basicInfo.reset();
     	editableType.reset();
-    	primaryGrid.reset();
-    	secondaryGrid.reset();
+//    	primaryGrid.reset();
+//    	secondaryGrid.reset();
     	dynamicallyVLayout.removeAllComponents();
     	dynamicallyVLayout.setHeightUndefined();
-	    dynamicallyVLayout.addComponents(basicInfo, editableType, primaryGrid, secondaryGrid);
+    	
+    	VerticalLayout vLayout = new VerticalLayout();
+    	vLayout.setSpacing(false);
+    	vLayout.setMargin(false);
+    	vLayout.addComponents(topGrid, bottomGrid);
+    	
+    	
+    	
+    	try {
+			generateHtmlPage();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
+ 			@Override
+ 			public InputStream getStream() {
+ 				FileInputStream inputStream = null;
+				try {
+					inputStream = new FileInputStream("devices/"+user.getUserUniqueId()+".html");
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+				return inputStream;
+ 			}
+ 		}; 
+ 		StreamResource streamResource = new StreamResource(streamSource, user.getUserUniqueId()+".html");
+ 		streamResource.setCacheTime(0);
+		
+		BrowserFrame browser = new BrowserFrame("6766cBrowser", streamResource);
+		browser.setWidth("800px");
+		browser.setHeight("600px");
+    	
+    	
+    	spliter.setFirstComponent(vLayout);
+    	spliter.setSecondComponent(browser);
+    	
+	    dynamicallyVLayout.addComponents(basicInfo,editableType,spliter);//,topGrid,bottomGrid);
     }
+    
+    private void generateHtmlPage() throws IOException {
+		// 读取原来的html模板
+		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String everything = "";
+		File f = new File("devices/Sample_CamOCX_HTML_Device_IE.html");
+		FileInputStream in = new FileInputStream(f);
+		// 指定读取文件时以UTF-8的格式读取
+		// BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+		BufferedReader br = new BufferedReader(new UnicodeReader(in));
+		StringBuilder sb = new StringBuilder();
+		String line = br.readLine();
+		while (line != null) {
+			if (line.contains("var uuid = \"\";")) {
+				line = line.replace("var uuid = \"\";", "var uuid = \"123123\";");
+			}
+			// System.out.println(line);
+			sb.append(line);
+			sb.append(System.lineSeparator());
+			line = br.readLine();
+		}
+		everything = sb.toString();
+//		System.out.println(everything);
+
+		br.close();
+		in.close();
+		
+		// 动态生成新的html
+		OutputStreamWriter oStreamWriter = new OutputStreamWriter(
+				new FileOutputStream(new File("devices/" + user.getUserUniqueId() + ".html")), "utf-8");
+		oStreamWriter.append(everything);
+		oStreamWriter.close();
+
+	}
     
     /**
      * 
@@ -682,10 +774,10 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 			Notifications.warning("请将信息输入完整。");
 			return;
 		}
-		if (!primaryGrid.checkUploads()) {
-			Notifications.warning("请将主要材料上传完整。");
-			return;
-		}
+//		if (!primaryGrid.checkUploads()) {
+//			Notifications.warning("请将主要材料上传完整。");
+//			return;
+//		}
     	
     	User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
     	basicInfo.assignValues(editableTrans);
@@ -779,13 +871,15 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private Binder<Transaction> binder = new Binder<>();
     private BasicInfoPane basicInfo = new BasicInfoPane(this);
-//    private UploadGrid primaryGrid = new UploadGrid("主要材料");
-    private HighShootGrid primaryGrid = new HighShootGrid("主要材料");
-    
-    private FileDragAndDropGrid secondaryGrid = new FileDragAndDropGrid("次要材料");
+    private ThumbnailGrid topGrid = new ThumbnailGrid("主要材料", 400);
+    private ThumbnailGrid bottomGrid = new ThumbnailGrid("次要材料", 200);
     private Button btnPrint = new Button();
     private Button btnAdd = new Button();
     private Button btnCommit = new Button();
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
+    private HorizontalSplitPanel spliter = new HorizontalSplitPanel();
+    
+
+
 }

@@ -536,14 +536,32 @@ myDate.toLocaleString(); //获取日期与时间
 <!--拍照-->
 function Capture()
 {
+    var uuid = "";
+	var siteid = "";
 	var fileext = document.getElementById("filetype").value;
 	var strFolder = document.getElementById("path").value;
 	var myDate = new Date();
-	var myName = "Image_"+myDate.getFullYear()+(myDate.getMonth()+1)+myDate.getDate()+"_"+myDate.getHours()+myDate.getMinutes()+myDate.getSeconds()+myDate.getMilliseconds();
+	var myName = uuid+"_Image_"+myDate.getFullYear()+(myDate.getMonth()+1)+myDate.getDate()+"_"+myDate.getHours()+myDate.getMinutes()+myDate.getSeconds()+myDate.getMilliseconds();
 	//myDate.getTime()
 	var newFile = strFolder + "\\" + myName + fileext ;
 	var files = CamSDKOCX.CaptureImage(newFile);
-	//alert(newFile);
+ 	alert(newFile);
+ 	
+ 	
+ 	var ret = CamSDKOCX.UpdataFileHttp(newFile,"http://localhost/hello", siteid);
+	alert(ret);
+	var obj = JSON.parse(ret); 
+	response.value = obj.response;
+	if(obj.errorCode == 0)
+	{
+		alert("上传成功");
+	}
+	else
+	{
+		alert("SDK错误码：" + obj.errorCode);
+	}
+ 	
+ 	
 	return newFile;
 }
 <!--拍照（显示）-->
@@ -707,4 +725,56 @@ var countImage = 0;
 </script>
 <SCRIPT>
 //setTimeout("StartVideo()",100);
+</SCRIPT>
+
+<script>
+<!--清空列表-->
+function SetFilePath()
+{
+	openFile.href = CheckFile.value;
+}
+function UploadHttp()
+{
+	response.value = "";
+	if(CheckFile.value == "")
+	{
+		alert("请选择上传的文件！");
+		return;
+	}
+	var ret = CamSDKOCX.UpdataFileHttp(CheckFile.value,Serlet.value,msg.value);
+	alert(ret);
+	var obj = JSON.parse(ret); 
+	response.value = obj.response;
+	if(obj.errorCode == 0)
+	{
+		alert("上传成功");
+	}
+	else
+	{
+		alert("SDK错误码：" + obj.errorCode);
+	}
+}
+function UploadFtp()
+{
+	if(CheckFile.value == "")
+	{
+		alert("请选择上传的文件！");
+		return;
+	}
+	var ret = CamSDKOCX.UpdataFileFtp(CheckFile.value,host.value,user.value,pwd.value,floder.value);
+	if(ret == 263)
+	{
+		alert("没有授权，请连接高拍仪后，F5刷新再尝试上传");
+	}
+	else if(ret == 0)
+	{
+		alert("FTP上传成功");
+	}
+	else 
+	{
+		alert("FTP上传失败");
+	}
+}
+</script>
+<SCRIPT>
 </SCRIPT>

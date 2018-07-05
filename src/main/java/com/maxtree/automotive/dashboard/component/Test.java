@@ -88,7 +88,7 @@ public class Test {
 	private void install() throws Exception {
 		try {
 			lm.install(new File("license/Customer.lic"));
-		} catch(de.schlichtherle.license.LicenseContentException e) {
+		} catch(Exception e) {
 		}
 	}
 	

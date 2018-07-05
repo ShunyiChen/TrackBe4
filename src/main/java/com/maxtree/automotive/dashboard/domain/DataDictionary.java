@@ -44,9 +44,9 @@ public class DataDictionary {
 	public void setCode(String code) {
 		this.code = code;
 	}
-
+	
 	private Integer dictionaryUniqueId; // 数据字典id
 	private Integer itemType; // 数据项类别 1-号牌种类 2-材料名称
 	private String itemName;  // 数据项名称
-	private String code;      // 快捷编码
+	private String code;      // dictionary快捷编码
 }

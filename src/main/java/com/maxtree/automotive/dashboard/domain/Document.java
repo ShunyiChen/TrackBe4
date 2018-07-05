@@ -33,20 +33,12 @@ public class Document {
 		this.uuid = uuid;
 	}
 
-	public String getAlias() {
-		return alias;
+	public String getBusinessCode() {
+		return businessCode;
 	}
 
-	public void setAlias(String alias) {
-		this.alias = alias;
-	}
-
-	public String getFileName() {
-		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public void setBusinessCode(String businessCode) {
+		this.businessCode = businessCode;
 	}
 
 	public String getFileFullPath() {
@@ -56,7 +48,7 @@ public class Document {
 	public void setFileFullPath(String fileFullPath) {
 		this.fileFullPath = fileFullPath;
 	}
-	
+
 	public Integer getCategory() {
 		return category;
 	}
@@ -72,13 +64,21 @@ public class Document {
 	public void setBatch(Integer batch) {
 		this.batch = batch;
 	}
-	
+
 	public String getVin() {
 		return vin;
 	}
 
 	public void setVin(String vin) {
 		this.vin = vin;
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 
 	@Override
@@ -91,10 +91,10 @@ public class Document {
 
 	private Integer documentUniqueId = 0; 	// 文档ID
 	private String uuid;                  	// 文件UUID
-	private String alias; 	 				// 别名,例如：身份证，托银莫
-	private String fileName; 				// 文件名
+	private String businessCode;		    // 业务code
 	private String fileFullPath; 			// 文件实际存放全路径
 	private Integer category = 1; 			// 1:主要材料  2:次要材料(非数据库字段)
 	private Integer batch = 0;          	// 批次号（非数据库字段）
 	private String vin;                     // 车辆识别代码（非数据库字段）
+	private String alias;                   // 材料别名
 }

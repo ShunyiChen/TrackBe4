@@ -81,16 +81,15 @@ public class DocumentService {
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 				String SQL = "";
 				if (document.getCategory() == 1) {
-					SQL = "INSERT INTO DOCUMENTS_1_"+index+"(UUID,ALIAS,FILENAME,FILEFULLPATH) VALUES(?,?,?,?)";
+					SQL = "INSERT INTO DOCUMENTS_1_"+index+"(UUID,ALIAS,FILEFULLPATH) VALUES(?,?,?)";
 				} else {
-					SQL = "INSERT INTO DOCUMENTS_2_"+index+"(UUID,ALIAS,FILENAME,FILEFULLPATH) VALUES(?,?,?,?)";
+					SQL = "INSERT INTO DOCUMENTS_2_"+index+"(UUID,ALIAS,FILEFULLPATH) VALUES(?,?,?)";
 				}
 				PreparedStatement ps = con.prepareStatement(
 						SQL, new String[] {"documentuniqueid"});
 				ps.setString(1, document.getUuid());
 				ps.setString(2, document.getAlias());
-				ps.setString(3, document.getFileName());
-				ps.setString(4, EncryptionUtils.encryptString(document.getFileFullPath()));
+				ps.setString(3, EncryptionUtils.encryptString(document.getFileFullPath()));
 				return ps;
 			}
 		}, keyHolder);
@@ -111,11 +110,11 @@ public class DocumentService {
 		int index = number % 256;
 		String SQL = "";
 		if (document.getCategory() == 1) {
-			SQL = "UPDATE DOCUMENTS_1_"+index+" SET FILENAME=?,FILEFULLPATH=? WHERE DOCUMENTUNIQUEID=?";
+			SQL = "UPDATE DOCUMENTS_1_"+index+" SET FILEFULLPATH=? WHERE DOCUMENTUNIQUEID=?";
 		} else {
-			SQL = "UPDATE DOCUMENTS_2_"+index+" SET FILENAME=?,FILEFULLPATH=? WHERE DOCUMENTUNIQUEID=?";
+			SQL = "UPDATE DOCUMENTS_2_"+index+" SET FILEFULLPATH=? WHERE DOCUMENTUNIQUEID=?";
 		}
-	 	int opt = jdbcTemplate.update(SQL, new Object[] {document.getFileName(), EncryptionUtils.encryptString(document.getFileFullPath()), document.getDocumentUniqueId()});
+	 	int opt = jdbcTemplate.update(SQL, new Object[] {EncryptionUtils.encryptString(document.getFileFullPath()), document.getDocumentUniqueId()});
 	 	log.info("Affected row="+opt);
 	}
 	

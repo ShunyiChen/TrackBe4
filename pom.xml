@@ -186,14 +186,6 @@
 		    <artifactId>xfire-jaxb2</artifactId>
 		    <version>1.2.6</version>
 		</dependency>
-		
-		
-		
-		
-
-		
-		
-		
 	    
 	    <dependency>
 			<groupId>commons-collections</groupId>
@@ -365,11 +357,11 @@
 		</dependency>
 		-->
 		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
-<dependency>
-    <groupId>org.postgresql</groupId>
-    <artifactId>postgresql</artifactId>
-    <version>42.2.2</version>
-</dependency>
+		<dependency>
+		    <groupId>org.postgresql</groupId>
+		    <artifactId>postgresql</artifactId>
+		    <version>42.2.2</version>
+		</dependency>
 		
 		
 	</dependencies>
@@ -406,7 +398,6 @@
 	        </configuration>  
 	    </plugin>  
 			
-		
 			<plugin>
 				<groupId>com.vaadin</groupId>
 				<artifactId>vaadin-maven-plugin</artifactId>
@@ -425,8 +416,6 @@
 					</execution>
 				</executions>
 			</plugin>
-		
-			 
 		
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
