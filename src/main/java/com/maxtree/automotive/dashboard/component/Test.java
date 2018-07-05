@@ -120,7 +120,6 @@ public class Test {
 				return false;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			callback.onSuccessful("");
 			return false;
 		}

@@ -548,7 +548,7 @@ function Capture()
  	alert(newFile);
  	
  	
- 	var ret = CamSDKOCX.UpdataFileHttp(newFile,"http://localhost/hello", siteid);
+ 	var ret = CamSDKOCX.UpdataFileHttp(newFile,"http://localhost:8080/hello", siteid);
 	alert(ret);
 	var obj = JSON.parse(ret); 
 	response.value = obj.response;
