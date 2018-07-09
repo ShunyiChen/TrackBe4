@@ -14845,16 +14845,12 @@ div.v-layout.v-horizontal.v-widget {
 	margin-left: 5px;
 }
 
-.dashboard .picture-pane {
-	height: 190px;
-}
-
 .dashboard .picture-pane .v-horizontallayout {
 	padding-top: 5px;
 }
 
 .dashboard .picture-pane .v-panel-caption {
-	line-height: 25px;
+	line-height: 22px;
 	font-weight: bold;
 	font-size: 13px;
 	color: #666666;

@@ -16,9 +16,6 @@ import com.maxtree.automotive.dashboard.exception.DataException;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.Menu.Command;
 import com.vaadin.contextmenu.MenuItem;
-//import com.vaadin.addon.contextmenu.ContextMenu;
-//import com.vaadin.addon.contextmenu.Menu.Command;
-//import com.vaadin.addon.contextmenu.MenuItem;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
@@ -84,7 +81,7 @@ public class ManageBusinessTypesGrid extends VerticalLayout {
 		columnName.addStyleName("grid-title");
 		Label colCheckFile = new Label("是否审档");
 		colCheckFile.addStyleName("grid-title");
-		Label colLocal= new Label("是否内部审档");
+		Label colLocal= new Label("审档级别");
 		colLocal.addStyleName("grid-title");
 		Label colMaterials = new Label("业务材料");
 		colMaterials.addStyleName("grid-title");
@@ -132,10 +129,10 @@ public class ManageBusinessTypesGrid extends VerticalLayout {
 		row.addStyleName("grid-header-line");
 		// 业务名称
 		Label labelName = new Label(business.getName());
-		// 是否需要审档
-		Label labelFileCheck = new Label(business.getFileCheck() == 1 ? "是" : "否");
-		// 内部审档
-		Label labelLocal = new Label(business.getLocalCheck() == 1 ? "是" : "否");
+		// 是否审档
+		Label labelFileCheck = new Label(business.getNeedToCheck() == 1 ? "是" : "否");
+		// 审档级别
+		Label labelLocal = new Label(business.getCheckLevel());
 		// 所需资料
 		StringBuilder materialStr = new StringBuilder("");
 		for (DataDictionary item : business.getItems()) {

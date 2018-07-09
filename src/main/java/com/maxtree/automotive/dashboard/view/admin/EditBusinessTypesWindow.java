@@ -1,20 +1,22 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.component.SwitchButton;
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -39,7 +41,8 @@ public class EditBusinessTypesWindow extends Window {
 		mainLayout.setMargin(false);
 		
 		FormLayout form = new FormLayout();
-//		form.setSizeFull();
+		form.setSpacing(false);
+		form.setMargin(false);
 		form.setWidth("100%");
 		form.setHeightUndefined();
 		nameField = new TextField("业务类型名:");
@@ -51,7 +54,27 @@ public class EditBusinessTypesWindow extends Window {
 		codeField.setIcon(VaadinIcons.CODE);
 		codeField.setWidth("350px");
 		codeField.setHeight("27px");
-		form.addComponents(nameField, codeField);
+		List<String> needToCheckItems = new ArrayList<String>();
+		needToCheckItems.add("是");
+		needToCheckItems.add("否");
+		needToCheckBox = new ComboBox<String>("是否审档:", needToCheckItems);
+		needToCheckBox.setIcon(VaadinIcons.LIFEBUOY);
+		needToCheckBox.setWidth("350px");
+		needToCheckBox.setHeight("27px");
+		needToCheckBox.setEmptySelectionAllowed(false);
+		needToCheckBox.setTextInputAllowed(false);
+		List<String> checkLevelItems = new ArrayList<String>();
+		checkLevelItems.add("是");
+		checkLevelItems.add("否");
+		checkLevelBox = new ComboBox<String>("审档级别:", checkLevelItems);
+		checkLevelBox.setIcon(VaadinIcons.MALE);
+		checkLevelBox.setDescription("一级审档表示本社区本机构内部审档。二级审档表示本社区外部机构审档。");
+		checkLevelBox.setWidth("350px");
+		checkLevelBox.setHeight("27px");
+		checkLevelBox.setEmptySelectionAllowed(false);
+		checkLevelBox.setTextInputAllowed(false);
+		
+		form.addComponents(nameField,codeField,needToCheckBox,checkLevelBox);
 		
 		HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setSizeFull();
@@ -70,28 +93,7 @@ public class EditBusinessTypesWindow extends Window {
 		buttonPane.addComponent(subButtonPane);
 		buttonPane.setComponentAlignment(subButtonPane, Alignment.BOTTOM_RIGHT);
 		
-		HorizontalLayout hlayout1 = new HorizontalLayout();
-		hlayout1.setWidthUndefined();
-		hlayout1.setHeight("40px");
-		Image txt1 = new Image("是否需要审档:");
-		txt1.setIcon(VaadinIcons.CLIPBOARD_CHECK);
-		hlayout1.addComponents(txt1, btnCheck);
-		
-		HorizontalLayout hlayout2 = new HorizontalLayout();
-		hlayout2.setWidthUndefined();
-		hlayout2.setHeight("40px");
-		Image txt2 = new Image("业务索引号从1开始:");
-		txt2.setIcon(VaadinIcons.INDENT);
-		hlayout2.addComponents(txt2, btnIndex);
-		
-		HorizontalLayout hlayout3 = new HorizontalLayout();
-		hlayout3.setWidthUndefined();
-		hlayout3.setHeight("40px");
-		Image txt3 = new Image("是否内部审档:");
-		txt3.setIcon(VaadinIcons.DIAMOND);
-		hlayout3.addComponents(txt3, btnLocalCheck);
-		
-		mainLayout.addComponents(form, hlayout1,hlayout2,hlayout3,buttonPane);
+		mainLayout.addComponents(form,buttonPane);
 		this.setContent(mainLayout);
 		
 		btnCancel.addClickListener(e -> {
@@ -112,12 +114,9 @@ public class EditBusinessTypesWindow extends Window {
 			DashboardUI ui = (DashboardUI) UI.getCurrent();
 			Business newInstance = new Business();
 			newInstance.setName(w.nameField.getValue());
-			newInstance.setFileCheck(w.btnCheck.isSelected() ? 1:0);
-			newInstance.setHasFirstIndex(w.btnIndex.isSelected() ? 1:0);
-			newInstance.setLocalCheck(w.btnLocalCheck.isSelected() ? 1:0);
 			newInstance.setCode(w.codeField.getValue());
-			
-			
+			newInstance.setCheckLevel(w.checkLevelBox.getValue());
+			newInstance.setNeedToCheck(w.needToCheckBox.getValue().equals("是")?1:0);
 			ui.businessService.insert(newInstance);
 			w.close();
 			callback.onSuccessful();
@@ -132,9 +131,8 @@ public class EditBusinessTypesWindow extends Window {
         w.nameField.setValue(business.getName());
         w.nameField.focus();
         w.codeField.setValue(business.getCode());
-        w.btnCheck.setSelected((business.getFileCheck()==1));
-        w.btnIndex.setSelected((business.getHasFirstIndex()==1));
-        w.btnLocalCheck.setSelected((business.getLocalCheck()==1));
+        w.checkLevelBox.setValue(business.getCheckLevel());
+        w.needToCheckBox.setValue(business.getNeedToCheck() == 1?"是":"否");
         w.btnAdd.setCaption("保存");
         w.setCaption("编辑业务类型");
         w.btnAdd.addClickListener(e -> {
@@ -146,9 +144,8 @@ public class EditBusinessTypesWindow extends Window {
         	}
         	
         	business.setName(w.nameField.getValue());
-        	business.setFileCheck(w.btnCheck.isSelected()?1:0);
-        	business.setHasFirstIndex(w.btnIndex.isSelected()?1:0);
-        	business.setLocalCheck(w.btnLocalCheck.isSelected()?1:0);
+        	business.setCheckLevel(w.checkLevelBox.getValue());
+        	business.setNeedToCheck(w.needToCheckBox.getValue().equals("是")?1:0);
         	business.setCode(w.codeField.getValue());
         	ui.businessService.update(business);
 			w.close();
@@ -158,11 +155,10 @@ public class EditBusinessTypesWindow extends Window {
         w.center();
     }
 	
-	private SwitchButton btnCheck = new SwitchButton(false, null,"",SwitchButton.WHITE);
-	private SwitchButton btnIndex = new SwitchButton(false, null,"", SwitchButton.WHITE);
-	private SwitchButton btnLocalCheck = new SwitchButton(false, null,"", SwitchButton.WHITE);
 	private TextField nameField; // 业务类型名
 	private TextField codeField; // 业务类型快捷编码
+	private ComboBox<String> needToCheckBox; //是否审档
+	private ComboBox<String> checkLevelBox;//审档级别
 	private Button btnAdd;
 	private static DashboardUI ui = (DashboardUI) UI.getCurrent();
 }

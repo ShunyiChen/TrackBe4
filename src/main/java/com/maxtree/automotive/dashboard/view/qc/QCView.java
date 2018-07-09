@@ -706,42 +706,42 @@ public class QCView extends Panel implements View, FrontendViewIF{
      * @param transactionUniqueId
      */
     public void commitTransaction(int transactionUniqueId) {
-    	Business business = ui.businessService.findById(transaction.getBusinessUniqueId());
-    	// 不需要审档，合格退回前台，不合格也退回前台
-    	if (business.getFileCheck() == 0) {
-    		Callback2 accept = new Callback2() {
-
-				@Override
-				public void onSuccessful(Object... objects) {
-					acceptAndBack(objects[0].toString());
-				}
-    		};
-    		Callback2 back = new Callback2() {
-
-				@Override
-				public void onSuccessful(Object... objects) {
-					back(objects[0].toString());
-				}
-    		};
-    		EditFeedbackWindow.open(accept, back);
-    	}
-    	// 需要审档，合格提交到审档，不合格退回前台
-    	else {
-    		Callback2 accept = new Callback2() {
-				@Override
-				public void onSuccessful(Object... objects) {
-					submit(objects[0].toString());
-				}
-    		};
-    		Callback2 back = new Callback2() {
-
-				@Override
-				public void onSuccessful(Object... objects) {
-					back(objects[0].toString());
-				}
-    		};
-    		EditFeedbackWindow.open(accept, back);
-    	}
+//    	Business business = ui.businessService.findById(transaction.getBusinessUniqueId());
+//    	// 不需要审档，合格退回前台，不合格也退回前台
+//    	if (business.getFileCheck() == 0) {
+//    		Callback2 accept = new Callback2() {
+//
+//				@Override
+//				public void onSuccessful(Object... objects) {
+//					acceptAndBack(objects[0].toString());
+//				}
+//    		};
+//    		Callback2 back = new Callback2() {
+//
+//				@Override
+//				public void onSuccessful(Object... objects) {
+//					back(objects[0].toString());
+//				}
+//    		};
+//    		EditFeedbackWindow.open(accept, back);
+//    	}
+//    	// 需要审档，合格提交到审档，不合格退回前台
+//    	else {
+//    		Callback2 accept = new Callback2() {
+//				@Override
+//				public void onSuccessful(Object... objects) {
+//					submit(objects[0].toString());
+//				}
+//    		};
+//    		Callback2 back = new Callback2() {
+//
+//				@Override
+//				public void onSuccessful(Object... objects) {
+//					back(objects[0].toString());
+//				}
+//    		};
+//    		EditFeedbackWindow.open(accept, back);
+//    	}
     }
     
     @Override

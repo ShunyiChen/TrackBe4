@@ -1,5 +1,6 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.util.StringUtils;
@@ -80,22 +81,10 @@ public class EditUserWindow extends Window {
 		companySelector.setItems(companies);
 		companySelector.setIcon(VaadinIcons.GROUP);
 		
-//		maximumField = new DoubleField();
-//		maximumField.setCaption("最大空间容量(GB):");
-//		bar.setCaption("使用24%");
+		activateBox.setEmptySelectionAllowed(false);
+		activateBox.setTextInputAllowed(false);
 		
-		form.addComponents(userNameField, lastNameField, firstNameField, passwordField, confirmPasswordField, companySelector);
-		activatedButton = new SwitchButton(true, SwitchButton.WHITE);
-		activatedButton.setCaption("激活状态:");
-		activatedButton.setIcon(VaadinIcons.ENTER);
-		
-		
-		FormLayout bottomForm = new FormLayout();
-		bottomForm.setMargin(false);
-		bottomForm.setSpacing(false);
-		bottomForm.setWidth("100%");
-		bottomForm.setHeightUndefined();
-		bottomForm.addComponents(activatedButton);
+		form.addComponents(userNameField,lastNameField,firstNameField,passwordField,confirmPasswordField,companySelector,activateBox);
 		
 		HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setSizeFull();
@@ -115,7 +104,7 @@ public class EditUserWindow extends Window {
 		subButtonPane.setComponentAlignment(btnApply, Alignment.BOTTOM_RIGHT);
 		buttonPane.addComponent(subButtonPane);
 		buttonPane.setComponentAlignment(subButtonPane, Alignment.BOTTOM_RIGHT);
-		mainLayout.addComponents(form, bottomForm, buttonPane);
+		mainLayout.addComponents(form,buttonPane);
 		this.setContent(mainLayout);
 		btnCancel.addClickListener(e -> {
 			close();
@@ -141,8 +130,7 @@ public class EditUserWindow extends Window {
 		firstNameField.setWidth(w+"px");
 		lastNameField.setWidth(w+"px");
 		companySelector.setWidth(w+"px");
-//		maximumField.setWidth(w+"px");
-//		bar.setWidth(w+"px");
+		activateBox.setWidth(w+"px");
 		
 		userNameField.setHeight(h+"px");
 		passwordField.setHeight(h+"px");
@@ -150,8 +138,7 @@ public class EditUserWindow extends Window {
 		firstNameField.setHeight(h+"px");
 		lastNameField.setHeight(h+"px");
 		companySelector.setHeight(h+"px");
-//		maximumField.setHeight(h+"px");
-//		bar.setHeight(h+"px");
+		activateBox.setHeight(h+"px");
 	}
 	
 	/**
@@ -283,7 +270,7 @@ public class EditUserWindow extends Window {
     		String plainText = passwordField.getValue();
     		String hashed = PasswordSecurity.hashPassword(plainText);
     		user.setHashed(hashed);
-    		user.setActivated(activatedButton.isSelected() ? 1 : 0);
+    		user.setActivated(activateBox.getValue().equals("是")?1:0);
     		
     		Company company = companySelector.getValue();
     		if (company != null) {
@@ -314,7 +301,7 @@ public class EditUserWindow extends Window {
 				notification.show(Page.getCurrent());
     			return false;
     		}
-    		user.setActivated(activatedButton.isSelected() ? 1 : 0);
+    		user.setActivated(activateBox.getValue().equals("是")?1:0);
     		
     		Company company = companySelector.getValue();
     		if (company != null) {
@@ -363,7 +350,7 @@ public class EditUserWindow extends Window {
         w.lastNameField.setValue(user.getProfile().getLastName());
         w.passwordField.setVisible(false);
 		w.confirmPasswordField.setVisible(false);
-		w.activatedButton.setSelected(user.getActivated() == 1);
+		w.activateBox.setValue(user.getActivated() == 1?"是":"否");
 		
         w.btnAdd.setCaption("保存");
         w.setCaption("编辑用户");
@@ -391,7 +378,6 @@ public class EditUserWindow extends Window {
         w.center();
     }
 	
-	private SwitchButton activatedButton;
 	private TextField userNameField;
 	private PasswordField passwordField;
 	private PasswordField confirmPasswordField;
@@ -399,6 +385,7 @@ public class EditUserWindow extends Window {
 	private TextField lastNameField;
 	private ComboBox<Company> companySelector = new ComboBox<Company>();
 	private String oldUserName;
+	private ComboBox<String> activateBox = new ComboBox<String>("是否激活:", Arrays.asList(new String[] {"是","否"}));
 	
 	private Button btnAdd;
 	private Button btnApply;

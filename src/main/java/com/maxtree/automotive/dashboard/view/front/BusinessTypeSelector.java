@@ -32,18 +32,22 @@ public class BusinessTypeSelector extends HorizontalLayout {
 	public BusinessTypeSelector() {
 		this.setSpacing(false);
 		this.setMargin(false);
-		
+		this.setWidthUndefined();
+		this.setHeightUndefined();
 		
 		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		
 		int companyUniqueId = loginUser.getCompanyUniqueId();
 		Label businessTypeText = new Label("业务类型:");
 		data = ui.businessService.findAllByCompanyUniqueId(companyUniqueId);
 		selector = new ComboBox<Business>(null, data);
-//		selector.setEmptySelectionAllowed(false);
-		selector.setTextInputAllowed(false);
-		selector.setHeight("27px");
+//		selector.setTextInputAllowed(false);
+		// Disallow null selections
+		selector.setEmptySelectionAllowed(false);
+		selector.setPlaceholder("选择一个业务类型");
 		selector.setWidth("430px");
+		selector.setHeight("27px");
+		
+		
 		this.addComponents(businessTypeText, Box.createHorizontalBox(3), selector);
 		this.setComponentAlignment(businessTypeText, Alignment.MIDDLE_LEFT);
 		this.setComponentAlignment(selector, Alignment.MIDDLE_LEFT);

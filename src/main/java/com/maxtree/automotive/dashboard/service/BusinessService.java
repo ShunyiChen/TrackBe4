@@ -77,9 +77,12 @@ public class BusinessService {
 	 * @return
 	 */
 	public Business insert(Business business) {
-		String sql = "INSERT INTO BUSINESS(NAME,FILECHECK,HASFIRSTINDEX,LOCALCHECK,CODE) VALUES(?,?,?,?,?)";
-		jdbcTemplate.update(sql, new Object[] { business.getName(), business.getFileCheck(),
-				business.getHasFirstIndex(), business.getLocalCheck(), business.getCode() // 快捷代码
+		String sql = "INSERT INTO BUSINESS(NAME,NEEDTOCHECK,CHECKLEVEL,CODE) VALUES(?,?,?,?)";
+		jdbcTemplate.update(sql, new Object[] {
+				business.getName(),
+				business.getNeedToCheck(),
+				business.getCheckLevel(),
+				business.getCode() // 快捷代码
 		});
 		return business;
 	}
@@ -90,13 +93,12 @@ public class BusinessService {
 	 * @return
 	 */
 	public Business update(Business business) {
-		String sql = "UPDATE BUSINESS SET NAME=?,FILECHECK=?,HASFIRSTINDEX=?,LOCALCHECK=?,CODE=? WHERE BUSINESSUNIQUEID=?";
+		String sql = "UPDATE BUSINESS SET NAME=?,NEEDTOCHECK=?,CHECKLEVEL=?,CODE=? WHERE BUSINESSUNIQUEID=?";
 		jdbcTemplate.update(sql,
 				new Object[] {
 						business.getName(),
-						business.getFileCheck(),
-						business.getHasFirstIndex(),
-						business.getLocalCheck(),
+						business.getNeedToCheck(),
+						business.getCheckLevel(),
 						business.getCode(), // 快捷编码
 						business.getBusinessUniqueId()
 						});

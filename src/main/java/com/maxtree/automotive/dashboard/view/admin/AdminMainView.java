@@ -378,9 +378,32 @@ public class AdminMainView extends VerticalLayout {
         	}
         });
         
-        vContent.addComponents(row1, row2);
+        // 服务器
+        HorizontalLayout row3 = new HorizontalLayout();
+        row3.setMargin(false);
+        row3.setSpacing(false);
+        row3.addStyleName("detail-hlayout");
+        row3.setWidth("100%");
+        row3.setHeight("48px");
+        Label manageServers = new Label("管理服务器");
+        manageServers.addStyleName("detail-setting-text");
+        Image rightArrow3 = new Image(null, new ThemeResource("img/adminmenu/rightarrow.png"));
+        row3.addComponents(manageServers, rightArrow3);
+        row3.setComponentAlignment(manageServers, Alignment.MIDDLE_LEFT);
+        row3.setComponentAlignment(rightArrow3, Alignment.MIDDLE_RIGHT);
+        row3.addLayoutClickListener(e -> {
+//        	if (loginUser.isPermitted(PermissionCodes.K4)) {
+//        		showDetailPane(Commands.MANAGE_SITES);
+//            	hidePanes();
+//        	} else {
+//        		Notifications.warning("没有权限。");
+//        	}
+        });
+        
+        vContent.addComponents(row1, row2, row3);
         vContent.setComponentAlignment(row1, Alignment.TOP_CENTER);
         vContent.setComponentAlignment(row2, Alignment.TOP_CENTER);
+        vContent.setComponentAlignment(row3, Alignment.TOP_CENTER);
         
         vlayoutWithTitle.addComponents(label, vContent);
         vlayoutWithTitle.setComponentAlignment(label, Alignment.TOP_LEFT);
@@ -930,16 +953,16 @@ public class AdminMainView extends VerticalLayout {
 	
 	private ManageAdmin manageAdmin;// 管理管理员
 	private ManageCompany manageCompany;// 管理机构
-	private ManageOtherUsers manageOtherUsers;// = new ManageOtherUsers(this);// 管理其他用户
- 	private ManageBusinessTypes manageBusinessType;// = new ManageBusinessTypes(this);//业务类型管理
-	private ManageSites manageSites;// = new ManageSites(this);// 管理站点
-	private ManageRoles manageRoles;// = new ManageRoles(this);// 管理角色
-	private ManagePermissions managePermissions;// = new ManagePermissions(this);// 管理权限
+	private ManageOtherUsers manageOtherUsers;// 管理其他用户
+ 	private ManageBusinessTypes manageBusinessType;//业务类型管理
+	private ManageSites manageSites;// 管理站点
+	private ManageRoles manageRoles;// 管理角色
+	private ManagePermissions managePermissions;// 管理权限
 	private ManageDataDictionary manageDataDictionary;
 	private ManageCommunity manageCommunity; // 社区
 	private ManageApprovals manageApprovals;// 等待审批
 	private ManageUserInvitations manageUserInvitations;// 邀请用户
-	private ManageCommunityInvitations manageCommunityInvitations;// 社区邀请
+	private ManageCommunityInvitations manageCommunityInvitations;//社区邀请
 	private ManageTenants manageTenants;
 	private ManageBroadCast manageBroadCast;
 	private AboutTB4 aboutTB4;

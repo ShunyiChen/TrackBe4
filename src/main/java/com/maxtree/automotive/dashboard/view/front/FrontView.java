@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -23,6 +24,7 @@ import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.Status;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
+import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.Test;
@@ -102,13 +104,13 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         Responsive.makeResponsive(root);
         root.addComponent(buildHeader());
         root.addComponent(buildSparklines());
-        dynamicallyVLayout.addStyleName("dynamicallyVLayout");
-        dynamicallyVLayout.setWidth("100%");
-        dynamicallyVLayout.setHeight("100%");
-        dynamicallyVLayout.addComponents(blankLabel);
-        dynamicallyVLayout.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
-        root.addComponents(dynamicallyVLayout);
-        root.setExpandRatio(dynamicallyVLayout, 7.0f);
+        main.addStyleName("dynamicallyVLayout");
+        main.setWidth("100%");
+        main.setHeight("100%");
+        main.addComponents(blankLabel);
+        main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
+        root.addComponents(main);
+        root.setExpandRatio(main, 7.0f);
         
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
@@ -117,78 +119,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
             public void layoutClick(final LayoutClickEvent event) {
                 DashboardEventBus.post(new DashboardEvent.CloseOpenWindowsEvent());
             }
-        });
-        editableType.getSelector().addValueChangeListener(e -> {
-        	
-        	if (StringUtils.isEmpty(basicInfo.getVIN())) {
-        		Notifications.warning("VIN不能为空");
-        		return;
-        	}
-        	
-        	if (e.getValue() != null) {
-        		Business business = e.getValue();
-        		List<DataDictionary> items = ui.businessService.assignedItems(business.getCode());
-        		for (DataDictionary dd : items) {
-        			
-        			ThumbnailRow row = new ThumbnailRow(dd.getItemName());
-        			Thumbnail thumb = new Thumbnail();
-        			row.addThumbnail(thumb);
-        			
-        			topGrid.addRow(row);
-        			
-        		}
-        		
-        		
-        		
-//        		int businessUniqueId = business.getBusinessUniqueId();
-//        		if (editableTrans.getTransactionUniqueId() == 0) {
-//        			// 产生新的UUID
-//        			uuid = UUID.randomUUID().toString();
-//            		int i = 0;
-//            		Document[] documents = new Document[business.getItems().size()];
-//            		for (DataDictionary item : business.getItems()) {
-//            			documents[i] = new Document();
-//            			documents[i].setAlias(item.getItemName());
-//            			documents[i].setFileFullPath("");
-//            			documents[i].setCategory(1); //1：主要图片,2：次要图片
-//            			documents[i].setUuid(uuid);
-//            			documents[i].setVin(basicInfo.getVIN());
-//            			documents[i].setBatch(batch);
-//            			i++;
-//            		}
-//            		primaryGrid.addUploadCells(editableSite, documents);
-//        			
-//        		} else {
-//        			uuid = editableTrans.getUuid();
-//        			List<Document> documentList = ui.documentService.findPrimary(uuid, basicInfo.getVIN());
-//        			List<Document> filledDocumentList = new ArrayList<Document>();
-//        			for (DataDictionary item : business.getItems()) {
-//        				Document doc = existCheck(item.getItemName(), documentList);
-//        				if (doc == null) {
-//        					doc = new Document();
-//        					doc.setAlias(item.getItemName());
-//        					doc.setFileFullPath("");
-//        					doc.setCategory(1);  //1：主要图片,2：次要图片
-//        					doc.setUuid(editableTrans.getUuid());
-//        					doc.setVin(basicInfo.getVIN());
-//        					doc.setBatch(batch);
-//        				}
-//        				filledDocumentList.add(doc);
-//        			}
-//        			
-//        			// 初始化主要材料
-//            		primaryGrid.addUploadCells(editableSite, filledDocumentList.toArray(new Document[filledDocumentList.size()]));
-//        		}
-//        		
-//        		// 初始化次要材料
-//        		secondaryGrid.setBusinessUniqueId(businessUniqueId);
-//        		secondaryGrid.setEnabledForUploadComponent(true);//如果业务类型已选，则可以启用选择上传组件
-//        		secondaryGrid.setSite(editableSite);
-//        		secondaryGrid.setVin(basicInfo.getVIN());
-//        		secondaryGrid.setUuid(uuid);
-//            	List<Document> doc2 = ui.documentService.findSecondary(uuid, basicInfo.getVIN());
-//            	secondaryGrid.addUploadCells(basicInfo.getVIN(), editableSite, doc2.toArray(new Document[doc2.size()]));
-        	}
         });
         
         // 开启轮询事件提醒
@@ -232,21 +162,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
             	
             }
         });
-    }
-    
-    /**
-     * 
-     * @param documentName
-     * @param documentList
-     * @return
-     */
-    private Document existCheck(String documentName, List<Document> documentList) {
-    	for (Document doc : documentList) {
-    		if (doc.getAlias().equals(documentName)) {
-    			return doc;
-    		}
-    	}
-    	return null;
     }
     
     /**
@@ -479,85 +394,29 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
      * 
      */
     private void resetComponents() {
-    	basicInfo.reset();
-    	editableType.reset();
-//    	primaryGrid.reset();
-//    	secondaryGrid.reset();
-    	dynamicallyVLayout.removeAllComponents();
-    	dynamicallyVLayout.setHeightUndefined();
+    	main.removeAllComponents();
+    	main.setHeightUndefined();
     	
-    	VerticalLayout vLayout = new VerticalLayout();
-    	vLayout.setSpacing(false);
-    	vLayout.setMargin(false);
-    	vLayout.addComponents(topGrid, bottomGrid);
+    	VerticalLayout leftChild = new VerticalLayout();
+    	leftChild.setSizeFull();
+    	leftChild.setSpacing(true);
+    	leftChild.setMargin(false);
+    	leftChild.addComponents(topGrid, bottomGrid);
+    	Panel rightChild = new Panel("拍照");
+    	rightChild.setSizeFull();
+    	rightChild.setHeight("612px");
+    	rightChild.addStyleName("picture-pane");
+    	spliter.setSizeFull();
+    	spliter.addComponents(leftChild, rightChild);
     	
-    	
-    	
-    	try {
-			generateHtmlPage();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
- 			@Override
- 			public InputStream getStream() {
- 				FileInputStream inputStream = null;
-				try {
-					inputStream = new FileInputStream("devices/"+user.getUserUniqueId()+".html");
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
-				return inputStream;
- 			}
- 		}; 
- 		StreamResource streamResource = new StreamResource(streamSource, user.getUserUniqueId()+".html");
- 		streamResource.setCacheTime(0);
-		
-		BrowserFrame browser = new BrowserFrame("6766cBrowser", streamResource);
-		browser.setWidth("800px");
-		browser.setHeight("600px");
-    	
-    	
-    	spliter.setFirstComponent(vLayout);
-    	spliter.setSecondComponent(browser);
-    	
-	    dynamicallyVLayout.addComponents(basicInfo,editableType,spliter);//,topGrid,bottomGrid);
+    	spliter1.setSizeFull();
+    	spliter1.addComponents(basicInfoPane, businessTypePane);
+    	spliter1.setExpandRatio(basicInfoPane, 2);
+    	spliter1.setExpandRatio(businessTypePane, 1);
+    	main.addComponents(spliter1, spliter);
     }
     
-    private void generateHtmlPage() throws IOException {
-		// 读取原来的html模板
-		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		String everything = "";
-		File f = new File("devices/Sample_CamOCX_HTML_Device_IE.html");
-		FileInputStream in = new FileInputStream(f);
-		// 指定读取文件时以UTF-8的格式读取
-		// BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-		BufferedReader br = new BufferedReader(new UnicodeReader(in));
-		StringBuilder sb = new StringBuilder();
-		String line = br.readLine();
-		while (line != null) {
-			if (line.contains("var uuid = \"\";")) {
-				line = line.replace("var uuid = \"\";", "var uuid = \"123123\";");
-			}
-			// System.out.println(line);
-			sb.append(line);
-			sb.append(System.lineSeparator());
-			line = br.readLine();
-		}
-		everything = sb.toString();
-//		System.out.println(everything);
-
-		br.close();
-		in.close();
-		
-		// 动态生成新的html
-		OutputStreamWriter oStreamWriter = new OutputStreamWriter(
-				new FileOutputStream(new File("devices/" + user.getUserUniqueId() + ".html")), "utf-8");
-		oStreamWriter.append(everything);
-		oStreamWriter.close();
-
-	}
+ 
     
     /**
      * 
@@ -681,10 +540,10 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         	editableTrans.setPlateType("");
         	editableTrans.setPlateNumber(area.getLicenseplate());
         	editableTrans.setVin("");
-        	basicInfo.setFieldValues(editableTrans);
+        	basicInfoPane.setFieldValues(editableTrans);
         	
         	// validating the transaction information
-        	basicInfo.validatingFieldValues(binder);
+        	basicInfoPane.validatingFieldValues(binder);
         	binder.setBean(editableTrans);
         	
         	resetComponents();
@@ -769,18 +628,18 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
      * 
      */
     public void commitTransaction() {
-		Business business = editableType.getSelector().getValue();
-		if (!basicInfo.checkEmptyValues() || business == null) {
-			Notifications.warning("请将信息输入完整。");
-			return;
-		}
+//		Business business = editableType.getSelector().getValue();
+//		if (!basicInfo.checkEmptyValues() || business == null) {
+//			Notifications.warning("请将信息输入完整。");
+//			return;
+//		}
 //		if (!primaryGrid.checkUploads()) {
 //			Notifications.warning("请将主要材料上传完整。");
 //			return;
 //		}
     	
     	User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-    	basicInfo.assignValues(editableTrans);
+    	basicInfoPane.assignValues(editableTrans);
     	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
     	editableTrans.setCommunityUniqueId(loginUser.getCommunityUniqueId());
     	editableTrans.setCompanyUniqueId(loginUser.getCompanyUniqueId());
@@ -790,7 +649,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     	editableTrans.setDistrict(editableCompany.getDistrict());
     	editableTrans.setSite(editableSite);
     	editableTrans.setDateModified(new Date());
-    	editableTrans.setBusinessUniqueId(business.getBusinessUniqueId());
+//    	editableTrans.setBusinessUniqueId(business.getBusinessUniqueId());
     	editableTrans.setUuid(uuid);
     	editableTrans.setTypist(loginUser.getUserUniqueId());
     	// Insert new transaction
@@ -833,10 +692,10 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     
 	@Override
 	public void cleanStage() {
-		dynamicallyVLayout.removeAllComponents();
-		dynamicallyVLayout.setHeight("100%");
-		dynamicallyVLayout.addComponents(blankLabel);
-		dynamicallyVLayout.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
+		main.removeAllComponents();
+		main.setHeight("100%");
+		main.addComponents(blankLabel);
+		main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
 	}
 
 	@Override
@@ -859,7 +718,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 	private Transaction editableTrans = null; 	//可编辑的编辑transaction
 	private Company editableCompany = null;	 	//前台所在机构
 	private Site editableSite = null;			//站点
-	private BusinessTypeSelector editableType = new BusinessTypeSelector(); //业务类型
     private String uuid = null; 				//挂接文件的UUID
     private int batch = 0; 						//新建时的批次号
     private Label titleLabel;
@@ -867,18 +725,26 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     public static final String EDIT_ID = "dashboard-edit";
     public static final String TITLE_ID = "dashboard-title";
     private VerticalLayout root;
-    private VerticalLayout dynamicallyVLayout = new VerticalLayout();
+    private VerticalLayout main = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private Binder<Transaction> binder = new Binder<>();
-    private BasicInfoPane basicInfo = new BasicInfoPane(this);
+    
+    
+    
+    private BasicInfoPane basicInfoPane = new BasicInfoPane(this);
+    private BusinessTypePane businessTypePane = new BusinessTypePane();
     private ThumbnailGrid topGrid = new ThumbnailGrid("主要材料", 400);
     private ThumbnailGrid bottomGrid = new ThumbnailGrid("次要材料", 200);
+    
+    
+    
     private Button btnPrint = new Button();
     private Button btnAdd = new Button();
     private Button btnCommit = new Button();
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
-    private HorizontalSplitPanel spliter = new HorizontalSplitPanel();
+    private HorizontalLayout spliter1 = new HorizontalLayout();
+    private HorizontalLayout spliter = new HorizontalLayout();
     
 
 

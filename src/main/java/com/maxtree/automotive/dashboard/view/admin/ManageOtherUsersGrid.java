@@ -187,9 +187,23 @@ public class ManageOtherUsersGrid extends VerticalLayout {
 					}
 				}
 			});
-			
+			menu.addItem("分配业务类型", new Command() {
+				@Override
+				public void menuSelected(MenuItem selectedItem) {
+					AssigningBusinessesToUserWindow.open(loginUser);
+				}
+			});
 			menu.addSeparator();
 			
+			menu.addItem("重置密码", new Command() {
+				@Override
+				public void menuSelected(MenuItem selectedItem) {
+					
+					ResetPasswordWindow.open(loginUser);
+				}
+			});
+			
+			menu.addSeparator();
 			menu.addItem("编辑", new Command() {
 				@Override
 				public void menuSelected(MenuItem selectedItem) {

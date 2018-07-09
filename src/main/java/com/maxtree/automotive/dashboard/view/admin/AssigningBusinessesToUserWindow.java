@@ -8,7 +8,7 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.domain.Business;
-import com.maxtree.automotive.dashboard.domain.Company;
+import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.server.ThemeResource;
@@ -22,7 +22,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-public class AssigningBusinessesToCompanyWindow extends Window {
+public class AssigningBusinessesToUserWindow extends Window {
 
 	/**
 	 * 
@@ -33,12 +33,12 @@ public class AssigningBusinessesToCompanyWindow extends Window {
 	 * 
 	 * @param material
 	 */
-	public AssigningBusinessesToCompanyWindow(Company company) {
+	public AssigningBusinessesToUserWindow(User user) {
 		this.setWidth("613px");
 		this.setHeight("513px");
 		this.setModal(true);
 		this.setResizable(false);
-		this.setCaption("为机构分配业务类型");
+		this.setCaption("为用户分配业务类型");
 		this.addStyleName("edit-window");
 		VerticalLayout mainLayout = new VerticalLayout(); 
 		mainLayout.setSpacing(true);
@@ -46,7 +46,7 @@ public class AssigningBusinessesToCompanyWindow extends Window {
 		mainLayout.setWidth("100%");
 		mainLayout.setHeightUndefined();
 		Image img = new Image(null, new ThemeResource("img/adminmenu/userrole.png"));
-		Label companyName = new Label(company.getCompanyName());
+		Label companyName = new Label(user.getUserName());
 		HorizontalLayout title = new HorizontalLayout();
 		title.setWidthUndefined();
 		title.setHeightUndefined();
@@ -62,7 +62,7 @@ public class AssigningBusinessesToCompanyWindow extends Window {
 		hlayout.setMargin(false);
 		
 		List<Business> allBusinesses = ui.businessService.findAll();
-		List<Business> assignedBusinesses = ui.companyService.findAssignedBusinesses(company.getCompanyUniqueId());
+		List<Business> assignedBusinesses = ui.companyService.findAssignedBusinesses(user.getCompanyUniqueId());
 		
 		select = new TwinColSelect<>(null, allBusinesses);
 		select.setWidth("100%");
@@ -110,26 +110,32 @@ public class AssigningBusinessesToCompanyWindow extends Window {
 		});
 	}
 	
-	private void apply(Company company) {
-		ui.companyService.deleteBusinesses(company.getCompanyUniqueId());
+	/**
+	 * 
+	 * @param user
+	 */
+	private void apply(User user) {
+		ui.companyService.deleteBusinesses(user.getCompanyUniqueId());
 		
 		Set<Business> set = select.getSelectedItems();
 		List<Business> lstBusiness = new ArrayList<>(set);
 		
-		ui.companyService.assignBusinesses(company.getCompanyUniqueId(), lstBusiness);
+		ui.companyService.assignBusinesses(user.getCompanyUniqueId(), lstBusiness);
 	}
 	
-	public static void open(Company company, Callback callback) {
+	/**
+	 * 
+	 * @param user
+	 */
+	public static void open(User user) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        AssigningBusinessesToCompanyWindow w = new AssigningBusinessesToCompanyWindow(company);
+        AssigningBusinessesToUserWindow w = new AssigningBusinessesToUserWindow(user);
         w.btnApply.addClickListener(e -> {
-        	w.apply(company);
-			callback.onSuccessful();
+        	w.apply(user);
 		});
         w.btnOK.addClickListener(e -> {
-        	w.apply(company);
+        	w.apply(user);
 			w.close();
-			callback.onSuccessful();
 		});
         UI.getCurrent().addWindow(w);
         w.center();

@@ -4,7 +4,8 @@ import java.util.List;
 
 /**
  * 
- * @author chens
+ * @author Chen
+ *
  */
 public class Business {
 
@@ -24,12 +25,28 @@ public class Business {
 		this.name = name;
 	}
 
-	public Integer getFileCheck() {
-		return fileCheck;
+	public String getCode() {
+		return code;
 	}
 
-	public void setFileCheck(Integer fileCheck) {
-		this.fileCheck = fileCheck;
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public Integer getNeedToCheck() {
+		return needToCheck;
+	}
+
+	public void setNeedToCheck(Integer needToCheck) {
+		this.needToCheck = needToCheck;
+	}
+
+	public String getCheckLevel() {
+		return checkLevel;
+	}
+
+	public void setCheckLevel(String checkLevel) {
+		this.checkLevel = checkLevel;
 	}
 
 	public List<DataDictionary> getItems() {
@@ -40,42 +57,15 @@ public class Business {
 		this.items = items;
 	}
 
-	public Integer getHasFirstIndex() {
-		return hasFirstIndex;
-	}
-
-	public void setHasFirstIndex(Integer hasFirstIndex) {
-		this.hasFirstIndex = hasFirstIndex;
-	}
-	
-	public Integer getLocalCheck() {
-		return localCheck;
-	}
-
-	public void setLocalCheck(Integer localCheck) {
-		this.localCheck = localCheck;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
 	@Override
 	public String toString() {
-		// return String.format(
-		// "Business[businessUniqueId=%d, name='%s']", businessUniqueId, name);
-		return name+"("+(fileCheck == 0 ? "不需要审档":"需要审档")+")";
+		return name + "(" + (needToCheck == 0 ? "不需要审档" : "需要审档") + ")";
 	}
-	
+
 	private Integer businessUniqueId = 0;
-	private String name;
-	private Integer fileCheck = 0; // 0-不需要审档，1-需要审档
-	private List<DataDictionary> items;
-	private Integer hasFirstIndex = 0; // 0-不是第一个索引，1-是第一个索引
-	private Integer localCheck = 0; // 0-不用本机构审档员，1-用本机构内审档员审档
+	private String name; // 业务类型名称
 	private String code; // 快捷编码
+	private Integer needToCheck = 0; // 是否需要审档
+	private String checkLevel;// 审档级别（一级/二级）
+	private List<DataDictionary> items;
 }
