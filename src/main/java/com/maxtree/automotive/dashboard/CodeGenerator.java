@@ -62,7 +62,11 @@ public class CodeGenerator {
 		return code;
 	}
 	
-	public static String generateSiteCode() {
+	/**
+	 * 
+	 * @return
+	 */
+	public static String generate4BitCode() {
 		Random random = new Random();
 		String[] codes = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","0","1","2","3","4","5","6","7","8","9"};
 		StringBuilder generated = new StringBuilder(4);
@@ -77,7 +81,7 @@ public class CodeGenerator {
 	    {
 		 CodeGenerator cg = new CodeGenerator();
 		 for (int i =0;i < 20;i++) {
-			 System.out.println(cg.generateSiteCode());
+			 System.out.println(cg.generate4BitCode());
 		 }
 		 
 	    }

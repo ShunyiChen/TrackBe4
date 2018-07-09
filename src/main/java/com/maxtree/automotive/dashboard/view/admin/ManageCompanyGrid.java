@@ -78,7 +78,7 @@ public class ManageCompanyGrid extends VerticalLayout {
 		columnName.addStyleName("grid-title");
 		Label columnAddr = new Label("地址");
 		columnAddr.addStyleName("grid-title");
-		Label columnIgnore = new Label("忽略质检");
+		Label columnIgnore = new Label("跳过质检");
 		columnIgnore.addStyleName("grid-title");
 		Label columnCount = new Label("员工数");
 		columnCount.addStyleName("grid-title");
@@ -172,7 +172,7 @@ public class ManageCompanyGrid extends VerticalLayout {
 			});
 			menu.addSeparator();
 			// 如果是车管所
-			if (company.getCanCreateStorehouse() == 1) {
+			if (company.getHasStoreHouse() == 1) {
 				menu.addItem("库房", new Command() {
 					@Override
 					public void menuSelected(MenuItem selectedItem) {

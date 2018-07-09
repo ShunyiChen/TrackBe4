@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.domain.Business;
@@ -55,15 +54,12 @@ public class AssigningBusinessesToUserWindow extends Window {
 		title.addComponents(img, Box.createHorizontalBox(5), companyName);
 		title.setComponentAlignment(img, Alignment.MIDDLE_LEFT);
 		title.setComponentAlignment(companyName, Alignment.MIDDLE_LEFT);
-		
 		HorizontalLayout hlayout = new HorizontalLayout();
 		hlayout.setSizeFull();
 		hlayout.setSpacing(false);
 		hlayout.setMargin(false);
-		
-		List<Business> allBusinesses = ui.businessService.findAll();
-		List<Business> assignedBusinesses = ui.companyService.findAssignedBusinesses(user.getCompanyUniqueId());
-		
+		List<Business> allBusinesses = ui.businessService.findAllByCompanyUniqueId(user.getCompanyUniqueId());
+		List<Business> assignedBusinesses = ui.userService.findAssignedBusinesses(user.getUserUniqueId());
 		select = new TwinColSelect<>(null, allBusinesses);
 		select.setWidth("100%");
 		select.setRows(14);
@@ -115,12 +111,12 @@ public class AssigningBusinessesToUserWindow extends Window {
 	 * @param user
 	 */
 	private void apply(User user) {
-		ui.companyService.deleteBusinesses(user.getCompanyUniqueId());
+		ui.userService.deleteBusinesses(user.getUserUniqueId());
 		
 		Set<Business> set = select.getSelectedItems();
 		List<Business> lstBusiness = new ArrayList<>(set);
 		
-		ui.companyService.assignBusinesses(user.getCompanyUniqueId(), lstBusiness);
+		ui.userService.assignBusinesses(user.getUserUniqueId(), lstBusiness);
 	}
 	
 	/**

@@ -20,6 +20,8 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import com.maxtree.automotive.dashboard.PermissionCodes;
+import com.maxtree.automotive.dashboard.domain.Business;
+import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.domain.Permission;
 import com.maxtree.automotive.dashboard.domain.Role;
 import com.maxtree.automotive.dashboard.domain.RoleMember;
@@ -43,7 +45,7 @@ public class UserService {
 	 * @throws EmptyResultDataAccessException
 	 */
 	public User findById(int userUniqueId) throws EmptyResultDataAccessException {
-		String sql = "SELECT * FROM USERS WHERE USERUNIQUEID = ?";
+		String sql = "SELECT * FROM USERS WHERE USERUNIQUEID=?";
 		List<User> lstUsers = jdbcTemplate.query(sql, new Object[] {userUniqueId}, new BeanPropertyRowMapper<User>(User.class));
 		if (lstUsers.size() > 0) {
 			User user = lstUsers.get(0);
@@ -66,7 +68,7 @@ public class UserService {
 	 * @throws EmptyResultDataAccessException
 	 */
 	public User getUserByUserName(String username) throws EmptyResultDataAccessException {
-		String sql = "SELECT * FROM USERS WHERE USERNAME = ?";
+		String sql = "SELECT * FROM USERS WHERE USERNAME=?";
 		List<User> lstUsers = jdbcTemplate.query(sql, new Object[] {username}, new BeanPropertyRowMapper<User>(User.class));
 		if (lstUsers.size() > 0) {
 			User user = lstUsers.get(0);
@@ -102,11 +104,11 @@ public class UserService {
 	 */
 	private List<Role> getRoles(User user) {
 		List<Role> results = new ArrayList<Role>();
-		String sql = "SELECT * FROM ROLEMEMBER WHERE USERUNIQUEID = ?";
+		String sql = "SELECT * FROM ROLEMEMBER WHERE USERUNIQUEID=?";
 		List<RoleMember> lstRoleMember = jdbcTemplate.query(sql, new Object[] { user.getUserUniqueId() },
 				new BeanPropertyRowMapper<RoleMember>(RoleMember.class));
 		for (RoleMember roleMember : lstRoleMember) {
-			sql = "SELECT * FROM ROLE WHERE ROLEUNIQUEID = ?";
+			sql = "SELECT * FROM ROLE WHERE ROLEUNIQUEID=?";
 			Role role = jdbcTemplate.queryForObject(sql, new Object[] { roleMember.getRoleUniqueId() },
 					new BeanPropertyRowMapper<Role>(Role.class));
 			List<Permission> lstPermission = getPermissions(role);
@@ -360,5 +362,53 @@ public class UserService {
 		String sql = "SELECT * FROM USERS WHERE USERNAME=? AND USERNAME NOT IN (?)";
 		List<User> lstUSERs = jdbcTemplate.query(sql, new Object[] {newUserName, oldUserName}, new BeanPropertyRowMapper<User>(User.class));
 		return lstUSERs.size() > 0 || newUserName.equalsIgnoreCase("root");
+	}
+	
+	/**
+	 * 获取已安排的业务
+	 * 
+	 * @param userUniqueId
+	 * @return
+	 */
+	public List<Business> findAssignedBusinesses(int userUniqueId) {
+		String sql = "SELECT A.* FROM BUSINESS AS A RIGHT JOIN USERBUSINESSES AS B ON A.BUSINESSUNIQUEID=B.BUSINESSUNIQUEID WHERE B.USERUNIQUEID=?";
+		List<Business> assignedBusinesses = jdbcTemplate.query(sql, new Object[] {userUniqueId}, new BeanPropertyRowMapper<Business>(Business.class));
+		return assignedBusinesses;
+	}
+	
+	/**
+	 * 删除用户原来的业务关系
+	 * 
+	 * @param userUniqueId
+	 * @return
+	 */
+	public int deleteBusinesses(int userUniqueId) {
+		String sql = "DELETE FROM USERBUSINESSES WHERE USERUNIQUEID=?";
+	 	int opt = jdbcTemplate.update(sql, new Object[] {userUniqueId});
+	 	return opt;
+	}
+	
+	/**
+	 * 重新设置用户和业务关系
+	 * 
+	 * @param userUniqueId
+	 * @param lstBusiness
+	 */
+	public void assignBusinesses(int userUniqueId, List<Business> lstBusiness) {
+		String sql = "INSERT INTO USERBUSINESSES(USERUNIQUEID,BUSINESSUNIQUEID) VALUES(?,?)";
+		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				Business business = lstBusiness.get(i);
+				ps.setInt(1, userUniqueId);
+				ps.setInt(2, business.getBusinessUniqueId());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return lstBusiness.size();
+			}
+		});
 	}
 }

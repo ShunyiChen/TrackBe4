@@ -2,10 +2,8 @@ package com.maxtree.automotive.dashboard.view.admin;
 
 import com.maxtree.automotive.dashboard.TB4Application;
 import com.maxtree.automotive.dashboard.component.Box;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
@@ -31,10 +29,8 @@ public class AboutTB4Grid extends VerticalLayout {
 		hLayout1.setSpacing(false);
 		hLayout1.setWidthUndefined();
 		hLayout1.setHeight("40px");
-		Image logo = new Image(null, new ThemeResource("img/current-channel-logo@1x.png"));
 		Label name = new Label(TB4Application.NAME);
-		hLayout1.addComponents(logo, Box.createHorizontalBox(5), name);
-		hLayout1.setComponentAlignment(logo, Alignment.MIDDLE_LEFT);
+		hLayout1.addComponents(name);
 		hLayout1.setComponentAlignment(name, Alignment.MIDDLE_LEFT);
 		
 		HorizontalLayout hLayout2 = new HorizontalLayout();

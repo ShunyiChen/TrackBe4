@@ -7,17 +7,13 @@ import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.component.EmptyValidator;
-import com.maxtree.automotive.dashboard.component.SwitchButton;
 import com.maxtree.automotive.dashboard.domain.Company;
-import com.maxtree.automotive.dashboard.domain.DenseFrame;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.domain.UserProfile;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.security.PasswordSecurity;
 import com.vaadin.data.Binder;
-import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.icons.VaadinIcons;
@@ -47,7 +43,7 @@ public class EditUserWindow extends Window {
 	
 	
 	public EditUserWindow() {
-		this.setWidth("473px");
+		this.setWidth("433px");
 		this.setHeightUndefined();
 		this.setModal(true);
 		this.setResizable(false);
@@ -83,7 +79,7 @@ public class EditUserWindow extends Window {
 		
 		activateBox.setEmptySelectionAllowed(false);
 		activateBox.setTextInputAllowed(false);
-		
+		activateBox.setSelectedItem("是");
 		form.addComponents(userNameField,lastNameField,firstNameField,passwordField,confirmPasswordField,companySelector,activateBox);
 		
 		HorizontalLayout buttonPane = new HorizontalLayout();
@@ -188,7 +184,6 @@ public class EditUserWindow extends Window {
 	 * @return
 	 */
 	private boolean checkEmptyValues(boolean ignorePassword) {
-		
 		if (StringUtils.isEmpty(userNameField.getValue())) {
 			userNameField.setComponentError(new ErrorMessage() {
 				@Override
@@ -350,7 +345,7 @@ public class EditUserWindow extends Window {
         w.lastNameField.setValue(user.getProfile().getLastName());
         w.passwordField.setVisible(false);
 		w.confirmPasswordField.setVisible(false);
-		w.activateBox.setValue(user.getActivated() == 1?"是":"否");
+		w.activateBox.setValue(user.getActivated()==1?"是":"否");
 		
         w.btnAdd.setCaption("保存");
         w.setCaption("编辑用户");

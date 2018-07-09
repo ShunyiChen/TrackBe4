@@ -5,6 +5,7 @@ import java.util.List;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.domain.Business;
+import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
@@ -29,28 +30,39 @@ public class BusinessTypeSelector extends HorizontalLayout {
 	/**
 	 * 
 	 */
-	public BusinessTypeSelector() {
+	public BusinessTypeSelector(FrontView view) {
 		this.setSpacing(false);
 		this.setMargin(false);
 		this.setWidthUndefined();
 		this.setHeightUndefined();
-		
 		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		int companyUniqueId = loginUser.getCompanyUniqueId();
 		Label businessTypeText = new Label("业务类型:");
-		data = ui.businessService.findAllByCompanyUniqueId(companyUniqueId);
+		data = ui.userService.findAssignedBusinesses(loginUser.getUserUniqueId());
 		selector = new ComboBox<Business>(null, data);
-//		selector.setTextInputAllowed(false);
 		// Disallow null selections
-		selector.setEmptySelectionAllowed(false);
-		selector.setPlaceholder("选择一个业务类型");
+		selector.setEmptySelectionAllowed(true);
+		selector.setTextInputAllowed(false);
+		selector.setPlaceholder("业务类型");
 		selector.setWidth("430px");
 		selector.setHeight("27px");
-		
 		
 		this.addComponents(businessTypeText, Box.createHorizontalBox(3), selector);
 		this.setComponentAlignment(businessTypeText, Alignment.MIDDLE_LEFT);
 		this.setComponentAlignment(selector, Alignment.MIDDLE_LEFT);
+		
+		selector.addValueChangeListener(e->{
+			Business business = e.getValue();
+			if (business != null) {
+				List<DataDictionary> list = ui.businessService.getDataDictionaries(business.getCode());
+				int i = 0;
+				for (DataDictionary dd : list) {
+					i++;
+					ThumbnailRow row = new ThumbnailRow(i+"."+dd.getItemName());
+					view.topGrid.addRow(row);
+				}
+			}
+			
+		});
 	}
 
 	public ComboBox<Business> getSelector() {

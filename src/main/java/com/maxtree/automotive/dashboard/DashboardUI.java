@@ -171,16 +171,21 @@ public final class DashboardUI extends UI {
 			User user = userService.getUserByUserName(event.getUserName());
 			if (user.getUserName() != null) {
 				
-				boolean successful = PasswordSecurity.check(event.getPassword(), user.getHashed());
-				if (successful) {
-					log.info("Login is sucessful.");
-					VaadinSession.getCurrent().setAttribute(User.class.getName(), user);
-					updateContent();
+				if (user.getActivated() == 0) {
+					log.info("User["+event.getUserName()+"] not found.");
+					smoothNotification("没被激活", "当前用户没有被激活。请联系管理员设置并重新登录。");
+					
 				} else {
-					log.info("Incorrect password.");
-					smoothNotification("密码错误", "请重新输入密码，如果忘记密码请联系管理员重置密码。");
+					boolean successful = PasswordSecurity.check(event.getPassword(), user.getHashed());
+					if (successful) {
+						log.info("Login is sucessful.");
+						VaadinSession.getCurrent().setAttribute(User.class.getName(), user);
+						updateContent();
+					} else {
+						log.info("Incorrect password.");
+						smoothNotification("密码错误", "请重新输入密码，如果忘记密码请联系管理员重置密码。");
+					}
 				}
-				
 			} else {
 				log.info("User["+event.getUserName()+"] not found.");
 				smoothNotification("用户不存在", "用户名"+event.getUserName()+"不存在，请重新输入用户名和密码。");

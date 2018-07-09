@@ -32,11 +32,6 @@ public class DataDictionary {
 		this.itemName = itemName;
 	}
 
-	@Override
-	public String toString() {
-		return itemName;
-	}
-	
 	public String getCode() {
 		return code;
 	}
@@ -45,8 +40,22 @@ public class DataDictionary {
 		this.code = code;
 	}
 	
+	public Float getOlderNumber() {
+		return olderNumber;
+	}
+
+	public void setOlderNumber(Float olderNumber) {
+		this.olderNumber = olderNumber;
+	}
+
+	@Override
+	public String toString() {
+		return itemName;
+	}
+	
 	private Integer dictionaryUniqueId; // 数据字典id
-	private Integer itemType; // 数据项类别 1-号牌种类 2-材料名称
-	private String itemName;  // 数据项名称
-	private String code;      // dictionary快捷编码
+	private Integer itemType;//数据项类别 1-号牌种类 2-材料名称
+	private String itemName;//数据项名称
+	private String code;//dictionary快捷编码
+	private Float olderNumber = 0f;//顺序号
 }

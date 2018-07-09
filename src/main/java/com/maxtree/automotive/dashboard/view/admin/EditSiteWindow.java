@@ -411,7 +411,7 @@ public class EditSiteWindow extends Window {
         w.folderPercentage.setValue(0);
         w.sizePercentage.setCaption(0+"%");
 		w.folderPercentage.setCaption(0+"%");
-        w.codeField.setValue(CodeGenerator.generateSiteCode());
+        w.codeField.setValue(CodeGenerator.generate4BitCode());
 		
         w.btnAdd.setCaption("添加");
         w.btnAdd.addClickListener(e -> {

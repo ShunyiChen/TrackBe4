@@ -133,14 +133,11 @@ public class ManageOtherUsersGrid extends VerticalLayout {
 		row.setWidthUndefined();
 		row.setHeightUndefined();
 		row.addStyleName("grid-header-line");
-		
 		Image p = new Image(null, new ThemeResource(user.getProfile().getPicture()));
 		p.setWidth("30px");
 		p.setHeight("30px");
-		
 		// 用户名
 		Label username = new Label(user.getUserName());
-		
 		HorizontalLayout rowWithImage = new HorizontalLayout();
 		rowWithImage.setSpacing(false);
 		rowWithImage.setMargin(false);
@@ -148,7 +145,6 @@ public class ManageOtherUsersGrid extends VerticalLayout {
 		rowWithImage.setComponentAlignment(username, Alignment.MIDDLE_CENTER);
 		// 姓名
 		Label fullname = new Label(user.getProfile().getLastName()+""+user.getProfile().getFirstName());
-		
 		StringBuilder roles = new StringBuilder();
 		for (Role r : user.getRoles()) {
 			roles.append(r.getRoleName());
@@ -163,9 +159,7 @@ public class ManageOtherUsersGrid extends VerticalLayout {
 		Label companyLabel = new Label(user.getCompanyName());
 
 		Image moreImg = new Image(null, new ThemeResource("img/adminmenu/more.png"));
-		
 		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		
 		moreImg.addStyleName("mycursor");
 		moreImg.addClickListener(e -> {
 			// Create a context menu for 'someComponent'
@@ -190,19 +184,20 @@ public class ManageOtherUsersGrid extends VerticalLayout {
 			menu.addItem("分配业务类型", new Command() {
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-					AssigningBusinessesToUserWindow.open(loginUser);
+					if (loginUser.isPermitted(PermissionCodes.C6)) {
+						AssigningBusinessesToUserWindow.open(user);
+					}
 				}
 			});
 			menu.addSeparator();
-			
 			menu.addItem("重置密码", new Command() {
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-					
-					ResetPasswordWindow.open(loginUser);
+					if (loginUser.isPermitted(PermissionCodes.C7)) {
+						ResetPasswordWindow.open(user);
+					}
 				}
 			});
-			
 			menu.addSeparator();
 			menu.addItem("编辑", new Command() {
 				@Override

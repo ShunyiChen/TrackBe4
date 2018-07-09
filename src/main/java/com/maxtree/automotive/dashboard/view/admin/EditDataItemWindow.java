@@ -70,7 +70,8 @@ public class EditDataItemWindow extends Window {
 		// 设置焦点
 		codeField = new TextField("快捷编码:");
 		codeField.setIcon(VaadinIcons.CODE);
-		codeField.setValue("");
+		codeField.setValue(CodeGenerator.generate4BitCode());
+		codeField.setReadOnly(true);
 		
 		form.addComponents(typeField, nameField, codeField);
 		HorizontalLayout buttonPane = new HorizontalLayout();
@@ -119,7 +120,6 @@ public class EditDataItemWindow extends Window {
 		nameField.setWidth(w+"px");
 		typeField.setWidth(w+"px");
 		codeField.setWidth(w+"px");
-		
 		nameField.setHeight(h+"px");
 		typeField.setHeight(h+"px");
 		codeField.setHeight(h+"px");

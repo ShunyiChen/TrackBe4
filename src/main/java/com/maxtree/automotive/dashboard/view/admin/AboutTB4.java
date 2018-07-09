@@ -20,6 +20,7 @@ public class AboutTB4 extends VerticalLayout {
 		setMargin(false);
 	    setSpacing(false);
 	    setWidth("678px");
+	    setHeight((Page.getCurrent().getBrowserWindowHeight()-58)+"px");
 	 	addStyleName("detail-pane-with-padding20");
 	 	// 必须有一个VerticalLayout，否则上下各50%显示
 	 	VerticalLayout content = new VerticalLayout();

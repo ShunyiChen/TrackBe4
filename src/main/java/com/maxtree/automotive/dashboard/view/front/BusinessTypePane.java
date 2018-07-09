@@ -11,8 +11,12 @@ public class BusinessTypePane extends Panel{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public BusinessTypePane() {
-	
+	/**
+	 * 
+	 * @param view
+	 */
+	public BusinessTypePane(FrontView view) {
+		this.view = view;
 		initComponents();
 	}
 	
@@ -21,11 +25,8 @@ public class BusinessTypePane extends Panel{
 		this.addStyleName("picture-pane");
 		this.setWidth("100%");
 		this.setHeightUndefined();
-		
-		
 		// 业务类型选择
-		BusinessTypeSelector selector = new BusinessTypeSelector();
-		
+		BusinessTypeSelector selector = new BusinessTypeSelector(view);
 		VerticalLayout main = new VerticalLayout();
 		main.setSpacing(false);
 		main.setMargin(new MarginInfo(false, false, true, true));
@@ -34,4 +35,6 @@ public class BusinessTypePane extends Panel{
 		main.addComponent(selector);
 		this.setContent(main);
 	}
+	
+	private FrontView view = null;
 }

@@ -26,6 +26,7 @@ import com.maxtree.automotive.dashboard.exception.DataException;
 public class CompanyService {
 
 	private static final Logger log = LoggerFactory.getLogger(CompanyService.class);
+	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
@@ -71,7 +72,7 @@ public class CompanyService {
 	 */
 	public int create(Company company) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		String sql = "INSERT INTO COMPANIES(COMMUNITYUNIQUEID,COMPANYNAME,PROVINCE,CITY,PREFECTURE,DISTRICT,ADDRESS,CANCREATESTOREHOUSE,STOREHOUSEUNIQUEID,IGNORECHECKER) VALUES(?,?,?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO COMPANIES(COMMUNITYUNIQUEID,COMPANYNAME,PROVINCE,CITY,PREFECTURE,DISTRICT,ADDRESS,HASSTOREHOUSE,STOREHOUSEUNIQUEID,IGNORECHECKER) VALUES(?,?,?,?,?,?,?,?,?,?)";
 		
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
@@ -86,7 +87,7 @@ public class CompanyService {
 				ps.setString(5, company.getPrefecture());
 				ps.setString(6, company.getDistrict());
 				ps.setString(7, company.getAddress());
-				ps.setInt(8, company.getCanCreateStorehouse());
+				ps.setInt(8, company.getHasStoreHouse());
 				ps.setInt(9, company.getStorehouseUniqueId());
 				ps.setInt(10, company.getIgnoreChecker());
 				return ps;
@@ -113,8 +114,8 @@ public class CompanyService {
 			jdbcTemplate.update(Sql2, new Object[] {u.getCommunityUniqueId(), u.getCompanyUniqueId(), u.getCompanyName(), u.getUserUniqueId()});
 		}
 		
-		String sql = "UPDATE COMPANIES SET COMMUNITYUNIQUEID=?,COMPANYNAME=?,PROVINCE=?,CITY=?,PREFECTURE=?,DISTRICT=?,ADDRESS=?,CANCREATESTOREHOUSE=?,STOREHOUSEUNIQUEID=?,IGNORECHECKER=? WHERE COMPANYUNIQUEID=?";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {company.getCommunityUniqueId(), company.getCompanyName(),company.getProvince(),company.getCity(),company.getPrefecture(),company.getDistrict(), company.getAddress(), company.getCanCreateStorehouse(), company.getStorehouseUniqueId(), company.getIgnoreChecker(),company.getCompanyUniqueId()});
+		String sql = "UPDATE COMPANIES SET COMMUNITYUNIQUEID=?,COMPANYNAME=?,PROVINCE=?,CITY=?,PREFECTURE=?,DISTRICT=?,ADDRESS=?,HASSTOREHOUSE=?,STOREHOUSEUNIQUEID=?,IGNORECHECKER=? WHERE COMPANYUNIQUEID=?";
+	 	int opt = jdbcTemplate.update(sql, new Object[] {company.getCommunityUniqueId(), company.getCompanyName(),company.getProvince(),company.getCity(),company.getPrefecture(),company.getDistrict(), company.getAddress(), company.getHasStoreHouse(),company.getStorehouseUniqueId(),company.getIgnoreChecker(),company.getCompanyUniqueId()});
 	 	log.info("Updated row "+opt);
 	}
 	
@@ -199,7 +200,6 @@ public class CompanyService {
 	 */
 	public void assignBusinesses(int companyUniqueId, List<Business> lstBusiness) {
 		String sql = "INSERT INTO COMPANYBUSINESSES(COMPANYUNIQUEID,BUSINESSUNIQUEID) VALUES(?,?)";
-
 		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
 			@Override
@@ -214,6 +214,5 @@ public class CompanyService {
 				return lstBusiness.size();
 			}
 		});
-		log.info("assignBusinesses has done.");
 	}
 }

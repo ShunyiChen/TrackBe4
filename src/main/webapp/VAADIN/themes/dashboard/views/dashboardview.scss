@@ -260,7 +260,22 @@
 
     
     // 扫描录入界面
-
+    .ThumbnailRow-border {
+        border-radius: 5px;
+        border-style: dashed;
+        border-color: #A4A4A2;
+        border-width: 2px;
+        padding: 5px;
+    }
+    
+    .ThumbnailRow-border-selected {
+        border-radius: 5px;
+        border-style: solid;
+        border-color:deepskyblue;
+        border-width: 2px;
+        padding: 5px;
+        box-shadow:0 0 8px rgba(0,191,255,0.8);
+    }
  
 
     // 拖拽上传

@@ -14836,6 +14836,23 @@ div.v-layout.v-horizontal.v-widget {
 	color: gray;
 }
 
+.dashboard .ThumbnailRow-border {
+	border-radius: 5px;
+	border-style: dashed;
+	border-color: #A4A4A2;
+	border-width: 2px;
+	padding: 5px;
+}
+
+.dashboard .ThumbnailRow-border-selected {
+	border-radius: 5px;
+	border-style: solid;
+	border-color: deepskyblue;
+	border-width: 2px;
+	padding: 5px;
+	box-shadow: 0 0 8px rgba(0, 191, 255, 0.8);
+}
+
 .dashboard .drop-area {
 	cursor: pointer;
 	background-color: transparent;

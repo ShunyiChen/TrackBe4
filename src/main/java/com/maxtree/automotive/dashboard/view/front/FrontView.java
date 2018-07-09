@@ -416,8 +416,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     	main.addComponents(spliter1, spliter);
     }
     
- 
-    
     /**
      * 
      */
@@ -497,7 +495,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
      * 
      */
     private void createTransaction() {
-    	System.out.println("Add editableTrans="+editableTrans+"  editableSite="+editableSite);
     	if (editableTrans == null) {
     		editableTrans = new Transaction();
     		
@@ -729,14 +726,10 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private Binder<Transaction> binder = new Binder<>();
     
-    
-    
     private BasicInfoPane basicInfoPane = new BasicInfoPane(this);
-    private BusinessTypePane businessTypePane = new BusinessTypePane();
-    private ThumbnailGrid topGrid = new ThumbnailGrid("主要材料", 400);
-    private ThumbnailGrid bottomGrid = new ThumbnailGrid("次要材料", 200);
-    
-    
+    private BusinessTypePane businessTypePane = new BusinessTypePane(this);
+    public ThumbnailGrid topGrid = new ThumbnailGrid("主要材料", 400);
+    public ThumbnailGrid bottomGrid = new ThumbnailGrid("次要材料", 200);
     
     private Button btnPrint = new Button();
     private Button btnAdd = new Button();
@@ -745,7 +738,4 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
     private HorizontalLayout spliter1 = new HorizontalLayout();
     private HorizontalLayout spliter = new HorizontalLayout();
-    
-
-
 }

@@ -1,5 +1,6 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.util.StringUtils;
@@ -75,7 +76,13 @@ public class EditCompanyWindow extends Window {
 		prefectureSelector.setItems(area.getPrefecture());
 		districtSelector.setItems(area.getDistrict());
 		
-		form.addComponents(nameField, provinceSelector,citySelector,prefectureSelector,districtSelector,addrField, communitySelector);
+		hasStore.setEmptySelectionAllowed(false);
+		hasStore.setTextInputAllowed(false);
+		hasStore.setSelectedItem("是");
+		hasChecker.setEmptySelectionAllowed(false);
+		hasChecker.setTextInputAllowed(false);
+		hasChecker.setSelectedItem("是");
+		form.addComponents(nameField,provinceSelector,citySelector,prefectureSelector,districtSelector,addrField,communitySelector,hasStore,hasChecker);
 		HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setSizeFull();
 		buttonPane.setSpacing(false);
@@ -92,7 +99,7 @@ public class EditCompanyWindow extends Window {
 		subButtonPane.setComponentAlignment(btnAdd, Alignment.BOTTOM_CENTER);
 		buttonPane.addComponent(subButtonPane);
 		buttonPane.setComponentAlignment(subButtonPane, Alignment.BOTTOM_RIGHT);
-		mainLayout.addComponents(form, btnCanCreate, btnIgnore,buttonPane);
+		mainLayout.addComponents(form,buttonPane);
 		this.setContent(mainLayout);
 		
 		btnCancel.addClickListener(e -> {
@@ -126,6 +133,8 @@ public class EditCompanyWindow extends Window {
 		citySelector.setWidth(w+"px");
 		prefectureSelector.setWidth(w+"px");
 		districtSelector.setWidth(w+"px");
+		hasStore.setWidth(w+"px");
+		hasChecker.setWidth(w+"px");
 		
 		nameField.setHeight(h+"px");
 		addrField.setHeight(h+"px");
@@ -134,6 +143,8 @@ public class EditCompanyWindow extends Window {
 		citySelector.setHeight(h+"px");
 		prefectureSelector.setHeight(h+"px");
 		districtSelector.setHeight(h+"px");
+		hasStore.setHeight(h+"px");
+		hasChecker.setHeight(h+"px");
 	}
 	
 	/**
@@ -217,9 +228,7 @@ public class EditCompanyWindow extends Window {
 	 * @param communityUniqueID
 	 */
 	private void selectItem(int communityUniqueID) {
-		
 		communitySelector.setSelectedItem(null);
-		
 		ListDataProvider<Community> listDataProvider = (ListDataProvider<Community>) communitySelector.getDataProvider();
 		for (Community c : listDataProvider.getItems()) {
 			if (c.getCommunityUniqueId() == communityUniqueID) {
@@ -227,7 +236,6 @@ public class EditCompanyWindow extends Window {
 				break;
 			}
 		}
-		
 	}
 	
 	public static void open(Callback callback) {
@@ -236,11 +244,9 @@ public class EditCompanyWindow extends Window {
         w.btnAdd.setCaption("添加");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
-        		w.company.setCanCreateStorehouse(w.btnCanCreate.isSelected()?1:0);
         		w.company.setCommunityUniqueId(w.communitySelector.getValue() == null?0:w.communitySelector.getValue().getCommunityUniqueId());
-    			w.company.setCanCreateStorehouse(w.btnCanCreate.isSelected()?1:0);
-        		w.company.setIgnoreChecker(w.btnIgnore.isSelected()?1:0);
-        		
+        		w.company.setHasStoreHouse(w.hasStore.getValue().equals("是")?1:0);
+        		w.company.setIgnoreChecker(w.hasChecker.getValue().equals("是")?1:0);
         		ui.companyService.create(w.company);
     			w.close();
     			callback.onSuccessful();
@@ -254,7 +260,6 @@ public class EditCompanyWindow extends Window {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditCompanyWindow w = new EditCompanyWindow();
         Company c = ui.companyService.findById(company.getCompanyUniqueId());
-        
         w.selectItem(c.getCommunityUniqueId());
         w.company.setCompanyUniqueId(c.getCompanyUniqueId());
         w.nameField.setValue(c.getCompanyName());
@@ -262,10 +267,9 @@ public class EditCompanyWindow extends Window {
         w.citySelector.setSelectedItem(c.getCity() == null?"":c.getCity());
         w.prefectureSelector.setSelectedItem(c.getPrefecture()==null?"":c.getPrefecture());
         w.districtSelector.setSelectedItem(c.getDistrict()==null?"":c.getDistrict());
-        
+        w.hasStore.setSelectedItem(c.getHasStoreHouse()==1?"是":"否");
+        w.hasChecker.setSelectedItem(c.getIgnoreChecker()==1?"是":"否");
         w.addrField.setValue(c.getAddress() == null? "":c.getAddress());
-        w.btnCanCreate.setSelected(c.getCanCreateStorehouse() == 1);
-        w.btnIgnore.setSelected(c.getIgnoreChecker()==1);
         w.btnAdd.setCaption("保存");
         w.setCaption("编辑机构");
         w.btnAdd.addClickListener(e -> {
@@ -273,8 +277,8 @@ public class EditCompanyWindow extends Window {
         		
         		w.company.setEmployees(c.getEmployees());
         		w.company.setCommunityUniqueId(w.communitySelector.getValue() == null?0:w.communitySelector.getValue().getCommunityUniqueId());
-        		w.company.setCanCreateStorehouse(w.btnCanCreate.isSelected()?1:0);
-        		w.company.setIgnoreChecker(w.btnIgnore.isSelected()?1:0);
+        		w.company.setHasStoreHouse(w.hasStore.getValue().equals("是")?1:0);
+        		w.company.setIgnoreChecker(w.hasChecker.getValue().equals("是")?1:0);
     			ui.companyService.update(w.company);
     			w.close();
     			callback.onSuccessful();
@@ -289,8 +293,8 @@ public class EditCompanyWindow extends Window {
 	private ComboBox<String> citySelector = new ComboBox<String>("市:");
 	private ComboBox<String> prefectureSelector = new ComboBox<String>("县:");
 	private ComboBox<String> districtSelector = new ComboBox<String>("区:");
-	private SwitchButton btnCanCreate = new SwitchButton(false, "可以创建库房", "可以创建库房",SwitchButton.WHITE);
-	private SwitchButton btnIgnore = new SwitchButton(false, "忽略质检", "", SwitchButton.WHITE);
+	private ComboBox<String> hasStore = new ComboBox<String>("是否有库房:", Arrays.asList(new String[] {"是","否"}));
+	private ComboBox<String> hasChecker = new ComboBox<String>("是否有质检:", Arrays.asList(new String[] {"是","否"}));
 	private ComboBox<Community> communitySelector = new ComboBox<Community>();
 	private TextField nameField;
 	private TextField addrField;

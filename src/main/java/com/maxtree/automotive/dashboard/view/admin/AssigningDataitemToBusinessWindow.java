@@ -1,6 +1,7 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -63,12 +64,13 @@ public class AssigningDataitemToBusinessWindow extends Window {
 		
 		List<DataDictionary> allItems = ui.dataItemService.findAllByType(2);
 		List<DataDictionary> assignItems = ui.businessService.assignedItems(business.getCode());
-		
 		select = new TwinColSelect<>(null, allItems);
 		select.setWidth("100%");
 		select.setRows(14);
 		select.setLeftColumnCaption("未分配的材料");
 		select.setRightColumnCaption("已分配的材料");
+//		select.addSelectionListener(e->{
+//		});
 		
 		List<DataDictionary> selectedItems = new ArrayList<>();
 		for (DataDictionary item : allItems) {
@@ -80,7 +82,6 @@ public class AssigningDataitemToBusinessWindow extends Window {
 		}
 		// set select
 		select.select(selectedItems.toArray(new DataDictionary[selectedItems.size()]));
-		
         hlayout.addComponent(select);
         hlayout.setComponentAlignment(select, Alignment.TOP_CENTER);
 		

@@ -74,12 +74,12 @@ public class Company {
 		this.address = address;
 	}
 
-	public Integer getCanCreateStorehouse() {
-		return canCreateStorehouse;
+	public Integer getHasStoreHouse() {
+		return hasStoreHouse;
 	}
 
-	public void setCanCreateStorehouse(Integer canCreateStorehouse) {
-		this.canCreateStorehouse = canCreateStorehouse;
+	public void setHasStoreHouse(Integer hasStoreHouse) {
+		this.hasStoreHouse = hasStoreHouse;
 	}
 
 	public Integer getStorehouseUniqueId() {
@@ -119,7 +119,7 @@ public class Company {
 	private String prefecture; 				// 车辆所在县
 	private String district;				// 车辆所在区
 	private String address;                 // 详细地址
-	private Integer canCreateStorehouse = 0; // 1-可以创建库房，0-不能创建库房
+	private Integer hasStoreHouse = 0; 		// 是否存在库房1存在,0不存在
 	private Integer storehouseUniqueId = 0; // 库房ID
 	private Integer ignoreChecker = 0;   	// 忽略质检，1-忽略 0-未忽略
 	private List<User> employees;

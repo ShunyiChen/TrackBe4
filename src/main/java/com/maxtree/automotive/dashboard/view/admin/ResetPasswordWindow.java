@@ -110,12 +110,13 @@ public class ResetPasswordWindow extends Window {
 		if (StringUtils.isEmpty(passwordField.getValue())
 				|| StringUtils.isEmpty(confirmField.getValue())) {
 			Notifications.warning("文本框不能为空。");
+			return false;
 			
 		} else if (!passwordField.getValue().equals(confirmField.getValue())) {
 			Notifications.warning("输入密码与确认密码不一致。");
-			
+			return false;
 		}
-		return false;
+		return true;
 	}
 	
 	/**

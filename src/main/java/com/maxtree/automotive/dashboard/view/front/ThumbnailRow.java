@@ -22,11 +22,26 @@ public class ThumbnailRow extends HorizontalLayout{
 	 * 
 	 */
 	private void initComponents() {
-		setMargin(false);
-		setSpacing(false);
-		setWidthUndefined();
+		this.setWidth("100%");
 		this.setHeight("120px");
 		this.setCaption(materialName);
+		this.addStyleName("ThumbnailRow-border");
+	}
+	
+	/**
+	 * 
+	 */
+	public void selected() {
+		this.removeStyleName("ThumbnailRow-border");
+		this.addStyleName("ThumbnailRow-border-selected");
+	}
+	
+	/**
+	 * 
+	 */
+	public void deselected() {
+		this.removeStyleName("ThumbnailRow-border-selected");
+		this.addStyleName("ThumbnailRow-border");
 	}
 	
 	/**

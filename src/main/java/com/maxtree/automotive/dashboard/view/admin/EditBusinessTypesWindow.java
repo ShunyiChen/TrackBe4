@@ -63,9 +63,10 @@ public class EditBusinessTypesWindow extends Window {
 		needToCheckBox.setHeight("27px");
 		needToCheckBox.setEmptySelectionAllowed(false);
 		needToCheckBox.setTextInputAllowed(false);
+		needToCheckBox.setSelectedItem("是");
 		List<String> checkLevelItems = new ArrayList<String>();
-		checkLevelItems.add("是");
-		checkLevelItems.add("否");
+		checkLevelItems.add("一级");
+		checkLevelItems.add("二级");
 		checkLevelBox = new ComboBox<String>("审档级别:", checkLevelItems);
 		checkLevelBox.setIcon(VaadinIcons.MALE);
 		checkLevelBox.setDescription("一级审档表示本社区本机构内部审档。二级审档表示本社区外部机构审档。");
@@ -73,6 +74,7 @@ public class EditBusinessTypesWindow extends Window {
 		checkLevelBox.setHeight("27px");
 		checkLevelBox.setEmptySelectionAllowed(false);
 		checkLevelBox.setTextInputAllowed(false);
+		checkLevelBox.setSelectedItem("一级");
 		
 		form.addComponents(nameField,codeField,needToCheckBox,checkLevelBox);
 		
