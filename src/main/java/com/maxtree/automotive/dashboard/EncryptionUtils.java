@@ -16,7 +16,7 @@ public class EncryptionUtils {
 		char[] chs = normalStr.toCharArray();
 		StringBuilder encryptedStr = new StringBuilder();
 		for (char ch : chs) {
-			encryptedStr.append(ch+=17);
+			encryptedStr.append(ch+=1);
 		}
 		return encryptedStr.toString();
 	}
@@ -30,7 +30,7 @@ public class EncryptionUtils {
 		char[] chs = encryptedStr.toCharArray();
 		StringBuilder decryptedStr = new StringBuilder();
 		for (char ch : chs) {
-			decryptedStr.append(ch-=17);
+			decryptedStr.append(ch-=1);
 		}
 		return decryptedStr.toString();
 	}

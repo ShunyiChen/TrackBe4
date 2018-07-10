@@ -29,11 +29,11 @@ public class CapturePane extends Panel{
 	/**
 	 * 
 	 * @param caption
-	 * @param fileGrid
+	 * @param view
 	 */
-	public CapturePane(String caption, ThumbnailGrid fileGrid) {
+	public CapturePane(String caption, FrontView view) {
 		this.setCaption(caption);
-		this.fileGrid = fileGrid;
+		this.view = view;
 		initComponents();
 	}
 	
@@ -49,39 +49,6 @@ public class CapturePane extends Panel{
 		this.setHeight(height+"px");
 		browser.setSizeFull();
 		this.setContent(browser);
-		
-//		ShortcutListener upListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_UP,
-//				null) {
-//			/**
-//			 * 
-//			 */
-//			private static final long serialVersionUID = 1L;
-//
-//			@Override
-//			public void handleAction(Object sender, Object target) {
-//				fileGrid.focus();
-//			}
-//		};
-//		ShortcutListener downListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_DOWN,
-//				null) {
-//			/**
-//			 * 
-//			 */
-//			private static final long serialVersionUID = 1L;
-//
-//			@Override
-//			public void handleAction(Object sender, Object target) {
-//				fileGrid.focus();
-//			}
-//		};
-//    	this.addShortcutListener(upListener);
-//    	this.addShortcutListener(downListener);
-		
-		browser.addContextClickListener(e->{
-			System.out.println("ddddd");
-			fileGrid.focus();
-		});
-		 
 	}
 	
 	/**
@@ -133,6 +100,17 @@ public class CapturePane extends Panel{
 			if (line.contains("var uuid = \"\";")) {
 				line = line.replace("var uuid = \"\";", "var uuid = \""+uuid+"\";");
 			}
+			else if (line.contains("var siteid = \"\";")) {
+				line = line.replace("var siteid = \"\";", "var siteid = \""+view.editableSite.getSiteUniqueId()+"\";");
+			}
+			else if (line.contains("var vin = \"\";")) {
+				line = line.replace("var vin = \"\";", "var vin = \""+view.vin+"\";");
+			}
+			else if (line.contains("var batch = \"\";")) {
+				line = line.replace("var batch = \"\";", "var vin = \""+view.batch+"\";");
+			}
+			
+			
 			// System.out.println(line);
 			sb.append(line);
 			sb.append(System.lineSeparator());
@@ -148,6 +126,6 @@ public class CapturePane extends Panel{
 		oStreamWriter.close();
 	}
 	
+	private FrontView view;
 	private BrowserFrame browser = new BrowserFrame(null);
-	private ThumbnailGrid fileGrid;
 }

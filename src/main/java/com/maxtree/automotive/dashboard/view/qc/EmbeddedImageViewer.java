@@ -93,9 +93,9 @@ public class EmbeddedImageViewer extends Panel {
 	/**
 	 * 
 	 * @param documentUniqueId
-	 * @param category // 1 - 主要材料  2-次要材料
+	 * @param location // 1:主要材料  2:次要材料
 	 */
-	public void showPicture(int documentUniqueId, int category) {
+	public void showPicture(int documentUniqueId, int location) {
 		vlayout.removeAllComponents();
 		vlayout.addComponents(frame, Box.createVerticalBox(5), btnPane, Box.createVerticalBox(5));
 		vlayout.setComponentAlignment(frame, Alignment.TOP_CENTER);
@@ -103,7 +103,7 @@ public class EmbeddedImageViewer extends Panel {
 		for (int i = 0; i < allDocuments.size(); i++) {
 			Document doc = allDocuments.get(i);
 			if (doc.getDocumentUniqueId() == documentUniqueId 
-					&& doc.getCategory() == category) {
+					&& doc.location == location) {
 				displayImage(convertDocument2Image(doc));
 				index = i;
 			}

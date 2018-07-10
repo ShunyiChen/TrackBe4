@@ -70,8 +70,8 @@ public class DocumentService {
 	 * @param document
 	 * @return
 	 */
-	public int create(Document document) {
-		String vin = document.getVin();
+	public int insert(Document document) {
+		String vin = document.vin;
 		int number = Integer.parseInt(vin.substring(vin.length() - 6));
 		int index = number % 256;
 	 	GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
@@ -80,16 +80,17 @@ public class DocumentService {
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 				String SQL = "";
-				if (document.getCategory() == 1) {
-					SQL = "INSERT INTO DOCUMENTS_1_"+index+"(UUID,ALIAS,FILEFULLPATH) VALUES(?,?,?)";
+				if (document.location == 1) {
+					SQL = "INSERT INTO DOCUMENTS_1_"+index+"(UUID,BUSINESSCODE,DICTIONARYCODE,FILEFULLPATH) VALUES(?,?,?,?)";
 				} else {
-					SQL = "INSERT INTO DOCUMENTS_2_"+index+"(UUID,ALIAS,FILEFULLPATH) VALUES(?,?,?)";
+					SQL = "INSERT INTO DOCUMENTS_2_"+index+"(UUID,BUSINESSCODE,DICTIONARYCODE,FILEFULLPATH) VALUES(?,?,?,?)";
 				}
 				PreparedStatement ps = con.prepareStatement(
 						SQL, new String[] {"documentuniqueid"});
 				ps.setString(1, document.getUuid());
-				ps.setString(2, document.getAlias());
-				ps.setString(3, EncryptionUtils.encryptString(document.getFileFullPath()));
+				ps.setString(2, document.getBusinessCode());
+				ps.setString(3, document.getDictionarycode());
+				ps.setString(4, EncryptionUtils.encryptString(document.getFileFullPath()));
 				return ps;
 			}
 		}, keyHolder);
@@ -105,11 +106,11 @@ public class DocumentService {
 	 * @param document
 	 */
 	public void update(Document document) {
-		String vin = document.getVin();
+		String vin = document.vin;
 		int number = Integer.parseInt(vin.substring(vin.length() - 6));
 		int index = number % 256;
 		String SQL = "";
-		if (document.getCategory() == 1) {
+		if (document.location == 1) {
 			SQL = "UPDATE DOCUMENTS_1_"+index+" SET FILEFULLPATH=? WHERE DOCUMENTUNIQUEID=?";
 		} else {
 			SQL = "UPDATE DOCUMENTS_2_"+index+" SET FILEFULLPATH=? WHERE DOCUMENTUNIQUEID=?";

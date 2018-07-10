@@ -15,7 +15,6 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
-import com.maxtree.automotive.dashboard.CodeGenerator;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.SiteCapacity;
@@ -285,8 +284,8 @@ public class SiteService {
 		String sql = "INSERT INTO SITEFOLDER(SITEUNIQUEID,BATCHCOUNT,BUSINESSCOUNT) SELECT ?,BATCHCOUNT+?,? FROM SITEFOLDER WHERE SITEUNIQUEID=? AND BUSINESSCOUNT>=? AND BATCHCOUNT=(SELECT MAX(BATCHCOUNT) FROM SITEFOLDER WHERE SITEUNIQUEID=?) AND BATCHCOUNT<?";
 		int affected2 = jdbcTemplate.update(sql,site.getSiteUniqueId(),1,0,site.getSiteUniqueId(),site.getSiteCapacity().getMaxBusiness(),site.getSiteUniqueId(),site.getSiteCapacity().getMaxBatch());
 		
-		sql = "UPDATE SITEFOLDER SET BUSINESSCOUNT=BUSINESSCOUNT+1 WHERE SITEUNIQUEID=? AND BATCHCOUNT=(SELECT MAX(BATCHCOUNT) FROM SITEFOLDER WHERE SITEUNIQUEID=?) AND BUSINESSCOUNT<?";
-		int affected1 = jdbcTemplate.update(sql,site.getSiteUniqueId(),site.getSiteUniqueId(),site.getSiteCapacity().getMaxBusiness());
+		sql = "UPDATE SITEFOLDER SET BUSINESSCOUNT=BUSINESSCOUNT+? WHERE SITEUNIQUEID=? AND BATCHCOUNT=(SELECT MAX(BATCHCOUNT) FROM SITEFOLDER WHERE SITEUNIQUEID=?) AND BUSINESSCOUNT<?";
+		int affected1 = jdbcTemplate.update(sql,1,site.getSiteUniqueId(),site.getSiteUniqueId(),site.getSiteCapacity().getMaxBusiness());
 		
 		if (affected1 == 0 && affected2 == 0) {
 			return 0;

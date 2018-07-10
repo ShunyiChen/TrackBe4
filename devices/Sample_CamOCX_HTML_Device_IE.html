@@ -325,10 +325,14 @@ function Capture()
 {
     var uuid = "";
 	var siteid = "";
+	var vin = "";
+	var batch = "";
+	var businessCode = "";
+	var dictionarycode = "";
 	var fileext = ".jpg";//document.getElementById("filetype").value;
 	var strFolder = document.getElementById("path").value;
 	var myDate = new Date();
-	var myName = uuid+"_Image_"+myDate.getFullYear()+(myDate.getMonth()+1)+myDate.getDate()+"_"+myDate.getHours()+myDate.getMinutes()+myDate.getSeconds()+myDate.getMilliseconds();
+	var myName = siteid+"_"+uuid+"_Image"+myDate.getFullYear()+(myDate.getMonth()+1)+myDate.getDate()+""+myDate.getHours()+myDate.getMinutes()+myDate.getSeconds()+myDate.getMilliseconds();
 	//myDate.getTime()
 	var newFile = strFolder + "\\" + myName + fileext ;
 	var files = CamSDKOCX.CaptureImage(newFile);
@@ -534,11 +538,11 @@ function UploadHttp()
 	response.value = obj.response;
 	if(obj.errorCode == 0)
 	{
-		alert("上传成功");
+		//alert("上传成功");
 	}
 	else
 	{
-		alert("SDK错误码：" + obj.errorCode);
+		//alert("SDK错误码：" + obj.errorCode);
 	}
 }
 function UploadFtp()

@@ -652,7 +652,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     	editableTrans.setSite(editableSite);
     	editableTrans.setDateModified(new Date());
 //    	editableTrans.setBusinessUniqueId(business.getBusinessUniqueId());
-    	editableTrans.setUuid(uuid);
     	editableTrans.setTypist(loginUser.getUserUniqueId());
     	// Insert new transaction
     	if (editableTrans.getTransactionUniqueId() == 0) {
@@ -688,7 +687,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 		// 清空编辑变量
 		editableTrans = null;
 		editableCompany = null;
-		uuid = null;
 		editableSite = null;
     }
     
@@ -717,15 +715,17 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 		notificationsButton.updateNotificationsCount(event);
 	}
     
+	public static final String EDIT_ID = "dashboard-edit";
+	public static final String TITLE_ID = "dashboard-title";
 	private Transaction editableTrans = null; 	//可编辑的编辑transaction
 	private Company editableCompany = null;	 	//前台所在机构
-	private Site editableSite = null;			//站点
-    private String uuid = null; 				//挂接文件的UUID
-    private int batch = 0; 						//新建时的批次号
+	
+	public Site editableSite = null;			//站点
+	public int batch = 0; 						//新建时的批次号
+	public String vin = null;
+	
     private Label titleLabel;
     private Window notificationsWindow;
-    public static final String EDIT_ID = "dashboard-edit";
-    public static final String TITLE_ID = "dashboard-title";
     private VerticalLayout root;
     private VerticalLayout main = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
@@ -734,7 +734,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     private BasicInfoPane basicInfoPane = new BasicInfoPane(this);
     private BusinessTypePane businessTypePane = new BusinessTypePane(this);
     public ThumbnailGrid fileGrid = new ThumbnailGrid("上传材料");
-    public CapturePane capturePane = new CapturePane("拍照", fileGrid);
+    public CapturePane capturePane = new CapturePane("拍照", this);
     
     private Button btnPrint = new Button();
     private Button btnAdd = new Button();
