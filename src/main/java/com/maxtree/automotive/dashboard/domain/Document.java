@@ -48,5 +48,5 @@ public class Document {
 	private String dictionarycode; // 资料CODE
 	private String fileFullPath; // 文件实际存放全路径
 	public String vin;			// 车辆识别代码，用于获取表索引（非数据表字段）
-	public int location = 1;    // 存储位置1:主文档表2:次文档表
+	public int location = 1;    // 存储位置1:主文档表2:次文档表（非数据表字段）
 }

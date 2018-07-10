@@ -7,20 +7,27 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Iterator;
 import java.util.List;
 
 import org.yaml.snakeyaml.reader.UnicodeReader;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.UploadParameters;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.MessageBox;
+import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.DataDictionary;
+import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.vaadin.event.UIEvents;
+import com.vaadin.event.UIEvents.PollListener;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -58,29 +65,17 @@ public class BusinessTypeSelector extends FormLayout {
 		selector.setWidth("100%");
 		selector.setHeight("27px");
 		this.addComponent(selector);
+		
 		selector.addValueChangeListener(e->{
-			Business business = e.getValue();
+			business = e.getValue();
+			addPollListener();
 			if (business != null) {
-				
-				if (view.fileGrid.uuid != null) {
-					Callback event = new Callback() {
-
-						@Override
-						public void onSuccessful() {
-							
-							loadMaterials(business.getCode());
-						}
-					};
-					MessageBox.showMessage("变更提示", "您确定要放弃上次上传的文件？", MessageBox.WARNING, event, "确定");
-				}
-				else {
-					
-					loadMaterials(business.getCode());
-				}
-				
-				
+				view.businessCode = business.getCode();
+				loadMaterials(business.getCode());
+			} 
+			else {
+				view.businessCode = null;
 			}
-			
 		});
 	}
 	
@@ -97,23 +92,68 @@ public class BusinessTypeSelector extends FormLayout {
 		for (DataDictionary dd : list) {
 			i++;
 			ThumbnailRow row = new ThumbnailRow(i+"."+dd.getItemName());
+			row.setDataDictionary(dd);
+			
 			view.fileGrid.addRow(row);
+			// 选中第一个
 			if (i == 1) {
 				row.selected();
+				try {
+					UploadParameters p = new UploadParameters(view.loggedInUser.getUserUniqueId(), view.vin, view.batch+"", view.editableSite.getSiteUniqueId(),view.uuid,view.businessCode,dd.getCode());
+					Yaml.updateUploadParameters(p);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		i++;
 		ThumbnailRow row = new ThumbnailRow(i+"."+"其它材料");
+		row.setDataDictionary(new DataDictionary());
 		view.fileGrid.addRow(row);
-		view.fileGrid.generateNewUUID();
 		view.fileGrid.focus();
 		// 加载拍照影像
-		view.capturePane.displayImage(view.fileGrid.uuid);
+		view.capturePane.displayImage(view.uuid);
 		
 	}
+	
+	/**
+	 * 
+	 */
+	private void addPollListener() {
+		ui.setPollInterval(2 * 1000);
+		ui.addPollListener(listener);
+	}
+	
+	/**
+	 * 
+	 */
+	private PollListener listener = new UIEvents.PollListener() {
+		@Override
+		public void poll(UIEvents.PollEvent event) {
+			
+			Iterator<Component> iter = view.fileGrid.getThumbnailRows();
+			while(iter.hasNext()) {
+				ThumbnailRow row = (ThumbnailRow) iter.next();
+				if(row.getDataDictionary().getCode() == null) {
+					List<Document> list = ui.documentService.findAllDocument2(view.vin,view.uuid);
+					for (Document doc : list) {
+						row.addThumbnail(new Thumbnail());
+					}
+				}
+				else {
+					List<Document> list = ui.documentService.findAllDocument1(view.vin,view.uuid,row.getDataDictionary().getCode());
+					for (Document doc : list) {
+						row.addThumbnail(new Thumbnail());
+					}
+				}
+			}
+			System.out.println(System.currentTimeMillis());
+		}
+	};
 	
 	private FrontView view;
 	private List<Business> data;
 	private ComboBox<Business> selector;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
+	private Business business;
 }

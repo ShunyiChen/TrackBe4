@@ -1,8 +1,9 @@
 package com.maxtree.automotive.dashboard.view.front;
 
+import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.vaadin.ui.HorizontalLayout;
 
-public class ThumbnailRow extends HorizontalLayout{
+public class ThumbnailRow extends HorizontalLayout {
 
 	/**
 	 * 
@@ -52,5 +53,16 @@ public class ThumbnailRow extends HorizontalLayout{
 		this.addComponent(thumbnail);
 	}
 	
+	public DataDictionary getDataDictionary() {
+		return dataDictionary;
+	}
+
+	public void setDataDictionary(DataDictionary dataDictionary) {
+		this.dataDictionary = dataDictionary;
+	}
+
+
+
 	private String materialName;
+	private DataDictionary dataDictionary;
 }

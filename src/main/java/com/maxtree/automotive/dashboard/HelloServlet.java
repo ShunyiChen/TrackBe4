@@ -26,14 +26,18 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.util.StringUtils;
 
+import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.SiteCapacity;
+import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.automotive.dashboard.service.DocumentService;
 import com.maxtree.automotive.dashboard.service.SiteService;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.UI;
 
 @WebServlet("/hello")
@@ -84,31 +88,30 @@ public class HelloServlet extends HttpServlet {
 						
 						String paramString = item.getName();
 						String[] parameters = paramString.split("_");
-						int siteID = Integer.parseInt(parameters[0]);
-						String uuid = parameters[1];
-						fileName = parameters[2];
-						String batch = "";
+						int userUniqueId = Integer.parseInt(parameters[0]);
+						fileName = parameters[1];
+						UploadParameters p = Yaml.readUploadParameters(userUniqueId);
 						
-						System.out.println("==============="+siteID+","+uuid+","+fileName);
 						Site site = null;// ui.siteService.findById(3);
 						String sql = "SELECT * FROM SITE WHERE SITEUNIQUEID=?";
-						List<Site> results = jdbcTemplate.query(sql, new Object[] {siteID}, new BeanPropertyRowMapper<Site>(Site.class));
+						List<Site> results = jdbcTemplate.query(sql, new Object[] {p.getSiteID()}, new BeanPropertyRowMapper<Site>(Site.class));
 						if (results.size() > 0) {
 							site = results.get(0);
 						}
 						
 						//准备document参数
-						String fileFullPath = batch+"/"+uuid+"/"+fileName;
-						String vin = "";
-						String businessCode = "";
-						String dictionarycode = "";
+						String fileFullPath = p.getBatch()+"/"+p.getUuid()+"/"+fileName;
+						String dictionarycode = p.getDictionaryCode();
 						
 						//创建Document
 						Document document = new Document();
-						document.setUuid(uuid);
-						document.setBusinessCode(businessCode);
+						document.vin = p.getVin();
+						document.location = StringUtils.isEmpty(dictionarycode)?2:1;//1:主要材料 2:次要材料 
+						document.setUuid(p.getUuid());
+						document.setBusinessCode(p.getBusinessCode());
 						document.setDictionarycode(dictionarycode);
 						document.setFileFullPath(fileFullPath);
+						
 						documentService.insert(document);
 						
 						

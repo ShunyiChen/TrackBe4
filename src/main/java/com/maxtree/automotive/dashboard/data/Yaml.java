@@ -1,9 +1,17 @@
 package com.maxtree.automotive.dashboard.data;
 
 import java.io.File;
+import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.maxtree.automotive.dashboard.UploadParameters;
+import com.maxtree.automotive.dashboard.domain.User;
+import com.vaadin.server.VaadinSession;
 
 public class Yaml {
 
@@ -31,9 +39,52 @@ public class Yaml {
         return sc;
     }
 	
-	
-	public static void main(String[] args) {
-		SystemConfiguration sd = readSystemConfiguration();
-		System.out.println(sd.getDateformat());
+	/**
+	 * 更新用户操作行为
+	 * 
+	 * @param params
+	 * @throws JsonGenerationException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	public static void updateUploadParameters(UploadParameters params) throws JsonGenerationException, JsonMappingException, IOException {
+		File dumpFile = new File("devices/parameters/"+params.getUserUniqueId()+".yaml");
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        mapper.writeValue(dumpFile, params);
 	}
+	
+	/**
+	 * 读取用户操作行为
+	 * 
+	 * @param userUniqueId
+	 * @return
+	 * @throws JsonGenerationException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	public static UploadParameters readUploadParameters(int userUniqueId) throws JsonGenerationException, JsonMappingException, IOException {
+		UploadParameters ub = null;
+		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+		try {
+			ub = mapper.readValue(new File("devices/parameters/"+userUniqueId+".yaml"), UploadParameters.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		return ub;
+	}
+	
+	/**
+	 * 删除行为文件
+	 * 
+	 * @param userUniqueId
+	 * @throws IOException
+	 */
+	public static void deleteUploadParameters(int userUniqueId) throws IOException {
+		FileUtils.deleteQuietly(new File("devices/parameters/"+userUniqueId+".yaml"));
+	}
+	
+//	public static void main(String[] args) {
+//		SystemConfiguration sd = readSystemConfiguration();
+//		System.out.println(sd.getDateformat());
+//	}
 }

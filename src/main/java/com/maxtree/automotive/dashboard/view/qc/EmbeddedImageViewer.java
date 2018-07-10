@@ -43,13 +43,13 @@ public class EmbeddedImageViewer extends Panel {
 	public EmbeddedImageViewer(Transaction transaction, Site site) {
 		this.setCaption(null);
 		this.site = site;
-		// 主要材料
-		List<Document> primaryDocs = ui.documentService.findPrimary(transaction.getUuid(), transaction.getVin());
-    	// 次要文件
-    	List<Document> secondaryDoes = ui.documentService.findSecondary(transaction.getUuid(), transaction.getVin());
-		
-		this.allDocuments.addAll(primaryDocs);
-		this.allDocuments.addAll(secondaryDoes);
+//		// 主要材料
+//		List<Document> primaryDocs = ui.documentService.findPrimary(transaction.getUuid(), transaction.getVin());
+//    	// 次要文件
+//    	List<Document> secondaryDoes = ui.documentService.findSecondary(transaction.getUuid(), transaction.getVin());
+//		
+//		this.allDocuments.addAll(primaryDocs);
+//		this.allDocuments.addAll(secondaryDoes);
 		initComponents();
 	}
 	

@@ -323,16 +323,11 @@ myDate.toLocaleString(); //获取日期与时间
 <!--拍照-->
 function Capture()
 {
-    var uuid = "";
-	var siteid = "";
-	var vin = "";
-	var batch = "";
-	var businessCode = "";
-	var dictionarycode = "";
+    var userUniqueId = "";
 	var fileext = ".jpg";//document.getElementById("filetype").value;
 	var strFolder = document.getElementById("path").value;
 	var myDate = new Date();
-	var myName = siteid+"_"+uuid+"_Image"+myDate.getFullYear()+(myDate.getMonth()+1)+myDate.getDate()+""+myDate.getHours()+myDate.getMinutes()+myDate.getSeconds()+myDate.getMilliseconds();
+	var myName = userUniqueId+"_Image"+myDate.getFullYear()+(myDate.getMonth()+1)+myDate.getDate()+""+myDate.getHours()+myDate.getMinutes()+myDate.getSeconds()+myDate.getMilliseconds();
 	//myDate.getTime()
 	var newFile = strFolder + "\\" + myName + fileext ;
 	var files = CamSDKOCX.CaptureImage(newFile);

@@ -11,7 +11,7 @@ import java.io.OutputStreamWriter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,7 +111,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
         root.addComponents(main);
         root.setExpandRatio(main, 7.0f);
-        
+        loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
         root.addLayoutClickListener(new LayoutClickListener() {
@@ -120,6 +120,8 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
                 DashboardEventBus.post(new DashboardEvent.CloseOpenWindowsEvent());
             }
         });
+        
+        
         
         // 开启轮询事件提醒
         startPolling();
@@ -223,8 +225,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     	scrollPane.setWidth("100%");
         VerticalLayout listLayout = new VerticalLayout();
         
-        User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(currentUser, DashboardViewType.DASHBOARD.getViewName());
+        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.DASHBOARD.getViewName());
         for (Map<String, Object> m : allMessages) {
         	
         	int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
@@ -283,7 +284,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 //    				String read = m.get("read").toString().equals("1")?"已读":"未读";
 //    				MessageWrapper wrapper = new MessageWrapper(messageUniqueId, senderPicture+" "+senderUserName, senderPicture, subject, messageContent, transactionUniqueId, read, dateCreated, type, status);
     				// 标记已读
-    				ui.messagingService.markAsRead(messageUniqueId, currentUser.getUserUniqueId());
+    				ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
     				
     				CacheManager.getInstance().refreshSendDetailsCache();
     				
@@ -502,10 +503,14 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     private void createTransaction() {
     	if (editableTrans == null) {
     		editableTrans = new Transaction();
+    		try {
+				Yaml.deleteUploadParameters(loggedInUser.getUserUniqueId());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
     		
-    		User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-        	int companyUniqueId = currentUser.getCompanyUniqueId();
-        	int communityUniqueId = currentUser.getCommunityUniqueId();
+    		int companyUniqueId = loggedInUser.getCompanyUniqueId();
+        	int communityUniqueId = loggedInUser.getCommunityUniqueId();
         	if (companyUniqueId == 0) {
         		Notifications.warning("当前用户没有加入任何机构，请联系管理员进行分配。");
         		return;
@@ -526,8 +531,9 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		Notifications.warning("当前用户所在的社区不存在文件站点，或站点已关闭。请联系管理员进行设置。");
         		return;
         	}
-    		
-    		// 如果站点文件夹装满则提醒用户
+    		//创建UUID
+        	uuid = UUID.randomUUID().toString();
+    		//如果站点文件夹装满则提醒用户
         	batch = ui.siteService.updateFolders(editableSite);
         	if (batch == 0) {
         		Notifications.warning("当前站点-"+editableSite.getSiteName()+"已满。请联系管理员进行重新分配。");
@@ -640,11 +646,10 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 //			return;
 //		}
     	
-    	User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
     	basicInfoPane.assignValues(editableTrans);
     	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
-    	editableTrans.setCommunityUniqueId(loginUser.getCommunityUniqueId());
-    	editableTrans.setCompanyUniqueId(loginUser.getCompanyUniqueId());
+    	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+    	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
     	editableTrans.setProvince(editableCompany.getProvince());
     	editableTrans.setCity(editableCompany.getCity());
     	editableTrans.setPrefecture(editableCompany.getPrefecture());
@@ -652,7 +657,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     	editableTrans.setSite(editableSite);
     	editableTrans.setDateModified(new Date());
 //    	editableTrans.setBusinessUniqueId(business.getBusinessUniqueId());
-    	editableTrans.setTypist(loginUser.getUserUniqueId());
+    	editableTrans.setTypist(loggedInUser.getUserUniqueId());
     	// Insert new transaction
     	if (editableTrans.getTransactionUniqueId() == 0) {
     		
@@ -669,8 +674,8 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 		Queue newQueue = new Queue();
 		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
 		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-		newQueue.setSentByUser(loginUser.getUserUniqueId());	// 发送者
-		newQueue.setCommunityUniqueId(loginUser.getCommunityUniqueId());
+		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
+		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
 		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
 		ui.queueService.create(newQueue, serial);
     	
@@ -700,8 +705,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 
 	@Override
 	public void getUnreadCount() {
-		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loginUser.getUserUniqueId());
+		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loggedInUser.getUserUniqueId());
 		int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {
 			
@@ -720,9 +724,12 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 	private Transaction editableTrans = null; 	//可编辑的编辑transaction
 	private Company editableCompany = null;	 	//前台所在机构
 	
-	public Site editableSite = null;			//站点
-	public int batch = 0; 						//新建时的批次号
-	public String vin = null;
+	public User loggedInUser;	//登录用户
+	public Site editableSite;	//业务站点
+	public String uuid;	//UUID业务与原文关联号
+	public int batch;	//业务批次号。默认最大1000个批次，每批次最多放5000文件夹。
+	public String vin;	//车辆识别代码。用于分表。
+	public String businessCode; //业务CODE
 	
     private Label titleLabel;
     private Window notificationsWindow;
@@ -733,8 +740,8 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     
     private BasicInfoPane basicInfoPane = new BasicInfoPane(this);
     private BusinessTypePane businessTypePane = new BusinessTypePane(this);
-    public ThumbnailGrid fileGrid = new ThumbnailGrid("上传材料");
-    public CapturePane capturePane = new CapturePane("拍照", this);
+    public ThumbnailGrid fileGrid = new ThumbnailGrid(this);
+    public CapturePane capturePane = new CapturePane(this);
     
     private Button btnPrint = new Button();
     private Button btnAdd = new Button();

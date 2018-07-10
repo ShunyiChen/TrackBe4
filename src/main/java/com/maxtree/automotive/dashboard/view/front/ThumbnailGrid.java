@@ -1,12 +1,17 @@
 package com.maxtree.automotive.dashboard.view.front;
 
-import java.util.UUID;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.maxtree.automotive.dashboard.UploadParameters;
+import com.maxtree.automotive.dashboard.data.Yaml;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -25,10 +30,11 @@ public class ThumbnailGrid extends Panel{
 	
 	/**
 	 * 
-	 * @param caption
+	 * @param view
 	 */
-	public ThumbnailGrid(String caption) {
-		this.setCaption(caption);
+	public ThumbnailGrid(FrontView view) {
+		this.setCaption("上传材料");
+		this.view = view;
 		initComponents();
 	}
 	
@@ -50,8 +56,7 @@ public class ThumbnailGrid extends Panel{
 		vLayout.setWidth("100%");
 		vLayout.setHeightUndefined();
     	setContent(vLayout);
-    	ShortcutListener upListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_UP,
-				null) {
+    	ShortcutListener upListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_UP, null) {
 			/**
 			 * 
 			 */
@@ -70,11 +75,16 @@ public class ThumbnailGrid extends Panel{
 				row.selected();
 				
 				int pixels = (int) (row.getHeight()*index);
-				
-				System.out.println("up! current is "+index+"   pixels="+pixels);
-				
-				
 				ThumbnailGrid.this.setScrollTop(pixels);
+				
+				
+				try {
+					UploadParameters p = new UploadParameters(view.loggedInUser.getUserUniqueId(), view.vin, view.batch+"", view.editableSite.getSiteUniqueId(),view.uuid,view.businessCode,row.getDataDictionary().getCode());
+					Yaml.updateUploadParameters(p);
+					System.out.println("up! current is "+index+"   pixels="+pixels+"  "+p.getDictionaryCode());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		};
 		ShortcutListener downListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_DOWN,
@@ -96,14 +106,23 @@ public class ThumbnailGrid extends Panel{
 				row = (ThumbnailRow) vLayout.getComponent(index);
 				row.selected();
 				int pixels = (int) (row.getHeight()*index);
-				System.out.println("down! current is "+index+"  pixels="+pixels);
-				
 				ThumbnailGrid.this.setScrollTop(pixels);
+				
+				
+				//更新用户行为
+				try {
+					UploadParameters p = new UploadParameters(view.loggedInUser.getUserUniqueId(), view.vin, view.batch+"", view.editableSite.getSiteUniqueId(),view.uuid,view.businessCode,row.getDataDictionary().getCode());
+					Yaml.updateUploadParameters(p);
+					System.out.println("down! current is "+index+"  pixels="+pixels+"  "+p.getDictionaryCode());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		};
     	this.addShortcutListener(upListener);
     	this.addShortcutListener(downListener);
 	}
+	
 	
 	
 	/**
@@ -124,15 +143,15 @@ public class ThumbnailGrid extends Panel{
 	}
 	
 	/**
-	 * Generate a new UUID string
+	 * 
+	 * @return
 	 */
-	public void generateNewUUID() {
-		uuid = UUID.randomUUID().toString();
-		System.out.println("uuid="+uuid);
+	public Iterator<Component> getThumbnailRows() {
+		return vLayout.iterator();
 	}
 	
 	private static final Logger log = LoggerFactory.getLogger(ThumbnailGrid.class);
 	private VerticalLayout vLayout = new VerticalLayout();
 	private int index = 0;
-	public String uuid = null;
+	private FrontView view;
 }

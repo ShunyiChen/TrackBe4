@@ -18,11 +18,13 @@ public class InterF {
 	Client client = null;
 
 	/**
-	 * 获取车辆信息通过号牌种类，号码号牌
+	 * 输入号牌种类，号牌号码 输出车辆基本信息
 	 * 
 	 * @param hpzl
+	 *            String
 	 * @param hphm
-	 * @return
+	 *            String
+	 * @return Map
 	 */
 	public ArrayList getCarView(String hpzl, String hphm) {
 		ArrayList resultList = new ArrayList();
@@ -41,12 +43,12 @@ public class InterF {
 				e.printStackTrace();
 			}
 			StringReader read = new StringReader(new String(result));
-			// �����µ�����ԴSAX ��������ʹ�� InputSource ������ȷ����ζ�ȡ XML ����
+			// 创建新的输入源SAX 解析器将使用 InputSource 对象来确定如何读取 XML 输入
 			InputSource source = new InputSource(read);
-			// ����һ���µ�SAXBuilder
+			// 创建一个新的SAXBuilder
 			SAXBuilder sb = new SAXBuilder();
 			org.jdom.Document doc = sb.build(source);
-			// ȡ�ĸ�Ԫ��
+			// 取的根元素
 			org.jdom.Element root = doc.getRootElement();
 			org.jdom.Element ele = root.getChild("body");
 			List list = ele.getChildren();
@@ -67,9 +69,11 @@ public class InterF {
 	}
 
 	/**
+	 * 输入 身份证 输出 驾驶证基本信息
 	 * 
 	 * @param bslsh
-	 * @return
+	 *            String
+	 * @return Map
 	 */
 	public ArrayList getDriverView(String bslsh) {
 		ArrayList<Map> resultList = new ArrayList<Map>();
@@ -93,12 +97,12 @@ public class InterF {
 
 		try {
 			StringReader read = new StringReader(new String(result));
-			// �����µ�����ԴSAX ��������ʹ�� InputSource ������ȷ����ζ�ȡ XML ����
+			// 创建新的输入源SAX 解析器将使用 InputSource 对象来确定如何读取 XML 输入
 			InputSource source = new InputSource(read);
-			// ����һ���µ�SAXBuilder
+			// 创建一个新的SAXBuilder
 			SAXBuilder sb = new SAXBuilder();
 			org.jdom.Document doc = sb.build(source);
-			// ȡ�ĸ�Ԫ��
+			// 取的根元素
 			org.jdom.Element root = doc.getRootElement();
 			org.jdom.Element ele = root.getChild("body");
 			List list = ele.getChildren();
@@ -119,9 +123,11 @@ public class InterF {
 	}
 
 	/**
+	 * 输入 业务流水号 输出 驾驶证业务信息
 	 * 
 	 * @param bslsh
-	 * @return
+	 *            String
+	 * @return Map
 	 */
 	public ArrayList getDriverBusView(String bslsh) {
 		ArrayList<Map> resultList = new ArrayList<Map>();
@@ -144,12 +150,12 @@ public class InterF {
 
 		try {
 			StringReader read = new StringReader(new String(result));
-			// �����µ�����ԴSAX ��������ʹ�� InputSource ������ȷ����ζ�ȡ XML ����
+			// 创建新的输入源SAX 解析器将使用 InputSource 对象来确定如何读取 XML 输入
 			InputSource source = new InputSource(read);
-			// ����һ���µ�SAXBuilder
+			// 创建一个新的SAXBuilder
 			SAXBuilder sb = new SAXBuilder();
 			org.jdom.Document doc = sb.build(source);
-			// ȡ�ĸ�Ԫ��
+			// 取的根元素
 			org.jdom.Element root = doc.getRootElement();
 			org.jdom.Element ele = root.getChild("body");
 			List list = ele.getChildren();
@@ -170,12 +176,10 @@ public class InterF {
 	}
 
 	/**
-	 * ���� ҵ����ˮ�� ��� ҵ���¼
+	 * 输入 业务流水号 输出 业务记录
 	 * 
 	 * @param bslsh
-	 *            String   后面两个参数可以null,
-	 *            
-	 *            
+	 *            String
 	 * @return Map
 	 */
 	public ArrayList getbusView(String bslsh, String hpzl, String hphm) {
@@ -200,12 +204,12 @@ public class InterF {
 
 		try {
 			StringReader read = new StringReader(new String(result));
-			// �����µ�����ԴSAX ��������ʹ�� InputSource ������ȷ����ζ�ȡ XML ����
+			// 创建新的输入源SAX 解析器将使用 InputSource 对象来确定如何读取 XML 输入
 			InputSource source = new InputSource(read);
-			// ����һ���µ�SAXBuilder
+			// 创建一个新的SAXBuilder
 			SAXBuilder sb = new SAXBuilder();
 			org.jdom.Document doc = sb.build(source);
-			// ȡ�ĸ�Ԫ��
+			// 取的根元素
 			org.jdom.Element root = doc.getRootElement();
 			org.jdom.Element ele = root.getChild("body");
 			List list = ele.getChildren();

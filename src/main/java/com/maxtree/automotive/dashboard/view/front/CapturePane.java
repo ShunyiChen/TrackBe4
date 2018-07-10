@@ -12,7 +12,6 @@ import java.io.OutputStreamWriter;
 import org.yaml.snakeyaml.reader.UnicodeReader;
 
 import com.maxtree.automotive.dashboard.domain.User;
-import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.BrowserFrame;
@@ -28,11 +27,10 @@ public class CapturePane extends Panel{
 
 	/**
 	 * 
-	 * @param caption
 	 * @param view
 	 */
-	public CapturePane(String caption, FrontView view) {
-		this.setCaption(caption);
+	public CapturePane(FrontView view) {
+		this.setCaption("拍照");
 		this.view = view;
 		initComponents();
 	}
@@ -97,19 +95,9 @@ public class CapturePane extends Panel{
 		StringBuilder sb = new StringBuilder();
 		String line = br.readLine();
 		while (line != null) {
-			if (line.contains("var uuid = \"\";")) {
-				line = line.replace("var uuid = \"\";", "var uuid = \""+uuid+"\";");
+			if (line.contains("var userUniqueId = \"\";")) {
+				line = line.replace("var userUniqueId = \"\";", "var userUniqueId = \""+user.getUserUniqueId()+"\";");
 			}
-			else if (line.contains("var siteid = \"\";")) {
-				line = line.replace("var siteid = \"\";", "var siteid = \""+view.editableSite.getSiteUniqueId()+"\";");
-			}
-			else if (line.contains("var vin = \"\";")) {
-				line = line.replace("var vin = \"\";", "var vin = \""+view.vin+"\";");
-			}
-			else if (line.contains("var batch = \"\";")) {
-				line = line.replace("var batch = \"\";", "var vin = \""+view.batch+"\";");
-			}
-			
 			
 			// System.out.println(line);
 			sb.append(line);

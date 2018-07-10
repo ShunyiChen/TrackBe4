@@ -27,16 +27,17 @@ public class DocumentService {
 	/**
 	 * 获取主要文件列表
 	 * 
-	 * @param uuid
 	 * @param vin
+	 * @param uuid
+	 * @param dictionaryCode
 	 * @return
 	 */
-	public List<Document> findPrimary(String uuid, String vin) {
+	public List<Document> findAllDocument1(String vin, String uuid, String dictionaryCode) {
 		int number = Integer.parseInt(vin.substring(vin.length() - 6));
 		int index = number % 256;
 		
-		String sql = "SELECT * FROM DOCUMENTS_1_"+index+" WHERE UUID=? ORDER BY DOCUMENTUNIQUEID";
-		List<Document> result = jdbcTemplate.query(sql, new Object[] {uuid}, new BeanPropertyRowMapper<Document>(Document.class));
+		String sql = "SELECT * FROM DOCUMENTS_1_"+index+" WHERE UUID=? AND DICTIONARYCODE=? ORDER BY DOCUMENTUNIQUEID";
+		List<Document> result = jdbcTemplate.query(sql, new Object[] {uuid, dictionaryCode}, new BeanPropertyRowMapper<Document>(Document.class));
 		// decode
 		for (Document doc : result) {
 			doc.setFileFullPath(EncryptionUtils.decryptString(doc.getFileFullPath()));
@@ -47,11 +48,11 @@ public class DocumentService {
 	/**
 	 * 获取辅助文件列表
 	 * 
-	 * @param uuid
 	 * @param vin
+	 * @param uuid
 	 * @return
 	 */
-	public List<Document> findSecondary(String uuid, String vin) {
+	public List<Document> findAllDocument2(String vin, String uuid) {
 		int number = Integer.parseInt(vin.substring(vin.length() - 6));
 		int index = number % 256;
 		

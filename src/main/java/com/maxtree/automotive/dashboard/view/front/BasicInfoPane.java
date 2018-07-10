@@ -1,11 +1,12 @@
 package com.maxtree.automotive.dashboard.view.front;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.data.Area;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Transaction;
@@ -15,15 +16,12 @@ import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.shared.ui.ErrorLevel;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 
 public class BasicInfoPane extends Panel{
 
@@ -37,6 +35,14 @@ public class BasicInfoPane extends Panel{
 	 * @param view
 	 */
 	public BasicInfoPane(FrontView view) {
+		this.view = view;
+		initComponents();
+	}
+	
+	/**
+	 * 
+	 */
+	private void initComponents() {
 		this.setCaption("基础信息");
 		this.addStyleName("picture-pane");
 		this.setWidth("100%");
@@ -90,62 +96,31 @@ public class BasicInfoPane extends Panel{
 		vinField.setHeight(fieldHeight);
 		vinField.setReadOnly(true);
 		
-		
 		barCodeField.addBlurListener(e -> {
-			
-			if (StringUtils.isEmpty(barCodeField.getValue())) {
-				return;
-			}
-			
-			// TODO
-			// 调用外部Web service，返回车辆基本信息，然后再通过车辆基本信息查询Transaction，查询条件(状态：待补充，VIN和号码号牌，号牌种类全匹配)
-//			Transaction externalTrans = new EI().getInfoByBarcode(barCodeField.getValue());
-			
-			InterF interF = new InterF();
-			Transaction externalTrans = new Transaction();
-			externalTrans.setPlateNumber("");
-			externalTrans.setVin("");
-			externalTrans.setPlateType("");
-			
-//			Transaction trans = ui.transactionService.find(externalTrans.getPlateType(), externalTrans.getVin(), externalTrans.getPlateNumber());
-//			if (trans != null) {
-//				setFieldValues(trans);
-//				// 更新条形码
-//				trans.setBarcode(barCodeField.getValue());
-//				trans.setStatus(Status.S4.name);
-//				trans.setDateModified(new Date());
-//				
-//				if (trans.getCode() == null) {
-//		        	Portfolio portfolio = ui.storehouseService.findAvailablePortfolio();
-//		        	if (portfolio.getCode() == null) {
-//		        		Notifications.warning("没有对应的上架号。");
-//		        		return;
-//		        	}
-//		        	trans.setCode(portfolio.getCode());// 上架号
-//		        	
-//		        	portfolio.setVin(trans.getVin());
-//		        	ui.storehouseService.updatePortfolio(portfolio);
-//		        }
-//			
-//				Callback callback = new Callback() {
-//					@Override
-//					public void onSuccessful() {
-//						ui.transactionService.update(trans);
-//						view.cleanStage();
-//						
-//						// 提示信息
-//						Notification success = new Notification("业务流水号保存成功！");
-//						success.setDelayMsec(2000);
-//						success.setStyleName("bar success small");
-//						success.setPosition(Position.BOTTOM_CENTER);
-//						success.show(Page.getCurrent());
-//					}
-//				};
-//				MessageBox.showMessage("提示", "是否补充条形码:"+barCodeField.getValue()+"？", MessageBox.INFO, callback, "保存");
-//			}
+			populateVIN();
 		});
-		
-		
+		plateTypeField.addBlurListener(e -> {
+			populateVIN();
+		});
+		plateNumberField.addBlurListener(e -> {
+			populateVIN();
+		});
+	}
+	
+	/**
+	 * 为VIN赋值
+	 */
+	public void populateVIN() {
+		// 通过失去焦点获得，如果有条形码，可以通过条形码查询vin.如果没有条形码，可以通过车牌号和号牌种类查询出vin.
+		if (StringUtils.isEmpty(barCodeField.getValue())) {
+//			ArrayList<HashMap<String, String>> lst = interF.getCarView(plateTypeField.getValue(), plateNumberField.getValue());
+//			view.vin = lst.get(0).get("clsbdh");
+		} else {
+//			ArrayList<HashMap<String, String>> lst = interF.getbusView(barCodeField.getValue(), plateTypeField.getValue(), plateNumberField.getValue());
+//			view.vin = lst.get(0).get("clsbdh");
+		}
+		view.vin = "LGB12YEA9DY001226";
+		vinField.setValue(view.vin);
 	}
 	
 	/**
@@ -240,16 +215,13 @@ public class BasicInfoPane extends Panel{
 	}
 	
 	public void reset() {
-		Area area = Yaml.readArea();
-		
 		barCodeField.clear();
 		plateTypeField.clear();
 		plateNumberField.clear();
 		vinField.clear();
 		
-		
+		Area area = Yaml.readArea();
 		plateNumberField.setValue(area.getLicenseplate());
-		vinField.setValue("LGB12YEA9DY001226");
 	}
 	
 	/**
@@ -274,6 +246,10 @@ public class BasicInfoPane extends Panel{
 		transaction.setVin(vinField.getValue());
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getVIN() {
 		return vinField.getValue();
 	}
@@ -284,4 +260,6 @@ public class BasicInfoPane extends Panel{
 	private TextField plateNumberField = new TextField("号码号牌:"); 		// 号码号牌文本框
 	private TextField vinField = new TextField("车辆识别代号:"); 			// 车辆识别码文本框
 	private String fieldHeight = "27px";
+	private InterF interF = new InterF();
+	private FrontView view;
 }
