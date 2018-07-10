@@ -1,16 +1,15 @@
 package com.maxtree.automotive.dashboard.view.front;
 
-import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.maxtree.automotive.dashboard.component.Hr;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -27,10 +26,8 @@ public class ThumbnailGrid extends Panel{
 	/**
 	 * 
 	 * @param caption
-	 * @param isPrimary
 	 */
-	public ThumbnailGrid(String caption, int height) {
-		this.height = height;
+	public ThumbnailGrid(String caption) {
 		this.setCaption(caption);
 		initComponents();
 	}
@@ -40,6 +37,12 @@ public class ThumbnailGrid extends Panel{
 	 */
 	private void initComponents() {
 		this.addStyleName("picture-pane");
+		UI.getCurrent().getPage().addBrowserWindowResizeListener(e->{
+			int height = UI.getCurrent().getPage().getBrowserWindowHeight() - 173;
+			this.setHeight(height+"px");
+		});
+		
+		int height = UI.getCurrent().getPage().getBrowserWindowHeight() - 173;
 		this.setWidth("100%");
 		this.setHeight(height+"px");
 		vLayout.setMargin(false);
@@ -83,7 +86,6 @@ public class ThumbnailGrid extends Panel{
 
 			@Override
 			public void handleAction(Object sender, Object target) {
-				
 				ThumbnailRow row = (ThumbnailRow) vLayout.getComponent(index);
 				row.deselected();
 				if (index < vLayout.getComponentCount() - 1) {
@@ -103,7 +105,16 @@ public class ThumbnailGrid extends Panel{
     	this.addShortcutListener(downListener);
 	}
 	
+	
 	/**
+	 * Remove all rows
+	 */
+	public void removeAllRows() {
+		vLayout.removeAllComponents();
+	}
+	
+	/**
+	 * Add a new Row
 	 * 
 	 * @param lstRow
 	 */
@@ -112,8 +123,16 @@ public class ThumbnailGrid extends Panel{
 		vLayout.setComponentAlignment(row, Alignment.TOP_LEFT);
 	}
 	
+	/**
+	 * Generate a new UUID string
+	 */
+	public void generateNewUUID() {
+		uuid = UUID.randomUUID().toString();
+		System.out.println("uuid="+uuid);
+	}
+	
 	private static final Logger log = LoggerFactory.getLogger(ThumbnailGrid.class);
 	private VerticalLayout vLayout = new VerticalLayout();
-	private int height;
 	private int index = 0;
+	public String uuid = null;
 }

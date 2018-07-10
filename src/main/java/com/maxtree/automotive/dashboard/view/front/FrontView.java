@@ -397,23 +397,28 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     	main.removeAllComponents();
     	main.setHeightUndefined();
     	
-    	VerticalLayout leftChild = new VerticalLayout();
-    	leftChild.setSizeFull();
-    	leftChild.setSpacing(true);
-    	leftChild.setMargin(false);
-    	leftChild.addComponents(topGrid, bottomGrid);
-    	Panel rightChild = new Panel("拍照");
-    	rightChild.setSizeFull();
-    	rightChild.setHeight("612px");
-    	rightChild.addStyleName("picture-pane");
-    	spliter.setSizeFull();
-    	spliter.addComponents(leftChild, rightChild);
+//    	VerticalLayout leftChild = new VerticalLayout();
+//    	leftChild.setSizeFull();
+//    	leftChild.setSpacing(true);
+//    	leftChild.setMargin(false);
+//    	leftChild.addComponents(topGrid, bottomGrid);
+//    	Panel captureStage = new Panel("拍照");
+//    	captureStage.setSizeFull();
+//    	captureStage.setHeight("612px");
+//    	captureStage.addStyleName("picture-pane");
+    	spliterSouth.setSizeFull();
+    	spliterSouth.addComponents(fileGrid, capturePane);
     	
-    	spliter1.setSizeFull();
-    	spliter1.addComponents(basicInfoPane, businessTypePane);
-    	spliter1.setExpandRatio(basicInfoPane, 2);
-    	spliter1.setExpandRatio(businessTypePane, 1);
-    	main.addComponents(spliter1, spliter);
+    	spliterNorth.setSizeFull();
+    	spliterNorth.addComponents(basicInfoPane, businessTypePane);
+    	spliterNorth.setExpandRatio(basicInfoPane, 3);
+    	spliterNorth.setExpandRatio(businessTypePane, 1);
+    	main.addComponents(spliterNorth, spliterSouth);
+    	
+    	
+    	main.setExpandRatio(spliterNorth, 1);
+    	main.setExpandRatio(spliterSouth, 9);
+    	
     }
     
     /**
@@ -728,14 +733,14 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     
     private BasicInfoPane basicInfoPane = new BasicInfoPane(this);
     private BusinessTypePane businessTypePane = new BusinessTypePane(this);
-    public ThumbnailGrid topGrid = new ThumbnailGrid("主要材料", 400);
-    public ThumbnailGrid bottomGrid = new ThumbnailGrid("次要材料", 200);
+    public ThumbnailGrid fileGrid = new ThumbnailGrid("上传材料");
+    public CapturePane capturePane = new CapturePane("拍照", fileGrid);
     
     private Button btnPrint = new Button();
     private Button btnAdd = new Button();
     private Button btnCommit = new Button();
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
-    private HorizontalLayout spliter1 = new HorizontalLayout();
-    private HorizontalLayout spliter = new HorizontalLayout();
+    private HorizontalLayout spliterNorth = new HorizontalLayout();
+    private HorizontalLayout spliterSouth = new HorizontalLayout();
 }

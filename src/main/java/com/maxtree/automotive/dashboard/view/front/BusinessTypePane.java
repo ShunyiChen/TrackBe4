@@ -1,8 +1,8 @@
 package com.maxtree.automotive.dashboard.view.front;
 
 import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.VerticalLayout;
 
 public class BusinessTypePane extends Panel{
 
@@ -27,12 +27,13 @@ public class BusinessTypePane extends Panel{
 		this.setHeightUndefined();
 		// 业务类型选择
 		BusinessTypeSelector selector = new BusinessTypeSelector(view);
-		VerticalLayout main = new VerticalLayout();
+		HorizontalLayout main = new HorizontalLayout();
 		main.setSpacing(false);
 		main.setMargin(new MarginInfo(false, false, true, true));
 		main.setWidth("100%");
 		main.setHeightUndefined();
 		main.addComponent(selector);
+		
 		this.setContent(main);
 	}
 	

@@ -17,6 +17,7 @@ import com.vaadin.shared.ui.ErrorLevel;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
@@ -41,44 +42,47 @@ public class BasicInfoPane extends Panel{
 		this.setWidth("100%");
 		this.setHeightUndefined();
 		
-		VerticalLayout main = new VerticalLayout();
+		HorizontalLayout main = new HorizontalLayout();
 		main.setSpacing(false);
 		main.setMargin(new MarginInfo(false, false, true, true));
 		main.setWidth("100%");
 		main.setHeightUndefined();
 		
-		HorizontalLayout hlayout = new HorizontalLayout();
-		hlayout.setSpacing(false);
-		hlayout.setMargin(false);
-		hlayout.setHeightUndefined();
-		hlayout.setWidthUndefined();
+		FormLayout form1 = new FormLayout();
+		form1.setSizeFull();
+		form1.setSpacing(false);
+		form1.setMargin(false);
+		form1.addComponent(barCodeField);
+		
+		FormLayout form2 = new FormLayout();
+		form2.setSizeFull();
+		form2.setSpacing(false);
+		form2.setMargin(false);
+		form2.addComponent(plateTypeField);
+		
+		FormLayout form3 = new FormLayout();
+		form3.setSizeFull();
+		form3.setSpacing(false);
+		form3.setMargin(false);
+		form3.addComponent(plateNumberField);
+		
+		FormLayout form4 = new FormLayout();
+		form4.setSizeFull();
+		form4.setSpacing(false);
+		form4.setMargin(false);
+		form4.addComponent(vinField);
+		
+		main.addComponents(form1,form2,form3,form4);
+		setContent(main);
+		
 		List<String> data = ui.dataItemService.findNamesByType(1);
 		plateTypeField.setItems(data);
-		
 		plateTypeField.setEmptySelectionAllowed(false);
-		hlayout.addComponents(barCodeText, 
-				Box.createHorizontalBox(3),
-				barCodeField, 
-				Box.createHorizontalBox(5),
-				plateTypeText, 
-				Box.createHorizontalBox(3),
-				plateTypeField, 
-				Box.createHorizontalBox(5),
-				plateNumberText, 
-				Box.createHorizontalBox(3),
-				plateNumberField,
-				Box.createHorizontalBox(5),
-				vinText, 
-				Box.createHorizontalBox(3), 
-				vinField);
-		hlayout.setComponentAlignment(barCodeText, Alignment.MIDDLE_LEFT);
-		hlayout.setComponentAlignment(barCodeField, Alignment.MIDDLE_LEFT);
-		hlayout.setComponentAlignment(plateTypeText, Alignment.MIDDLE_LEFT);
-		hlayout.setComponentAlignment(plateTypeField, Alignment.MIDDLE_LEFT);
-		hlayout.setComponentAlignment(plateNumberText, Alignment.MIDDLE_LEFT);
-		hlayout.setComponentAlignment(plateNumberField, Alignment.MIDDLE_LEFT);
-		hlayout.setComponentAlignment(vinText, Alignment.MIDDLE_LEFT);
-		hlayout.setComponentAlignment(vinField, Alignment.MIDDLE_LEFT);
+ 
+		barCodeField.setWidth("100%");
+		plateTypeField.setWidth("100%");
+		plateNumberField.setWidth("100%");
+		vinField.setWidth("100%");
 		
 		barCodeField.setHeight(fieldHeight);
 		plateTypeField.setHeight(fieldHeight);
@@ -86,9 +90,6 @@ public class BasicInfoPane extends Panel{
 		vinField.setHeight(fieldHeight);
 		vinField.setReadOnly(true);
 		
-		
-		main.addComponents(hlayout);
-		this.setContent(main);
 		
 		barCodeField.addBlurListener(e -> {
 			
@@ -278,13 +279,9 @@ public class BasicInfoPane extends Panel{
 	}
 	
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
-	private Label barCodeText = new Label("条形码:");
-	private Label plateTypeText = new Label("号牌种类:");
-	private Label plateNumberText = new Label("号码号牌:");
-	private Label vinText = new Label("车辆识别码:");
-	private TextField barCodeField = new TextField(); 	// 条形码文本框
-	private ComboBox<String> plateTypeField = new ComboBox<>();	// 号牌种类文本框
-	private TextField plateNumberField = new TextField(); // 号码号牌文本框
-	private TextField vinField = new TextField(); 			// 车辆识别码文本框
+	private TextField barCodeField = new TextField("条形码:"); 			// 条形码文本框
+	private ComboBox<String> plateTypeField = new ComboBox<>("号牌种类:");// 号牌种类文本框
+	private TextField plateNumberField = new TextField("号码号牌:"); 		// 号码号牌文本框
+	private TextField vinField = new TextField("车辆识别代号:"); 			// 车辆识别码文本框
 	private String fieldHeight = "27px";
 }
