@@ -14,16 +14,16 @@ import org.yaml.snakeyaml.reader.UnicodeReader;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.HelloServlet;
-import com.maxtree.automotive.dashboard.UploadParameters;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.domain.Document;
-import com.maxtree.automotive.dashboard.domain.UploadedFileQueue;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
+import com.maxtree.automotive.dashboard.servlet.UploadInDTO;
+import com.maxtree.automotive.dashboard.servlet.UploadOutDTO;
 import com.vaadin.event.UIEvents;
 import com.vaadin.event.UIEvents.PollListener;
 import com.vaadin.server.VaadinSession;
@@ -71,13 +71,9 @@ public class BusinessTypeSelector extends FormLayout {
 		selector.addValueChangeListener(e->{
 			business = e.getValue();
 			if (business != null) {
-				view.businessCode = business.getCode();
 				loadMaterials(business.getCode());
 				polling();
 			} 
-			else {
-				view.businessCode = null;
-			}
 		});
 	}
 	
@@ -101,12 +97,9 @@ public class BusinessTypeSelector extends FormLayout {
 			// 选中第一个
 			if (i == 1) {
 				row.selected();
-				try {
-					UploadParameters p = new UploadParameters(view.loggedInUser.getUserUniqueId(), view.vin, view.batch+"", view.editableSite.getSiteUniqueId(),view.uuid,view.businessCode,dd.getCode());
-					Yaml.updateUploadParameters(p);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				
+				UploadInDTO inDto = new UploadInDTO(view.loggedInUser.getUserUniqueId(), view.vin, view.batch+"", view.editableSite.getSiteUniqueId(),view.uuid,dd.getCode());
+				UploadFileServlet.IN_DTOs.put(view.loggedInUser.getUserUniqueId(), inDto);
 			}
 		}
 		i++;
@@ -121,18 +114,33 @@ public class BusinessTypeSelector extends FormLayout {
 		
 	}
 	
+	/**
+	 * 
+	 */
 	private void polling() {
 		ui.setPollInterval(1 * 1000);
 		ui.addPollListener(new UIEvents.PollListener() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void poll(UIEvents.PollEvent event) {
 				
-				List<UploadedFileQueue> list = HelloServlet.MAP.get(view.loggedInUser.getUserUniqueId()+"");
+				List<UploadOutDTO> list = UploadFileServlet.OUT_DTOs.get(view.loggedInUser.getUserUniqueId());
 				if (list != null) {
-					for (UploadedFileQueue ufq : list) {
+ 
+					Iterator<UploadOutDTO> iter = list.iterator();
+					while(iter.hasNext()) {
+						UploadOutDTO ufq = iter.next();
 						if (ufq.getRemovable() == 0) {
-							view.fileGrid.map.get(ufq.getDictionaryCode()).addThumbnail(new Thumbnail(ufq.getUserUniqueId(), ufq.getDocumentUniqueId()));
+							view.fileGrid.map.get(ufq.getDictionaryCode()).addThumbnail(new Thumbnail(ufq.thumbnail));
 							ufq.setRemovable(1);
+						}
+						else {
+							// 已经回显过的从缓存清空
+							iter.remove();
 						}
 					}
 				}

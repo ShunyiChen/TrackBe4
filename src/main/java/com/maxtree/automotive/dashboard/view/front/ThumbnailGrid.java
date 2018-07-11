@@ -8,8 +8,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.maxtree.automotive.dashboard.UploadParameters;
 import com.maxtree.automotive.dashboard.data.Yaml;
+import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
+import com.maxtree.automotive.dashboard.servlet.UploadInDTO;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
@@ -79,13 +80,9 @@ public class ThumbnailGrid extends Panel{
 				ThumbnailGrid.this.setScrollTop(pixels);
 				
 				
-				try {
-					UploadParameters p = new UploadParameters(view.loggedInUser.getUserUniqueId(), view.vin, view.batch+"", view.editableSite.getSiteUniqueId(),view.uuid,view.businessCode,row.getDataDictionary().getCode());
-					Yaml.updateUploadParameters(p);
-					System.out.println("up! current is "+index+"   pixels="+pixels+"  "+p.getDictionaryCode());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				UploadInDTO inDto = new UploadInDTO(view.loggedInUser.getUserUniqueId(), view.vin, view.batch+"", view.editableSite.getSiteUniqueId(),view.uuid,row.getDataDictionary().getCode());
+				UploadFileServlet.IN_DTOs.put(view.loggedInUser.getUserUniqueId(), inDto);
+				System.out.println("up! current is "+index+"   pixels="+pixels+"  "+inDto.getDictionaryCode());
 			}
 		};
 		ShortcutListener downListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_DOWN,
@@ -110,21 +107,14 @@ public class ThumbnailGrid extends Panel{
 				ThumbnailGrid.this.setScrollTop(pixels);
 				
 				
-				//更新用户行为
-				try {
-					UploadParameters p = new UploadParameters(view.loggedInUser.getUserUniqueId(), view.vin, view.batch+"", view.editableSite.getSiteUniqueId(),view.uuid,view.businessCode,row.getDataDictionary().getCode());
-					Yaml.updateUploadParameters(p);
-					System.out.println("down! current is "+index+"  pixels="+pixels+"  "+p.getDictionaryCode());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				UploadInDTO inDto = new UploadInDTO(view.loggedInUser.getUserUniqueId(), view.vin, view.batch+"", view.editableSite.getSiteUniqueId(),view.uuid,row.getDataDictionary().getCode());
+				UploadFileServlet.IN_DTOs.put(view.loggedInUser.getUserUniqueId(), inDto);
+				System.out.println("down! current is "+index+"  pixels="+pixels+"  "+inDto.getDictionaryCode());
 			}
 		};
     	this.addShortcutListener(upListener);
     	this.addShortcutListener(downListener);
 	}
-	
-	
 	
 	/**
 	 * Remove all rows

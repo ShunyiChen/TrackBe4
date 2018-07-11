@@ -1,5 +1,6 @@
 package com.maxtree.automotive.dashboard.service;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import com.maxtree.automotive.dashboard.EncryptionUtils;
 import com.maxtree.automotive.dashboard.domain.Document;
-import com.maxtree.automotive.dashboard.domain.UploadedFileQueue;
 
 @Component
 public class DocumentService {
@@ -83,16 +83,20 @@ public class DocumentService {
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 				String SQL = "";
 				if (document.location == 1) {
-					SQL = "INSERT INTO DOCUMENTS_1_"+index+"(UUID,BUSINESSCODE,DICTIONARYCODE,FILEFULLPATH) VALUES(?,?,?,?)";
+					SQL = "INSERT INTO DOCUMENTS_1_"+index+"(UUID,DICTIONARYCODE,FILEFULLPATH,THUMBNAIL) VALUES(?,?,?,?)";
 				} else {
-					SQL = "INSERT INTO DOCUMENTS_2_"+index+"(UUID,BUSINESSCODE,DICTIONARYCODE,FILEFULLPATH) VALUES(?,?,?,?)";
+					SQL = "INSERT INTO DOCUMENTS_2_"+index+"(UUID,DICTIONARYCODE,FILEFULLPATH,THUMBNAIL) VALUES(?,?,?,?)";
 				}
 				PreparedStatement ps = con.prepareStatement(
 						SQL, new String[] {"documentuniqueid"});
 				ps.setString(1, document.getUuid());
-				ps.setString(2, document.getBusinessCode());
-				ps.setString(3, document.getDictionarycode());
-				ps.setString(4, EncryptionUtils.encryptString(document.getFileFullPath()));
+				ps.setString(2, document.getDictionarycode());
+				ps.setString(3, EncryptionUtils.encryptString(document.getFileFullPath()));
+				try {
+					ps.setBinaryStream(4, document.getThumbnail(), document.getThumbnail().available());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				return ps;
 			}
 		}, keyHolder);
@@ -113,11 +117,14 @@ public class DocumentService {
 		int index = number % 256;
 		String SQL = "";
 		if (document.location == 1) {
-			SQL = "UPDATE DOCUMENTS_1_"+index+" SET FILEFULLPATH=? WHERE DOCUMENTUNIQUEID=?";
+			SQL = "UPDATE DOCUMENTS_1_"+index+" SET FILEFULLPATH=?,THUMBNAIL=? WHERE DOCUMENTUNIQUEID=?";
 		} else {
-			SQL = "UPDATE DOCUMENTS_2_"+index+" SET FILEFULLPATH=? WHERE DOCUMENTUNIQUEID=?";
+			SQL = "UPDATE DOCUMENTS_2_"+index+" SET FILEFULLPATH=?,THUMBNAIL=? WHERE DOCUMENTUNIQUEID=?";
 		}
-	 	int opt = jdbcTemplate.update(SQL, new Object[] {EncryptionUtils.encryptString(document.getFileFullPath()), document.getDocumentUniqueId()});
+	 	int opt = jdbcTemplate.update(SQL, new Object[] {
+	 			EncryptionUtils.encryptString(document.getFileFullPath()),
+	 			document.getThumbnail(),
+	 			document.getDocumentUniqueId()});
 	 	log.info("Affected row="+opt);
 	}
 	

@@ -1,17 +1,13 @@
-package com.maxtree.automotive.dashboard;
+package com.maxtree.automotive.dashboard.servlet;
 
-import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -34,24 +29,15 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.StringUtils;
 
-import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
-import com.maxtree.automotive.dashboard.domain.SiteCapacity;
-import com.maxtree.automotive.dashboard.domain.UploadedFileQueue;
-import com.maxtree.automotive.dashboard.domain.User;
-import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.automotive.dashboard.service.DocumentService;
-import com.maxtree.automotive.dashboard.service.SiteService;
-import com.maxtree.imageprocessor.services.ImageProcessorAPI;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
-import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.UI;
 
 import net.coobird.thumbnailator.Thumbnails;
 
 @WebServlet("/hello")
-public class HelloServlet extends HttpServlet {
+public class UploadFileServlet extends HttpServlet {
 
 	/**
 	 * 
@@ -63,16 +49,13 @@ public class HelloServlet extends HttpServlet {
 	
 	@Autowired
 	DocumentService documentService;
-	
-	public static Map<String, List<UploadedFileQueue>> MAP = new HashMap<String, List<UploadedFileQueue>>();
+	//userUniqueId作为Key
+	public static Map<Integer, List<UploadOutDTO>> OUT_DTOs = new HashMap<Integer, List<UploadOutDTO>>();
+	//userUniqueId作为Key
+	public static Map<Integer, UploadInDTO> IN_DTOs = new HashMap<Integer, UploadInDTO>();
 	
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
-		doGet(request, response);
-	}
-
-	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response) {
 		DiskFileItemFactory factory = new DiskFileItemFactory();// 将请求消息实体中的每一个项目封装成单独的DiskFileItem (FileItem接口的实现) 对象
 		ServletFileUpload upload = new ServletFileUpload(factory);// ServletFileUpload负责处理上传的文件数据,并将表单中每个输入项封装成
 																	// 一个FileItem对象中.
@@ -98,18 +81,21 @@ public class HelloServlet extends HttpServlet {
 				if (!item.isFormField()) { // 判断该表单项是否是普通类型
 					if (item.getName() != null && !item.getName().equals("")) {
 						
-						String paramString = item.getName();
-						String[] parameters = paramString.split("_");
-						int userUniqueId = Integer.parseInt(parameters[0]);
-						fileName = parameters[1];
-						UploadParameters p = Yaml.readUploadParameters(userUniqueId);
+//						String paramString = item.getName();
+//						String[] parameters = paramString.split("_");
+//						Integer userUniqueId = Integer.parseInt(parameters[0]);
+//						fileName = parameters[1];
 						
+						Integer userUniqueId = 2;
+						fileName = new File(item.getName()).getName();
+						
+						UploadInDTO p = IN_DTOs.get(userUniqueId);
+						System.out.println(p);
 						if (!checkEmpty(p)) {
 							return;
 						}
 						
-						
-						Site site = null;// ui.siteService.findById(3);
+						Site site = null;
 						String sql = "SELECT * FROM SITE WHERE SITEUNIQUEID=?";
 						List<Site> results = jdbcTemplate.query(sql, new Object[] {p.getSiteID()}, new BeanPropertyRowMapper<Site>(Site.class));
 						if (results.size() > 0) {
@@ -119,46 +105,45 @@ public class HelloServlet extends HttpServlet {
 						//准备document参数
 						String fileFullPath = p.getBatch()+"/"+p.getUuid()+"/"+fileName;
 						String dictionarycode = p.getDictionaryCode();
-						
-						
 						inputStream = item.getInputStream();
+						byte[] bytes = IOUtils.toByteArray(inputStream);
+						inputStream.close();
 						
-//						BufferedInputStream buf = new BufferedInputStream(inputStream); 
-						
-						
-//						inputstreamtofile(inputStream, fileFullPath, site);
+						//保存原图
+						ByteArrayInputStream is = new ByteArrayInputStream(bytes);
+						inputstreamtofile(is, fileFullPath, site);
 //						out.print(fileName);
+						//生成缩略图
+						is = new ByteArrayInputStream(bytes);
+						ByteArrayOutputStream smallOutputStream = new ByteArrayOutputStream();
+						Thumbnails.of(is).size(100, 100)/*.scale(0.033f)*/.toOutputStream(smallOutputStream);//.toFile("devices/"+userUniqueId+"/thumbnails/"+documentUniqueId+".jpg");  
+						is.close();
 						
 						//创建Document
 						Document document = new Document();
 						document.vin = p.getVin();
 						document.location = dictionarycode.equals("$$$$")?2:1;//1:主要材料 2:次要材料 
 						document.setUuid(p.getUuid());
-						document.setBusinessCode(p.getBusinessCode());
 						document.setDictionarycode(dictionarycode);
 						document.setFileFullPath(fileFullPath);
-						
+						document.setThumbnail(new ByteArrayInputStream(smallOutputStream.toByteArray()));
 						int documentUniqueId = documentService.insert(document);
-						File dir = new File("devices/"+userUniqueId+"/thumbnails");
-						if (!dir.exists()) {
-							dir.mkdirs();
-						}
+						System.out.println("documentUniqueId="+documentUniqueId);
 						
-						Thumbnails.of(inputStream).scale(0.033f).toFile("devices/"+userUniqueId+"/thumbnails/"+documentUniqueId+".jpg");  
-						inputStream.close();
-						
-						UploadedFileQueue ufq = new UploadedFileQueue();
+						UploadOutDTO ufq = new UploadOutDTO();
 						ufq.location = dictionarycode.equals("$$$$")?2:1;//1:主要材料 2:次要材料  
+						ufq.thumbnail = new ByteArrayInputStream(smallOutputStream.toByteArray());
 						ufq.setDictionaryCode(dictionarycode);
 						ufq.setDocumentUniqueId(documentUniqueId);
 						ufq.setUserUniqueId(userUniqueId);
 						ufq.setRemovable(0);
-						if(MAP.get(userUniqueId+"") == null) {
-							MAP.put(userUniqueId+"", new ArrayList<UploadedFileQueue>());
-						}
-						List<UploadedFileQueue> list = MAP.get(userUniqueId+"");
-						list.add(ufq);
 						
+						
+						if(OUT_DTOs.get(userUniqueId) == null) {
+							OUT_DTOs.put(userUniqueId, new ArrayList<UploadOutDTO>());
+						}
+						List<UploadOutDTO> list = OUT_DTOs.get(userUniqueId);
+						list.add(ufq);
 						
 					}
 				} else {
@@ -169,15 +154,22 @@ public class HelloServlet extends HttpServlet {
 						System.out.println("params1="+params1);
 					}
 				}
-
+				
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			out.flush();
 			out.close();
 		}
+		
+		
+	}
 
+	@Override
+	public void doGet(HttpServletRequest request, HttpServletResponse response) {
+		doPost(request, response);
 	}
 	
 	/**
@@ -185,11 +177,10 @@ public class HelloServlet extends HttpServlet {
 	 * @param p
 	 * @return
 	 */
-	private boolean checkEmpty(UploadParameters p) {
+	private boolean checkEmpty(UploadInDTO p) {
 		if (StringUtils.isEmpty(p.getVin())
 				|| StringUtils.isEmpty(p.getUuid())
 				|| StringUtils.isEmpty(p.getSiteID()+"")
-				|| StringUtils.isEmpty(p.getBusinessCode())
 				|| StringUtils.isEmpty(p.getDictionaryCode())
 				|| StringUtils.isEmpty(p.getBatch())) {
 			

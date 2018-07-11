@@ -8,32 +8,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.util.Date;
-import java.util.List;
 
 import org.yaml.snakeyaml.reader.UnicodeReader;
 
-import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.domain.UploadedFileQueue;
 import com.maxtree.automotive.dashboard.domain.User;
-import com.vaadin.event.UIEvents;
-import com.vaadin.server.ExternalResource;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.BrowserFrame;
-import com.vaadin.ui.CustomLayout;
-import com.vaadin.ui.JavaScript;
-import com.vaadin.ui.JavaScriptFunction;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Link;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-
-import elemental.json.JsonArray;
 
 public class CapturePane extends Panel{
 
@@ -85,14 +68,14 @@ public class CapturePane extends Panel{
  			public InputStream getStream() {
  				FileInputStream inputStream = null;
 				try {
-					inputStream = new FileInputStream("devices/"+user.getUserUniqueId()+"/capture.html");
+					inputStream = new FileInputStream("devices/"+user.getUserUniqueId()+".html");
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				}
 				return inputStream;
  			}
  		}; 
- 		StreamResource streamResource = new StreamResource(streamSource, "capture.html");
+ 		StreamResource streamResource = new StreamResource(streamSource, user.getUserUniqueId()+".html");
  		streamResource.setCacheTime(0);
 		browser.setSource(streamResource);
 	}
@@ -107,7 +90,8 @@ public class CapturePane extends Panel{
 		// 读取原来的html模板
 		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		String everything = "";
-		File template = new File("devices/Sample_CamOCX_HTML_Device_IE.html");
+//		File template = new File("devices/Sample_CamOCX_HTML_Device_IE.html");
+		File template = new File("devices/templates/TempHtml.html");
 		FileInputStream in = new FileInputStream(template);
 		BufferedReader br = new BufferedReader(new UnicodeReader(in));
 		StringBuilder sb = new StringBuilder();
@@ -127,7 +111,7 @@ public class CapturePane extends Panel{
 		in.close();
 		
 		// 动态生成新的html
-		OutputStreamWriter oStreamWriter = new OutputStreamWriter(new FileOutputStream(new File("devices/" + user.getUserUniqueId() + "/capture.html")), "utf-8");
+		OutputStreamWriter oStreamWriter = new OutputStreamWriter(new FileOutputStream(new File("devices/" + user.getUserUniqueId() + ".html")), "utf-8");
 		oStreamWriter.append(everything);
 		oStreamWriter.close();
 	}

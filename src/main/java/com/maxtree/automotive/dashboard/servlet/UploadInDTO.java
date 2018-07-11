@@ -1,15 +1,13 @@
-package com.maxtree.automotive.dashboard;
+package com.maxtree.automotive.dashboard.servlet;
 
 /**
- * 上传文件参数
+ * 上传入参
  * 
  * @author chens
  *
  */
-public class UploadParameters {
+public class UploadInDTO {
 
-	public UploadParameters() {}
-	
 	/**
 	 * 
 	 * @param userUniqueId
@@ -17,16 +15,14 @@ public class UploadParameters {
 	 * @param batch
 	 * @param siteID
 	 * @param uuid
-	 * @param businessCode
 	 * @param dictionaryCode
 	 */
-	public UploadParameters(int userUniqueId,String vin,String batch,int siteID,String uuid,String businessCode,String dictionaryCode) {
+	public UploadInDTO(int userUniqueId,String vin,String batch,int siteID,String uuid,String dictionaryCode) {
 		this.userUniqueId = userUniqueId;
 		this.vin = vin;
 		this.batch = batch;
 		this.siteID = siteID;
 		this.uuid = uuid;
-		this.businessCode = businessCode;
 		this.dictionaryCode = dictionaryCode;
 	}
 	
@@ -70,14 +66,6 @@ public class UploadParameters {
 		this.uuid = uuid;
 	}
 
-	public String getBusinessCode() {
-		return businessCode;
-	}
-
-	public void setBusinessCode(String businessCode) {
-		this.businessCode = businessCode;
-	}
-
 	public String getDictionaryCode() {
 		return dictionaryCode;
 	}
@@ -88,8 +76,8 @@ public class UploadParameters {
 	
 	@Override
 	public String toString() {
-		return String.format("UploadParameters[userUniqueId=%d,vin='%s',batch='%s',siteID=%d, uuid='%s',businessCode='%s',dictionaryCode='%s']",
-				userUniqueId,vin,batch,siteID,uuid,businessCode,dictionaryCode);
+		return String.format("UploadParameters[userUniqueId=%d,vin='%s',batch='%s',siteID=%d, uuid='%s',dictionaryCode='%s']",
+				userUniqueId,vin,batch,siteID,uuid,dictionaryCode);
 	}
 
 	private int userUniqueId;
@@ -97,6 +85,5 @@ public class UploadParameters {
 	private String batch;
 	private int siteID;
 	private String uuid;
-	private String businessCode;
 	private String dictionaryCode;
 }

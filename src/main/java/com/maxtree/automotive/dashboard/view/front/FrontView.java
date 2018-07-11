@@ -503,11 +503,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     private void createTransaction() {
     	if (editableTrans == null) {
     		editableTrans = new Transaction();
-    		try {
-				Yaml.deleteUploadParameters(loggedInUser.getUserUniqueId());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
     		
     		int companyUniqueId = loggedInUser.getCompanyUniqueId();
         	int communityUniqueId = loggedInUser.getCommunityUniqueId();
@@ -729,7 +724,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 	public String uuid;	//UUID业务与原文关联号
 	public int batch;	//业务批次号。默认最大1000个批次，每批次最多放5000文件夹。
 	public String vin;	//车辆识别代码。用于分表。
-	public String businessCode; //业务CODE
 	
     private Label titleLabel;
     private Window notificationsWindow;
