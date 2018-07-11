@@ -1,7 +1,8 @@
 package com.maxtree.automotive.dashboard.view.front;
 
 import com.maxtree.automotive.dashboard.domain.DataDictionary;
-import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.event.LayoutEvents.LayoutClickListener;
+import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
@@ -31,17 +32,19 @@ public class ThumbnailRow extends Panel {
 		this.setCaption(materialName);
 		this.addStyleName("ThumbnailRow-border");
 		
-//		Panel scroll = new Panel();
-//		scroll.setCaption(null);
-//		scroll.setSizeFull();
-//		scroll.setContent(main);
-		
 		main.setSpacing(false);
 		main.setMargin(false);
 		main.setWidthUndefined();
 		main.setHeight("100%");
-//		this.addComponent(scroll);
 		this.setContent(main);
+	}
+	
+	/**
+	 * 
+	 * @param listener
+	 */
+	public void addActionListener(ClickListener listener) {
+		this.addClickListener(listener);
 	}
 	
 	/**
@@ -69,6 +72,14 @@ public class ThumbnailRow extends Panel {
 		main.setComponentAlignment(thumbnail, Alignment.MIDDLE_LEFT);
 	}
 	
+	/**
+	 * 
+	 * @param thumbnail
+	 */
+	public void removeThumbnail(Thumbnail thumbnail) {
+		main.removeComponent(thumbnail);
+	}
+	
 	public DataDictionary getDataDictionary() {
 		return dataDictionary;
 	}
@@ -76,8 +87,6 @@ public class ThumbnailRow extends Panel {
 	public void setDataDictionary(DataDictionary dataDictionary) {
 		this.dataDictionary = dataDictionary;
 	}
-
-
 
 	private String materialName;
 	private DataDictionary dataDictionary;

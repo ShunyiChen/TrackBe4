@@ -26,7 +26,7 @@ public class SystemConfiguration {
 		this.dateformat = dateformat;
 	}
 
-	private int pollinginterval; 	// 事件提醒轮询间隔为30秒
+	private int pollinginterval; 	//全部事件(消息提醒,上传回显）轮询间隔为1秒
 	private int refreshcacheinterval; //刷新权限缓存间隔为300秒
 	private String dateformat;		// 打印结果单日期格式 yyyy年MM月dd日 HH:mm:SS
 }

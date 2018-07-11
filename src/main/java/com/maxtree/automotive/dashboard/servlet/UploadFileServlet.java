@@ -81,13 +81,13 @@ public class UploadFileServlet extends HttpServlet {
 				if (!item.isFormField()) { // 判断该表单项是否是普通类型
 					if (item.getName() != null && !item.getName().equals("")) {
 						
-						String paramString = item.getName();
-						String[] parameters = paramString.split("_");
-						Integer userUniqueId = Integer.parseInt(parameters[0]);
-						fileName = parameters[1];
+//						String paramString = item.getName();
+//						String[] parameters = paramString.split("_");
+//						Integer userUniqueId = Integer.parseInt(parameters[0]);
+//						fileName = parameters[1];
 						
-//						Integer userUniqueId = 2;
-//						fileName = new File(item.getName()).getName();
+						Integer userUniqueId = 2;
+						fileName = new File(item.getName()).getName();
 						
 						UploadInDTO p = IN_DTOs.get(userUniqueId);
 						System.out.println(p);
@@ -126,9 +126,8 @@ public class UploadFileServlet extends HttpServlet {
 						document.setUuid(p.getUuid());
 						document.setDictionarycode(dictionarycode);
 						document.setFileFullPath(fileFullPath);
-						document.setThumbnail(new ByteArrayInputStream(smallOutputStream.toByteArray()));
+						document.setThumbnail(smallOutputStream.toByteArray());
 						int documentUniqueId = documentService.insert(document);
-						System.out.println("documentUniqueId="+documentUniqueId);
 						
 						UploadOutDTO ufq = new UploadOutDTO();
 						ufq.location = dictionarycode.equals("$$$$")?2:1;//1:主要材料 2:次要材料  
@@ -136,8 +135,9 @@ public class UploadFileServlet extends HttpServlet {
 						ufq.setDictionaryCode(dictionarycode);
 						ufq.setDocumentUniqueId(documentUniqueId);
 						ufq.setUserUniqueId(userUniqueId);
+						ufq.setFileFullPath(fileFullPath);
 						ufq.setRemovable(0);
-						
+						smallOutputStream.close();
 						
 						if(OUT_DTOs.get(userUniqueId) == null) {
 							OUT_DTOs.put(userUniqueId, new ArrayList<UploadOutDTO>());

@@ -357,7 +357,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 
         @Subscribe
         public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-        	log.info("===============DashboardView Polling");
+//        	System.out.println("===============DashboardView Polling");
         	DashboardMenu.getInstance().updateNotificationsCount(event.getCount());
         	setUnreadCount(event.getCount());
         }
@@ -735,7 +735,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     private BasicInfoPane basicInfoPane = new BasicInfoPane(this);
     private BusinessTypePane businessTypePane = new BusinessTypePane(this);
     public ThumbnailGrid fileGrid = new ThumbnailGrid(this);
-    public CapturePane capturePane = new CapturePane(this);
+    public CapturePane capturePane = new CapturePane();
     
     private Button btnPrint = new Button();
     private Button btnAdd = new Button();

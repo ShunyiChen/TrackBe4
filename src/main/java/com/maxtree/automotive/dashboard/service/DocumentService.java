@@ -1,6 +1,6 @@
 package com.maxtree.automotive.dashboard.service;
 
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -33,12 +33,12 @@ public class DocumentService {
 	 * @param dictionaryCode
 	 * @return
 	 */
-	public List<Document> findAllDocument1(String vin, String uuid, String dictionaryCode) {
+	public List<Document> findAllDocument1(String vin, String uuid) {
 		int number = Integer.parseInt(vin.substring(vin.length() - 6));
 		int index = number % 256;
 		
-		String sql = "SELECT * FROM DOCUMENTS_1_"+index+" WHERE UUID=? AND DICTIONARYCODE=? ORDER BY DOCUMENTUNIQUEID";
-		List<Document> result = jdbcTemplate.query(sql, new Object[] {uuid, dictionaryCode}, new BeanPropertyRowMapper<Document>(Document.class));
+		String sql = "SELECT A.*,B.ITEMNAME AS ALIAS FROM DOCUMENTS_1_"+index+" AS A LEFT JOIN DATADICTIONARY AS B ON A.DICTIONARYCODE=B.CODE WHERE A.UUID=? ORDER BY A.DOCUMENTUNIQUEID";
+		List<Document> result = jdbcTemplate.query(sql, new Object[] {uuid}, new BeanPropertyRowMapper<Document>(Document.class));
 		// decode
 		for (Document doc : result) {
 			doc.setFileFullPath(EncryptionUtils.decryptString(doc.getFileFullPath()));
@@ -89,11 +89,7 @@ public class DocumentService {
 					ps.setString(1, document.getUuid());
 					ps.setString(2, document.getDictionarycode());
 					ps.setString(3, EncryptionUtils.encryptString(document.getFileFullPath()));
-					try {
-						ps.setBinaryStream(4, document.getThumbnail(), document.getThumbnail().available());
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					ps.setBinaryStream(4, new ByteArrayInputStream(document.getThumbnail()), document.getThumbnail().length);
 					return ps;
 				}
 				else {
@@ -102,11 +98,7 @@ public class DocumentService {
 							SQL, new String[] {"documentuniqueid"});
 					ps.setString(1, document.getUuid());
 					ps.setString(2, EncryptionUtils.encryptString(document.getFileFullPath()));
-					try {
-						ps.setBinaryStream(3, document.getThumbnail(), document.getThumbnail().available());
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					ps.setBinaryStream(3, new ByteArrayInputStream(document.getThumbnail()), document.getThumbnail().length);
 					return ps;
 				}
 				
@@ -143,11 +135,13 @@ public class DocumentService {
 	/**
 	 * 
 	 * @param documentUniqueId
+	 * @param location
+	 * @param vin
 	 */
-	public void deleteById(int documentUniqueId, String vin) {
+	public void deleteById(int documentUniqueId, int location, String vin) {
 		int number = Integer.parseInt(vin.substring(vin.length() - 6));
 		int index = number % 256;
-		String sql = "DELETE FROM DOCUMENTS_2_"+index+" WHERE DOCUMENTUNIQUEID=?";
+		String sql = "DELETE FROM DOCUMENTS_"+location+"_"+index+" WHERE DOCUMENTUNIQUEID=?";
 		int affected = jdbcTemplate.update(sql, new Object[] {documentUniqueId});
 		log.info("Affected row "+affected);
 	}

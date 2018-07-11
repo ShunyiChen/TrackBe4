@@ -29,9 +29,8 @@ public class CapturePane extends Panel{
 	 * 
 	 * @param view
 	 */
-	public CapturePane(FrontView view) {
+	public CapturePane() {
 		this.setCaption("拍照");
-		this.view = view;
 		initComponents();
 	}
 	
@@ -90,8 +89,8 @@ public class CapturePane extends Panel{
 		// 读取原来的html模板
 		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		String everything = "";
-		File template = new File("devices/templates/Sample_CamOCX_HTML_Device_IE.html");
-//		File template = new File("devices/templates/TempHtml.html");
+//		File template = new File("devices/templates/Sample_CamOCX_HTML_Device_IE.html");
+		File template = new File("devices/templates/TempHtml.html");
 		FileInputStream in = new FileInputStream(template);
 		BufferedReader br = new BufferedReader(new UnicodeReader(in));
 		StringBuilder sb = new StringBuilder();
@@ -116,6 +115,5 @@ public class CapturePane extends Panel{
 		oStreamWriter.close();
 	}
 	
-	private FrontView view;
 	private BrowserFrame browser = new BrowserFrame(null);
 }

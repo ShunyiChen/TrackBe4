@@ -1,38 +1,25 @@
 package com.maxtree.automotive.dashboard.view.front;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import org.yaml.snakeyaml.reader.UnicodeReader;
-
-import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.component.Box;
-import com.maxtree.automotive.dashboard.component.MessageBox;
+import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.DataDictionary;
-import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
 import com.maxtree.automotive.dashboard.servlet.UploadInDTO;
 import com.maxtree.automotive.dashboard.servlet.UploadOutDTO;
+import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.event.UIEvents;
-import com.vaadin.event.UIEvents.PollListener;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 
 /**
@@ -61,7 +48,7 @@ public class BusinessTypeSelector extends FormLayout {
 		data = ui.userService.findAssignedBusinesses(loginUser.getUserUniqueId());
 		selector = new ComboBox<Business>("业务类型:", data);
 		// Disallow null selections
-		selector.setEmptySelectionAllowed(false);
+		selector.setEmptySelectionAllowed(true);
 		selector.setTextInputAllowed(false);
 		selector.setPlaceholder("请选择一个业务类型");
 		selector.setWidth("100%");
@@ -71,8 +58,13 @@ public class BusinessTypeSelector extends FormLayout {
 		selector.addValueChangeListener(e->{
 			business = e.getValue();
 			if (business != null) {
-				loadMaterials(business.getCode());
-				polling();
+				if (view.vin != null) {
+					loadMaterials(business.getCode());
+					polling();
+				}
+				else {
+					Notifications.warning("车辆识别代码不能空。");
+				}
 			} 
 		});
 	}
@@ -111,14 +103,73 @@ public class BusinessTypeSelector extends FormLayout {
 		view.fileGrid.focus();
 		// 加载拍照影像
 		view.capturePane.displayImage(view.uuid);
-		
 	}
 	
 	/**
-	 * 
+	 * 上传图像回显
 	 */
 	private void polling() {
-		ui.setPollInterval(1 * 1000);
+		
+//		TimerTask timerTask = new TimerTask() {
+//
+//			@Override
+//			public void run() {
+//				System.out.println("request focus");
+//					
+//				view.fileGrid.focus();
+//				
+//				List<UploadOutDTO> list = UploadFileServlet.OUT_DTOs.get(view.loggedInUser.getUserUniqueId());
+//				if (list != null) {
+// 
+//					Iterator<UploadOutDTO> iter = list.iterator();
+//					while(iter.hasNext()) {
+//						UploadOutDTO ufq = iter.next();
+//						if (ufq.getRemovable() == 0) {
+//							
+//							Thumbnail thumbnail = new Thumbnail(ufq.thumbnail);
+//							// 右键菜单
+//							com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(thumbnail, true);
+//							menu.addItem("查看", new com.vaadin.contextmenu.Menu.Command() {
+//								@Override
+//								public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+//									ImageViewerWindow.open(view, ufq.getDocumentUniqueId());
+//								}
+//							});
+//							menu.addSeparator();
+//							menu.addItem("删除", new com.vaadin.contextmenu.Menu.Command() {
+//								@Override
+//								public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+//									//从文件系统删除
+//									try {
+//										fileSystem.deleteFile(view.editableSite, ufq.getFileFullPath());
+//									} catch (FileException e) {
+//										e.printStackTrace();
+//									}
+//									
+//									//从数据库删除
+//									ui.documentService.deleteById(ufq.getDocumentUniqueId(), ufq.getLocation() ,view.vin);
+//									
+//									//从UI删除
+//									ThumbnailRow row = view.fileGrid.mapRows.get(ufq.getDictionaryCode());
+//									row.removeThumbnail(thumbnail);
+//								}
+//							});
+//							
+//							view.fileGrid.mapRows.get(ufq.getDictionaryCode()).addThumbnail(thumbnail);
+//							ufq.setRemovable(1);
+//						}
+//						else {
+//							// 已经回显过的从缓存清空
+//							iter.remove();
+//						}
+//					}
+//				}
+//			}
+//		};
+//		
+//		Timer timer = new Timer(true);
+//        timer.scheduleAtFixedRate(timerTask, 0, pollInterval*1000);
+		
 		ui.addPollListener(new UIEvents.PollListener() {
 			/**
 			 * 
@@ -127,7 +178,7 @@ public class BusinessTypeSelector extends FormLayout {
 
 			@Override
 			public void poll(UIEvents.PollEvent event) {
-				
+				System.out.println("request focus");
 				view.fileGrid.focus();
 				
 				List<UploadOutDTO> list = UploadFileServlet.OUT_DTOs.get(view.loggedInUser.getUserUniqueId());
@@ -137,7 +188,37 @@ public class BusinessTypeSelector extends FormLayout {
 					while(iter.hasNext()) {
 						UploadOutDTO ufq = iter.next();
 						if (ufq.getRemovable() == 0) {
-							view.fileGrid.map.get(ufq.getDictionaryCode()).addThumbnail(new Thumbnail(ufq.thumbnail));
+							
+							Thumbnail thumbnail = new Thumbnail(ufq.thumbnail);
+							// 右键菜单
+							com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(thumbnail, true);
+							menu.addItem("查看", new com.vaadin.contextmenu.Menu.Command() {
+								@Override
+								public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+									ImageViewerWindow.open(view, ufq.getDocumentUniqueId());
+								}
+							});
+							menu.addSeparator();
+							menu.addItem("删除", new com.vaadin.contextmenu.Menu.Command() {
+								@Override
+								public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+									//从文件系统删除
+									try {
+										fileSystem.deleteFile(view.editableSite, ufq.getFileFullPath());
+									} catch (FileException e) {
+										e.printStackTrace();
+									}
+									
+									//从数据库删除
+									ui.documentService.deleteById(ufq.getDocumentUniqueId(), ufq.getLocation() ,view.vin);
+									
+									//从UI删除
+									ThumbnailRow row = view.fileGrid.mapRows.get(ufq.getDictionaryCode());
+									row.removeThumbnail(thumbnail);
+								}
+							});
+							
+							view.fileGrid.mapRows.get(ufq.getDictionaryCode()).addThumbnail(thumbnail);
 							ufq.setRemovable(1);
 						}
 						else {
@@ -155,4 +236,5 @@ public class BusinessTypeSelector extends FormLayout {
 	private ComboBox<Business> selector;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private Business business;
+	private TB4FileSystem fileSystem = new TB4FileSystem();
 }

@@ -168,7 +168,7 @@ public class TB4FileSystem {
 				protocol = site.getSiteType().toLowerCase();
 				name = protocol + ":///" + site.getHostAddr();
 			}
-			targetPath = new String(targetPath.getBytes("UTF-8"),"ISO-8859-1");
+			targetPath = new String(targetPath.getBytes("UTF-8"),"UTF-8");
 			file = fsManager.resolveFile(name + "/"+ targetPath);
 			
 			file.delete();
