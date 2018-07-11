@@ -110,66 +110,6 @@ public class BusinessTypeSelector extends FormLayout {
 	 */
 	private void polling() {
 		
-//		TimerTask timerTask = new TimerTask() {
-//
-//			@Override
-//			public void run() {
-//				System.out.println("request focus");
-//					
-//				view.fileGrid.focus();
-//				
-//				List<UploadOutDTO> list = UploadFileServlet.OUT_DTOs.get(view.loggedInUser.getUserUniqueId());
-//				if (list != null) {
-// 
-//					Iterator<UploadOutDTO> iter = list.iterator();
-//					while(iter.hasNext()) {
-//						UploadOutDTO ufq = iter.next();
-//						if (ufq.getRemovable() == 0) {
-//							
-//							Thumbnail thumbnail = new Thumbnail(ufq.thumbnail);
-//							// 右键菜单
-//							com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(thumbnail, true);
-//							menu.addItem("查看", new com.vaadin.contextmenu.Menu.Command() {
-//								@Override
-//								public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
-//									ImageViewerWindow.open(view, ufq.getDocumentUniqueId());
-//								}
-//							});
-//							menu.addSeparator();
-//							menu.addItem("删除", new com.vaadin.contextmenu.Menu.Command() {
-//								@Override
-//								public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
-//									//从文件系统删除
-//									try {
-//										fileSystem.deleteFile(view.editableSite, ufq.getFileFullPath());
-//									} catch (FileException e) {
-//										e.printStackTrace();
-//									}
-//									
-//									//从数据库删除
-//									ui.documentService.deleteById(ufq.getDocumentUniqueId(), ufq.getLocation() ,view.vin);
-//									
-//									//从UI删除
-//									ThumbnailRow row = view.fileGrid.mapRows.get(ufq.getDictionaryCode());
-//									row.removeThumbnail(thumbnail);
-//								}
-//							});
-//							
-//							view.fileGrid.mapRows.get(ufq.getDictionaryCode()).addThumbnail(thumbnail);
-//							ufq.setRemovable(1);
-//						}
-//						else {
-//							// 已经回显过的从缓存清空
-//							iter.remove();
-//						}
-//					}
-//				}
-//			}
-//		};
-//		
-//		Timer timer = new Timer(true);
-//        timer.scheduleAtFixedRate(timerTask, 0, pollInterval*1000);
-		
 		ui.addPollListener(new UIEvents.PollListener() {
 			/**
 			 * 
@@ -178,7 +118,6 @@ public class BusinessTypeSelector extends FormLayout {
 
 			@Override
 			public void poll(UIEvents.PollEvent event) {
-				System.out.println("request focus");
 				view.fileGrid.focus();
 				
 				List<UploadOutDTO> list = UploadFileServlet.OUT_DTOs.get(view.loggedInUser.getUserUniqueId());
