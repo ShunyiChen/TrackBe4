@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.maxtree.automotive.dashboard.EncryptionUtils;
 import com.maxtree.automotive.dashboard.domain.Document;
+import com.maxtree.automotive.dashboard.domain.UploadedFileQueue;
 
 @Component
 public class DocumentService {
@@ -131,4 +132,42 @@ public class DocumentService {
 		int affected = jdbcTemplate.update(sql, new Object[] {documentUniqueId});
 		log.info("Affected row "+affected);
 	}
+	
+//	/**
+//	 * 
+//	 * @param userUniqueId
+//	 * @return
+//	 */
+//	public List<UploadedFileQueue> findAllUploadedFileQueue(int userUniqueId) {
+//		String sql = "SELECT * FROM UPLOADEDFILEQUEUE WHERE USERUNIQUEID=? AND REMOVABLE=?";
+//		List<UploadedFileQueue> result = jdbcTemplate.query(sql, new Object[] {userUniqueId, 0}, new BeanPropertyRowMapper<UploadedFileQueue>(UploadedFileQueue.class));
+//		
+//		return result;
+//	}
+//	
+//	/**
+//	 * 
+//	 */
+//	public void insertUploadedFileQueue(UploadedFileQueue ufq) {
+//		String sql = "INSERT INTO UPLOADEDFILEQUEUE(USERUNIQUEID,DICTIONARYCODE,DOCUMENTUNIQUEID,REMOVABLE) VALUES(?,?,?,?)";
+//		int opt = jdbcTemplate.update(sql, new Object[] {ufq.getUserUniqueId(), ufq.getDictionaryCode(), ufq.getDocumentUniqueId(), ufq.getRemovable()});
+//	 	log.info("Affected row="+opt);
+//	}
+//	
+//	public void updateUploadedFileQueue(int queueUniqueId) {
+//		String sql = "UPDATE UPLOADEDFILEQUEUE SET REMOVABLE=? WHERE QUEUEUNIQUEID=?";
+//		int opt = jdbcTemplate.update(sql, new Object[] {1, queueUniqueId});
+//	 	log.info("Affected row="+opt);
+//	}
+//	
+//	/**
+//	 * 
+//	 * @param userUniqueId
+//	 * @param removable
+//	 */
+//	public void deleteUploadedFileQueue(int userUniqueId, int removable) {
+//		String sql = "DELETE FROM UPLOADEDFILEQUEUE WHERE USERUNIQUEID=? AND REMOVABLE=?";
+//		int opt = jdbcTemplate.update(sql, new Object[] {userUniqueId, removable});
+//	 	log.info("Affected row="+opt);
+//	}
 }

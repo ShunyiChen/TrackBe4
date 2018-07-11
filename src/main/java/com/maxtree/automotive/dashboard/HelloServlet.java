@@ -1,5 +1,7 @@
 package com.maxtree.automotive.dashboard;
 
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -11,9 +13,13 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -32,13 +38,17 @@ import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.SiteCapacity;
+import com.maxtree.automotive.dashboard.domain.UploadedFileQueue;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.automotive.dashboard.service.DocumentService;
 import com.maxtree.automotive.dashboard.service.SiteService;
+import com.maxtree.imageprocessor.services.ImageProcessorAPI;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.UI;
+
+import net.coobird.thumbnailator.Thumbnails;
 
 @WebServlet("/hello")
 public class HelloServlet extends HttpServlet {
@@ -53,6 +63,8 @@ public class HelloServlet extends HttpServlet {
 	
 	@Autowired
 	DocumentService documentService;
+	
+	public static Map<String, List<UploadedFileQueue>> MAP = new HashMap<String, List<UploadedFileQueue>>();
 	
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
@@ -92,6 +104,11 @@ public class HelloServlet extends HttpServlet {
 						fileName = parameters[1];
 						UploadParameters p = Yaml.readUploadParameters(userUniqueId);
 						
+						if (!checkEmpty(p)) {
+							return;
+						}
+						
+						
 						Site site = null;// ui.siteService.findById(3);
 						String sql = "SELECT * FROM SITE WHERE SITEUNIQUEID=?";
 						List<Site> results = jdbcTemplate.query(sql, new Object[] {p.getSiteID()}, new BeanPropertyRowMapper<Site>(Site.class));
@@ -103,24 +120,46 @@ public class HelloServlet extends HttpServlet {
 						String fileFullPath = p.getBatch()+"/"+p.getUuid()+"/"+fileName;
 						String dictionarycode = p.getDictionaryCode();
 						
+						
+						inputStream = item.getInputStream();
+						
+//						BufferedInputStream buf = new BufferedInputStream(inputStream); 
+						
+						
+//						inputstreamtofile(inputStream, fileFullPath, site);
+//						out.print(fileName);
+						
 						//创建Document
 						Document document = new Document();
 						document.vin = p.getVin();
-						document.location = StringUtils.isEmpty(dictionarycode)?2:1;//1:主要材料 2:次要材料 
+						document.location = dictionarycode.equals("$$$$")?2:1;//1:主要材料 2:次要材料 
 						document.setUuid(p.getUuid());
 						document.setBusinessCode(p.getBusinessCode());
 						document.setDictionarycode(dictionarycode);
 						document.setFileFullPath(fileFullPath);
 						
-						documentService.insert(document);
+						int documentUniqueId = documentService.insert(document);
+						File dir = new File("devices/"+userUniqueId+"/thumbnails");
+						if (!dir.exists()) {
+							dir.mkdirs();
+						}
+						
+						Thumbnails.of(inputStream).scale(0.033f).toFile("devices/"+userUniqueId+"/thumbnails/"+documentUniqueId+".jpg");  
+						inputStream.close();
+						
+						UploadedFileQueue ufq = new UploadedFileQueue();
+						ufq.location = dictionarycode.equals("$$$$")?2:1;//1:主要材料 2:次要材料  
+						ufq.setDictionaryCode(dictionarycode);
+						ufq.setDocumentUniqueId(documentUniqueId);
+						ufq.setUserUniqueId(userUniqueId);
+						ufq.setRemovable(0);
+						if(MAP.get(userUniqueId+"") == null) {
+							MAP.put(userUniqueId+"", new ArrayList<UploadedFileQueue>());
+						}
+						List<UploadedFileQueue> list = MAP.get(userUniqueId+"");
+						list.add(ufq);
 						
 						
-//						fileName = item.getName();
-//						int index = fileName.lastIndexOf("\\");
-//						fileName = fileName.substring(index + 1, fileName.length());
-						inputStream = item.getInputStream();
-						inputstreamtofile(inputStream, fileName, site);
-//						out.print(fileName);
 					}
 				} else {
 					if ("paramValues".equals(item.getFieldName())) {
@@ -140,6 +179,30 @@ public class HelloServlet extends HttpServlet {
 		}
 
 	}
+	
+	/**
+	 * 
+	 * @param p
+	 * @return
+	 */
+	private boolean checkEmpty(UploadParameters p) {
+		if (StringUtils.isEmpty(p.getVin())
+				|| StringUtils.isEmpty(p.getUuid())
+				|| StringUtils.isEmpty(p.getSiteID()+"")
+				|| StringUtils.isEmpty(p.getBusinessCode())
+				|| StringUtils.isEmpty(p.getDictionaryCode())
+				|| StringUtils.isEmpty(p.getBatch())) {
+			
+			System.out.println(p);
+			
+			return false;
+		}
+		else {
+			
+			return true;
+		}
+	}
+	
 
 	/**
 	 * 
@@ -157,13 +220,13 @@ public class HelloServlet extends HttpServlet {
 	/**
 	 * 
 	 * @param ins
-	 * @param fileName
+	 * @param fileFullPath
 	 * @param site
 	 */
-	public static void inputstreamtofile(InputStream ins, String fileName, Site site) {
+	public static void inputstreamtofile(InputStream ins, String fileFullPath, Site site) {
 		try {
 			TB4FileSystem vfs2 = new TB4FileSystem();
-			OutputStream os = vfs2.receiveUpload(site, fileName);
+			OutputStream os = vfs2.receiveUpload(site, fileFullPath);
 			int bytesRead = 0;
 			byte[] buffer = new byte[8192];
 			while ((bytesRead = ins.read(buffer, 0, 8192)) != -1) {

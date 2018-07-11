@@ -97,7 +97,7 @@ public class TransactionService {
 		int index = number % 256;
 		
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-		String INSERT_TRANS_SQL = "INSERT INTO TRANSACTION_"+index+"(BARCODE,PLATETYPE,PLATENUMBER,VIN,DATECREATED,STATUS,SITEUNIQUEID,BUSINESSUNIQUEID,COMMUNITYUNIQUEID,COMPANYUNIQUEID,PROVINCE,CITY,PREFECTURE,DISTRICT,DATEMODIFIED,UUID,TYPIST,INDEXNUMBER) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String INSERT_TRANS_SQL = "INSERT INTO TRANSACTION_"+index+"(BARCODE,PLATETYPE,PLATENUMBER,VIN,DATECREATED,STATUS,SITECODE,BUSINESSCODE,COMMUNITYUNIQUEID,COMPANYUNIQUEID,PROVINCE,CITY,PREFECTURE,DISTRICT,DATEMODIFIED,UUID,TYPIST,INDEXNUMBER) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -111,8 +111,8 @@ public class TransactionService {
 				java.sql.Timestamp date = new java.sql.Timestamp(millis);
 				ps.setTimestamp(5, date);
 				ps.setString(6, transaction.getStatus());
-				ps.setInt(7, transaction.getSiteUniqueId());
-				ps.setInt(8, transaction.getBusinessUniqueId());
+				ps.setString(7, transaction.getSiteCode());
+				ps.setString(8, transaction.getBusinessCode());
 				ps.setInt(9, transaction.getCommunityUniqueId());
 				ps.setInt(10, transaction.getCompanyUniqueId());
 				ps.setString(11, transaction.getProvince());
@@ -143,9 +143,9 @@ public class TransactionService {
 		int number = Integer.parseInt(transaction.getVin().substring(transaction.getVin().length() - 6));
 		int index = number % 256;
 		
-		String sql = "UPDATE TRANSACTION_"+index+" SET BARCODE=?,PLATETYPE=?,PLATENUMBER=?,VIN=?,STATUS=?,DATEMODIFIED=?,BUSINESSUNIQUEID=?,UUID=?,CODE=?,INDEXNUMBER=? WHERE TRANSACTIONUNIQUEID=?";
+		String sql = "UPDATE TRANSACTION_"+index+" SET BARCODE=?,PLATETYPE=?,PLATENUMBER=?,VIN=?,STATUS=?,DATEMODIFIED=?,BUSINESSCODE=?,UUID=?,CODE=?,INDEXNUMBER=? WHERE TRANSACTIONUNIQUEID=?";
 	 	int affected = jdbcTemplate.update(sql, new Object[] {transaction.getBarcode(), transaction.getPlateType(), transaction.getPlateNumber(), 
-	 			transaction.getVin(), transaction.getStatus(),transaction.getDateModified(), transaction.getBusinessUniqueId(), 
+	 			transaction.getVin(), transaction.getStatus(),transaction.getDateModified(), transaction.getBusinessCode(), 
 	 			transaction.getUuid(), transaction.getCode(), transaction.getIndexNumber(), transaction.getTransactionUniqueId()});
 	 	log.info("Updated.Affected row = "+affected);
 	}

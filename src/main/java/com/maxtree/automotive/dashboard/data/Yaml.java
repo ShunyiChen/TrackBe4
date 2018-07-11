@@ -48,7 +48,10 @@ public class Yaml {
 	 * @throws IOException
 	 */
 	public static void updateUploadParameters(UploadParameters params) throws JsonGenerationException, JsonMappingException, IOException {
-		File dumpFile = new File("devices/parameters/"+params.getUserUniqueId()+".yaml");
+		File dumpFile = new File("devices/"+params.getUserUniqueId()+"/parameters.yaml");
+		if (!dumpFile.exists()) {
+			dumpFile.getParentFile().mkdirs();
+		}
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         mapper.writeValue(dumpFile, params);
 	}
@@ -66,7 +69,7 @@ public class Yaml {
 		UploadParameters ub = null;
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 		try {
-			ub = mapper.readValue(new File("devices/parameters/"+userUniqueId+".yaml"), UploadParameters.class);
+			ub = mapper.readValue(new File("devices/"+userUniqueId+"/parameters.yaml"), UploadParameters.class);
         } catch (Exception e) {
             e.printStackTrace();
         }

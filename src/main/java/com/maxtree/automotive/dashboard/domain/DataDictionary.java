@@ -7,7 +7,7 @@ package com.maxtree.automotive.dashboard.domain;
  *
  */
 public class DataDictionary {
-
+	
 	public Integer getDictionaryUniqueId() {
 		return dictionaryUniqueId;
 	}

@@ -14853,6 +14853,11 @@ div.v-layout.v-horizontal.v-widget {
 	box-shadow: 0 0 8px rgba(0, 191, 255, 0.8);
 }
 
+.dashboard .Thumbnail {
+	padding-right: 5px;
+	padding: 5px;
+}
+
 .dashboard .drop-area {
 	cursor: pointer;
 	background-color: transparent;

@@ -8,6 +8,8 @@ package com.maxtree.automotive.dashboard;
  */
 public class UploadParameters {
 
+	public UploadParameters() {}
+	
 	/**
 	 * 
 	 * @param userUniqueId

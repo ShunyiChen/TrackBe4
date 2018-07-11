@@ -14,6 +14,7 @@ import org.yaml.snakeyaml.reader.UnicodeReader;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.HelloServlet;
 import com.maxtree.automotive.dashboard.UploadParameters;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.MessageBox;
@@ -21,6 +22,7 @@ import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.domain.Document;
+import com.maxtree.automotive.dashboard.domain.UploadedFileQueue;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.vaadin.event.UIEvents;
 import com.vaadin.event.UIEvents.PollListener;
@@ -68,10 +70,10 @@ public class BusinessTypeSelector extends FormLayout {
 		
 		selector.addValueChangeListener(e->{
 			business = e.getValue();
-			addPollListener();
 			if (business != null) {
 				view.businessCode = business.getCode();
 				loadMaterials(business.getCode());
+				polling();
 			} 
 			else {
 				view.businessCode = null;
@@ -87,6 +89,7 @@ public class BusinessTypeSelector extends FormLayout {
 	private void loadMaterials(String businessCode) {
 		// 加载文件上传表格
 		view.fileGrid.removeAllRows();
+		
 		List<DataDictionary> list = ui.businessService.getDataDictionaries(businessCode);
 		int i = 0;
 		for (DataDictionary dd : list) {
@@ -108,7 +111,9 @@ public class BusinessTypeSelector extends FormLayout {
 		}
 		i++;
 		ThumbnailRow row = new ThumbnailRow(i+"."+"其它材料");
-		row.setDataDictionary(new DataDictionary());
+		DataDictionary dict = new DataDictionary();
+		dict.setCode("$$$$");
+		row.setDataDictionary(dict);
 		view.fileGrid.addRow(row);
 		view.fileGrid.focus();
 		// 加载拍照影像
@@ -116,41 +121,25 @@ public class BusinessTypeSelector extends FormLayout {
 		
 	}
 	
-	/**
-	 * 
-	 */
-	private void addPollListener() {
-		ui.setPollInterval(2 * 1000);
-		ui.addPollListener(listener);
-	}
-	
-	/**
-	 * 
-	 */
-	private PollListener listener = new UIEvents.PollListener() {
-		@Override
-		public void poll(UIEvents.PollEvent event) {
-			
-			Iterator<Component> iter = view.fileGrid.getThumbnailRows();
-			while(iter.hasNext()) {
-				ThumbnailRow row = (ThumbnailRow) iter.next();
-				if(row.getDataDictionary().getCode() == null) {
-					List<Document> list = ui.documentService.findAllDocument2(view.vin,view.uuid);
-					for (Document doc : list) {
-						row.addThumbnail(new Thumbnail());
-					}
-				}
-				else {
-					List<Document> list = ui.documentService.findAllDocument1(view.vin,view.uuid,row.getDataDictionary().getCode());
-					for (Document doc : list) {
-						row.addThumbnail(new Thumbnail());
+	private void polling() {
+		ui.setPollInterval(1 * 1000);
+		ui.addPollListener(new UIEvents.PollListener() {
+			@Override
+			public void poll(UIEvents.PollEvent event) {
+				
+				List<UploadedFileQueue> list = HelloServlet.MAP.get(view.loggedInUser.getUserUniqueId()+"");
+				if (list != null) {
+					for (UploadedFileQueue ufq : list) {
+						if (ufq.getRemovable() == 0) {
+							view.fileGrid.map.get(ufq.getDictionaryCode()).addThumbnail(new Thumbnail(ufq.getUserUniqueId(), ufq.getDocumentUniqueId()));
+							ufq.setRemovable(1);
+						}
 					}
 				}
 			}
-			System.out.println(System.currentTimeMillis());
-		}
-	};
-	
+		});
+	}
+
 	private FrontView view;
 	private List<Business> data;
 	private ComboBox<Business> selector;

@@ -1,6 +1,7 @@
 package com.maxtree.automotive.dashboard.view.front;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -130,6 +131,7 @@ public class ThumbnailGrid extends Panel{
 	 */
 	public void removeAllRows() {
 		vLayout.removeAllComponents();
+		map.clear();
 	}
 	
 	/**
@@ -140,6 +142,7 @@ public class ThumbnailGrid extends Panel{
 	public void addRow(ThumbnailRow row) {
 		vLayout.addComponents(row);
 		vLayout.setComponentAlignment(row, Alignment.TOP_LEFT);
+		map.put(row.getDataDictionary().getCode(), row);
 	}
 	
 	/**
@@ -152,6 +155,7 @@ public class ThumbnailGrid extends Panel{
 	
 	private static final Logger log = LoggerFactory.getLogger(ThumbnailGrid.class);
 	private VerticalLayout vLayout = new VerticalLayout();
+	public HashMap<String, ThumbnailRow> map = new HashMap<>();
 	private int index = 0;
 	private FrontView view;
 }

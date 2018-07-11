@@ -647,7 +647,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 //		}
     	
     	basicInfoPane.assignValues(editableTrans);
-    	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
+//    	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
     	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
     	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
     	editableTrans.setProvince(editableCompany.getProvince());

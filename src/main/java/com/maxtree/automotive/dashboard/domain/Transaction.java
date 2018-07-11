@@ -83,20 +83,20 @@ public class Transaction {
 		this.status = status;
 	}
 
-	public Integer getSiteUniqueId() {
-		return siteUniqueId;
+	public String getSiteCode() {
+		return siteCode;
 	}
 
-	public void setSiteUniqueId(Integer siteUniqueId) {
-		this.siteUniqueId = siteUniqueId;
+	public void setSiteCode(String siteCode) {
+		this.siteCode = siteCode;
 	}
 
-	public Integer getBusinessUniqueId() {
-		return businessUniqueId;
+	public String getBusinessCode() {
+		return businessCode;
 	}
 
-	public void setBusinessUniqueId(Integer businessUniqueId) {
-		this.businessUniqueId = businessUniqueId;
+	public void setBusinessCode(String businessCode) {
+		this.businessCode = businessCode;
 	}
 
 	public Integer getCommunityUniqueId() {
@@ -191,8 +191,8 @@ public class Transaction {
 	public String toString() {
 		 return String.format(
 		 "Transaction[transactionUniqueId=%d, barcode='%s', plateType='%s',plateNumber='%s',vin='%s', "
-		 + "dateCreated='%s', dateModified='%s', dateFinished='%s', status='%s',siteUniqueId='%d',"
-		 + "businessUniqueId='%d', communityUniqueID='%d',companyUniqueId='%d',province='%s',city='%s'"
+		 + "dateCreated='%s', dateModified='%s', dateFinished='%s', status='%s',siteCode='%d',"
+		 + "businessCode='%d', communityUniqueID='%d',companyUniqueId='%d',province='%s',city='%s'"
 		 + ",prefecture='%s',district='%s',uuid='%s',code='%s',typist='%d',indexNumber='%d']",
 		 transactionUniqueId,
 		 barcode,
@@ -203,8 +203,8 @@ public class Transaction {
 		 dateModified,
 		 dateFinished,
 		 status,
-		 siteUniqueId,
-		 businessUniqueId,
+		 siteCode,
+		 businessCode,
 		 communityUniqueId,
 		 companyUniqueId,
 		 province,
@@ -227,8 +227,8 @@ public class Transaction {
 	private Date dateModified; 				// 最后修改日期
 	private Date dateFinished; 				// 完成日期
 	private String status; 					// 业务状态
-	private Integer siteUniqueId = 0; 		// 站点ID
-	private Integer businessUniqueId = 0;   // 业务ID
+	private String siteCode; 				// 站点CODE
+	private String businessCode;   			// 业务CODE
 	private Integer communityUniqueId = 0; 	// 办理社区ID
 	private Integer companyUniqueId = 0;    // 办理机构ID
 	private String province;   				// 车辆所在省
@@ -239,5 +239,5 @@ public class Transaction {
 	private String code;                 	// 上架号
 	private Site site;						// 文件站点
 	private Integer typist = 0;				// 录入员
-	private Integer indexNumber = 0;		// 业务顺序号
+	private Integer indexNumber = 0; 		// 业务顺序号
 }
