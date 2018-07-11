@@ -281,6 +281,14 @@
         padding: 5px;
     }
  
+    .Thumbnail:hover {
+        border-radius: 5px;
+        border-style: solid;
+        border-color:deepskyblue;
+        border-width: 1px;
+        padding: 0px;
+        box-shadow:0 0 8px rgba(0,191,255,0.8);
+    }
 
     // 拖拽上传
     .drop-area{

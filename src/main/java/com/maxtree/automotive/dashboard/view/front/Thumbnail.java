@@ -32,5 +32,7 @@ public class Thumbnail extends VerticalLayout{
 		Image image = new Image(null, streamResource);
 		this.addComponents(image);
 		this.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
+		
+		
 	}
 }

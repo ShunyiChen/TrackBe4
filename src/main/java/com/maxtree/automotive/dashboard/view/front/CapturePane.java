@@ -90,8 +90,8 @@ public class CapturePane extends Panel{
 		// 读取原来的html模板
 		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		String everything = "";
-//		File template = new File("devices/Sample_CamOCX_HTML_Device_IE.html");
-		File template = new File("devices/templates/TempHtml.html");
+		File template = new File("devices/templates/Sample_CamOCX_HTML_Device_IE.html");
+//		File template = new File("devices/templates/TempHtml.html");
 		FileInputStream in = new FileInputStream(template);
 		BufferedReader br = new BufferedReader(new UnicodeReader(in));
 		StringBuilder sb = new StringBuilder();

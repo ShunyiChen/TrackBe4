@@ -84,20 +84,32 @@ public class DocumentService {
 				String SQL = "";
 				if (document.location == 1) {
 					SQL = "INSERT INTO DOCUMENTS_1_"+index+"(UUID,DICTIONARYCODE,FILEFULLPATH,THUMBNAIL) VALUES(?,?,?,?)";
-				} else {
-					SQL = "INSERT INTO DOCUMENTS_2_"+index+"(UUID,DICTIONARYCODE,FILEFULLPATH,THUMBNAIL) VALUES(?,?,?,?)";
+					PreparedStatement ps = con.prepareStatement(
+							SQL, new String[] {"documentuniqueid"});
+					ps.setString(1, document.getUuid());
+					ps.setString(2, document.getDictionarycode());
+					ps.setString(3, EncryptionUtils.encryptString(document.getFileFullPath()));
+					try {
+						ps.setBinaryStream(4, document.getThumbnail(), document.getThumbnail().available());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					return ps;
 				}
-				PreparedStatement ps = con.prepareStatement(
-						SQL, new String[] {"documentuniqueid"});
-				ps.setString(1, document.getUuid());
-				ps.setString(2, document.getDictionarycode());
-				ps.setString(3, EncryptionUtils.encryptString(document.getFileFullPath()));
-				try {
-					ps.setBinaryStream(4, document.getThumbnail(), document.getThumbnail().available());
-				} catch (IOException e) {
-					e.printStackTrace();
+				else {
+					SQL = "INSERT INTO DOCUMENTS_2_"+index+"(UUID,FILEFULLPATH,THUMBNAIL) VALUES(?,?,?)";
+					PreparedStatement ps = con.prepareStatement(
+							SQL, new String[] {"documentuniqueid"});
+					ps.setString(1, document.getUuid());
+					ps.setString(2, EncryptionUtils.encryptString(document.getFileFullPath()));
+					try {
+						ps.setBinaryStream(3, document.getThumbnail(), document.getThumbnail().available());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					return ps;
 				}
-				return ps;
+				
 			}
 		}, keyHolder);
 		

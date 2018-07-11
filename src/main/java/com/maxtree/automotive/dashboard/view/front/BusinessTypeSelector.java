@@ -128,6 +128,8 @@ public class BusinessTypeSelector extends FormLayout {
 			@Override
 			public void poll(UIEvents.PollEvent event) {
 				
+				view.fileGrid.focus();
+				
 				List<UploadOutDTO> list = UploadFileServlet.OUT_DTOs.get(view.loggedInUser.getUserUniqueId());
 				if (list != null) {
  

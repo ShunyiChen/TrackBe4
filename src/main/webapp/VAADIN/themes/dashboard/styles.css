@@ -14857,6 +14857,15 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 5px;
 }
 
+.dashboard .Thumbnail:hover {
+	border-radius: 5px;
+	border-style: solid;
+	border-color: deepskyblue;
+	border-width: 1px;
+	padding: 0px;
+	box-shadow: 0 0 8px rgba(0, 191, 255, 0.8);
+}
+
 .dashboard .drop-area {
 	cursor: pointer;
 	background-color: transparent;
