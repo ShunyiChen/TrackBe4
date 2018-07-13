@@ -20,8 +20,6 @@ import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
-import com.maxtree.automotive.dashboard.domain.Audit;
-import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Portfolio;
 import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
@@ -559,13 +557,13 @@ public class QCView extends Panel implements View, FrontendViewIF{
         String messageBody = "{\"type\":\"transaction\",\"status\":\""+Status.S4.name+"\",\"transactionUniqueId\":\""+transaction.getTransactionUniqueId()+"\",\"message\":\""+msg.toString()+"\"}";
         new TB4MessagingSystem().sendMessageTo(loginUser, receiver.getUserName(), 0, 0, receiver.getUserUniqueId(), subject, messageBody, DashboardViewType.DASHBOARD.getViewName());
 		
-        // 5.审批记录
-        Audit audit = new Audit();
-        audit.setTransactionUniqueId(transaction.getTransactionUniqueId());
-        audit.setAuditor(loginUser.getUserUniqueId());
-        audit.setAuditDate(new Date());
-        audit.setAuditResults(msg.toString());
-        ui.auditService.createAudit(audit);
+//        // 5.审批记录
+//        Audit audit = new Audit();
+//        audit.setTransactionUniqueId(transaction.getTransactionUniqueId());
+//        audit.setAuditor(loginUser.getUserUniqueId());
+//        audit.setAuditDate(new Date());
+//        audit.setAuditResults(msg.toString());
+//        ui.auditService.createAudit(audit);
         
 		// 6.清空
 		cleanStage();
@@ -607,13 +605,13 @@ public class QCView extends Panel implements View, FrontendViewIF{
         String messageBody = "{\"type\":\"transaction\",\"status\":\""+Status.S1.name+"\",\"transactionUniqueId\":\""+transaction.getTransactionUniqueId()+"\",\"message\":\""+msg.toString()+"\"}";
         new TB4MessagingSystem().sendMessageTo(loginUser, receiver.getUserName(), 0, 0, receiver.getUserUniqueId(), subject, messageBody, DashboardViewType.DASHBOARD.getViewName());
 		
-        // 4.审批记录
-        Audit audit = new Audit();
-        audit.setTransactionUniqueId(transaction.getTransactionUniqueId());
-        audit.setAuditor(loginUser.getUserUniqueId());
-        audit.setAuditDate(new Date());
-        audit.setAuditResults(msg.toString());
-        ui.auditService.createAudit(audit);
+//        // 4.审批记录
+//        Audit audit = new Audit();
+//        audit.setTransactionUniqueId(transaction.getTransactionUniqueId());
+//        audit.setAuditor(loginUser.getUserUniqueId());
+//        audit.setAuditDate(new Date());
+//        audit.setAuditResults(msg.toString());
+//        ui.auditService.createAudit(audit);
         
 		// 5.清空
 		cleanStage();
@@ -657,13 +655,13 @@ public class QCView extends Panel implements View, FrontendViewIF{
 	    serial = 2;// 1:质检，2：审档
 		ui.queueService.create(newQueue, serial);
 		
-		// 4.审批记录
-        Audit audit = new Audit();
-        audit.setTransactionUniqueId(transaction.getTransactionUniqueId());
-        audit.setAuditor(loginUser.getUserUniqueId());
-        audit.setAuditDate(new Date());
-        audit.setAuditResults(comments);
-        ui.auditService.createAudit(audit);
+//		// 4.审批记录
+//        Audit audit = new Audit();
+//        audit.setTransactionUniqueId(transaction.getTransactionUniqueId());
+//        audit.setAuditor(loginUser.getUserUniqueId());
+//        audit.setAuditDate(new Date());
+//        audit.setAuditResults(comments);
+//        ui.auditService.createAudit(audit);
 		
 		// 5.清空
 		cleanStage();

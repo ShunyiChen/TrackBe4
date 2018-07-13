@@ -2,8 +2,6 @@ package com.maxtree.automotive.dashboard.servlet;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,6 +13,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
@@ -53,6 +54,12 @@ public class UploadFileServlet extends HttpServlet {
 	public static Map<Integer, List<UploadOutDTO>> OUT_DTOs = new HashMap<Integer, List<UploadOutDTO>>();
 	//userUniqueId作为Key
 	public static Map<Integer, UploadInDTO> IN_DTOs = new HashMap<Integer, UploadInDTO>();
+	
+	@Override
+	public void init(ServletConfig config) throws ServletException
+	{
+		SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
+	}
 	
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
@@ -90,7 +97,6 @@ public class UploadFileServlet extends HttpServlet {
 //						fileName = new File(item.getName()).getName();
 						
 						UploadInDTO p = IN_DTOs.get(userUniqueId);
-						System.out.println(p);
 						if (!checkEmpty(p)) {
 							return;
 						}
@@ -183,9 +189,6 @@ public class UploadFileServlet extends HttpServlet {
 				|| StringUtils.isEmpty(p.getSiteID()+"")
 				|| StringUtils.isEmpty(p.getDictionaryCode())
 				|| StringUtils.isEmpty(p.getBatch())) {
-			
-			System.out.println(p);
-			
 			return false;
 		}
 		else {

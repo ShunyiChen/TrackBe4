@@ -7,7 +7,6 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.domain.Audit;
 import com.maxtree.automotive.dashboard.exception.DataException;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.MenuItem;
@@ -77,13 +76,13 @@ public class ManageApprovalsGrid extends VerticalLayout {
 		tableBody = new VerticalLayout(); 
 		tableBody.setMargin(false);
 		tableBody.setSpacing(false);
-		List<Audit> lst = new ArrayList<>();//ui.approvalService.findAll();
-		for (Audit app : lst) {
-			HorizontalLayout row1 = createDataRow(app);
-			tableBody.addComponents(row1);
-			tableBody.setComponentAlignment(row1, Alignment.MIDDLE_LEFT);
-		}
-		gridPanel.setContent(tableBody);
+//		List<Audit> lst = new ArrayList<>();//ui.approvalService.findAll();
+//		for (Audit app : lst) {
+//			HorizontalLayout row1 = createDataRow(app);
+//			tableBody.addComponents(row1);
+//			tableBody.setComponentAlignment(row1, Alignment.MIDDLE_LEFT);
+//		}
+//		gridPanel.setContent(tableBody);
 		return gridPanel;
 	}
 	
@@ -92,7 +91,7 @@ public class ManageApprovalsGrid extends VerticalLayout {
 	 * @param business
 	 * @return
 	 */
-	private HorizontalLayout createDataRow(Audit approval) {
+	private HorizontalLayout createDataRow() {
 		HorizontalLayout row = new HorizontalLayout();
 		row.setSpacing(false);
 		row.setMargin(false);
@@ -156,12 +155,12 @@ public class ManageApprovalsGrid extends VerticalLayout {
 	 */
 	private void refreshTable() {
 		tableBody.removeAllComponents();
-		List<Audit> lst = new ArrayList<>();//ui.approvalService.findAll();
-		for (Audit app : lst) {
-			HorizontalLayout row1 = createDataRow(app);
-			tableBody.addComponents(row1);
-			tableBody.setComponentAlignment(row1, Alignment.MIDDLE_LEFT);
-		}
+//		List<Audit> lst = new ArrayList<>();//ui.approvalService.findAll();
+//		for (Audit app : lst) {
+//			HorizontalLayout row1 = createDataRow(app);
+//			tableBody.addComponents(row1);
+//			tableBody.setComponentAlignment(row1, Alignment.MIDDLE_LEFT);
+//		}
 	}
 	
 	private VerticalLayout tableBody;

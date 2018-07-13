@@ -14,7 +14,6 @@ import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.security.PasswordSecurity;
-import com.maxtree.automotive.dashboard.service.AuditService;
 import com.maxtree.automotive.dashboard.service.BusinessService;
 import com.maxtree.automotive.dashboard.service.CommunityService;
 import com.maxtree.automotive.dashboard.service.CompanyService;
@@ -86,8 +85,6 @@ public final class DashboardUI extends UI {
 	public StorehouseService storehouseService;
 	@Autowired
 	public CompanyService companyService;
-	@Autowired
-	public AuditService auditService;
 	@Autowired
 	public DataItemService dataItemService;
 	@Autowired
