@@ -178,7 +178,6 @@ public class MessagingService {
 	 * @return
 	 */
 	public List<Map<String, Object>> findAllMessagesByUser(User user, String viewName) {
-//		String sql = "SELECT B.*,A.MARKEDASREAD,A.VIEWNAME,C.USERNAME,D.PICTURE FROM MESSAGERECIPIENT AS A LEFT JOIN MESSAGES AS B ON A.MESSAGEUNIQUEID=B.MESSAGEUNIQUEID LEFT JOIN USERS AS C ON C.USERUNIQUEID=B.CREATORUNIQUEID LEFT JOIN USERPROFILES AS D ON D.USERUNIQUEID=C.USERUNIQUEID WHERE A.RECIPIENTUNIQUEID=? AND A.VIEWNAME IN('', ?) ORDER BY B.MESSAGEUNIQUEID DESC";
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT B.*,A.MARKEDASREAD,A.VIEWNAME,C.USERNAME,D.PICTURE");
 		sql.append(" FROM SENDDETAILS AS A ");
@@ -188,19 +187,6 @@ public class MessagingService {
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql.toString(), new Object[] {user.getUserUniqueId(), viewName});
 		return rows;
 	}
-	
-//	/**
-//	 * 
-//	 * @param user
-//	 * @param viewName
-//	 * @return
-//	 */
-//	public int getUnreadCount(User user, String viewName) {
-//		String sql = "SELECT COUNT(*) FROM MESSAGERECIPIENT WHERE RECIPIENTUNIQUEID=? AND MARKEDASREAD=? AND VIEWNAME=?";
-//		int count = jdbcTemplate.queryForObject(
-//                sql, new Object[] {user.getUserUniqueId(),0,viewName}, Integer.class);
-//		return count;
-//	}
 	
 	/**
 	 * 
@@ -266,12 +252,6 @@ public class MessagingService {
 	 * @param messageUniqueId
 	 */
 	public void deleteMessage(int messageUniqueId) {
-//		String sql = "DELETE FROM MESSAGERECIPIENT WHERE MESSAGEUNIQUEID=?";
-//		jdbcTemplate.update(sql, new Object[] {messageUniqueId});
-//		
-//		sql = "DELETE FROM REMINDERFREQUENCY AS A WHERE A.FREQUENCYUNIQUEID = (SELECT B.REMINDERFREQUENCYID FROM MESSAGES AS B WHERE A.FREQUENCYUNIQUEID=B.REMINDERFREQUENCYID AND B.MESSAGEUNIQUEID=?)";
-//		jdbcTemplate.update(sql, new Object[] {messageUniqueId});
-		
 		String sql = "UPDATE MESSAGES SET DELETED=? WHERE MESSAGEUNIQUEID=?";
 		jdbcTemplate.update(sql, new Object[] {1, messageUniqueId});
 	}

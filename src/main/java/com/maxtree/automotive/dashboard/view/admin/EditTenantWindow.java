@@ -142,7 +142,7 @@ public class EditTenantWindow extends Window {
         w.btnAdd.setCaption("添加");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
-    			ui.communityService.createTenant(w.tenant);
+    			ui.tenantService.insertTenant(w.tenant);
     			w.close();
     			callback.onSuccessful();
         	}
@@ -154,14 +154,14 @@ public class EditTenantWindow extends Window {
 	public static void edit(Tenant tenant, Callback callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditTenantWindow w = new EditTenantWindow();
-        Tenant r = ui.communityService.findTenantById(tenant.getTenantUniqueId());
+        Tenant r = ui.tenantService.findTenantById(tenant.getTenantUniqueId());
         w.tenant.setTenantUniqueId(r.getTenantUniqueId());
         w.nameField.setValue(r.getTenantName());
         w.btnAdd.setCaption("保存");
         w.setCaption("编辑租户");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
-    			ui.communityService.updateTenant(w.tenant);
+    			ui.tenantService.updateTenant(w.tenant);
     			w.close();
     			callback.onSuccessful();
         	}

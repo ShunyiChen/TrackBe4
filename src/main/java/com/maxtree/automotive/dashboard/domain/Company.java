@@ -50,14 +50,6 @@ public class Company {
 		this.city = city;
 	}
 
-	public String getPrefecture() {
-		return prefecture;
-	}
-
-	public void setPrefecture(String prefecture) {
-		this.prefecture = prefecture;
-	}
-
 	public String getDistrict() {
 		return district;
 	}
@@ -114,10 +106,9 @@ public class Company {
 	private Integer companyUniqueId = 0;
 	private Integer communityUniqueId = 0;
 	private String companyName;
-	private String province;   				// 车辆所在省
-	private String city;       				// 车辆所在市
-	private String prefecture; 				// 车辆所在县
-	private String district;				// 车辆所在区
+	private String province;   				// 车辆所在省份
+	private String city;       				// 车辆所在地级市
+	private String district;				// 车辆所在市、县级市
 	private String address;                 // 详细地址
 	private Integer hasStoreHouse = 0; 		// 是否存在库房1存在,0不存在
 	private Integer storehouseUniqueId = 0; // 库房ID

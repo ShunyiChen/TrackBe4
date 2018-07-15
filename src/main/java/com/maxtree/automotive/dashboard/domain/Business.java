@@ -65,7 +65,7 @@ public class Business {
 	private Integer businessUniqueId = 0;
 	private String name; // 业务类型名称
 	private String code; // 快捷编码
-	private Integer needToCheck = 0; // 是否需要审档
+	private Integer needToCheck = 0; // 是否需要审档, 1:审档 0：非审档
 	private String checkLevel;// 审档级别（一级/二级）
 	private List<DataDictionary> items;
 }

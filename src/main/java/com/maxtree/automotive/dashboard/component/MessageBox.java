@@ -26,6 +26,7 @@ public class MessageBox extends Window {
 		this.setModal(true);
 		this.setWidth("500px");
 		this.setIcon(VaadinIcons.WARNING);
+		this.setClosable(false);
 		initComponents();
 	}
 
@@ -51,12 +52,21 @@ public class MessageBox extends Window {
 
 		btnCancel.addClickListener(e -> {
 			close();
+			if (onCancel != null) 
+				onCancel.onSuccessful();
+			
 		});
 		btnOK.addClickListener(e -> {
 			close();
 			onOK.onSuccessful();
 		});
-
+//		this.addCloseListener(e->{
+//			if (onCancel != null) 
+//				onCancel.onSuccessful();
+//			
+//		});
+		
+		
 		mainLayout.addComponents(messageLabel, wrapper);
 	}
 
@@ -80,12 +90,38 @@ public class MessageBox extends Window {
 		UI.getCurrent().addWindow(w);
 		w.center();
 	}
+	
+	/**
+	 * 
+	 * @param caption
+	 * @param message
+	 * @param messageType
+	 * @param onOK
+	 * @param onCancel
+	 * @param okButtonText
+	 * @param cancelButtonText
+	 */
+	public static void showMessage(String caption, String message, int messageType, Callback onOK, Callback onCancel, String okButtonText, String cancelButtonText) {
+		MessageBox w = new MessageBox(messageType);
+		w.setIcon(messageType == 1 ? VaadinIcons.WARNING
+				: (messageType == 2) ? VaadinIcons.INFO_CIRCLE : VaadinIcons.INFO_CIRCLE_O);
+		w.setCaption("&nbsp;&nbsp;" + caption);
+		w.setCaptionAsHtml(true);
+		w.btnOK.setCaption(okButtonText);
+		w.btnCancel.setCaption(cancelButtonText);
+		w.messageLabel.setValue("<span style='font-size:14px;color: #000000;'>" + message + "</span>");
+		w.onOK = onOK;
+		w.onCancel = onCancel;
+		UI.getCurrent().addWindow(w);
+		w.center();
+	}
 
 	public static int INFO = 0;
 	public static int WARNING = 1;
 	public static int ERROR = 2;
 	private Label messageLabel = new Label("", ContentMode.HTML);
 	private Callback onOK;
+	private Callback onCancel;
 	private Button btnCancel = new Button("取消");
 	private Button btnOK = new Button("确定");
 

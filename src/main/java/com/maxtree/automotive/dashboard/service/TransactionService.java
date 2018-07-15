@@ -15,7 +15,6 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
-import com.maxtree.automotive.dashboard.Status;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.exception.DataException;
 import com.maxtree.automotive.dashboard.view.search.CriterionModel;
@@ -92,12 +91,12 @@ public class TransactionService {
 	 * @param transaction
 	 * @return
 	 */
-	public int create(Transaction transaction) {
+	public int insert(Transaction transaction) {
 		int number = Integer.parseInt(transaction.getVin().substring(transaction.getVin().length() - 6));
 		int index = number % 256;
 		
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-		String INSERT_TRANS_SQL = "INSERT INTO TRANSACTION_"+index+"(BARCODE,PLATETYPE,PLATENUMBER,VIN,DATECREATED,STATUS,SITECODE,BUSINESSCODE,COMMUNITYUNIQUEID,COMPANYUNIQUEID,PROVINCE,CITY,PREFECTURE,DISTRICT,DATEMODIFIED,UUID,TYPIST,INDEXNUMBER) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String INSERT_TRANS_SQL = "INSERT INTO TRANSACTION_"+index+"(BARCODE,PLATETYPE,PLATENUMBER,VIN,DATECREATED,STATUS,SITECODE,BUSINESSCODE,COMMUNITYUNIQUEID,COMPANYUNIQUEID,LOCATIONCODE,DATEMODIFIED,UUID,TYPIST,INDEXNUMBER) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -115,15 +114,12 @@ public class TransactionService {
 				ps.setString(8, transaction.getBusinessCode());
 				ps.setInt(9, transaction.getCommunityUniqueId());
 				ps.setInt(10, transaction.getCompanyUniqueId());
-				ps.setString(11, transaction.getProvince());
-				ps.setString(12, transaction.getCity());
-				ps.setString(13, transaction.getPrefecture());
-				ps.setString(14, transaction.getDistrict());
+				ps.setString(11, transaction.getLocationCode());
 				java.sql.Timestamp modifyDate = new java.sql.Timestamp(transaction.getDateModified().getTime());
-				ps.setTimestamp(15, modifyDate);
-				ps.setString(16, transaction.getUuid());
-				ps.setInt(17, transaction.getTypist());
-				ps.setInt(18, transaction.getIndexNumber());
+				ps.setTimestamp(12, modifyDate);
+				ps.setString(13, transaction.getUuid());
+				ps.setString(14, transaction.getCreator());
+				ps.setInt(15, transaction.getIndexNumber());
 				return ps;
 			}
 		}, keyHolder);

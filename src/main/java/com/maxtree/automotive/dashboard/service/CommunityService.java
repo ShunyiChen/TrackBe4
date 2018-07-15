@@ -159,90 +159,6 @@ private static final Logger log = LoggerFactory.getLogger(CommunityService.class
 		return results;
 	}
 	
-	public List<Tenant> findAllTenants() {
-		String sql = "SELECT * FROM TENANTS ORDER BY TENANTUNIQUEID";
-		List<Tenant> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<Tenant>(Tenant.class));
-		return results;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public List<Tenant> findAssignedTenants(int communityUniqueId) {
-		String sql = "SELECT * FROM COMMUNITYTENANTS WHERE COMMUNITYUNIQUEID=? ORDER BY TENANTUNIQUEID";
-		List<Tenant> results = jdbcTemplate.query(sql, new Object[] {communityUniqueId}, new BeanPropertyRowMapper<Tenant>(Tenant.class));
-		return results;
-	}
-	
-	/**
-	 * 
-	 * @param tenant
-	 */
-	public void createTenant(Tenant tenant) {
-		String sql = "INSERT INTO TENANTS(TENANTNAME) VALUES(?)";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {tenant.getTenantName()});
-	 	log.info("Created row "+opt);
-	}
-	
-	/**
-	 * 
-	 * @param tenant
-	 */
-	public void updateTenant(Tenant tenant) {
-		String sql = "UPDATE TENANTS SET TENANTNAME=? WHERE TENANTUNIQUEID=?";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {tenant.getTenantName(), tenant.getTenantUniqueId()});
-	 	log.info("Updated row "+opt);
-	}
-	
-	/**
-	 * 
-	 * @param tenant
-	 */
-	public void deleteTenant(Tenant tenant) {
-		String sql = "DELETE FROM COMMUNITYTENANTS WHERE TENANTUNIQUEID=?";
-		jdbcTemplate.update(sql, tenant.getTenantUniqueId());
-		
-		sql = "DELETE FROM TENANTS WHERE TENANTUNIQUEID=?";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {tenant.getTenantUniqueId()});
-	 	log.info("Deleted row "+opt);
-	}
-	
-	/**
-	 * 
-	 * @param tenantUniqueId
-	 * @return
-	 */
-	public Tenant findTenantById(int tenantUniqueId) {
-		String sql = "SELECT * FROM TENANTS WHERE TENANTUNIQUEID= ?";
-		List<Tenant> results = jdbcTemplate.query(sql, new Object[] {tenantUniqueId}, new BeanPropertyRowMapper<Tenant>(Tenant.class));
-		if (results.size() > 0) {
-			return results.get(0);
-		}
-		return new Tenant();
-	}
-	
-	/**
-	 * 
-	 * @param communityUniqueId
-	 */
-	public void deleteCommunityTenants(int communityUniqueId) {
-		String sql4 = "DELETE FROM COMMUNITYTENANTS WHERE COMMUNITYUNIQUEID = ?";
-	 	int opt = jdbcTemplate.update(sql4, new Object[] {communityUniqueId});
-	 	log.info("Deleted row "+opt);
-	}
-	
-	/**
-	 * 
-	 * @param communityUniqueId
-	 * @param tenantUniqueId
-	 */
-	public void insertCommunityTenants(int communityUniqueId, int tenantUniqueId) {
-		String sql = "INSERT INTO COMMUNITYTENANTS(COMMUNITYUNIQUEID,TENANTUNIQUEID) VALUES(?,?)";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {communityUniqueId, tenantUniqueId});
-	 	log.info("inserted row "+opt);
-	}
-	
 	/**
 	 * 
 	 * @param communityUniqueId
@@ -254,4 +170,25 @@ private static final Logger log = LoggerFactory.getLogger(CommunityService.class
 		return results;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
+	public List<Tenant> findAssignedTenants(int communityUniqueId) {
+		String sql = "SELECT B.* FROM COMMUNITYTENANTS AS A LEFT JOIN TENANTS AS B ON A.TENANTUNIQUEID=B.TENANTUNIQUEID WHERE A.COMMUNITYUNIQUEID=? ORDER BY A.TENANTUNIQUEID";
+		List<Tenant> results = jdbcTemplate.query(sql, new Object[] { communityUniqueId },
+				new BeanPropertyRowMapper<Tenant>(Tenant.class));
+		return results;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public List<Tenant> findUnassignedTenants(int communityUniqueId) {
+		String sql = "SELECT * FROM TENANTS WHERE TENANTUNIQUEID NOT IN (SELECT TENANTUNIQUEID FROM COMMUNITYTENANTS WHERE COMMUNITYUNIQUEID<>?)";
+		List<Tenant> results = jdbcTemplate.query(sql, new Object[] { communityUniqueId }, new BeanPropertyRowMapper<Tenant>(Tenant.class));
+		return results;
+	}
+
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
-import com.maxtree.automotive.dashboard.data.Area;
+import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Tenant;
 import com.maxtree.automotive.dashboard.domain.Transaction;
@@ -69,7 +69,7 @@ public class BasicSearchWindow extends Window {
 		form.setWidthUndefined();
 		form.setHeightUndefined();
 		
-		List<Tenant> items = ui.communityService.findAllTenants();
+		List<Tenant> items = ui.tenantService.findAllTenants();
 		selectList.setItems(items);
 		selectList.setEmptySelectionAllowed(false);
 		selectList.setTextInputAllowed(false);
@@ -78,8 +78,8 @@ public class BasicSearchWindow extends Window {
 		
 		plateField.setCaption("车牌号:");
 		plateField.setIcon(VaadinIcons.CAR);
-		Area area = Yaml.readArea();
-		plateField.setValue(area.getLicenseplate());
+		Address addr = Yaml.readAddress();
+		plateField.setValue(addr.getLicenseplate());
 		plateField.focus();
 		form.addComponents(selectList, plateField);
 		

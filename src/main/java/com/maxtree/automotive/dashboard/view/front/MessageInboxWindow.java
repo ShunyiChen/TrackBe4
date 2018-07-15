@@ -39,9 +39,9 @@ public class MessageInboxWindow extends Window {
 	 * @param allMessages
 	 */
 	public MessageInboxWindow(List<Map<String, Object>> allMessages) {
-		this.setCaption("事件列表");
-		this.setWidth("700px");
-		this.setHeight("500px");
+		this.setCaption("消息列表");
+		this.setWidth("1105px");
+		this.setHeightUndefined();
 		this.setResizable(true);
 		this.setClosable(true);
 		this.setModal(true);
@@ -80,7 +80,7 @@ public class MessageInboxWindow extends Window {
         // provides BugEntries
 		grid.removeAllColumns();
 		grid.setWidth("100%");
-		grid.setHeight("300px");
+		grid.setHeight("400px");
 		grid.setSelectionMode(SelectionMode.MULTI);
 		grid.setItems(messageWrapperList);
     	grid.setHeightByRows(5);
@@ -109,7 +109,7 @@ public class MessageInboxWindow extends Window {
     	});
     	
     	textarea.setWidth("98%");
-    	textarea.setHeight("120px");
+    	textarea.setHeight("200px");
     	
     	HorizontalLayout buttonLayout = new HorizontalLayout();
 //    	buttonLayout.addStyleName("MessageInboxWindow");

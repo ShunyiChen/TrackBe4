@@ -7,7 +7,7 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.data.Area;
+import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.trackbe4.external.tmri.InterF;
@@ -138,21 +138,7 @@ public class BasicInfoPane extends Panel{
 //		.bind(Transaction::getVin, Transaction::setVin);
 	}
 	
-	public boolean checkEmptyValues() {
-//		if (StringUtils.isEmpty(barCodeField.getValue())) {
-//			barCodeField.setComponentError(new ErrorMessage() {
-//				@Override
-//				public ErrorLevel getErrorLevel() {
-//					return ErrorLevel.ERROR;
-//				}
-//
-//				@Override
-//				public String getFormattedHtmlMessage() {
-//					return "条形码不能为空。";
-//				}
-//			});
-//			return false;
-//		} else 
+	public boolean emptyChecks() {
 		if (StringUtils.isEmpty(plateTypeField.getSelectedItem())) {
 			
 			plateTypeField.setComponentError(new ErrorMessage() {
@@ -195,10 +181,6 @@ public class BasicInfoPane extends Panel{
 			return false;
 		}
 		
-//		if (barCodeField.getErrorMessage() != null) {
-//			barCodeField.setComponentError(barCodeField.getErrorMessage());
-//			return false;
-//		} 
 		else if (plateTypeField.getErrorMessage() != null) {
 			plateTypeField.setComponentError(plateTypeField.getErrorMessage());
 			return false;
@@ -220,8 +202,8 @@ public class BasicInfoPane extends Panel{
 		plateNumberField.clear();
 		vinField.clear();
 		
-		Area area = Yaml.readArea();
-		plateNumberField.setValue(area.getLicenseplate());
+		Address addr = Yaml.readAddress();
+		plateNumberField.setValue(addr.getLicenseplate());
 	}
 	
 	/**
@@ -239,7 +221,7 @@ public class BasicInfoPane extends Panel{
 	 * 
 	 * @param transaction
 	 */
-	public void assignValues(Transaction transaction) {
+	public void populate(Transaction transaction) {
 		transaction.setBarcode(barCodeField.getValue()==null?"":barCodeField.getValue());
 		transaction.setPlateType(plateTypeField.getValue());
 		transaction.setPlateNumber(plateNumberField.getValue());

@@ -24,7 +24,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-public class AssigningTenantsToCommunityWindow extends Window {
+public class AssigningCommunityToTenantWindow extends Window {
 
 	/**
 	 * 
@@ -35,12 +35,12 @@ public class AssigningTenantsToCommunityWindow extends Window {
 	 * 
 	 * @param community
 	 */
-	public AssigningTenantsToCommunityWindow(Community community) {
+	public AssigningCommunityToTenantWindow(Tenant tenant) {
 		this.setWidth("613px");
 		this.setHeight("513px");
 		this.setModal(true);
 		this.setResizable(false);
-		this.setCaption("为社区分配租户");
+		this.setCaption("为租户分配一个社区");
 		this.addStyleName("edit-window");
 		VerticalLayout mainLayout = new VerticalLayout(); 
 		mainLayout.setSpacing(true);
@@ -48,7 +48,7 @@ public class AssigningTenantsToCommunityWindow extends Window {
 		mainLayout.setWidth("100%");
 		mainLayout.setHeightUndefined();
 		Image img = new Image(null, new ThemeResource("img/adminmenu/userrole.png"));
-		Label companyName = new Label(community.getCommunityName());
+		Label companyName = new Label(tenant.getTenantName());
 		HorizontalLayout title = new HorizontalLayout();
 		title.setWidthUndefined();
 		title.setHeightUndefined();
@@ -63,24 +63,24 @@ public class AssigningTenantsToCommunityWindow extends Window {
 		hlayout.setSpacing(false);
 		hlayout.setMargin(false);
 		
-		List<Tenant> allTenants = ui.communityService.findUnassignedTenants(community.getCommunityUniqueId());
-		List<Tenant> assignedTenants = ui.communityService.findAssignedTenants(community.getCommunityUniqueId());
+		List<Community> allCommunities = ui.tenantService.findUnassignedCommunities(tenant.getTenantUniqueId());
+		List<Community> assignedCommunities = ui.tenantService.findAssignedCommunites(tenant.getTenantUniqueId());
 		
-		select = new TwinColSelect<>(null, allTenants);
+		select = new TwinColSelect<>(null, allCommunities);
 		select.setWidth("100%");
 		select.setRows(14);
-		select.setLeftColumnCaption("未分配的租户");
-		select.setRightColumnCaption("已分配的租户");
-		List<Tenant> selected = new ArrayList<>();
-		for (Tenant t : allTenants) {
-			for (Tenant assignedTenant : assignedTenants) {
-				if (assignedTenant.getTenantUniqueId() == t.getTenantUniqueId()) {
-					selected.add(t);
+		select.setLeftColumnCaption("未分配的社区");
+		select.setRightColumnCaption("已分配的社区");
+		List<Community> selected = new ArrayList<>();
+		for (Community c : allCommunities) {
+			for (Community assignedCommunity : assignedCommunities) {
+				if (assignedCommunity.getCommunityUniqueId() == c.getCommunityUniqueId()) {
+					selected.add(c);
 				}
 			}
 		}
 		// set select
-		select.select(selected.toArray(new Tenant[selected.size()]));
+		select.select(selected.toArray(new Community[selected.size()]));
 		
         hlayout.addComponent(select);
         hlayout.setComponentAlignment(select, Alignment.TOP_CENTER);
@@ -113,21 +113,21 @@ public class AssigningTenantsToCommunityWindow extends Window {
 	
 	/**
 	 * 
-	 * @param community
+	 * @param tenant
 	 * @return
 	 */
-	private boolean apply(Community community) {
-		Set<Tenant> set = select.getSelectedItems();
+	private boolean apply(Tenant tenant) {
+		Set<Community> set = select.getSelectedItems();
 		if (set.size() > 1) {
-			Notifications.warning("只能为社区分配一个租户。");
+			Notifications.warning("只能为租户分配一个社区。");
 			return false;
 		}
 		else {
-			ui.tenantService.deleteTenantByCommunityUniqueId(community.getCommunityUniqueId());
-			Iterator<Tenant> iter = set.iterator();
+			ui.tenantService.deleteCommunityByTenantUniqueId(tenant.getTenantUniqueId());
+			Iterator<Community> iter = set.iterator();
 			while(iter.hasNext()) {
-				Tenant t = iter.next();
-				ui.tenantService.insertCommunityTenants(community.getCommunityUniqueId(), t.getTenantUniqueId());
+				Community c = iter.next();
+				ui.tenantService.insertCommunityTenants(c.getCommunityUniqueId(), tenant.getTenantUniqueId());
 			}
 			return true;
 		}
@@ -135,20 +135,19 @@ public class AssigningTenantsToCommunityWindow extends Window {
 	
 	/**
 	 * 
-	 * @param community
+	 * @param tenant
 	 * @param callback
 	 */
-	public static void open(Community community, Callback callback) {
+	public static void open(Tenant tenant, Callback callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        AssigningTenantsToCommunityWindow w = new AssigningTenantsToCommunityWindow(community);
+        AssigningCommunityToTenantWindow w = new AssigningCommunityToTenantWindow(tenant);
         w.btnApply.addClickListener(e -> {
-        	if(w.apply(community)) {
+        	if(w.apply(tenant)) {
         		callback.onSuccessful();
         	}
-			
 		});
         w.btnOK.addClickListener(e -> {
-        	if(w.apply(community)) {
+        	if(w.apply(tenant)) {
         		w.close();
     			callback.onSuccessful();
         	}
@@ -160,5 +159,5 @@ public class AssigningTenantsToCommunityWindow extends Window {
 	private Button btnApply;
 	private Button btnOK;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
-	private TwinColSelect<Tenant> select = null;
+	private TwinColSelect<Community> select = null;
 }

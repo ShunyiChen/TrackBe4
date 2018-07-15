@@ -11,7 +11,6 @@ import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.Status;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.Hr;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
@@ -147,7 +146,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
 	
 	private void startPolling() {
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
-		ui.setPollInterval(sc.getPollinginterval() * 1000);
+		ui.setPollInterval(sc.getPollinginterval());
 		ui.addPollListener(new UIEvents.PollListener() {
 			@Override
 			public void poll(UIEvents.PollEvent event) {
@@ -541,22 +540,22 @@ public class QCView extends Panel implements View, FrontendViewIF{
 		} catch (DataException e) {
 			e.printStackTrace();
 		}
-    	User receiver = ui.userService.findById(transaction.getTypist());
-    	
-    	// 3.更改状态
-		transaction.setStatus(Status.S4.name);
-		transaction.setDateModified(new Date());
-		int index = ui.transactionService.findIndexByVIN(transaction.getVin());
-		transaction.setIndexNumber(index);
-		ui.transactionService.update(transaction);
-		
-		// 4.发送消息
-		String subject = "质检合格";
-        StringBuilder msg = new StringBuilder();
-        msg.append(comments);
-        String messageBody = "{\"type\":\"transaction\",\"status\":\""+Status.S4.name+"\",\"transactionUniqueId\":\""+transaction.getTransactionUniqueId()+"\",\"message\":\""+msg.toString()+"\"}";
-        new TB4MessagingSystem().sendMessageTo(loginUser, receiver.getUserName(), 0, 0, receiver.getUserUniqueId(), subject, messageBody, DashboardViewType.DASHBOARD.getViewName());
-		
+//    	User receiver = ui.userService.findById(transaction.getTypist());
+//    	
+//    	// 3.更改状态
+//		transaction.setStatus(Status.S4.name);
+//		transaction.setDateModified(new Date());
+//		int index = ui.transactionService.findIndexByVIN(transaction.getVin());
+//		transaction.setIndexNumber(index);
+//		ui.transactionService.update(transaction);
+//		
+//		// 4.发送消息
+//		String subject = "质检合格";
+//        StringBuilder msg = new StringBuilder();
+//        msg.append(comments);
+//        String messageBody = "{\"type\":\"transaction\",\"status\":\""+Status.S4.name+"\",\"transactionUniqueId\":\""+transaction.getTransactionUniqueId()+"\",\"message\":\""+msg.toString()+"\"}";
+//        new TB4MessagingSystem().sendMessageTo(loginUser, receiver.getUserName(), 0, 0, receiver.getUserUniqueId(), subject, messageBody, DashboardViewType.DASHBOARD.getViewName());
+//		
 //        // 5.审批记录
 //        Audit audit = new Audit();
 //        audit.setTransactionUniqueId(transaction.getTransactionUniqueId());
@@ -593,17 +592,17 @@ public class QCView extends Panel implements View, FrontendViewIF{
 		}
     	User receiver = ui.userService.findById(queue.getSentByUser());
     	
-    	// 2.更改状态
-		transaction.setStatus(Status.S1.name);///无状态，即前台可以再修改
-		transaction.setDateModified(new Date());
-		ui.transactionService.update(transaction);
-		
-		// 3.发送消息
-		String subject = "质检不合格";
-        StringBuilder msg = new StringBuilder();
-        msg.append(comments);
-        String messageBody = "{\"type\":\"transaction\",\"status\":\""+Status.S1.name+"\",\"transactionUniqueId\":\""+transaction.getTransactionUniqueId()+"\",\"message\":\""+msg.toString()+"\"}";
-        new TB4MessagingSystem().sendMessageTo(loginUser, receiver.getUserName(), 0, 0, receiver.getUserUniqueId(), subject, messageBody, DashboardViewType.DASHBOARD.getViewName());
+//    	// 2.更改状态
+//		transaction.setStatus(Status.S1.name);///无状态，即前台可以再修改
+//		transaction.setDateModified(new Date());
+//		ui.transactionService.update(transaction);
+//		
+//		// 3.发送消息
+//		String subject = "质检不合格";
+//        StringBuilder msg = new StringBuilder();
+//        msg.append(comments);
+//        String messageBody = "{\"type\":\"transaction\",\"status\":\""+Status.S1.name+"\",\"transactionUniqueId\":\""+transaction.getTransactionUniqueId()+"\",\"message\":\""+msg.toString()+"\"}";
+//        new TB4MessagingSystem().sendMessageTo(loginUser, receiver.getUserName(), 0, 0, receiver.getUserUniqueId(), subject, messageBody, DashboardViewType.DASHBOARD.getViewName());
 		
 //        // 4.审批记录
 //        Audit audit = new Audit();
@@ -641,11 +640,11 @@ public class QCView extends Panel implements View, FrontendViewIF{
 			e.printStackTrace();
 		}
     	
-    	// 2.更改状态
-		transaction.setStatus(Status.S2.name);
-		transaction.setDateModified(new Date());
-		ui.transactionService.update(transaction);
-    	
+//    	// 2.更改状态
+//		transaction.setStatus(Status.S2.name);
+//		transaction.setDateModified(new Date());
+//		ui.transactionService.update(transaction);
+//    	
 		// 3.添加到审核队列
 		Queue newQueue = new Queue();
 		newQueue.setTransactionUniqueId(transaction.getTransactionUniqueId());

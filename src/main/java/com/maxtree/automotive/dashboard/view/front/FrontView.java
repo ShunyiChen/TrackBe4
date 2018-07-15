@@ -1,13 +1,5 @@
 package com.maxtree.automotive.dashboard.view.front;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -15,27 +7,21 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
-import org.yaml.snakeyaml.reader.UnicodeReader;
 
 import com.google.common.eventbus.Subscribe;
+import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.Status;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
-import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
-import com.maxtree.automotive.dashboard.data.Area;
+import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
-import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Company;
-import com.maxtree.automotive.dashboard.domain.DataDictionary;
-import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Site;
@@ -58,19 +44,16 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
-import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
@@ -171,7 +154,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
      */
 	private void startPolling() {
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
-		ui.setPollInterval(sc.getPollinginterval() * 1000);
+		ui.setPollInterval(sc.getPollinginterval());
 		ui.addPollListener(new UIEvents.PollListener() {
 			@Override
 			public void poll(UIEvents.PollEvent event) {
@@ -537,11 +520,11 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		return;
         	}
         	
-        	Area area = Yaml.readArea();
+        	Address addr = Yaml.readAddress();
         	editableTrans = new Transaction();
         	editableTrans.setBarcode("");
         	editableTrans.setPlateType("");
-        	editableTrans.setPlateNumber(area.getLicenseplate());
+        	editableTrans.setPlateNumber(addr.getLicenseplate());
         	editableTrans.setVin("");
         	basicInfoPane.setFieldValues(editableTrans);
         	
@@ -631,39 +614,89 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
      * 
      */
     public void commitTransaction() {
-//		Business business = editableType.getSelector().getValue();
-//		if (!basicInfo.checkEmptyValues() || business == null) {
-//			Notifications.warning("请将信息输入完整。");
-//			return;
-//		}
-//		if (!primaryGrid.checkUploads()) {
-//			Notifications.warning("请将主要材料上传完整。");
-//			return;
-//		}
+    	if(!basicInfoPane.emptyChecks()) {
+			Notifications.warning("请将信息输入完整。");
+			return;
+    	}
     	
-    	basicInfoPane.assignValues(editableTrans);
+    	if (fileGrid.emptyChecks()) {
+			Notifications.warning("请将业务材料上传完整。");
+			return;
+    	}
+    	
+    	// 4大流程
+    	//新车注册流程
+    	if (businessTypePane.getSelected().getName().equals("注册登记")) {
+    		basicInfoPane.populate(editableTrans);//赋值基本信息
+        	editableTrans.setDateCreated(new Date());
+        	editableTrans.setDateModified(new Date());
+        	editableTrans.setStatus(BusinessState.PUTAWAY.name);
+        	editableTrans.setSiteCode(editableSite.getCode());
+        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
+        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
+        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
+        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
+        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setUuid(uuid);
+        	editableTrans.setCreator(loggedInUser.getUserName());
+        	editableTrans.setIndexNumber(1);
+        	
+        	// 是否跳过质检
+        	// 跳过质检，完成逻辑上架
+        	if(editableCompany.getIgnoreChecker() == 1) {
+        		editableTrans.setCode("");//上架号
+        		ui.transactionService.insert(editableTrans);
+        	}
+        	// 提交给质检
+        	else {
+        		ui.transactionService.insert(editableTrans);
+        	}
+    	}
+    	// 非审档流程
+    	else if (businessTypePane.getSelected().getNeedToCheck() == 0) {
+    		
+    	}
+    	// 需要审档（一级）流程
+    	else if (businessTypePane.getSelected().getNeedToCheck() == 1 && businessTypePane.getSelected().getCheckLevel().equals("一级")) {
+    		
+    	}
+    	// 需要审档（二级）流程
+    	else if (businessTypePane.getSelected().getNeedToCheck() == 1 && businessTypePane.getSelected().getCheckLevel().equals("二级")) {
+    		
+    	}
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
 //    	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
-    	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-    	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-    	editableTrans.setProvince(editableCompany.getProvince());
-    	editableTrans.setCity(editableCompany.getCity());
-    	editableTrans.setPrefecture(editableCompany.getPrefecture());
-    	editableTrans.setDistrict(editableCompany.getDistrict());
-    	editableTrans.setSite(editableSite);
-    	editableTrans.setDateModified(new Date());
-//    	editableTrans.setBusinessUniqueId(business.getBusinessUniqueId());
-    	editableTrans.setTypist(loggedInUser.getUserUniqueId());
-    	// Insert new transaction
-    	if (editableTrans.getTransactionUniqueId() == 0) {
-    		
-    		editableTrans.setStatus(Status.S1.name);
-    		
-    		int transactionUniqueId = ui.transactionService.create(editableTrans);
-        	editableTrans.setTransactionUniqueId(transactionUniqueId);
-    	}
-    	else {
-    		ui.transactionService.update(editableTrans);
-    	}
+//    	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+//    	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+//    	editableTrans.setProvince(editableCompany.getProvince());
+//    	editableTrans.setCity(editableCompany.getCity());
+//    	editableTrans.setPrefecture(editableCompany.getPrefecture());
+//    	editableTrans.setDistrict(editableCompany.getDistrict());
+//    	editableTrans.setSite(editableSite);
+//    	editableTrans.setDateModified(new Date());
+////    	editableTrans.setBusinessUniqueId(business.getBusinessUniqueId());
+//    	editableTrans.setTypist(loggedInUser.getUserUniqueId());
+//    	// Insert new transaction
+//    	if (editableTrans.getTransactionUniqueId() == 0) {
+//    		
+////    		editableTrans.setStatus(Status.S1.name);
+//    		
+//    		int transactionUniqueId = ui.transactionService.create(editableTrans);
+//        	editableTrans.setTransactionUniqueId(transactionUniqueId);
+//    	}
+//    	else {
+//    		ui.transactionService.update(editableTrans);
+//    	}
     	
     	// 添加到质检队列
 		Queue newQueue = new Queue();

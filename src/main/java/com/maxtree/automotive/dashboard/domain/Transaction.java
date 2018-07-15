@@ -115,38 +115,6 @@ public class Transaction {
 		this.companyUniqueId = companyUniqueId;
 	}
 
-	public String getProvince() {
-		return province;
-	}
-
-	public void setProvince(String province) {
-		this.province = province;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getPrefecture() {
-		return prefecture;
-	}
-
-	public void setPrefecture(String prefecture) {
-		this.prefecture = prefecture;
-	}
-	
-	public String getDistrict() {
-		return district;
-	}
-
-	public void setDistrict(String district) {
-		this.district = district;
-	}
-
 	public String getUuid() {
 		return uuid;
 	}
@@ -171,14 +139,22 @@ public class Transaction {
 		this.site = site;
 	}
 	
-	public Integer getTypist() {
-		return typist;
+	public String getLocationCode() {
+		return locationCode;
 	}
 
-	public void setTypist(Integer typist) {
-		this.typist = typist;
+	public void setLocationCode(String locationCode) {
+		this.locationCode = locationCode;
 	}
-	
+
+	public String getCreator() {
+		return creator;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
+	}
+
 	public Integer getIndexNumber() {
 		return indexNumber;
 	}
@@ -192,8 +168,8 @@ public class Transaction {
 		 return String.format(
 		 "Transaction[transactionUniqueId=%d, barcode='%s', plateType='%s',plateNumber='%s',vin='%s', "
 		 + "dateCreated='%s', dateModified='%s', dateFinished='%s', status='%s',siteCode='%d',"
-		 + "businessCode='%d', communityUniqueID='%d',companyUniqueId='%d',province='%s',city='%s'"
-		 + ",prefecture='%s',district='%s',uuid='%s',code='%s',typist='%d',indexNumber='%d']",
+		 + "businessCode='%d', communityUniqueID='%d',companyUniqueId='%d',locationCode='%s',"
+		 + "uuid='%s',code='%s',creator='%s',indexNumber='%d']",
 		 transactionUniqueId,
 		 barcode,
 		 plateType,
@@ -207,13 +183,10 @@ public class Transaction {
 		 businessCode,
 		 communityUniqueId,
 		 companyUniqueId,
-		 province,
-		 city,
-		 prefecture,
-		 district,
+		 locationCode,
 		 uuid,
 		 code,
-		 typist,
+		 creator,
 		 indexNumber
 		);
 	}
@@ -231,13 +204,10 @@ public class Transaction {
 	private String businessCode;   			// 业务CODE
 	private Integer communityUniqueId = 0; 	// 办理社区ID
 	private Integer companyUniqueId = 0;    // 办理机构ID
-	private String province;   				// 车辆所在省
-	private String city;       				// 车辆所在市
-	private String prefecture; 				// 车辆所在县
-	private String district;				// 车辆所在区
+	private String locationCode;   			// 车辆所在地地点CODE
 	private String uuid;					// 文件挂接UUID
 	private String code;                 	// 上架号
 	private Site site;						// 文件站点
-	private Integer typist = 0;				// 录入员
+	private String creator;					// 录入人用户名
 	private Integer indexNumber = 0; 		// 业务顺序号
 }

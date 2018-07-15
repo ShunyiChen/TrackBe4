@@ -1,5 +1,6 @@
 package com.maxtree.automotive.dashboard.view.front;
 
+import com.maxtree.automotive.dashboard.domain.Business;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
@@ -26,7 +27,7 @@ public class BusinessTypePane extends Panel{
 		this.setWidth("100%");
 		this.setHeightUndefined();
 		// 业务类型选择
-		BusinessTypeSelector selector = new BusinessTypeSelector(view);
+		selector = new BusinessTypeSelector(view);
 		HorizontalLayout main = new HorizontalLayout();
 		main.setSpacing(false);
 		main.setMargin(new MarginInfo(false, false, true, true));
@@ -37,5 +38,14 @@ public class BusinessTypePane extends Panel{
 		this.setContent(main);
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
+	public Business getSelected() {
+		return selector.getValue();
+	}
+	
 	private FrontView view = null;
+	private BusinessTypeSelector selector;
 }

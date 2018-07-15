@@ -6,7 +6,6 @@ import java.util.Set;
 
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.Status;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Transaction;
@@ -124,23 +123,23 @@ public class SearchAndPrintWindow extends Window {
         btnPrint.addClickListener(e->{
         	Set<Transaction> selected = grid.getSelectedItems();
       	    if (selected.size() > 0) {
-      	    	
-      	    	List<Transaction> list = new ArrayList<>(selected);
-      	    	Transaction selectedTransaction = list.get(0);
-      	    	if (selectedTransaction.getStatus().equals(Status.S4.name)) {
-      	    		
-      	    		// 打印文件标签和车辆标签
-      	    		PrintingConfirmationWindow.open("打印确认", selectedTransaction.getTransactionUniqueId()); 
-      	    		
-      	    	} else if (selectedTransaction.getStatus().equals(Status.ReturnedToThePrint.name) 
-      	    			|| selectedTransaction.getStatus().equals(Status.S3.name)) {
-      	    		// 打印审核结果单
-      	    		PrintingResultsWindow.open("打印确认", selectedTransaction.getTransactionUniqueId()); 
-      	    	}
-      	    	else {
-      	    		
-      	    		Notifications.warning("不存在打印。");
-      	    	}
+//      	    	
+//      	    	List<Transaction> list = new ArrayList<>(selected);
+//      	    	Transaction selectedTransaction = list.get(0);
+//      	    	if (selectedTransaction.getStatus().equals(Status.S4.name)) {
+//      	    		
+//      	    		// 打印文件标签和车辆标签
+//      	    		PrintingConfirmationWindow.open("打印确认", selectedTransaction.getTransactionUniqueId()); 
+//      	    		
+//      	    	} else if (selectedTransaction.getStatus().equals(Status.ReturnedToThePrint.name) 
+//      	    			|| selectedTransaction.getStatus().equals(Status.S3.name)) {
+//      	    		// 打印审核结果单
+//      	    		PrintingResultsWindow.open("打印确认", selectedTransaction.getTransactionUniqueId()); 
+//      	    	}
+//      	    	else {
+//      	    		
+//      	    		Notifications.warning("不存在打印。");
+//      	    	}
       	    	
       	    	
       	    } else {

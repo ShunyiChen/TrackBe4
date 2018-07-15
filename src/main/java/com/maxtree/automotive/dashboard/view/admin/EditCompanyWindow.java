@@ -7,8 +7,7 @@ import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.component.SwitchButton;
-import com.maxtree.automotive.dashboard.data.Area;
+import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Company;
@@ -21,7 +20,6 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -70,11 +68,10 @@ public class EditCompanyWindow extends Window {
 		addrField = new TextField("详细地址:");
 		addrField.setIcon(VaadinIcons.EDIT);
 		
-		Area area = Yaml.readArea();
-		provinceSelector.setItems(area.getProvince());
-		citySelector.setItems(area.getCity());
-		prefectureSelector.setItems(area.getPrefecture());
-		districtSelector.setItems(area.getDistrict());
+		Address addr = Yaml.readAddress();
+		provinceSelector.setItems(addr.getProvince());
+		citySelector.setItems(addr.getCity());
+		districtSelector.setItems(addr.getDistrict());
 		
 		hasStore.setEmptySelectionAllowed(false);
 		hasStore.setTextInputAllowed(false);
@@ -82,7 +79,7 @@ public class EditCompanyWindow extends Window {
 		hasChecker.setEmptySelectionAllowed(false);
 		hasChecker.setTextInputAllowed(false);
 		hasChecker.setSelectedItem("是");
-		form.addComponents(nameField,provinceSelector,citySelector,prefectureSelector,districtSelector,addrField,communitySelector,hasStore,hasChecker);
+		form.addComponents(nameField,provinceSelector,citySelector,districtSelector,addrField,communitySelector,hasStore,hasChecker);
 		HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setSizeFull();
 		buttonPane.setSpacing(false);
@@ -131,7 +128,6 @@ public class EditCompanyWindow extends Window {
 		communitySelector.setWidth(w+"px");
 		provinceSelector.setWidth(w+"px");
 		citySelector.setWidth(w+"px");
-		prefectureSelector.setWidth(w+"px");
 		districtSelector.setWidth(w+"px");
 		hasStore.setWidth(w+"px");
 		hasChecker.setWidth(w+"px");
@@ -141,7 +137,6 @@ public class EditCompanyWindow extends Window {
 		communitySelector.setHeight(h+"px");
 		provinceSelector.setHeight(h+"px");
 		citySelector.setHeight(h+"px");
-		prefectureSelector.setHeight(h+"px");
 		districtSelector.setHeight(h+"px");
 		hasStore.setHeight(h+"px");
 		hasChecker.setHeight(h+"px");
@@ -156,7 +151,6 @@ public class EditCompanyWindow extends Window {
 		binder.bind(nameField, Company::getCompanyName, Company::setCompanyName);
 		binder.bind(provinceSelector, Company::getProvince, Company::setProvince);
 		binder.bind(citySelector, Company::getCity, Company::setCity);
-		binder.bind(prefectureSelector, Company::getPrefecture, Company::setPrefecture);
 		binder.bind(districtSelector, Company::getDistrict, Company::setDistrict);
 		binder.bind(addrField, Company::getAddress, Company::setAddress);
 	}
@@ -177,9 +171,6 @@ public class EditCompanyWindow extends Window {
 		binder.forField(citySelector).withValidator(new StringLengthValidator(
 		        "市长度范围在0~20个字符",
 		        0, 20)) .bind(Company::getCity, Company::setCity);
-		binder.forField(prefectureSelector).withValidator(new StringLengthValidator(
-		        "县长度范围在0~20个字符",
-		        0, 20)) .bind(Company::getPrefecture, Company::setPrefecture);
 		binder.forField(districtSelector).withValidator(new StringLengthValidator(
 		        "区长度范围在0~20个字符",
 		        0, 20)) .bind(Company::getDistrict, Company::setDistrict);
@@ -265,7 +256,6 @@ public class EditCompanyWindow extends Window {
         w.nameField.setValue(c.getCompanyName());
         w.provinceSelector.setSelectedItem(c.getProvince() ==null?"":c.getProvince());
         w.citySelector.setSelectedItem(c.getCity() == null?"":c.getCity());
-        w.prefectureSelector.setSelectedItem(c.getPrefecture()==null?"":c.getPrefecture());
         w.districtSelector.setSelectedItem(c.getDistrict()==null?"":c.getDistrict());
         w.hasStore.setSelectedItem(c.getHasStoreHouse()==1?"是":"否");
         w.hasChecker.setSelectedItem(c.getIgnoreChecker()==1?"是":"否");
@@ -289,10 +279,9 @@ public class EditCompanyWindow extends Window {
         w.center();
     }
 	
-	private ComboBox<String> provinceSelector = new ComboBox<String>("省:");
-	private ComboBox<String> citySelector = new ComboBox<String>("市:");
-	private ComboBox<String> prefectureSelector = new ComboBox<String>("县:");
-	private ComboBox<String> districtSelector = new ComboBox<String>("区:");
+	private ComboBox<String> provinceSelector = new ComboBox<String>("省份:");
+	private ComboBox<String> citySelector = new ComboBox<String>("地级市:");
+	private ComboBox<String> districtSelector = new ComboBox<String>("市、县级市:");
 	private ComboBox<String> hasStore = new ComboBox<String>("是否有库房:", Arrays.asList(new String[] {"是","否"}));
 	private ComboBox<String> hasChecker = new ComboBox<String>("是否有质检:", Arrays.asList(new String[] {"是","否"}));
 	private ComboBox<Community> communitySelector = new ComboBox<Community>();

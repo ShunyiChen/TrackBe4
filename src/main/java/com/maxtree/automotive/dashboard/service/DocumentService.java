@@ -146,41 +146,21 @@ public class DocumentService {
 		log.info("Affected row "+affected);
 	}
 	
-//	/**
-//	 * 
-//	 * @param userUniqueId
-//	 * @return
-//	 */
-//	public List<UploadedFileQueue> findAllUploadedFileQueue(int userUniqueId) {
-//		String sql = "SELECT * FROM UPLOADEDFILEQUEUE WHERE USERUNIQUEID=? AND REMOVABLE=?";
-//		List<UploadedFileQueue> result = jdbcTemplate.query(sql, new Object[] {userUniqueId, 0}, new BeanPropertyRowMapper<UploadedFileQueue>(UploadedFileQueue.class));
-//		
-//		return result;
-//	}
-//	
-//	/**
-//	 * 
-//	 */
-//	public void insertUploadedFileQueue(UploadedFileQueue ufq) {
-//		String sql = "INSERT INTO UPLOADEDFILEQUEUE(USERUNIQUEID,DICTIONARYCODE,DOCUMENTUNIQUEID,REMOVABLE) VALUES(?,?,?,?)";
-//		int opt = jdbcTemplate.update(sql, new Object[] {ufq.getUserUniqueId(), ufq.getDictionaryCode(), ufq.getDocumentUniqueId(), ufq.getRemovable()});
-//	 	log.info("Affected row="+opt);
-//	}
-//	
-//	public void updateUploadedFileQueue(int queueUniqueId) {
-//		String sql = "UPDATE UPLOADEDFILEQUEUE SET REMOVABLE=? WHERE QUEUEUNIQUEID=?";
-//		int opt = jdbcTemplate.update(sql, new Object[] {1, queueUniqueId});
-//	 	log.info("Affected row="+opt);
-//	}
-//	
-//	/**
-//	 * 
-//	 * @param userUniqueId
-//	 * @param removable
-//	 */
-//	public void deleteUploadedFileQueue(int userUniqueId, int removable) {
-//		String sql = "DELETE FROM UPLOADEDFILEQUEUE WHERE USERUNIQUEID=? AND REMOVABLE=?";
-//		int opt = jdbcTemplate.update(sql, new Object[] {userUniqueId, removable});
-//	 	log.info("Affected row="+opt);
-//	}
+	/**
+	 * 
+	 * @param uuid
+	 * @param vin
+	 */
+	public void deleteByUUID(String uuid, String vin) {
+		int number = Integer.parseInt(vin.substring(vin.length() - 6));
+		int index = number % 256;
+		String sql = "DELETE FROM DOCUMENTS_"+1+"_"+index+" WHERE UUID=?";
+		int affected = jdbcTemplate.update(sql, new Object[] {uuid});
+		log.info("Affected row "+affected);
+		
+	    sql = "DELETE FROM DOCUMENTS_"+2+"_"+index+" WHERE UUID=?";
+		affected = jdbcTemplate.update(sql, new Object[] {uuid});
+		log.info("Affected row "+affected);
+	}
+	
 }

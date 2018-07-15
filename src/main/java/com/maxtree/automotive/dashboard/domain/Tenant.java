@@ -24,11 +24,20 @@ public class Tenant {
 		this.tenantName = tenantName;
 	}
 
+	public String getCommunityName() {
+		return communityName;
+	}
+
+	public void setCommunityName(String communityName) {
+		this.communityName = communityName;
+	}
+
 	@Override
 	public String toString() {
 		return tenantName;
 	}
 	
-	private Integer tenantUniqueId = 0;
-	private String tenantName;
+	private Integer tenantUniqueId = 0;//增长ID
+	private String tenantName;//租户名
+	private String communityName;// 分配的社区名（非数据库字段）
 }

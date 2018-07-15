@@ -2,14 +2,19 @@ package com.maxtree.automotive.dashboard.view.front;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
+import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.DataDictionary;
+import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
@@ -17,7 +22,11 @@ import com.maxtree.automotive.dashboard.servlet.UploadInDTO;
 import com.maxtree.automotive.dashboard.servlet.UploadOutDTO;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.event.UIEvents;
+import com.vaadin.event.UIEvents.PollEvent;
+import com.vaadin.event.UIEvents.PollListener;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.shared.EventId;
+import com.vaadin.shared.Registration;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.UI;
@@ -48,24 +57,90 @@ public class BusinessTypeSelector extends FormLayout {
 		data = ui.userService.findAssignedBusinesses(loginUser.getUserUniqueId());
 		selector = new ComboBox<Business>("业务类型:", data);
 		// Disallow null selections
-		selector.setEmptySelectionAllowed(true);
+		selector.setEmptySelectionAllowed(false);
 		selector.setTextInputAllowed(false);
 		selector.setPlaceholder("请选择一个业务类型");
 		selector.setWidth("100%");
 		selector.setHeight("27px");
 		this.addComponent(selector);
 		
-		selector.addValueChangeListener(e->{
-			business = e.getValue();
-			if (business != null) {
-				if (view.vin != null) {
-					loadMaterials(business.getCode());
-					polling();
-				}
-				else {
-					Notifications.warning("车辆识别代码不能空。");
-				}
-			} 
+		this.initPollListener();
+		// 解决1秒内选不完问题
+		selector.addFocusListener(e->{
+			ui.setPollInterval(-1);
+			selectionHashDone = false;
+			
+		});
+		
+		selector.addBlurListener(e->{
+			SystemConfiguration sc = Yaml.readSystemConfiguration();
+			ui.setPollInterval(sc.getPollinginterval());
+		});
+		
+		/**
+		 * 
+		 */
+		selector.addSelectionListener(e->{
+			
+			if (view.vin == null) {
+				Notifications.warning("车辆识别代码不能空。");
+				return;
+			}
+			
+			
+			Optional<Business> opt = e.getSelectedItem();
+			if (opt.get() != e.getOldValue() && e.getOldValue() != null && !selectionHashDone) {
+				Callback onOk = new Callback() {
+					@Override
+					public void onSuccessful() {
+						selectionHashDone = true;
+						
+						//删除旧原文1
+						List<Document> document1List = ui.documentService.findAllDocument1(view.vin, view.uuid);
+						for(Document doc : document1List) {
+							try {
+								fileSystem.deleteFile(view.editableSite, doc.getFileFullPath());
+							} catch (FileException e) {
+								e.printStackTrace();
+							}
+						}
+						//删除旧原文2
+						List<Document> document2List = ui.documentService.findAllDocument2(view.vin, view.uuid);
+						for(Document doc : document2List) {
+							try {
+								fileSystem.deleteFile(view.editableSite, doc.getFileFullPath());
+							} catch (FileException e) {
+								e.printStackTrace();
+							}
+						}
+						
+						//删除数据库记录
+						ui.documentService.deleteByUUID(view.uuid, view.vin);
+						
+						loadMaterials(opt.get().getCode());
+					}
+				};
+				Callback onCancel = new Callback() {
+					@Override
+					public void onSuccessful() {
+						selectionHashDone = true;
+						
+						
+						selector.setValue(e.getOldValue());
+						//恢复轮询
+//						ui.setPollInterval(sc.getPollinginterval());
+					}
+				};
+				MessageBox.showMessage("提示", "更改业务类型将会删除上次上传的材料，请确认是否继续更改。", MessageBox.WARNING, onOk, onCancel, "是","否");
+
+			}
+				
+			if(forTheFirstTimeToLoad) {
+				loadMaterials(opt.get().getCode());
+				ui.addPollListener(pollListener);
+				forTheFirstTimeToLoad = false;
+			}
+			
 		});
 	}
 	
@@ -108,9 +183,9 @@ public class BusinessTypeSelector extends FormLayout {
 	/**
 	 * 上传图像回显
 	 */
-	private void polling() {
+	private void initPollListener() {
 		
-		ui.addPollListener(new UIEvents.PollListener() {
+		pollListener = new UIEvents.PollListener() {
 			/**
 			 * 
 			 */
@@ -118,6 +193,7 @@ public class BusinessTypeSelector extends FormLayout {
 
 			@Override
 			public void poll(UIEvents.PollEvent event) {
+				// 定期获取上传文件表格焦点，从而可以按上下键控制
 				view.fileGrid.focus();
 				
 				List<UploadOutDTO> list = UploadFileServlet.OUT_DTOs.get(view.loggedInUser.getUserUniqueId());
@@ -167,13 +243,23 @@ public class BusinessTypeSelector extends FormLayout {
 					}
 				}
 			}
-		});
+		};
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public Business getValue() {
+		return selector.getValue();
+	}
+	
 	private FrontView view;
 	private List<Business> data;
 	private ComboBox<Business> selector;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
-	private Business business;
 	private TB4FileSystem fileSystem = new TB4FileSystem();
+	private UIEvents.PollListener pollListener;
+	private boolean selectionHashDone = false;
+	private boolean forTheFirstTimeToLoad = true;
 }

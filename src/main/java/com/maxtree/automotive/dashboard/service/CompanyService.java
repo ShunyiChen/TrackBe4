@@ -72,7 +72,7 @@ public class CompanyService {
 	 */
 	public int create(Company company) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		String sql = "INSERT INTO COMPANIES(COMMUNITYUNIQUEID,COMPANYNAME,PROVINCE,CITY,PREFECTURE,DISTRICT,ADDRESS,HASSTOREHOUSE,STOREHOUSEUNIQUEID,IGNORECHECKER) VALUES(?,?,?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO COMPANIES(COMMUNITYUNIQUEID,COMPANYNAME,PROVINCE,CITY,DISTRICT,ADDRESS,HASSTOREHOUSE,STOREHOUSEUNIQUEID,IGNORECHECKER) VALUES(?,?,?,?,?,?,?,?,?)";
 		
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
@@ -84,12 +84,11 @@ public class CompanyService {
 				ps.setString(2, company.getCompanyName());
 				ps.setString(3, company.getProvince());
 				ps.setString(4, company.getCity());
-				ps.setString(5, company.getPrefecture());
-				ps.setString(6, company.getDistrict());
-				ps.setString(7, company.getAddress());
-				ps.setInt(8, company.getHasStoreHouse());
-				ps.setInt(9, company.getStorehouseUniqueId());
-				ps.setInt(10, company.getIgnoreChecker());
+				ps.setString(5, company.getDistrict());
+				ps.setString(6, company.getAddress());
+				ps.setInt(7, company.getHasStoreHouse());
+				ps.setInt(8, company.getStorehouseUniqueId());
+				ps.setInt(9, company.getIgnoreChecker());
 				return ps;
 			}
 			
@@ -114,11 +113,15 @@ public class CompanyService {
 			jdbcTemplate.update(Sql2, new Object[] {u.getCommunityUniqueId(), u.getCompanyUniqueId(), u.getCompanyName(), u.getUserUniqueId()});
 		}
 		
-		String sql = "UPDATE COMPANIES SET COMMUNITYUNIQUEID=?,COMPANYNAME=?,PROVINCE=?,CITY=?,PREFECTURE=?,DISTRICT=?,ADDRESS=?,HASSTOREHOUSE=?,STOREHOUSEUNIQUEID=?,IGNORECHECKER=? WHERE COMPANYUNIQUEID=?";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {company.getCommunityUniqueId(), company.getCompanyName(),company.getProvince(),company.getCity(),company.getPrefecture(),company.getDistrict(), company.getAddress(), company.getHasStoreHouse(),company.getStorehouseUniqueId(),company.getIgnoreChecker(),company.getCompanyUniqueId()});
+		String sql = "UPDATE COMPANIES SET COMMUNITYUNIQUEID=?,COMPANYNAME=?,PROVINCE=?,CITY=?,DISTRICT=?,ADDRESS=?,HASSTOREHOUSE=?,STOREHOUSEUNIQUEID=?,IGNORECHECKER=? WHERE COMPANYUNIQUEID=?";
+	 	int opt = jdbcTemplate.update(sql, new Object[] {company.getCommunityUniqueId(), company.getCompanyName(),company.getProvince(),company.getCity(),company.getDistrict(), company.getAddress(), company.getHasStoreHouse(),company.getStorehouseUniqueId(),company.getIgnoreChecker(),company.getCompanyUniqueId()});
 	 	log.info("Updated row "+opt);
 	}
 	
+	/**
+	 * 
+	 * @param company
+	 */
 	public void updateStorehouse(Company company) {
 		String sql = "UPDATE COMPANIES SET STOREHOUSEUNIQUEID=? WHERE COMPANYUNIQUEID=?";
 	 	int opt = jdbcTemplate.update(sql, new Object[] {company.getStorehouseUniqueId(), company.getCompanyUniqueId()});
@@ -130,22 +133,34 @@ public class CompanyService {
 	 * @param company
 	 * @throws DataException
 	 */
-	public void delete(Company company) throws DataException {
-		int companyUniqueId = company.getCompanyUniqueId();
-		// 更新机构内的用户
-		List<User> employees = company.getEmployees();
-		for (User u : employees) {
-			u.setCommunityUniqueId(0);
-			u.setCompanyUniqueId(0);
-			u.setCompanyName("");
+	public void deleteCompany(Company company) throws DataException {
+		try {
+			int companyUniqueId = company.getCompanyUniqueId();
+			// 更改用户表
+			List<User> employees = company.getEmployees();
+			for (User u : employees) {
+				u.setCommunityUniqueId(0);
+				u.setCompanyUniqueId(0);
+				u.setCompanyName("");
+				
+				String sql = "UPDATE USERS SET COMMUNITYUNIQUEID=?,COMPANYUNIQUEID=?,COMPANYNAME=? WHERE USERUNIQUEID=?";
+				jdbcTemplate.update(sql, new Object[] {u.getCommunityUniqueId(), u.getCompanyUniqueId(), u.getCompanyName(), u.getUserUniqueId()});
 			
-			String Sql2 = "UPDATE USERS SET COMMUNITYUNIQUEID=?,COMPANYUNIQUEID=?,COMPANYNAME=? WHERE USERUNIQUEID=?";
-			jdbcTemplate.update(Sql2, new Object[] {u.getCommunityUniqueId(), u.getCompanyUniqueId(), u.getCompanyName(), u.getUserUniqueId()});
+				sql = "DELETE FROM USERBUSINESSES WHERE USERUNIQUEID=?";
+				jdbcTemplate.update(sql, new Object[] {u.getUserUniqueId()});
+			}
+			
+			// 删除公司业务类型表
+			String sql = "DELETE FROM COMPANYBUSINESSES WHERE COMPANYUNIQUEID=?";
+			jdbcTemplate.update(sql, new Object[] {company.getCompanyUniqueId()});
+			
+			sql = "DELETE FROM COMPANIES WHERE COMPANYUNIQUEID=?";
+		 	int opt = jdbcTemplate.update(sql, new Object[] {companyUniqueId});
+		 	log.info("Affected row "+opt);
+			
+		} catch (Exception e) {
+			throw new DataException(e.getMessage());
 		}
-		
-		String sql = "DELETE FROM COMPANIES WHERE COMPANYUNIQUEID = ?";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {companyUniqueId});
-	 	log.info("Deleted row "+opt);
 	}
 	
 	/**

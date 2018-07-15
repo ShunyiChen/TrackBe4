@@ -106,7 +106,7 @@ public class ImageViewerWindow extends Window {
 		
 		this.addCloseListener(e->{
 			SystemConfiguration config = Yaml.readSystemConfiguration();
-			ui.setPollInterval(config.getPollinginterval() *1000);
+			ui.setPollInterval(config.getPollinginterval());
 		});
 	}
 	

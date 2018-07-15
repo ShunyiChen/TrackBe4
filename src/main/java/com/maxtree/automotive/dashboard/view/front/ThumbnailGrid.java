@@ -167,6 +167,22 @@ public class ThumbnailGrid extends Panel{
 	 * 
 	 * @return
 	 */
+	public boolean emptyChecks() {
+		Iterator<String> iter = mapRows.keySet().iterator();
+		while(iter.hasNext()) {
+			String key = iter.next();
+			ThumbnailRow value = mapRows.get(key);
+			if(!value.hasThumbnailUploaded()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public Iterator<Component> getThumbnailRows() {
 		return vLayout.iterator();
 	}

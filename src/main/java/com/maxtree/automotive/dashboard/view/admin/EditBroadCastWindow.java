@@ -314,6 +314,7 @@ public class EditBroadCastWindow extends Window {
 	/**
 	 * 
 	 * @param msg
+	 * @param callback
 	 */
 	public static void edit(Message msg, Callback callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
@@ -338,8 +339,6 @@ public class EditBroadCastWindow extends Window {
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
         		String viewName = "";// 如果viewName等于空，则表示消息将发送到对方的首个view上
-        		new TB4MessagingSystem().resendMessageTo(msg.getMessageUniqueId(), w.nameSets, viewName, ui);
-        		
         		
         		String subject = w.message.getSubject();
         		String messageBody = "{\"type\":\"text\", \"message\":\""+w.descArea.getValue()+"\"}";
@@ -347,7 +346,8 @@ public class EditBroadCastWindow extends Window {
         		msg.setMessageBody(messageBody);
         		msg.setSentTimes(msg.getSentTimes()+1);
         		msg.setDateCreated(new Date());
-        		ui.messagingService.updateMessage(msg);
+        		int newMessageUniqueId = ui.messagingService.insertMessage(msg);
+        		new TB4MessagingSystem().sendMessageTo(newMessageUniqueId, w.nameSets, viewName);
         		
         		w.close();
         		

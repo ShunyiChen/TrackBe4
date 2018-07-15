@@ -40,12 +40,12 @@ public class DataDictionary {
 		this.code = code;
 	}
 	
-	public Float getOlderNumber() {
-		return olderNumber;
+	public Float getOrderNumber() {
+		return orderNumber;
 	}
 
-	public void setOlderNumber(Float olderNumber) {
-		this.olderNumber = olderNumber;
+	public void setOrderNumber(Float orderNumber) {
+		this.orderNumber = orderNumber;
 	}
 
 	@Override
@@ -57,5 +57,5 @@ public class DataDictionary {
 	private Integer itemType;//数据项类别 1-号牌种类 2-材料名称
 	private String itemName;//数据项名称
 	private String code;//dictionary快捷编码
-	private Float olderNumber = 0f;//顺序号
+	private Float orderNumber = 0f;//顺序号
 }

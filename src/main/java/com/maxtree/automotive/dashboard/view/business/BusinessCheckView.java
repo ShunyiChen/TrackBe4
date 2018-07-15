@@ -11,7 +11,6 @@ import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.Status;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.Hr;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
@@ -151,7 +150,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 	
 	private void startPolling() {
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
-		ui.setPollInterval(sc.getPollinginterval() * 1000);
+		ui.setPollInterval(sc.getPollinginterval());
 		ui.addPollListener(new UIEvents.PollListener() {
 			@Override
 			public void poll(UIEvents.PollEvent event) {
@@ -570,19 +569,19 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		} catch (DataException e) {
 			e.printStackTrace();
 		}
-    	User receiver = ui.userService.findById(transaction.getTypist());
+//    	User receiver = ui.userService.findById(transaction.getTypist());
     	
     	// 2.更改状态
-		transaction.setStatus(Status.S3.name);
-		transaction.setDateModified(new Date());
-		ui.transactionService.update(transaction);
-		
-		// 3.发送消息
-		String subject = "审档消息";
-        StringBuilder msg = new StringBuilder();
-        msg.append(comments);
-        String messageBody = "{\"type\":\"transaction\",\"status\":\""+Status.S3.name+"\",\"transactionUniqueId\":\""+transaction.getTransactionUniqueId()+"\",\"message\":\""+msg.toString()+"\"}";
-        new TB4MessagingSystem().sendMessageTo(loginUser, receiver.getUserName(), 0, 0, receiver.getUserUniqueId(), subject, messageBody, DashboardViewType.DASHBOARD.getViewName());
+//		transaction.setStatus(Status.S3.name);
+//		transaction.setDateModified(new Date());
+//		ui.transactionService.update(transaction);
+//		
+//		// 3.发送消息
+//		String subject = "审档消息";
+//        StringBuilder msg = new StringBuilder();
+//        msg.append(comments);
+//        String messageBody = "{\"type\":\"transaction\",\"status\":\""+Status.S3.name+"\",\"transactionUniqueId\":\""+transaction.getTransactionUniqueId()+"\",\"message\":\""+msg.toString()+"\"}";
+//        new TB4MessagingSystem().sendMessageTo(loginUser, receiver.getUserName(), 0, 0, receiver.getUserUniqueId(), subject, messageBody, DashboardViewType.DASHBOARD.getViewName());
 		
 //        // 4.审批记录
 //        Audit audit = new Audit();
@@ -617,19 +616,19 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		} catch (DataException e) {
 			e.printStackTrace();
 		}
-    	User receiver = ui.userService.findById(transaction.getTypist());
+//    	User receiver = ui.userService.findById(transaction.getTypist());
     	
     	// 2.更改状态
-		transaction.setStatus(Status.ReturnedToThePrint.name);///无状态，即前台可以再修改
-		transaction.setDateModified(new Date());
-		ui.transactionService.update(transaction);
-		
-		// 3.发送消息
-		String subject = "审档消息";
-        StringBuilder msg = new StringBuilder();
-        msg.append(comments);
-        String messageBody = "{\"type\":\"transaction\",\"status\":\""+Status.ReturnedToThePrint.name+"\",\"transactionUniqueId\":\""+transaction.getTransactionUniqueId()+"\",\"message\":\""+msg.toString()+"\"}";
-        new TB4MessagingSystem().sendMessageTo(loginUser, receiver.getUserName(), 0, 0, receiver.getUserUniqueId(), subject, messageBody, DashboardViewType.DASHBOARD.getViewName());
+//		transaction.setStatus(Status.ReturnedToThePrint.name);///无状态，即前台可以再修改
+//		transaction.setDateModified(new Date());
+//		ui.transactionService.update(transaction);
+//		
+//		// 3.发送消息
+//		String subject = "审档消息";
+//        StringBuilder msg = new StringBuilder();
+//        msg.append(comments);
+//        String messageBody = "{\"type\":\"transaction\",\"status\":\""+Status.ReturnedToThePrint.name+"\",\"transactionUniqueId\":\""+transaction.getTransactionUniqueId()+"\",\"message\":\""+msg.toString()+"\"}";
+//        new TB4MessagingSystem().sendMessageTo(loginUser, receiver.getUserName(), 0, 0, receiver.getUserUniqueId(), subject, messageBody, DashboardViewType.DASHBOARD.getViewName());
 		
         // 4.审批记录
 //        Audit audit = new Audit();

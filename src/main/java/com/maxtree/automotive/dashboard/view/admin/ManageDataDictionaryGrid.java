@@ -54,7 +54,7 @@ public class ManageDataDictionaryGrid extends VerticalLayout {
 						refreshTable();
 					}
 				};
-				EditDataItemWindow.open(callback);
+				EditDataDictionaryWindow.open(callback);
 			} else {
         		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
         	}
@@ -78,10 +78,15 @@ public class ManageDataDictionaryGrid extends VerticalLayout {
 		columnCategory.addStyleName("grid-title");
 		Label columnProject = new Label("项目名");
 		columnProject.addStyleName("grid-title");
-		
-		header.addComponents(columnCategory, columnProject);
+		Label columnCode = new Label("代码");
+		columnCode.addStyleName("grid-title");
+		Label columnOrder = new Label("顺序");
+		columnOrder.addStyleName("grid-title");
+		header.addComponents(columnCategory,columnProject,columnCode,columnOrder);
 		header.setComponentAlignment(columnCategory, Alignment.MIDDLE_LEFT);
 		header.setComponentAlignment(columnProject, Alignment.MIDDLE_LEFT);
+		header.setComponentAlignment(columnCode, Alignment.MIDDLE_LEFT);
+		header.setComponentAlignment(columnOrder, Alignment.MIDDLE_LEFT);
 		return header;
 	}
 	
@@ -119,8 +124,23 @@ public class ManageDataDictionaryGrid extends VerticalLayout {
 		row.setWidthUndefined();
 		row.setHeightUndefined();
 		row.addStyleName("grid-header-line");
-		Label labelCategoryName = new Label(dataItem.getItemType()==1?"号牌种类":"业务材料");
+		Label labelCategoryName;
+		if (dataItem.getItemType()==1) {
+			labelCategoryName = new Label("号牌种类");
+		} 
+		else if(dataItem.getItemType()==2) {
+			labelCategoryName = new Label("地区代号");
+		}
+		else {
+			labelCategoryName = new Label("业务材料");
+		}
+		// 名称
 		Label labelName = new Label(dataItem.getItemName());
+		// 代码
+		Label labelCode = new Label(dataItem.getCode());
+		// 顺序
+		Label labelOrder = new Label(dataItem.getOrderNumber()+"");
+		
 		Image moreImg = new Image(null, new ThemeResource("img/adminmenu/more.png"));
 		moreImg.addStyleName("mycursor");
 		moreImg.addClickListener(e -> {
@@ -138,7 +158,7 @@ public class ManageDataDictionaryGrid extends VerticalLayout {
 								refreshTable();
 							}
 						};
-						EditDataItemWindow.edit(dataItem, callback);
+						EditDataDictionaryWindow.edit(dataItem, callback);
 					}
 					else {
 		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
@@ -175,11 +195,16 @@ public class ManageDataDictionaryGrid extends VerticalLayout {
 			menu.open(e.getClientX(), e.getClientY());
 		});
 		
-		labelCategoryName.setWidth("107px");
-		labelName.setWidth("415px");
-		row.addComponents(labelCategoryName, labelName, moreImg);
+		labelCategoryName.setWidth("137px");
+		labelName.setWidth("145px");
+		labelCode.setWidth("145px");
+		labelOrder.setWidth("95px");
+		
+		row.addComponents(labelCategoryName,labelName,labelCode,labelOrder,moreImg);
 		row.setComponentAlignment(labelCategoryName, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(labelName, Alignment.MIDDLE_LEFT);
+		row.setComponentAlignment(labelCode, Alignment.MIDDLE_LEFT);
+		row.setComponentAlignment(labelOrder, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(moreImg, Alignment.MIDDLE_RIGHT);
 		return row;
 	}

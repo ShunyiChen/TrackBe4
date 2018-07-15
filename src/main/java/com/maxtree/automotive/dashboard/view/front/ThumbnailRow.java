@@ -80,6 +80,15 @@ public class ThumbnailRow extends Panel {
 		main.removeComponent(thumbnail);
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean hasThumbnailUploaded() {
+		return main.getComponentCount() > 1;
+	}
+	
+	
 	public DataDictionary getDataDictionary() {
 		return dataDictionary;
 	}

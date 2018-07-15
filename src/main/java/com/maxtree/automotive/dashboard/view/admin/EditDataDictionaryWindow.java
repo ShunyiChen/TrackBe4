@@ -8,10 +8,15 @@ import org.springframework.util.StringUtils;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.CodeGenerator;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.component.DoubleField;
+import com.maxtree.automotive.dashboard.component.EmptyValidator;
 import com.maxtree.automotive.dashboard.domain.DataDictionary;
+import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.data.Binder;
+import com.vaadin.data.converter.StringToFloatConverter;
+import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.ErrorMessage;
@@ -29,7 +34,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Notification.Type;
 
-public class EditDataItemWindow extends Window {
+public class EditDataDictionaryWindow extends Window {
 
 	/**
 	 * 
@@ -39,12 +44,12 @@ public class EditDataItemWindow extends Window {
 	/**
 	 * 
 	 */
-	public EditDataItemWindow() {
+	public EditDataDictionaryWindow() {
 		this.setWidth("513px");
 		this.setHeightUndefined();
 		this.setModal(true);
 		this.setResizable(false);
-		this.setCaption("添加项目");
+		this.setCaption("添加字典");
 		this.addStyleName("edit-window");
 		VerticalLayout mainLayout = new VerticalLayout(); 
 		mainLayout.setSpacing(true);
@@ -53,9 +58,11 @@ public class EditDataItemWindow extends Window {
 		FormLayout form = new FormLayout();
 		form.setSizeFull();
 		DataDictionaryType type1 = new DataDictionaryType(1, "号牌种类"); 
-		DataDictionaryType type2 = new DataDictionaryType(2, "业务材料"); 
+		DataDictionaryType type2 = new DataDictionaryType(2, "地区代号"); 
+		DataDictionaryType type3 = new DataDictionaryType(2, "业务材料"); 
 		types.add(type1);
 		types.add(type2);
+		types.add(type3);
 		typeField.setEmptySelectionAllowed(false);
 		typeField.setCaption("分类:");
 		typeField.setItems(types);
@@ -64,16 +71,21 @@ public class EditDataItemWindow extends Window {
 		typeField.addValueChangeListener(e-> {
 			typeField.setComponentError(null);
 		});
-		nameField = new TextField("项目名:");
+		typeField.setSelectedItem(type1);
+		
+		nameField = new TextField("字典名:");
 		nameField.setIcon(VaadinIcons.EDIT);
 		nameField.focus();
 		// 设置焦点
-		codeField = new TextField("快捷编码:");
+		codeField = new TextField("代号:");
 		codeField.setIcon(VaadinIcons.CODE);
-		codeField.setValue(CodeGenerator.generate4BitCode());
-		codeField.setReadOnly(true);
 		
-		form.addComponents(typeField, nameField, codeField);
+		//顺序
+		orderField = new DoubleField();
+		orderField.setCaption("顺序号:");
+		orderField.setIcon(VaadinIcons.CALC);
+		
+		form.addComponents(typeField, nameField, codeField, orderField);
 		HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setSizeFull();
 		buttonPane.setSpacing(false);
@@ -120,9 +132,12 @@ public class EditDataItemWindow extends Window {
 		nameField.setWidth(w+"px");
 		typeField.setWidth(w+"px");
 		codeField.setWidth(w+"px");
+		orderField.setWidth(w+"px");
+		
 		nameField.setHeight(h+"px");
 		typeField.setHeight(h+"px");
 		codeField.setHeight(h+"px");
+		orderField.setHeight(h+"px");
 	}
 	
 	/**
@@ -144,8 +159,12 @@ public class EditDataItemWindow extends Window {
 	        "项目名长度范围在2~20个字符",
 	        1, 20)) .bind(DataDictionary::getItemName, DataDictionary::setItemName);
 		binder.forField(codeField).withValidator(new StringLengthValidator(
-		        "快捷编码长度为4个字符",
-		        4, 4)) .bind(DataDictionary::getCode, DataDictionary::setCode);
+		        "快捷编码长度为1-7个字符",
+		        1, 7)) .bind(DataDictionary::getCode, DataDictionary::setCode);
+		binder.forField(orderField)
+		  .withValidator(new EmptyValidator("顺序号不能为空"))
+		  .withConverter(new StringToFloatConverter("请输入一个浮点数"))
+		  .bind(DataDictionary::getOrderNumber, DataDictionary::setOrderNumber);
 	}
 	
 	/**
@@ -198,6 +217,21 @@ public class EditDataItemWindow extends Window {
 				}
 			});
 		}
+		else if (StringUtils.isEmpty(dict.getOrderNumber())) {
+			orderField.setComponentError(new ErrorMessage() {
+				@Override
+				public ErrorLevel getErrorLevel() {
+					// TODO Auto-generated method stub
+					return ErrorLevel.ERROR;
+				}
+
+				@Override
+				public String getFormattedHtmlMessage() {
+					// TODO Auto-generated method stub
+					return "顺序号不能为空。请输入一个浮点型数字。";
+				}
+			});
+		}
 		
 		if (typeField.getErrorMessage() != null) {
 			nameField.setComponentError(nameField.getErrorMessage());
@@ -211,16 +245,25 @@ public class EditDataItemWindow extends Window {
 			codeField.setComponentError(codeField.getErrorMessage());
 			return false;
 		}
+		else if (orderField.getErrorMessage() != null) {
+			orderField.setComponentError(orderField.getErrorMessage());
+			return false;
+		}
 		return true;
 	}
 	
+	/**
+	 * 
+	 * @param callback
+	 */
 	public static void open(Callback callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        EditDataItemWindow w = new EditDataItemWindow();
+        EditDataDictionaryWindow w = new EditDataDictionaryWindow();
         w.btnAdd.setCaption("添加");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
         		w.dict.setItemType(w.typeField.getValue().getType());
+        		w.dict.setOrderNumber(Float.parseFloat(w.orderField.getValue().toString()));
     			ui.dataItemService.insert(w.dict);
     			w.close();
     			callback.onSuccessful();
@@ -230,9 +273,14 @@ public class EditDataItemWindow extends Window {
         w.center();
     }
 	
+	/**
+	 * 
+	 * @param dataItem
+	 * @param callback
+	 */
 	public static void edit(DataDictionary dataItem, Callback callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        EditDataItemWindow w = new EditDataItemWindow();
+        EditDataDictionaryWindow w = new EditDataDictionaryWindow();
         DataDictionary r = ui.dataItemService.findById(dataItem.getDictionaryUniqueId());
         w.dict.setDictionaryUniqueId(r.getDictionaryUniqueId());
         for(DataDictionaryType type : w.types) {
@@ -242,8 +290,9 @@ public class EditDataItemWindow extends Window {
         }
         w.nameField.setValue(r.getItemName());
         w.codeField.setValue(r.getCode());
+        w.orderField.setValue(r.getOrderNumber()+"");
         w.btnAdd.setCaption("保存");
-        w.setCaption("编辑数据项");
+        w.setCaption("编辑字典");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
         		
@@ -262,6 +311,7 @@ public class EditDataItemWindow extends Window {
 	private ComboBox<DataDictionaryType> typeField = new ComboBox<DataDictionaryType>();
 	private TextField nameField;
 	private TextField codeField;
+	private DoubleField orderField;
 	private Button btnAdd;
 	private Binder<DataDictionary> binder = new Binder<>();
 	private DataDictionary dict = new DataDictionary();

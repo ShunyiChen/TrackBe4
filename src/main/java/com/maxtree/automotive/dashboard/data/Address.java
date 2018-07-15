@@ -1,6 +1,6 @@
 package com.maxtree.automotive.dashboard.data;
 
-public class Area {
+public class Address {
 
 	public String[] getProvince() {
 		return province;
@@ -16,14 +16,6 @@ public class Area {
 
 	public void setCity(String[] city) {
 		this.city = city;
-	}
-
-	public String[] getPrefecture() {
-		return prefecture;
-	}
-
-	public void setPrefecture(String[] prefecture) {
-		this.prefecture = prefecture;
 	}
 
 	public String[] getDistrict() {
@@ -42,9 +34,8 @@ public class Area {
 		this.licenseplate = licenseplate;
 	}
 
-	private String[] province;
-	private String[] city;
-	private String[] prefecture;
-	private String[] district;
-	private String licenseplate;
+	private String[] province; //省份
+	private String[] city;//地级市
+	private String[] district;//市、县级市
+	private String licenseplate;//辽B
 }

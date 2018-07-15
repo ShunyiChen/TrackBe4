@@ -65,24 +65,24 @@ public class CodeGenerator {
 	/**
 	 * 
 	 * @return
-	 */
-	public static String generate4BitCode() {
-		Random random = new Random();
-		String[] codes = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","0","1","2","3","4","5","6","7","8","9"};
-		StringBuilder generated = new StringBuilder(4);
-		for(int i = 0; i < 4; i++) {
-			int randomNum = random.nextInt(36);
-			generated.append(codes[randomNum]);
-		}
-		return generated.toString();
-	}
+//	 */
+//	public static String generate4BitCode() {
+//		Random random = new Random();
+//		String[] codes = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","0","1","2","3","4","5","6","7","8","9"};
+//		StringBuilder generated = new StringBuilder(4);
+//		for(int i = 0; i < 4; i++) {
+//			int randomNum = random.nextInt(36);
+//			generated.append(codes[randomNum]);
+//		}
+//		return generated.toString();
+//	}
 	
 	 public static void main( String[] args )
 	    {
 		 CodeGenerator cg = new CodeGenerator();
-		 for (int i =0;i < 20;i++) {
-			 System.out.println(cg.generate4BitCode());
-		 }
+//		 for (int i =0;i < 20;i++) {
+//			 System.out.println(cg.generate4BitCode());
+//		 }
 		 
 	    }
 	

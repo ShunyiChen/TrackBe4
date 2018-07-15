@@ -45,7 +45,7 @@ public class DataItemService {
 	 * @return
 	 */
 	public List<DataDictionary> findAll() {
-		String sql = "SELECT * FROM DATADICTIONARY ORDER BY ITEMTYPE,DICTIONARYUNIQUEID";
+		String sql = "SELECT * FROM DATADICTIONARY ORDER BY ITEMTYPE,ORDERNUMBER";
 		List<DataDictionary> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<DataDictionary>(DataDictionary.class));
 		return results;
 	}
@@ -74,12 +74,26 @@ public class DataItemService {
 	
 	/**
 	 * 
-	 * @param dataItem
+	 * @param itemType
+	 * @return
+	 */
+	public String findCodeByName(String name) {
+		String sql = "SELECT CODE FROM DATADICTIONARY WHERE ITEMNAME=? ORDER BY ORDERNUMBER";
+		List<String> results = jdbcTemplate.queryForList(sql, new Object[] {name}, String.class);
+		if(results.size() > 0) {
+			return results.get(0);
+		}
+		return "";
+	}
+	
+	/**
+	 * 
+	 * @param dict
 	 * @return
 	 */
 	public int insert(DataDictionary dict) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		String sql = "INSERT INTO DATADICTIONARY(ITEMTYPE,ITEMNAME,CODE) VALUES(?,?,?)";
+		String sql = "INSERT INTO DATADICTIONARY(ITEMTYPE,ITEMNAME,CODE,ORDERNUMBER) VALUES(?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -89,6 +103,7 @@ public class DataItemService {
 				ps.setInt(1, dict.getItemType());
 				ps.setString(2, dict.getItemName());
 				ps.setString(3, dict.getCode());
+				ps.setFloat(4, dict.getOrderNumber());
 				return ps;
 			}
 			
@@ -102,8 +117,8 @@ public class DataItemService {
 	 * @param dict
 	 */
 	public void update(DataDictionary dict) {
-		String sql = "UPDATE DATADICTIONARY SET ITEMTYPE=?,ITEMNAME=?,CODE=? WHERE DICTIONARYUNIQUEID=?";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {dict.getItemType(),dict.getItemName(), dict.getCode(), dict.getDictionaryUniqueId()});
+		String sql = "UPDATE DATADICTIONARY SET ITEMTYPE=?,ITEMNAME=?,CODE=?,ORDERNUMBER=? WHERE DICTIONARYUNIQUEID=?";
+	 	int opt = jdbcTemplate.update(sql, new Object[] {dict.getItemType(),dict.getItemName(), dict.getCode(), dict.getOrderNumber(),dict.getDictionaryUniqueId()});
 	 	log.info("Updated row "+opt);
 	}
 	

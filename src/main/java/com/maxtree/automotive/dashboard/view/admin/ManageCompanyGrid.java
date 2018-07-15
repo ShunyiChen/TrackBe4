@@ -2,11 +2,14 @@ package com.maxtree.automotive.dashboard.view.admin;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.PermissionCodes;
 import com.maxtree.automotive.dashboard.TB4Application;
 import com.maxtree.automotive.dashboard.component.Box;
+import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.Storehouse;
@@ -234,13 +237,23 @@ public class ManageCompanyGrid extends VerticalLayout {
 				public void menuSelected(MenuItem selectedItem) {
 					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 					if (loginUser.isPermitted(PermissionCodes.F3)) {
-						DashboardUI ui = (DashboardUI) UI.getCurrent();
-						try {
-							ui.companyService.delete(company);
-						} catch (DataException e) {
-							Notifications.warning("无法删除正在引用的公司。");
-						}
-						refreshTable();
+						
+						Callback event = new Callback() {
+
+							@Override
+							public void onSuccessful() {
+								
+								try {
+									ui.companyService.deleteCompany(company);
+								} catch (DataException e) {
+									log.info("删除机构"+company.toString()+"出错，"+e.getMessage());
+								}
+								refreshTable();
+							}
+						};
+						
+						MessageBox.showMessage("提示", "请确定是否删除该机构。", MessageBox.WARNING, event, "删除");
+						
 					}
 					else {
 		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
@@ -279,4 +292,7 @@ public class ManageCompanyGrid extends VerticalLayout {
 	
 	private VerticalLayout tableBody;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
+	// define the logger
+    private static Logger log = Logger.getLogger(ManageCompanyGrid.class);
+    
 }

@@ -65,6 +65,10 @@ public class ManageTenantsGrid extends VerticalLayout {
 		this.setComponentAlignment(addButton, Alignment.TOP_RIGHT);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	private HorizontalLayout createGridHeader() {
 		HorizontalLayout header = new HorizontalLayout();
 		header.setMargin(false);
@@ -74,9 +78,11 @@ public class ManageTenantsGrid extends VerticalLayout {
 		header.addStyleName("grid-header-line");
 		Label columnName = new Label("租户名");
 		columnName.addStyleName("grid-title");
-		
-		header.addComponents(columnName);
+		Label columnCommunity = new Label("分配的社区");
+		columnCommunity.addStyleName("grid-title");
+		header.addComponents(columnName,columnCommunity);
 		header.setComponentAlignment(columnName, Alignment.MIDDLE_LEFT);
+		header.setComponentAlignment(columnCommunity, Alignment.MIDDLE_LEFT);
 		return header;
 	}
 	
@@ -92,7 +98,7 @@ public class ManageTenantsGrid extends VerticalLayout {
 		tableBody.setMargin(false);
 		tableBody.setSpacing(false);
 		
-		List<Tenant> data = ui.communityService.findAllTenants();
+		List<Tenant> data = ui.tenantService.findAllTenants();
 		for (Tenant t : data) {
 			HorizontalLayout row1 = createDataRow(t);
 			tableBody.addComponents(row1);
@@ -104,7 +110,7 @@ public class ManageTenantsGrid extends VerticalLayout {
 	
 	/**
 	 * 
-	 * @param community
+	 * @param tenant
 	 * @return
 	 */
 	private HorizontalLayout createDataRow(Tenant tenant) {
@@ -115,11 +121,37 @@ public class ManageTenantsGrid extends VerticalLayout {
 		row.setHeightUndefined();
 		row.addStyleName("grid-header-line");
 		Label labelName = new Label(tenant.getTenantName());
+		Label labelCommunity = new Label(tenant.getCommunityName());
 		Image moreImg = new Image(null, new ThemeResource("img/adminmenu/more.png"));
 		moreImg.addStyleName("mycursor");
 		moreImg.addClickListener(e -> {
 			// Create a context menu for 'someComponent'
 			ContextMenu menu = new ContextMenu(moreImg, true);
+			
+			menu.addItem("分配社区", new Command() {
+				@Override
+				public void menuSelected(MenuItem selectedItem) {
+					
+					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+					if (loginUser.isPermitted(PermissionCodes.J5)) {
+						 
+						Callback callback = new Callback() {
+
+							@Override
+							public void onSuccessful() {
+								refreshTable();
+							}
+						};
+						AssigningCommunityToTenantWindow.open(tenant, callback);
+						
+					}
+					else {
+		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
+		        	}
+					
+				}
+			});
+			menu.addSeparator();
 			menu.addItem("编辑", new Command() {
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
@@ -147,7 +179,7 @@ public class ManageTenantsGrid extends VerticalLayout {
 				public void menuSelected(MenuItem selectedItem) {
 					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 					if (loginUser.isPermitted(PermissionCodes.J3)) {
-						ui.communityService.deleteTenant(tenant);
+						ui.tenantService.deleteTenant(tenant);
 						refreshTable();
 					}
 					else {
@@ -160,9 +192,11 @@ public class ManageTenantsGrid extends VerticalLayout {
 			menu.open(e.getClientX(), e.getClientY());
 		});
 		
-		labelName.setWidth("530px");
-		row.addComponents(labelName, moreImg);
+		labelName.setWidth("285px");
+		labelCommunity.setWidth("255px");
+		row.addComponents(labelName,labelCommunity,moreImg);
 		row.setComponentAlignment(labelName, Alignment.MIDDLE_LEFT);
+		row.setComponentAlignment(labelCommunity, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(moreImg, Alignment.MIDDLE_RIGHT);
 		return row;
 	}
@@ -172,7 +206,7 @@ public class ManageTenantsGrid extends VerticalLayout {
 	 */
 	private void refreshTable() {
 		tableBody.removeAllComponents();
-		List<Tenant> data = ui.communityService.findAllTenants();
+		List<Tenant> data = ui.tenantService.findAllTenants();
 		for (Tenant t : data) {
 			HorizontalLayout row1 = createDataRow(t);
 			tableBody.addComponents(row1);

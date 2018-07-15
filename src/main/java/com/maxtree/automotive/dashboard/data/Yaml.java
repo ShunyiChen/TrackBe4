@@ -7,11 +7,11 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 public class Yaml {
 
-	public static Area readArea() {
-		Area area = null;
+	public static Address readAddress() {
+		Address area = null;
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         try {
-        	area = mapper.readValue(new File("configuration/Area.yaml"), Area.class);
+        	area = mapper.readValue(new File("configuration/Address.yaml"), Address.class);
 //            System.out.println(ReflectionToStringBuilder.toString(user,ToStringStyle.MULTI_LINE_STYLE));
         } catch (Exception e) {
             e.printStackTrace();
