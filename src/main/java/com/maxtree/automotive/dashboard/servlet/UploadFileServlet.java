@@ -89,13 +89,13 @@ public class UploadFileServlet extends HttpServlet {
 				if (!item.isFormField()) { // 判断该表单项是否是普通类型
 					if (item.getName() != null && !item.getName().equals("")) {
 						
-//						String paramString = item.getName();
-//						String[] parameters = paramString.split("_");
-//						Integer userUniqueId = Integer.parseInt(parameters[0]);
-//						fileName = parameters[1];
+						String paramString = item.getName();
+						String[] parameters = paramString.split("_");
+						Integer userUniqueId = Integer.parseInt(parameters[0]);
+						fileName = parameters[1];
 						
-						Integer userUniqueId = 2;
-						fileName = new File(item.getName()).getName();
+//						Integer userUniqueId = 2;
+//						fileName = new File(item.getName()).getName();
 						
 						UploadInDTO p = IN_DTOs.get(userUniqueId);
 						if (!checkEmpty(p)) {
