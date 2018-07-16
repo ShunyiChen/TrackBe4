@@ -55,6 +55,8 @@ public class AdminMainView extends VerticalLayout {
 		customerInformationLayout = customerInformation();
 		// 社区
 		communityLayout = community();
+		// 库房
+		storehouseLayout = storehouse();
 		// 数据存储
 		dataLayout = dataStorage();
 		// 消息
@@ -63,16 +65,14 @@ public class AdminMainView extends VerticalLayout {
 		systemLayout = systemSettings();
 		// 帮助
 		helpLayout = help();
-		
-        
 	 	content.setSpacing(false);
 	 	content.setMargin(false);
 	 	content.setWidth("98%");
 	 	content.setHeight("98%");
-	 	content.addComponents(customerInformationLayout, communityLayout, dataLayout, messageLayout, systemLayout, helpLayout);
-	 	
+	 	content.addComponents(customerInformationLayout,communityLayout,storehouseLayout,dataLayout,messageLayout,systemLayout,helpLayout);
 	 	content.setComponentAlignment(customerInformationLayout, Alignment.TOP_CENTER);
 	 	content.setComponentAlignment(communityLayout, Alignment.TOP_CENTER);
+	 	content.setComponentAlignment(storehouseLayout, Alignment.TOP_CENTER);
 	 	content.setComponentAlignment(dataLayout, Alignment.TOP_CENTER);
 	 	content.setComponentAlignment(messageLayout, Alignment.TOP_CENTER);
 	 	content.setComponentAlignment(systemLayout, Alignment.TOP_CENTER);
@@ -526,6 +526,65 @@ public class AdminMainView extends VerticalLayout {
 	}
 	
 	/**
+	 * 库房
+	 * 
+	 * @return
+	 */
+	private VerticalLayout storehouse() {
+		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		VerticalLayout vlayoutWithTitle = new VerticalLayout(); 
+		vlayoutWithTitle.setMargin(false);
+		vlayoutWithTitle.setSpacing(false);
+		vlayoutWithTitle.setWidth("678px");
+		vlayoutWithTitle.setHeightUndefined();
+		Label label = new Label("库房");
+		label.addStyleName("setting-text");
+ 
+		// 白色方块面板
+        VerticalLayout vContent = new VerticalLayout();
+        vContent.setMargin(false);
+        vContent.setSpacing(false);
+        vContent.setWidth("100%");
+        vContent.setHeight("150px");
+        vContent.addStyleName("setting-layout-shadow");
+        
+        vContent.setWidth("100%");
+        vContent.setHeightUndefined();
+        
+        // 管理库房
+        HorizontalLayout row1 = new HorizontalLayout();
+        row1.setMargin(false);
+        row1.setSpacing(false);
+        row1.addStyleName("detail-hlayout");
+        row1.setWidth("100%");
+        row1.setHeight("48px");
+        Label manageCommunities = new Label("管理库房");
+        manageCommunities.addStyleName("detail-setting-text");
+        Image rightArrow = new Image(null, new ThemeResource("img/adminmenu/rightarrow.png"));
+        row1.addComponents(manageCommunities, rightArrow);
+        row1.setComponentAlignment(manageCommunities, Alignment.MIDDLE_LEFT);
+        row1.setComponentAlignment(rightArrow, Alignment.MIDDLE_RIGHT);
+        row1.addLayoutClickListener(e -> {
+        	if (loginUser.isPermitted(PermissionCodes.J5)) {
+        		showDetailPane(Commands.MANAGE_STOREHOUSES);
+            	hidePanes();
+        	} else {
+        		Notifications.warning("没有权限。");
+        	}
+        	
+        });
+        
+        vContent.addComponents(row1);
+        vContent.setComponentAlignment(row1, Alignment.TOP_CENTER);
+        vlayoutWithTitle.addComponents(label, vContent);
+        vlayoutWithTitle.setComponentAlignment(label, Alignment.TOP_LEFT);
+        vlayoutWithTitle.setComponentAlignment(vContent, Alignment.TOP_CENTER);
+        vlayoutWithTitle.addStyleName("adminmainview-item");
+        return vlayoutWithTitle;
+	}
+	
+	
+	/**
 	 * 广播消息
 	 * 
 	 * @return
@@ -820,33 +879,44 @@ public class AdminMainView extends VerticalLayout {
         return fittingLayout;
 	}
 	
+	/**
+	 * Hide pane
+	 */
 	public void hidePanes() {
 		customerInformationLayout.setVisible(false);
 		communityLayout.setVisible(false);
+		storehouseLayout.setVisible(false);
 		dataLayout.setVisible(false);
 		messageLayout.setVisible(false);
 		systemLayout.setVisible(false);
 		helpLayout.setVisible(false);
 	}
 	
+	/**
+	 * Show pane
+	 */
 	public void showPanes() {
 		customerInformationLayout.setVisible(true);
 		communityLayout.setVisible(true);
+		storehouseLayout.setVisible(true);
 		dataLayout.setVisible(true);
 		messageLayout.setVisible(true);
 		systemLayout.setVisible(true);
 		helpLayout.setVisible(true);
 	}
 	
+	/**
+	 * 
+	 * @param command
+	 */
 	private void showDetailPane(int command) {
-		
 		if (command == Commands.EDIT_PROFILE) {
-			manageAdmin = new ManageAdmin(this);  // 管理员
+			manageAdmin = new ManageAdmin(this);	// 管理员
 			content.addComponent(manageAdmin);
 			content.setComponentAlignment(manageAdmin, Alignment.TOP_CENTER);
 		} 
 		else if (command == Commands.MANAGE_COMPANIES) {
-			manageCompany = new ManageCompany(this); // 管理机构
+			manageCompany = new ManageCompany(this);	// 管理机构
 			content.addComponent(manageCompany);
 			content.setComponentAlignment(manageCompany, Alignment.TOP_CENTER);
 		} 
@@ -856,19 +926,24 @@ public class AdminMainView extends VerticalLayout {
 			content.setComponentAlignment(manageOtherUsers, Alignment.TOP_CENTER);
 		}
 		else if (command == Commands.MANAGE_ROLES) {
-			manageRoles = new ManageRoles(this);           // 管理角色
+			manageRoles = new ManageRoles(this);	// 管理角色
 			content.addComponent(manageRoles);
 			content.setComponentAlignment(manageRoles, Alignment.TOP_CENTER);
-		    
-		} else if (command == Commands.MANAGE_PERMISSIONS) {
+		}
+		else if (command == Commands.MANAGE_PERMISSIONS) {
 			managePermissions = new ManagePermissions(this);// 管理权限
 			content.addComponent(managePermissions);
 			content.setComponentAlignment(managePermissions, Alignment.TOP_CENTER);
-		    
-		} else if (command == Commands.MANAGE_COMMUNITIES) {
+		} 
+		else if (command == Commands.MANAGE_COMMUNITIES) {
 			manageCommunity = new ManageCommunity(this);	// 管理社区
 			content.addComponent(manageCommunity);
 			content.setComponentAlignment(manageCommunity, Alignment.TOP_CENTER);
+		}
+		else if (command == Commands.MANAGE_STOREHOUSES) {
+			manageStorehouse = new ManageStorehouse(this);	// 管理库房
+			content.addComponent(manageStorehouse);
+			content.setComponentAlignment(manageStorehouse, Alignment.TOP_CENTER);
 		} 
 		else if (command == Commands.PENDING_APPROVAL) {
 			manageApprovals = new ManageApprovals(this);
@@ -910,14 +985,17 @@ public class AdminMainView extends VerticalLayout {
 			content.addComponent(manageBusinessType);
 			content.setComponentAlignment(manageBusinessType, Alignment.TOP_CENTER);
 		}
-		else if (command == Commands.ABOUT_TB4) {
-			//关于TB4
+		else if (command == Commands.ABOUT_TB4) { //关于TB4
 			aboutTB4 = new AboutTB4(this);
 			content.addComponent(aboutTB4);
 			content.setComponentAlignment(aboutTB4, Alignment.TOP_CENTER);
 		}
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	private Component buildExitButton() {
         Button result = new Button("");
         result.setIcon(VaadinIcons.EXIT);
@@ -947,6 +1025,10 @@ public class AdminMainView extends VerticalLayout {
 		subRow.setComponentAlignment(userAvatar, Alignment.MIDDLE_LEFT);
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public VerticalLayout getContent() {
 		return content;
 	}
@@ -960,6 +1042,7 @@ public class AdminMainView extends VerticalLayout {
 	private ManagePermissions managePermissions;// 管理权限
 	private ManageDataDictionary manageDataDictionary;
 	private ManageCommunity manageCommunity; // 社区
+	private ManageStorehouse manageStorehouse; // 库房
 	private ManageApprovals manageApprovals;// 等待审批
 	private ManageUserInvitations manageUserInvitations;// 邀请用户
 	private ManageCommunityInvitations manageCommunityInvitations;//社区邀请
@@ -973,6 +1056,8 @@ public class AdminMainView extends VerticalLayout {
 	private VerticalLayout customerInformationLayout;
 	// 社区
 	private VerticalLayout communityLayout;
+	// 库房
+	private VerticalLayout storehouseLayout;
 	// 数据
 	private VerticalLayout dataLayout;
 	// 消息

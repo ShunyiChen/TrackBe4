@@ -25,53 +25,52 @@ public class DenseFrameComponent extends VerticalLayout {
 	}
 	
 	private void initComponents() {
-		addStyleName("denseframecomponent-border");
-		this.setSizeUndefined();
+//		addStyleName("denseframecomponent-border");
+//		this.setSizeUndefined();
+//		
+//		Label title = new Label(""+denseFrame.getCode());
+//		HorizontalLayout hlayout = new HorizontalLayout();
+//		hlayout.setSpacing(false);
+//		hlayout.setMargin(false);
+//		hlayout.setWidthUndefined();
+//		hlayout.setHeight("40px");
+//		hlayout.addComponents(checkBox, title);
+//		hlayout.setComponentAlignment(checkBox, Alignment.MIDDLE_LEFT);
+//		hlayout.setComponentAlignment(title, Alignment.MIDDLE_LEFT);
+//		
+//		GridLayout grid = new GridLayout();
+//		grid.setRows(denseFrame.getRowCount());
+//		grid.setColumns(denseFrame.getColumnCount());
+//		
+//		int index = 0;
+//		
+//		for (int i = 0; i < denseFrame.getRowCount(); i++) {
+//			
+//			for (int j = 0; j < denseFrame.getColumnCount(); j++) {
+//				
+//				index++;
+//				 
+//				FileBox fileBox = new FileBox();
+//				fileBox.setRow(i);
+//				fileBox.setCol(j);
+//				fileBox.setDenseFrameUniquedId(denseFrame.getDenseFrameUniqueId());
+//				fileBox.setCode(denseFrame.getCode()+"-"+new CodeGenerator().generateCode(index));
+//				
+//				int fileboxUniqueId = ui.storehouseService.insertFileBox(fileBox);
+//				
+//				fileBox.setFileboxUniqueId(fileboxUniqueId);
+//				
+//				ui.storehouseService.insertPortfolio(fileBox);
+//				
+//				
+//				FileBoxComponent child = new FileBoxComponent(fileBox);
+//				grid.addComponent(child);
+//				grid.setRowExpandRatio(i, 0.0f);
+//				grid.setColumnExpandRatio(j, 0.0f);
+//			}
+//		}
 		
-		Label title = new Label(""+denseFrame.getCode());
-		HorizontalLayout hlayout = new HorizontalLayout();
-		hlayout.setSpacing(false);
-		hlayout.setMargin(false);
-		hlayout.setWidthUndefined();
-		hlayout.setHeight("40px");
-		hlayout.addComponents(checkBox, title);
-		hlayout.setComponentAlignment(checkBox, Alignment.MIDDLE_LEFT);
-		hlayout.setComponentAlignment(title, Alignment.MIDDLE_LEFT);
-		
-		GridLayout grid = new GridLayout();
-		grid.setRows(denseFrame.getRowCount());
-		grid.setColumns(denseFrame.getColumnCount());
-		
-		int index = 0;
-		
-		for (int i = 0; i < denseFrame.getRowCount(); i++) {
-			
-			for (int j = 0; j < denseFrame.getColumnCount(); j++) {
-				
-				index++;
-				 
-				
-				FileBox fileBox = new FileBox();
-				fileBox.setRow(i);
-				fileBox.setCol(j);
-				fileBox.setDenseFrameUniquedId(denseFrame.getDenseFrameUniqueId());
-				fileBox.setCode(denseFrame.getCode()+"-"+new CodeGenerator().generateCode(index));
-				
-				int fileboxUniqueId = ui.storehouseService.insertFileBox(fileBox);
-				
-				fileBox.setFileboxUniqueId(fileboxUniqueId);
-				
-				ui.storehouseService.insertPortfolio(fileBox);
-				
-				
-				FileBoxComponent child = new FileBoxComponent(fileBox);
-				grid.addComponent(child);
-				grid.setRowExpandRatio(i, 0.0f);
-				grid.setColumnExpandRatio(j, 0.0f);
-			}
-		}
-		
-		this.addComponents(hlayout, grid);
+//		this.addComponents(hlayout, grid);
 	}
 	
 	public boolean isSelected() {

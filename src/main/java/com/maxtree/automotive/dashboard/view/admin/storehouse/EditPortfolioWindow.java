@@ -89,9 +89,9 @@ public class EditPortfolioWindow extends Window {
 	private void bindFields() {
 		// Bind nameField to the Person.name property
 		// by specifying its getter and setter
-		binder.forField(codeField).withValidator(new StringLengthValidator(
-		        "档案袋编号长度为15个字符",
-		        15, 15)) .bind(Portfolio::getCode, Portfolio::setCode);
+//		binder.forField(codeField).withValidator(new StringLengthValidator(
+//		        "档案袋编号长度为15个字符",
+//		        15, 15)) .bind(Portfolio::getCode, Portfolio::setCode);
 	}
 	
 	/**
@@ -99,16 +99,16 @@ public class EditPortfolioWindow extends Window {
 	 * @return
 	 */
 	private boolean checkEmptyValues() {
-		if (StringUtils.isEmpty(portfolio.getCode())) {
-			Notification notification = new Notification("提示：", "档案袋编号不能为空", Type.WARNING_MESSAGE);
-			notification.setDelayMsec(2000);
-			notification.show(Page.getCurrent());
-			return false;
-		}
-		if (codeField.getErrorMessage() != null) {
-			codeField.setComponentError(codeField.getErrorMessage());
-			return false;
-		}
+//		if (StringUtils.isEmpty(portfolio.getCode())) {
+//			Notification notification = new Notification("提示：", "档案袋编号不能为空", Type.WARNING_MESSAGE);
+//			notification.setDelayMsec(2000);
+//			notification.show(Page.getCurrent());
+//			return false;
+//		}
+//		if (codeField.getErrorMessage() != null) {
+//			codeField.setComponentError(codeField.getErrorMessage());
+//			return false;
+//		}
 		return true;
 	}
 	

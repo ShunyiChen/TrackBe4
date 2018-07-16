@@ -18,12 +18,20 @@ public class FileBox {
 		this.fileboxUniqueId = fileboxUniqueId;
 	}
 
-	public Integer getDenseFrameUniquedId() {
-		return denseFrameUniquedId;
+	public Integer getCol() {
+		return col;
 	}
 
-	public void setDenseFrameUniquedId(Integer denseFrameUniquedId) {
-		this.denseFrameUniquedId = denseFrameUniquedId;
+	public void setCol(Integer col) {
+		this.col = col;
+	}
+
+	public Integer getRow() {
+		return row;
+	}
+
+	public void setRow(Integer row) {
+		this.row = row;
 	}
 
 	public String getCode() {
@@ -33,32 +41,24 @@ public class FileBox {
 	public void setCode(String code) {
 		this.code = code;
 	}
-	
-	public Integer getRow() {
-		return row;
+
+	public String getDenseframeCode() {
+		return denseframeCode;
 	}
 
-	public void setRow(Integer row) {
-		this.row = row;
-	}
-
-	public Integer getCol() {
-		return col;
-	}
-
-	public void setCol(Integer col) {
-		this.col = col;
+	public void setDenseframeCode(String denseframeCode) {
+		this.denseframeCode = denseframeCode;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("FileBox[fileboxUniqueId=%d, denseFrameUniquedId=%d, code='%s', row=%d, col=%d]", fileboxUniqueId,
-				denseFrameUniquedId, code, row, col);
+		return String.format("FileBox[fileboxUniqueId=%d, col=%d,row=%d, code='%s',denseframeCode='%s']",
+				fileboxUniqueId, col, row, code, denseframeCode);
 	}
 
 	private Integer fileboxUniqueId = 0;
-	private Integer denseFrameUniquedId = 0;
-	private String code; 		 // 编号
-	private Integer row = 0;  	// 位于密集架行
-	private Integer col = 0; 	// 位于密集架列
+	private Integer col = 0; // 位于密集架列
+	private Integer row = 0; // 位于密集架行
+	private String code;// 单元格CODE
+	private String denseframeCode;// 密集架CODE
 }

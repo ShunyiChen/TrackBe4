@@ -519,17 +519,17 @@ public class QCView extends Panel implements View, FrontendViewIF{
     private void acceptAndBack(String comments) {
     	
     	// 1.设置上架号
-    	if (transaction.getCode() == null) {
-         	Portfolio portfolio = ui.storehouseService.findAvailablePortfolio();
-         	if (portfolio.getCode() == null) {
-         		Notifications.warning("没有对应的上架号，请联系管理员设置库房。");
-         		return;
-         	}
-         	transaction.setCode(portfolio.getCode());// 上架号
-         	
-         	portfolio.setVin(transaction.getVin());
-         	ui.storehouseService.updatePortfolio(portfolio);
-         }
+//    	if (transaction.getCode() == null) {
+//         	Portfolio portfolio = ui.storehouseService.findAvailablePortfolio();
+//         	if (portfolio.getCode() == null) {
+//         		Notifications.warning("没有对应的上架号，请联系管理员设置库房。");
+//         		return;
+//         	}
+//         	transaction.setCode(portfolio.getCode());// 上架号
+//         	
+//         	portfolio.setVin(transaction.getVin());
+//         	ui.storehouseService.updatePortfolio(portfolio);
+//         }
     	
     	// 2.删除锁定队列
     	User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());

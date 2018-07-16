@@ -618,12 +618,10 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 			Notifications.warning("请将信息输入完整。");
 			return;
     	}
-    	
     	if (fileGrid.emptyChecks()) {
 			Notifications.warning("请将业务材料上传完整。");
 			return;
     	}
-    	
     	// 4大流程
     	//新车注册流程
     	if (businessTypePane.getSelected().getName().equals("注册登记")) {

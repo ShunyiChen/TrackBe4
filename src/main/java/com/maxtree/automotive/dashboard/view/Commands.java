@@ -19,4 +19,5 @@ public class Commands {
 	public static int EDIT_DATA_DICTIONARY = 17;// 编辑数据字典
 	public static int MANAGE_BUSINESS_TYPES = 18;// 管理业务类型
 	public static int ABOUT_TB4 = 19;// 关于TB4
+	public static int MANAGE_STOREHOUSES = 20;// 管理库房
 }

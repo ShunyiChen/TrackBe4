@@ -1,24 +1,34 @@
 package com.maxtree.automotive.dashboard.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 库房
  * 
- * 一个库房包含多个密集架DenseFrame
+ * 
+ * 说明： 一个车管所可以包含多个库房;
+ * 一个库房可以包含多个密集架;
+ * 一个密集架包含多个单元格;
+ * 一个单元格包含多个档案袋;
+ * 一个档案袋包含一辆车的全部办理业务;
+ * 
  * 
  * @author chens
  *
  */
 public class Storehouse {
-
 	public Integer getStorehouseUniqueId() {
 		return storehouseUniqueId;
 	}
 
 	public void setStorehouseUniqueId(Integer storehouseUniqueId) {
 		this.storehouseUniqueId = storehouseUniqueId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getCode() {
@@ -29,20 +39,32 @@ public class Storehouse {
 		this.code = code;
 	}
 
-	public List<DenseFrame> getDenseFrameList() {
-		return denseFrameList;
+	public Integer getCompanyUniqueId() {
+		return companyUniqueId;
 	}
 
-	public void setDenseFrameList(List<DenseFrame> denseFrameList) {
-		this.denseFrameList = denseFrameList;
+	public void setCompanyUniqueId(Integer companyUniqueId) {
+		this.companyUniqueId = companyUniqueId;
+	}
+	
+	public String getCompanyName() {
+		return companyName;
 	}
 
-//	@Override
-//	public String toString() {
-//		return String.format("Storehouse[storehouseUniqueId=%d, name='%s', description='%s', status=%d, code='%s']", storehouseUniqueId, name, description, status, code);
-//	}
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("Storehouse[storehouseUniqueId=%d, name='%s', code='%s']",
+				storehouseUniqueId, name, code);
+	}
 
 	private Integer storehouseUniqueId = 0;
-	private String code;
-	private List<DenseFrame> denseFrameList = new ArrayList<>();
+	private String name;//库房名
+	private String code; //UUID,库房CODE
+	private Integer companyUniqueId = 0; //机构ID
+	private String companyName;//机构名称（非数据库字段）
+
 }

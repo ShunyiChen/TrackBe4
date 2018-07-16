@@ -18,22 +18,6 @@ public class Portfolio {
 		this.portfolioUniqueId = portfolioUniqueId;
 	}
 
-	public Integer getFileBoxUniqueId() {
-		return fileBoxUniqueId;
-	}
-
-	public void setFileBoxUniqueId(Integer fileBoxUniqueId) {
-		this.fileBoxUniqueId = fileBoxUniqueId;
-	}
-	
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
 	public String getVin() {
 		return vin;
 	}
@@ -42,13 +26,30 @@ public class Portfolio {
 		this.vin = vin;
 	}
 
+	public Integer getSerialNumber() {
+		return serialNumber;
+	}
+
+	public void setSerialNumber(Integer serialNumber) {
+		this.serialNumber = serialNumber;
+	}
+
+	public String getFileBoxCode() {
+		return fileBoxCode;
+	}
+
+	public void setFileBoxCode(String fileBoxCode) {
+		this.fileBoxCode = fileBoxCode;
+	}
+
 	@Override
 	public String toString() {
-		return String.format("Portfolio[portfolioUniqueId=%d, fileBoxUniqueId=%d, code='%s', num=%d, vin=%s]", portfolioUniqueId, fileBoxUniqueId, code, vin);
+		return String.format("Portfolio[portfolioUniqueId=%d, vin='%s',serialNumber=%d,fileBoxCode='%s']",
+				portfolioUniqueId, vin, serialNumber, fileBoxCode);
 	}
-	
-	private Integer portfolioUniqueId;  
-	private Integer fileBoxUniqueId;
-	private String code;		
-	private String vin; 	// 车辆VIN
+
+	private Integer portfolioUniqueId;
+	private String vin; // 车辆VIN
+	private Integer serialNumber = 0;// 顺序号
+	private String fileBoxCode;// 单元格CODE
 }

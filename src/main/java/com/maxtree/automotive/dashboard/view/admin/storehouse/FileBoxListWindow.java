@@ -59,7 +59,7 @@ public class FileBoxListWindow extends Window {
     	
     	grid.setItems(lst);
     	grid.removeAllColumns();
-    	grid.addColumn(Portfolio::getCode).setCaption("编号");
+//    	grid.addColumn(Portfolio::getCode).setCaption("编号");
     	grid.addColumn(Portfolio::getVin).setCaption("车辆VIN");
     	grid.setSelectionMode(SelectionMode.SINGLE);
     	
