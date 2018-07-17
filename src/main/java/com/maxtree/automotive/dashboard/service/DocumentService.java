@@ -34,7 +34,7 @@ public class DocumentService {
 	 * @return
 	 */
 	public List<Document> findAllDocument1(String vin, String uuid) {
-		int number = Integer.parseInt(vin.substring(vin.length() - 6));
+		int number = Integer.parseInt(vin.substring(vin.length() - 4));
 		int index = number % 256;
 		
 		String sql = "SELECT A.*,B.ITEMNAME AS ALIAS FROM DOCUMENTS_1_"+index+" AS A LEFT JOIN DATADICTIONARY AS B ON A.DICTIONARYCODE=B.CODE WHERE A.UUID=? ORDER BY A.DOCUMENTUNIQUEID";
@@ -54,7 +54,7 @@ public class DocumentService {
 	 * @return
 	 */
 	public List<Document> findAllDocument2(String vin, String uuid) {
-		int number = Integer.parseInt(vin.substring(vin.length() - 6));
+		int number = Integer.parseInt(vin.substring(vin.length() - 4));
 		int index = number % 256;
 		
 		String sql = "SELECT * FROM DOCUMENTS_2_"+index+" WHERE UUID=? ORDER BY DOCUMENTUNIQUEID";
@@ -74,7 +74,7 @@ public class DocumentService {
 	 */
 	public int insert(Document document) {
 		String vin = document.vin;
-		int number = Integer.parseInt(vin.substring(vin.length() - 6));
+		int number = Integer.parseInt(vin.substring(vin.length() - 4));
 		int index = number % 256;
 	 	GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 	 	jdbcTemplate.update(new PreparedStatementCreator() {
@@ -117,7 +117,7 @@ public class DocumentService {
 	 */
 	public void update(Document document) {
 		String vin = document.vin;
-		int number = Integer.parseInt(vin.substring(vin.length() - 6));
+		int number = Integer.parseInt(vin.substring(vin.length() - 4));
 		int index = number % 256;
 		String SQL = "";
 		if (document.location == 1) {
@@ -139,7 +139,7 @@ public class DocumentService {
 	 * @param vin
 	 */
 	public void deleteById(int documentUniqueId, int location, String vin) {
-		int number = Integer.parseInt(vin.substring(vin.length() - 6));
+		int number = Integer.parseInt(vin.substring(vin.length() - 4));
 		int index = number % 256;
 		String sql = "DELETE FROM DOCUMENTS_"+location+"_"+index+" WHERE DOCUMENTUNIQUEID=?";
 		int affected = jdbcTemplate.update(sql, new Object[] {documentUniqueId});
@@ -152,7 +152,7 @@ public class DocumentService {
 	 * @param vin
 	 */
 	public void deleteByUUID(String uuid, String vin) {
-		int number = Integer.parseInt(vin.substring(vin.length() - 6));
+		int number = Integer.parseInt(vin.substring(vin.length() - 4));
 		int index = number % 256;
 		String sql = "DELETE FROM DOCUMENTS_"+1+"_"+index+" WHERE UUID=?";
 		int affected = jdbcTemplate.update(sql, new Object[] {uuid});

@@ -33,32 +33,41 @@ public class FileBox {
 	public void setRow(Integer row) {
 		this.row = row;
 	}
-
-	public String getCode() {
-		return code;
+	
+	public Integer getSerialNumber() {
+		return serialNumber;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setSerialNumber(Integer serialNumber) {
+		this.serialNumber = serialNumber;
 	}
 
-	public String getDenseframeCode() {
-		return denseframeCode;
+	public Integer getDenseframeSN() {
+		return denseframeSN;
 	}
 
-	public void setDenseframeCode(String denseframeCode) {
-		this.denseframeCode = denseframeCode;
+	public void setDenseframeSN(Integer denseframeSN) {
+		this.denseframeSN = denseframeSN;
+	}
+
+	public Integer getStorehouseSN() {
+		return storehouseSN;
+	}
+
+	public void setStorehouseSN(Integer storehouseSN) {
+		this.storehouseSN = storehouseSN;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("FileBox[fileboxUniqueId=%d, col=%d,row=%d, code='%s',denseframeCode='%s']",
-				fileboxUniqueId, col, row, code, denseframeCode);
+		return String.format("FileBox[fileboxUniqueId=%d, col=%d,row=%d, serialNumber=%d,denseframeSN=%d，storehouseSN=%d]", fileboxUniqueId, col, row,
+				serialNumber,denseframeSN,storehouseSN);
 	}
 
 	private Integer fileboxUniqueId = 0;
 	private Integer col = 0; // 位于密集架列
 	private Integer row = 0; // 位于密集架行
-	private String code;// 单元格CODE
-	private String denseframeCode;// 密集架CODE
+	private Integer serialNumber = 0;
+	private Integer denseframeSN = 0;// 密集架顺序号
+	private Integer storehouseSN = 0;// 库房顺序号
 }

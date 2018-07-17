@@ -17,6 +17,18 @@ public class DoubleField extends TextField implements ValueChangeListener<String
 	private static final long serialVersionUID = 1L;
 	public String lastValue;
 
+	/**
+	 * 
+	 * @param caption
+	 */
+	public DoubleField(String caption) {
+		this();
+		this.setCaption(caption);
+	}
+	
+	/**
+	 * 
+	 */
 	public DoubleField() {
 		setValueChangeMode(ValueChangeMode.EAGER);
 		addValueChangeListener(this);

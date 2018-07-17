@@ -31,12 +31,12 @@ public class Storehouse {
 		this.name = name;
 	}
 
-	public String getCode() {
-		return code;
+	public Integer getSerialNumber() {
+		return serialNumber;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setSerialNumber(Integer serialNumber) {
+		this.serialNumber = serialNumber;
 	}
 
 	public Integer getCompanyUniqueId() {
@@ -57,13 +57,13 @@ public class Storehouse {
 
 	@Override
 	public String toString() {
-		return String.format("Storehouse[storehouseUniqueId=%d, name='%s', code='%s']",
-				storehouseUniqueId, name, code);
+		return String.format("Storehouse[storehouseUniqueId=%d, name='%s', serialNumber=%d]",
+				storehouseUniqueId, name, serialNumber);
 	}
 
 	private Integer storehouseUniqueId = 0;
 	private String name;//库房名
-	private String code; //UUID,库房CODE
+	private Integer serialNumber = 0;//库房顺序号（3位数）
 	private Integer companyUniqueId = 0; //机构ID
 	private String companyName;//机构名称（非数据库字段）
 

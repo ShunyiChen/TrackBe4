@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.admin.storehouse;
+package com.maxtree.automotive.dashboard.view.admin;
 
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.domain.FileBox;
@@ -22,7 +22,7 @@ public class FileBoxComponent extends Button {
 	}
 	
 	private void initComponents() {
-		this.setCaption(fileBox.getCode());
+		this.setCaption("单元格-"+fileBox.getCol()+","+fileBox.getRow());
 		this.setWidth("130px");
 		this.setHeight("40px");
 		
@@ -46,7 +46,7 @@ public class FileBoxComponent extends Button {
 				}
 			};
 			
-			FileBoxListWindow.open(fileBox, callback);
+			ViewFileBoxWindow.open(fileBox, callback);
 		});
 	}
 	

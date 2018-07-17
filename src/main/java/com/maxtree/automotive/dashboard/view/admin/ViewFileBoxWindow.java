@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.admin.storehouse;
+package com.maxtree.automotive.dashboard.view.admin;
 
 import java.util.List;
 import java.util.Set;
@@ -20,7 +20,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-public class FileBoxListWindow extends Window {
+public class ViewFileBoxWindow extends Window {
 
 	/**
 	 * 
@@ -31,7 +31,7 @@ public class FileBoxListWindow extends Window {
 	 * 
 	 * @param fileBox
 	 */
-	public FileBoxListWindow(FileBox fileBox) {
+	public ViewFileBoxWindow(FileBox fileBox) {
 		this.fileBox = fileBox;
 		initComponents();
 	}
@@ -50,8 +50,7 @@ public class FileBoxListWindow extends Window {
     	
 		setContent(main);
 		
-		List<Portfolio> lst = ui.storehouseService.findAllPortfolio(fileBox.getFileboxUniqueId());
-		
+		List<Portfolio> lst = ui.storehouseService.findAllPortfolio(fileBox.getSerialNumber());
     	grid.setWidth("100%");
     	grid.setHeightUndefined();
     	
@@ -59,7 +58,7 @@ public class FileBoxListWindow extends Window {
     	
     	grid.setItems(lst);
     	grid.removeAllColumns();
-//    	grid.addColumn(Portfolio::getCode).setCaption("编号");
+    	grid.addColumn(Portfolio::getCode).setCaption("编号");
     	grid.addColumn(Portfolio::getVin).setCaption("车辆VIN");
     	grid.setSelectionMode(SelectionMode.SINGLE);
     	
@@ -86,7 +85,7 @@ public class FileBoxListWindow extends Window {
 	 */
 	public static void open(FileBox fileBox, Callback2 callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        FileBoxListWindow w = new FileBoxListWindow(fileBox);
+        ViewFileBoxWindow w = new ViewFileBoxWindow(fileBox);
         UI.getCurrent().addWindow(w);
         w.center();
     }

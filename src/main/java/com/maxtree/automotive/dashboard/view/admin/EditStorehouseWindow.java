@@ -151,10 +151,11 @@ public class EditStorehouseWindow extends Window {
 	public static void open(Callback callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditStorehouseWindow w = new EditStorehouseWindow();
+        int serialNumber = ui.storehouseService.findNextSerialnumberOfStorehouse();
+        w.storehouse.setSerialNumber(serialNumber);
         w.btnAdd.setCaption("添加库房");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
-        		w.storehouse.setCode(UUID.randomUUID().toString());
     			ui.storehouseService.insertStorehouse(w.storehouse);
     			w.close();
     			callback.onSuccessful();
@@ -173,7 +174,7 @@ public class EditStorehouseWindow extends Window {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditStorehouseWindow w = new EditStorehouseWindow();
         w.storehouse.setStorehouseUniqueId(s.getStorehouseUniqueId());
-        w.storehouse.setCode(s.getCode());
+        w.storehouse.setSerialNumber(s.getSerialNumber());
         w.storehouse.setCompanyUniqueId(s.getCompanyUniqueId());
         w.nameField.setValue(s.getName());
         w.btnAdd.setCaption("保存");

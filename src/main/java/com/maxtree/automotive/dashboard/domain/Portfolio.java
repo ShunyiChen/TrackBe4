@@ -25,31 +25,49 @@ public class Portfolio {
 	public void setVin(String vin) {
 		this.vin = vin;
 	}
-
-	public Integer getSerialNumber() {
-		return serialNumber;
+	
+	public String getCode() {
+		return code;
 	}
 
-	public void setSerialNumber(Integer serialNumber) {
-		this.serialNumber = serialNumber;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
-	public String getFileBoxCode() {
-		return fileBoxCode;
+	public Integer getFileBoxSN() {
+		return fileBoxSN;
 	}
 
-	public void setFileBoxCode(String fileBoxCode) {
-		this.fileBoxCode = fileBoxCode;
+	public void setFileBoxSN(Integer fileBoxSN) {
+		this.fileBoxSN = fileBoxSN;
+	}
+	
+	public Integer getDenseframeSN() {
+		return denseframeSN;
+	}
+
+	public void setDenseframeSN(Integer denseframeSN) {
+		this.denseframeSN = denseframeSN;
+	}
+
+	public Integer getStorehouseSN() {
+		return storehouseSN;
+	}
+
+	public void setStorehouseSN(Integer storehouseSN) {
+		this.storehouseSN = storehouseSN;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("Portfolio[portfolioUniqueId=%d, vin='%s',serialNumber=%d,fileBoxCode='%s']",
-				portfolioUniqueId, vin, serialNumber, fileBoxCode);
+		return String.format("Portfolio[portfolioUniqueId=%d, vin='%s', code='%s',fileBoxSN=%d,denseframeSN=%d,storehouseSN=%d]",
+				portfolioUniqueId,vin,code,fileBoxSN,denseframeSN,storehouseSN);
 	}
 
-	private Integer portfolioUniqueId;
+	private Integer portfolioUniqueId = 0;
 	private String vin; // 车辆VIN
-	private Integer serialNumber = 0;// 顺序号
-	private String fileBoxCode;// 单元格CODE
+	private String code;// 上架号
+	private Integer fileBoxSN = 0; //单元格顺序号（3位数）
+	private Integer denseframeSN = 0;// 密集架顺序号
+	private Integer storehouseSN = 0;// 库房顺序号
 }

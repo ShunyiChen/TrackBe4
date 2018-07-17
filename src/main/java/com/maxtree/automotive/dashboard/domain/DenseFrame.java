@@ -50,34 +50,25 @@ public class DenseFrame {
 		this.serialNumber = serialNumber;
 	}
 
-	public String getCode() {
-		return code;
+	public Integer getStorehouseSN() {
+		return storehouseSN;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getStorehouseCode() {
-		return storehouseCode;
-	}
-
-	public void setStorehouseCode(String storehouseCode) {
-		this.storehouseCode = storehouseCode;
+	public void setStorehouseSN(Integer storehouseSN) {
+		this.storehouseSN = storehouseSN;
 	}
 
 	@Override
 	public String toString() {
 		return String.format(
-				"DenseFrame[denseFrameUniquedId=%d,name=%s,maxCol=%d,maxRow=%d,serialNumber='%d',code='%s',storehouseCode='%s']",
-				denseFrameUniqueId, name, maxCol, maxRow, serialNumber, code, storehouseCode);
+				"DenseFrame[denseFrameUniquedId=%d,name=%s,maxCol=%d,maxRow=%d,serialNumber='%d',storehouseSN=%d]",
+				denseFrameUniqueId, name, maxCol, maxRow, serialNumber, storehouseSN);
 	}
 
 	private Integer denseFrameUniqueId = 0;
-	private String name;//密集架名
-	private Integer maxCol = 0;//最大列数
-	private Integer maxRow = 0;//最大行数
-	private Integer serialNumber = 0;//顺序号
-	private String code;//UUID,密集架CODE
-	private String storehouseCode;//UUID,库房CODE
+	private String name;		// 密集架名
+	private Integer maxCol = 0;	// 最大列数
+	private Integer maxRow = 0;	// 最大行数
+	private Integer serialNumber = 0;// 顺序号
+	private Integer storehouseSN = 0;// 库房顺序号
 }

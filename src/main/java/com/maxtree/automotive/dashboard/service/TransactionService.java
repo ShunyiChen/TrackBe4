@@ -78,7 +78,7 @@ public class TransactionService {
 	 * @return
 	 */
 	public List<Transaction> findForList(String vin) {
-		int number = Integer.parseInt(vin.substring(vin.length() - 6));
+		int number = Integer.parseInt(vin.substring(vin.length() - 4));
 		int index = number % 256;
 		
 		String sql = "SELECT * FROM TRANSACTION_"+index+" WHERE VIN=? ORDER BY TRANSACTIONUNIQUEID";
@@ -92,7 +92,7 @@ public class TransactionService {
 	 * @return
 	 */
 	public int insert(Transaction transaction) {
-		int number = Integer.parseInt(transaction.getVin().substring(transaction.getVin().length() - 6));
+		int number = Integer.parseInt(transaction.getVin().substring(transaction.getVin().length() - 4));
 		int index = number % 256;
 		
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
@@ -136,7 +136,7 @@ public class TransactionService {
 	 * @param transaction
 	 */
 	public void update(Transaction transaction) {
-		int number = Integer.parseInt(transaction.getVin().substring(transaction.getVin().length() - 6));
+		int number = Integer.parseInt(transaction.getVin().substring(transaction.getVin().length() - 4));
 		int index = number % 256;
 		
 		String sql = "UPDATE TRANSACTION_"+index+" SET BARCODE=?,PLATETYPE=?,PLATENUMBER=?,VIN=?,STATUS=?,DATEMODIFIED=?,BUSINESSCODE=?,UUID=?,CODE=?,INDEXNUMBER=? WHERE TRANSACTIONUNIQUEID=?";
@@ -152,7 +152,7 @@ public class TransactionService {
 	 * @return
 	 */
 	public int findIndexByVIN(String vin) {
-		int number = Integer.parseInt(vin.substring(vin.length() - 6));
+		int number = Integer.parseInt(vin.substring(vin.length() - 4));
 		int index = number % 256;
 		String sql = "SELECT COUNT(TRANSACTIONUNIQUEID) FROM TRANSACTION_"+index+" WHERE VIN=?";
 		int count = jdbcTemplate.queryForObject( sql, new Object[] {vin}, Integer.class);

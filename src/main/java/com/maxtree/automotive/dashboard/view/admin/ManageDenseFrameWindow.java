@@ -11,12 +11,12 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Hr;
 import com.maxtree.automotive.dashboard.component.MessageBox;
+import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.DenseFrame;
 import com.maxtree.automotive.dashboard.domain.Storehouse;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.exception.DataException;
-import com.maxtree.automotive.dashboard.view.admin.storehouse.DenseFrameComponent;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -78,13 +78,13 @@ public class ManageDenseFrameWindow extends Window {
 		btnAdd.setDescription("添加新密集架");
 		btnEdit.setDescription("编辑密集架");
 		btnRemove.setDescription("删除密集架");
-		btnClone.setDescription("克隆密集架");
+		btnCopy.setDescription("复制密集架");
 		
-		toolbar.addComponents(btnAdd, Box.createHorizontalBox(5), btnEdit, Box.createHorizontalBox(5), btnRemove, Box.createHorizontalBox(5), btnClone, Box.createHorizontalBox(5), selectAll);
+		toolbar.addComponents(btnAdd, Box.createHorizontalBox(5), btnEdit, Box.createHorizontalBox(5), btnRemove, Box.createHorizontalBox(5), btnCopy, Box.createHorizontalBox(5), selectAll);
 		toolbar.setComponentAlignment(btnAdd, Alignment.MIDDLE_LEFT);
 		toolbar.setComponentAlignment(btnEdit, Alignment.MIDDLE_LEFT);
 		toolbar.setComponentAlignment(btnRemove, Alignment.MIDDLE_LEFT);
-		toolbar.setComponentAlignment(btnClone, Alignment.MIDDLE_LEFT);
+		toolbar.setComponentAlignment(btnCopy, Alignment.MIDDLE_LEFT);
 		toolbar.setComponentAlignment(selectAll, Alignment.MIDDLE_LEFT);
 		
 		btnAdd.addClickListener(e -> {
@@ -139,13 +139,8 @@ public class ManageDenseFrameWindow extends Window {
 						if (comp instanceof DenseFrameComponent) {
 							DenseFrameComponent dcomp = (DenseFrameComponent) comp;
 							if (dcomp.isSelected()) {
-								try {
-									ui.storehouseService.deleteDenseFrame(dcomp.getDenseFrame().getDenseFrameUniqueId());
-									
-									removeableList.add(comp);
-								} catch (DataException e2) {
-									e2.printStackTrace();
-								}
+								ui.storehouseService.deleteDenseFrame(dcomp.getDenseFrame().getStorehouseSN());
+								removeableList.add(comp);
 							}
 						}
 					}
@@ -154,11 +149,11 @@ public class ManageDenseFrameWindow extends Window {
 				}
 			};
 			
-			MessageBox.showMessage("删除提示", "您确定要删除当前密集架？", MessageBox.INFO, okEvent, "删除");
+			MessageBox.showMessage("删除提示", "注意：删除密集架将会删除其所有的单元格和档案袋。<br>请确定是否彻底删除密集架？", MessageBox.INFO, okEvent, "删除");
 			
         });
 		
-        btnClone.addClickListener(e -> {
+		btnCopy.addClickListener(e -> {
         	
         	List<DenseFrameComponent> selected = new ArrayList<DenseFrameComponent>();
         	Iterator<Component> iter = clayout.iterator();
@@ -173,27 +168,33 @@ public class ManageDenseFrameWindow extends Window {
 			}
 			
 			if (selected.size() == 0) {
-				Notification notification = new Notification("提示：", "至少选择一个目标克隆。", Type.WARNING_MESSAGE);
-				notification.setDelayMsec(2000);
-				notification.show(Page.getCurrent());
+				Notifications.warning("复制前至少选择一个密集架作为模板。");
 			} else {
 				
-//				for (DenseFrameComponent dcomp : selected) {
-//					DenseFrame denseFrame = dcomp.getDenseFrame();
-//					
-//					DenseFrame frame = new DenseFrame();
-//					frame.setStorehouseUniqueId(storehouse.getStorehouseUniqueId());
-//					frame.setRowCount(denseFrame.getRowCount());
-//					frame.setColumnCount(denseFrame.getColumnCount());
-//					frame.setCode(storehouse.getCode()+"-"+new CodeGenerator().generateDenseframeCode(storehouse.getStorehouseUniqueId()));
-//					
-//					int denseFrameUniqueId = ui.storehouseService.insertDenseFrame(frame);
-//					frame.setDenseFrameUniqueId(denseFrameUniqueId);
-//					
-//					DenseFrameComponent component = new DenseFrameComponent(frame);
-//					
-//					add(component);
-//				}
+				Callback event = new Callback() {
+
+					@Override
+					public void onSuccessful() {
+						for (DenseFrameComponent dcomp : selected) {
+							DenseFrame df = dcomp.getDenseFrame();
+							
+							DenseFrame frame = new DenseFrame();
+							frame.setName(df.getName()+"-copy");
+							frame.setMaxCol(df.getMaxCol());
+							frame.setMaxRow(df.getMaxRow());
+							frame.setSerialNumber(ui.storehouseService.findNextSerialnumberOfDenseFrame(df.getStorehouseSN()));
+							frame.setStorehouseSN(df.getStorehouseSN());
+							int denseFrameUniqueId = ui.storehouseService.insertDenseFrame(frame);
+							frame.setDenseFrameUniqueId(denseFrameUniqueId);
+							
+							DenseFrameComponent component = new DenseFrameComponent(frame);
+							
+							add(component);
+						}
+						
+					}
+				};
+				MessageBox.showMessage("提示", "请确认是否增加"+selected.size()+"个新的拷贝", MessageBox.WARNING, event, "确定");
 			}
         });
 	
@@ -216,8 +217,8 @@ public class ManageDenseFrameWindow extends Window {
         
 	}
 	
-	private void load(String storehouseCode) {
-		List<DenseFrame> lst = ui.storehouseService.findAllDenseFrame(storehouseCode);
+	private void load(int storehouseSN) {
+		List<DenseFrame> lst = ui.storehouseService.findAllDenseFrame(storehouseSN);
 		for (DenseFrame frame : lst) {
 			DenseFrameComponent component = new DenseFrameComponent(frame);
 			add(component);
@@ -242,7 +243,7 @@ public class ManageDenseFrameWindow extends Window {
 	 * @param component
 	 */
 	private void add(DenseFrameComponent component) {
-		clayout.addComponents(component);//, Box.createHorizontalBox(10));
+		clayout.addComponents(component);
 	}
 	
 	/**
@@ -252,7 +253,7 @@ public class ManageDenseFrameWindow extends Window {
 	public static void open(Storehouse storehouse) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         ManageDenseFrameWindow w = new ManageDenseFrameWindow(storehouse);
-        w.load(storehouse.getCode());
+        w.load(storehouse.getSerialNumber());
         UI.getCurrent().addWindow(w);
         w.center();
     }
@@ -261,7 +262,7 @@ public class ManageDenseFrameWindow extends Window {
 	private Button btnAdd = new Button("添加密集架");
 	private Button btnEdit = new Button("编辑");
 	private Button btnRemove = new Button("删除");
-	private Button btnClone = new Button("克隆");
+	private Button btnCopy = new Button("复制");
 	private CheckBox selectAll = new CheckBox("全选/全不选");
 	private CssLayout clayout;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
