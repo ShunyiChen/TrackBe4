@@ -5,22 +5,19 @@ import java.util.Set;
 
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.component.Box;
-import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.domain.FileBox;
-import com.maxtree.automotive.dashboard.domain.Portfolio;
+import com.maxtree.automotive.dashboard.domain.FrameNumber;
+//import com.maxtree.automotive.dashboard.domain.FileBox;
+//import com.maxtree.automotive.dashboard.domain.Portfolio;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-public class ViewFileBoxWindow extends Window {
+public class ViewBagsWindow extends Window {
 
 	/**
 	 * 
@@ -31,8 +28,8 @@ public class ViewFileBoxWindow extends Window {
 	 * 
 	 * @param fileBox
 	 */
-	public ViewFileBoxWindow(FileBox fileBox) {
-		this.fileBox = fileBox;
+	public ViewBagsWindow(FrameNumber cell) {
+		this.cell = cell;
 		initComponents();
 	}
 	
@@ -50,25 +47,24 @@ public class ViewFileBoxWindow extends Window {
     	
 		setContent(main);
 		
-		List<Portfolio> lst = ui.storehouseService.findAllPortfolio(fileBox.getSerialNumber());
+		List<FrameNumber> lst = ui.frameService.findAllBag(cell.getStorehouseName(), cell.getFrameCode(), cell.getCellCode());
     	grid.setWidth("100%");
     	grid.setHeightUndefined();
-    	
     	grid.setHeightByRows(12);
     	
     	grid.setItems(lst);
     	grid.removeAllColumns();
-    	grid.addColumn(Portfolio::getCode).setCaption("编号");
-    	grid.addColumn(Portfolio::getVin).setCaption("车辆VIN");
+    	grid.addColumn(FrameNumber::getCode).setCaption("上架号");
+    	grid.addColumn(FrameNumber::getVin).setCaption("车辆VIN");
     	grid.setSelectionMode(SelectionMode.SINGLE);
     	
-    	grid.addSelectionListener(event -> {
-    	    selected = event.getAllSelectedItems();
+//    	grid.addSelectionListener(event -> {
+//    	    selected = event.getAllSelectedItems();
 //    	    if (selected.size() > 0) {
 //    	    	List<Reminder> selectreminders = new ArrayList<>(selected);
 //        	    textarea.setValue(selectreminders.get(0).getContent());
 //    	    } 
-    	});
+//    	});
     	
     	Panel scorllPane = new Panel();
     	scorllPane.setWidth("100%");
@@ -83,15 +79,15 @@ public class ViewFileBoxWindow extends Window {
 	 * @param storehouse
 	 * @param callback
 	 */
-	public static void open(FileBox fileBox, Callback2 callback) {
+	public static void open(FrameNumber cell, Callback2 callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        ViewFileBoxWindow w = new ViewFileBoxWindow(fileBox);
+        ViewBagsWindow w = new ViewBagsWindow(cell);
         UI.getCurrent().addWindow(w);
         w.center();
     }
 	
-	private Grid<Portfolio> grid = new Grid<>(Portfolio.class);
-	private Set<Portfolio> selected = null;
-	private FileBox fileBox;
+	private Grid<FrameNumber> grid = new Grid<>(FrameNumber.class);
+	private Set<FrameNumber> selected = null;
+	private FrameNumber cell;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 }

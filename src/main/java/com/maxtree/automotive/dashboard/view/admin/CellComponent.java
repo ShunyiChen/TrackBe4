@@ -1,10 +1,16 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
 import com.maxtree.automotive.dashboard.Callback2;
-import com.maxtree.automotive.dashboard.domain.FileBox;
+import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.vaadin.ui.Button;
 
-public class FileBoxComponent extends Button {
+/**
+ * 单元格组件
+ * 
+ * @author Chen
+ *
+ */
+public class CellComponent extends Button {
 
 	/**
 	 * 
@@ -13,16 +19,16 @@ public class FileBoxComponent extends Button {
 
 	/**
 	 * 
-	 * @param fileBox
+	 * @param cell
 	 */
-	public FileBoxComponent(FileBox fileBox) {
-		this.fileBox = fileBox;
+	public CellComponent(FrameNumber cell) {
+		this.cell = cell;
 		initComponents();
 		initActions();
 	}
 	
 	private void initComponents() {
-		this.setCaption("单元格-"+fileBox.getCol()+","+fileBox.getRow());
+		this.setCaption("单元格-列"+cell.getCol()+",行"+cell.getRow());
 		this.setWidth("130px");
 		this.setHeight("40px");
 		
@@ -43,12 +49,13 @@ public class FileBoxComponent extends Button {
 			Callback2 callback = new Callback2() {
 				@Override
 				public void onSuccessful(Object... objects) {
+					
 				}
 			};
 			
-			ViewFileBoxWindow.open(fileBox, callback);
+			ViewBagsWindow.open(cell, callback);
 		});
 	}
 	
-	private FileBox fileBox;
+	private FrameNumber cell;
 }

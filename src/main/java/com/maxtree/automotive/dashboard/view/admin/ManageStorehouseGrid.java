@@ -9,7 +9,7 @@ import com.maxtree.automotive.dashboard.TB4Application;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.domain.Storehouse;
+import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.MenuItem;
@@ -92,9 +92,9 @@ public class ManageStorehouseGrid extends VerticalLayout {
 		tableBody = new VerticalLayout(); 
 		tableBody.setMargin(false);
 		tableBody.setSpacing(false);
-		List<Storehouse> data = ui.storehouseService.findAllStorehouses();
-		for (Storehouse s : data) {
-			HorizontalLayout row1 = createDataRow(s);
+		List<FrameNumber> results = ui.frameService.findAllStorehouse();
+		for (FrameNumber store : results) {
+			HorizontalLayout row1 = createDataRow(store);
 			tableBody.addComponents(row1);
 			tableBody.setComponentAlignment(row1, Alignment.MIDDLE_LEFT);
 		}
@@ -107,14 +107,14 @@ public class ManageStorehouseGrid extends VerticalLayout {
 	 * @param community
 	 * @return
 	 */
-	private HorizontalLayout createDataRow(Storehouse s) {
+	private HorizontalLayout createDataRow(FrameNumber store) {
 		HorizontalLayout row = new HorizontalLayout();
 		row.setSpacing(false);
 		row.setMargin(false);
 		row.setWidthUndefined();
 		row.setHeightUndefined();
 		row.addStyleName("grid-header-line");
-		Label labelName = new Label(s.getName());
+		Label labelName = new Label(store.getStorehouseName());
 		Image moreImg = new Image(null, new ThemeResource("img/adminmenu/more.png"));
 		moreImg.addStyleName("mycursor");
 		moreImg.addClickListener(e -> {
@@ -146,7 +146,7 @@ public class ManageStorehouseGrid extends VerticalLayout {
 				public void menuSelected(MenuItem selectedItem) {
 					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 					if (loginUser.isPermitted(PermissionCodes.P6)) {
-						ManageDenseFrameWindow.open(s);
+						ManageFrameWindow.open(store);
 					}
 					else {
 		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
@@ -167,7 +167,7 @@ public class ManageStorehouseGrid extends VerticalLayout {
 								refreshTable();
 							}
 						};
-						EditStorehouseWindow.edit(s, callback);
+						EditStorehouseWindow.edit(store, callback);
 					}
 					else {
 		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
@@ -184,7 +184,7 @@ public class ManageStorehouseGrid extends VerticalLayout {
 						Callback event = new Callback() {
 							@Override
 							public void onSuccessful() {
-								ui.storehouseService.deleteStorehouse(s.getStorehouseUniqueId());
+								ui.frameService.deleteStorehouse(store.getStorehouseName());
 								refreshTable();
 							}
 						};
@@ -196,7 +196,7 @@ public class ManageStorehouseGrid extends VerticalLayout {
 			menu.open(e.getClientX(), e.getClientY());
 		});
 		
-		labelName.setWidth("595px");
+		labelName.setWidth("590px");
 		row.addComponents(labelName, moreImg);
 		row.setComponentAlignment(labelName, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(moreImg, Alignment.MIDDLE_RIGHT);
@@ -208,9 +208,9 @@ public class ManageStorehouseGrid extends VerticalLayout {
 	 */
 	private void refreshTable() {
 		tableBody.removeAllComponents();
-		List<Storehouse> data = ui.storehouseService.findAllStorehouses();
-		for (Storehouse s : data) {
-			HorizontalLayout row1 = createDataRow(s);
+		List<FrameNumber> results = ui.frameService.findAllStorehouse();
+		for (FrameNumber store : results) {
+			HorizontalLayout row1 = createDataRow(store);
 			tableBody.addComponents(row1);
 			tableBody.setComponentAlignment(row1, Alignment.MIDDLE_LEFT);
 		}

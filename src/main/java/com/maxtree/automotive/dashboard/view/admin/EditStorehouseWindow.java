@@ -1,5 +1,6 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.util.StringUtils;
@@ -7,7 +8,8 @@ import org.springframework.util.StringUtils;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
-import com.maxtree.automotive.dashboard.domain.Storehouse;
+import com.maxtree.automotive.dashboard.component.Notifications;
+import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.data.Binder;
@@ -86,7 +88,7 @@ public class EditStorehouseWindow extends Window {
 		
 		// Bind nameField to the Person.name property
 		// by specifying its getter and setter
-		bindFields();
+//		bindFields();
 		
 		// Validating Field Values
 		validatingFieldValues();
@@ -107,14 +109,14 @@ public class EditStorehouseWindow extends Window {
 		nameField.setHeight(h+"px");
 	}
 	
-	/**
-	 * 
-	 */
-	private void bindFields(){
-		// Bind nameField to the Person.name property
-		// by specifying its getter and setter
-		binder.bind(nameField, Storehouse::getName, Storehouse::setName);
-	}
+//	/**
+//	 * 
+//	 */
+//	private void bindFields(){
+//		// Bind nameField to the Person.name property
+//		// by specifying its getter and setter
+//		binder.bind(nameField, FrameNumber::getStorehouseName, FrameNumber::setStorehouseName);
+//	}
 	
 	/**
 	 * 
@@ -123,7 +125,7 @@ public class EditStorehouseWindow extends Window {
 		// Validating Field Values
 		binder.forField(nameField).withValidator(new StringLengthValidator(
 	        "库房名称长度范围在1~20个字符",
-	        1, 20)) .bind(Storehouse::getName, Storehouse::setName);
+	        1, 20)) .bind(FrameNumber::getStorehouseName, FrameNumber::setStorehouseName);
 	}
 	
 	/**
@@ -141,6 +143,16 @@ public class EditStorehouseWindow extends Window {
 			nameField.setComponentError(nameField.getErrorMessage());
 			return false;
 		}
+		
+		
+		List<FrameNumber> list = ui.frameService.findAllStorehouse();
+		for(FrameNumber f : list) {
+			if (f.getStorehouseName().equals(nameField.getValue())) {
+				Notifications.warning("库房名"+nameField.getValue()+"已存在，请重新命名。");
+				return false;
+			}
+		}
+		
 		return true;
 	}
 	
@@ -151,12 +163,10 @@ public class EditStorehouseWindow extends Window {
 	public static void open(Callback callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditStorehouseWindow w = new EditStorehouseWindow();
-        int serialNumber = ui.storehouseService.findNextSerialnumberOfStorehouse();
-        w.storehouse.setSerialNumber(serialNumber);
         w.btnAdd.setCaption("添加库房");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
-    			ui.storehouseService.insertStorehouse(w.storehouse);
+    			ui.frameService.insert(w.storehouse);
     			w.close();
     			callback.onSuccessful();
         	}
@@ -170,18 +180,19 @@ public class EditStorehouseWindow extends Window {
 	 * @param storehouse
 	 * @param callback
 	 */
-	public static void edit(Storehouse s, Callback callback) {
+	public static void edit(FrameNumber store, Callback callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditStorehouseWindow w = new EditStorehouseWindow();
-        w.storehouse.setStorehouseUniqueId(s.getStorehouseUniqueId());
-        w.storehouse.setSerialNumber(s.getSerialNumber());
-        w.storehouse.setCompanyUniqueId(s.getCompanyUniqueId());
-        w.nameField.setValue(s.getName());
+        w.storehouse.setCompanyUniqueId(store.getCompanyUniqueId());
+        w.nameField.setValue(store.getStorehouseName());
         w.btnAdd.setCaption("保存");
         w.setCaption("编辑库房");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
-    			ui.storehouseService.updateStorehouse(w.storehouse);
+        		
+        		
+        		
+    			ui.frameService.updateStorehouse(w.storehouse, store.getStorehouseName());
     			w.close();
     			callback.onSuccessful();
         	}
@@ -193,7 +204,9 @@ public class EditStorehouseWindow extends Window {
 	
 	private TextField nameField;
 	private Button btnAdd;
-	private Binder<Storehouse> binder = new Binder<>();
-	private Storehouse storehouse = new Storehouse();
+	private Binder<FrameNumber> binder = new Binder<>();
+	private FrameNumber storehouse = new FrameNumber();
 	private static DashboardUI ui = (DashboardUI) UI.getCurrent();
+	
+	
 }

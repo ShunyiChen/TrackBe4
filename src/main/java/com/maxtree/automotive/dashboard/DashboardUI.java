@@ -19,13 +19,13 @@ import com.maxtree.automotive.dashboard.service.CommunityService;
 import com.maxtree.automotive.dashboard.service.CompanyService;
 import com.maxtree.automotive.dashboard.service.DataItemService;
 import com.maxtree.automotive.dashboard.service.DocumentService;
+import com.maxtree.automotive.dashboard.service.FrameNumberService;
 import com.maxtree.automotive.dashboard.service.MessagingService;
 import com.maxtree.automotive.dashboard.service.PermissionCategoryService;
 import com.maxtree.automotive.dashboard.service.PermissionService;
 import com.maxtree.automotive.dashboard.service.QueueService;
 import com.maxtree.automotive.dashboard.service.RoleService;
 import com.maxtree.automotive.dashboard.service.SiteService;
-import com.maxtree.automotive.dashboard.service.StorehouseService;
 import com.maxtree.automotive.dashboard.service.TenantService;
 import com.maxtree.automotive.dashboard.service.TransactionService;
 import com.maxtree.automotive.dashboard.service.UserService;
@@ -83,8 +83,6 @@ public final class DashboardUI extends UI {
 	@Autowired
 	public CommunityService communityService;
 	@Autowired
-	public StorehouseService storehouseService;
-	@Autowired
 	public CompanyService companyService;
 	@Autowired
 	public DataItemService dataItemService;
@@ -92,6 +90,8 @@ public final class DashboardUI extends UI {
 	public MessagingService messagingService;
 	@Autowired
 	public TenantService tenantService;
+	@Autowired
+	public FrameNumberService frameService;
 	
 	/*
 	 * This field stores an access to the dummy backend layer. In real applications

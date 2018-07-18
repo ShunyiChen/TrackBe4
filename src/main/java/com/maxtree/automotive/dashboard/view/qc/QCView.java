@@ -19,7 +19,6 @@ import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
-import com.maxtree.automotive.dashboard.domain.Portfolio;
 import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Transaction;

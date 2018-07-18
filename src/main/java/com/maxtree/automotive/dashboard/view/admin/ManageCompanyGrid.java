@@ -12,7 +12,6 @@ import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Company;
-import com.maxtree.automotive.dashboard.domain.Storehouse;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.DataException;
 import com.vaadin.contextmenu.ContextMenu;

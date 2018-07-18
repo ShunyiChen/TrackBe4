@@ -8,7 +8,6 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.EmptyValidator;
 import com.maxtree.automotive.dashboard.domain.Community;
-import com.maxtree.automotive.dashboard.domain.DenseFrame;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.data.Binder;

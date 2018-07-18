@@ -13,15 +13,11 @@ import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.DoubleField;
 import com.maxtree.automotive.dashboard.component.EmptyValidator;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.domain.DenseFrame;
-import com.maxtree.automotive.dashboard.domain.FileBox;
-import com.maxtree.automotive.dashboard.domain.Portfolio;
-import com.maxtree.automotive.dashboard.domain.Storehouse;
+import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.data.Binder;
 import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
@@ -31,14 +27,14 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-public class EditDenseFrameWindow extends Window {
+public class EditFrameWindow extends Window {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public EditDenseFrameWindow() {
+	public EditFrameWindow() {
 		initComponents();
 	}
 	
@@ -52,21 +48,20 @@ public class EditDenseFrameWindow extends Window {
 		VerticalLayout main = new VerticalLayout();
 		main.setWidth("100%");
 		main.setHeightUndefined();
-		nameField.setWidth("200px");
+		
 		maxColField.setWidth("200px");
 		maxRowField.setWidth("200px");
-		SNField.setWidth("200px");
-		nameField.setHeight("27px");
+		frameCodeField.setWidth("200px");
 		maxColField.setHeight("27px");
 		maxRowField.setHeight("27px");
-		SNField.setHeight("27px");
+		frameCodeField.setHeight("27px");
 		
 		FormLayout form = new FormLayout();
 		form.setSpacing(false);
 		form.setMargin(false);
 		form.setSizeFull();
-		form.addComponents(nameField,maxColField,maxRowField,SNField);
-		SNField.setReadOnly(true);
+		form.addComponents(maxColField,maxRowField,frameCodeField);
+		frameCodeField.setReadOnly(true);
 		HorizontalLayout buttons = new HorizontalLayout();
 		buttons.setSpacing(false);
 		buttons.setMargin(false);
@@ -90,7 +85,7 @@ public class EditDenseFrameWindow extends Window {
  		// Bind an actual concrete Person instance.
  		// After this, whenever the user changes the value
  		// of nameField, p.setName is automatically called.
- 		binder.setBean(denseFrame);
+ 		binder.setBean(frame);
 	}
 	
 	/**
@@ -99,19 +94,15 @@ public class EditDenseFrameWindow extends Window {
 	private void bindFields() {
 		// Bind nameField to the Person.name property
 		// by specifying its getter and setter
-		binder.forField(nameField).withValidator(new StringLengthValidator(
-		        "密集架名称长度为1-20个字符",
-		        1, 20)) .bind(DenseFrame::getName, DenseFrame::setName);
-		
 		binder.forField(maxColField)
 		  .withValidator(new EmptyValidator("输入列数不能为空"))
 		  .withConverter(new StringToIntegerConverter("请输入一个数字"))
-		  .bind(DenseFrame::getMaxCol, DenseFrame::setMaxCol);
+		  .bind(FrameNumber::getMaxColumn, FrameNumber::setMaxColumn);
 		
 		binder.forField(maxRowField)
 		  .withValidator(new EmptyValidator("输入行数不能为空"))
 		  .withConverter(new StringToIntegerConverter("请输入一个数字"))
-		  .bind(DenseFrame::getMaxRow, DenseFrame::setMaxRow);
+		  .bind(FrameNumber::getMaxRow, FrameNumber::setMaxRow);
 	}
 	
 	/**
@@ -119,11 +110,7 @@ public class EditDenseFrameWindow extends Window {
 	 * @return
 	 */
 	private boolean checkEmptyValues() {
-		if (StringUtils.isEmpty(nameField.getValue())) {
-			Notifications.warning("名称不能为空。");
-			return false;
-		}
-		else if (StringUtils.isEmpty(maxColField.getValue())) {
+		if (StringUtils.isEmpty(maxColField.getValue())) {
 			Notifications.warning("最大列数不能为空。");
 			return false;
 		}
@@ -153,38 +140,41 @@ public class EditDenseFrameWindow extends Window {
 	 * @param storehouseCode
 	 * @param callback
 	 */
-	public static void open(Storehouse storehouse, Callback2 callback) {
+	public static void open(FrameNumber store, Callback2 callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        EditDenseFrameWindow w = new EditDenseFrameWindow();
-        int serialNumber = ui.storehouseService.findNextSerialnumberOfDenseFrame(storehouse.getSerialNumber());
-        w.denseFrame.setStorehouseSN(storehouse.getSerialNumber());
-        w.denseFrame.setSerialNumber(serialNumber);
-        w.SNField.setValue(serialNumber+"");
+        EditFrameWindow w = new EditFrameWindow();
+        int frameCode = ui.frameService.findNextCodeOfFrame(store.getStorehouseName());
+        w.frameCodeField.setValue(frameCode+"");
         w.btnAdd.addClickListener(e -> {
 			if (w.checkEmptyValues()) {
-				w.denseFrame.setSerialNumber(serialNumber);
-				int id = ui.storehouseService.insertDenseFrame(w.denseFrame);
-				w.denseFrame.setDenseFrameUniqueId(id);
+				w.frame.setStorehouseName(store.getStorehouseName());
+				w.frame.setFrameCode(frameCode);
+				w.frame.setCompanyUniqueId(store.getCompanyUniqueId());
+				int frameId = ui.frameService.insert(w.frame);
+				w.frame.setFrameUniqueId(frameId);
 				
-				int SN = 0;//单元格顺序号
-				for (int i = 0; i < w.denseFrame.getMaxRow(); i++) {
+				int cellCode = 0;//单元格顺序号
+				for (int i = 1; i <= w.frame.getMaxRow(); i++) {
 					
-					for (int j = 0; j < w.denseFrame.getMaxCol(); j++) {
-						SN++;
-						FileBox fileBox = new FileBox();
-						fileBox.setCol(j);
-						fileBox.setRow(i);
-						fileBox.setSerialNumber(SN);
-						fileBox.setDenseframeSN(w.denseFrame.getSerialNumber());
+					for (int j = 1; j <= w.frame.getMaxColumn(); j++) {
+						cellCode++;
+						FrameNumber cell = new FrameNumber();
+						cell.setStorehouseName(store.getStorehouseName());
+						cell.setFrameCode(frameCode);
+						cell.setMaxColumn(w.frame.getMaxColumn());
+						cell.setMaxRow(w.frame.getMaxRow());
+						cell.setCol(j);
+						cell.setRow(i);
+						cell.setCellCode(cellCode);
+						cell.setCompanyUniqueId(store.getCompanyUniqueId());
 						
-						int fileboxUniqueId = ui.storehouseService.insertFileBox(fileBox);
-						fileBox.setFileboxUniqueId(fileboxUniqueId);
+						int cellId = ui.frameService.insert(cell);
+						cell.setFrameUniqueId(cellId);
 						
-						
-						List<Portfolio> list = new ArrayList<Portfolio>();
-						for(int z=0; z < 100; z++) {
+						List<FrameNumber> batch = new ArrayList<FrameNumber>();
+						for(int z=1; z<=100; z++) {
 							StringBuilder codes = new StringBuilder();
-							codes.append(formatter.format(w.denseFrame.getSerialNumber()));
+							codes.append(formatter.format(w.frame.getFrameCode()));
 							codes.append("-");
 							codes.append(formatter.format(j));
 							codes.append("-");
@@ -192,23 +182,27 @@ public class EditDenseFrameWindow extends Window {
 							codes.append("-");
 							codes.append(formatter.format(z));
 							
-							Portfolio p = new Portfolio();
-							p.setCode(codes.toString());
-							p.setFileBoxSN(SN);
-							p.setVin(null);
+							FrameNumber bag = new FrameNumber();
+							bag.setStorehouseName(store.getStorehouseName());
+							bag.setFrameCode(frameCode);
+							bag.setMaxColumn(w.frame.getMaxColumn());
+							bag.setMaxRow(w.frame.getMaxRow());
+							bag.setCol(j);
+							bag.setRow(i);
+							bag.setCellCode(cellCode);
+							bag.setCompanyUniqueId(store.getCompanyUniqueId());
+							bag.setCode(codes.toString());
+							bag.setVin(null);
+							batch.add(bag);
 						}
-						ui.storehouseService.insertPortfolio(list);
+						ui.frameService.insert(batch);
 						
-//						FileBoxComponent child = new FileBoxComponent(fileBox);
-//						grid.addComponent(child);
-//						grid.setRowExpandRatio(i, 0.0f);
-//						grid.setColumnExpandRatio(j, 0.0f);
 					}
 				}
 				
 				
     			w.close();
-    			callback.onSuccessful(w.denseFrame);
+    			callback.onSuccessful(w.frame);
 			}
         });
         UI.getCurrent().addWindow(w);
@@ -220,41 +214,37 @@ public class EditDenseFrameWindow extends Window {
 	 * @param denseFrame
 	 * @param callback
 	 */
-	public static void edit(DenseFrame df, Callback2 callback) {
+	public static void edit(FrameNumber frame, Callback2 callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        EditDenseFrameWindow w = new EditDenseFrameWindow();
-        w.denseFrame.setDenseFrameUniqueId(df.getDenseFrameUniqueId());
-        w.denseFrame.setName(df.getName());
-        w.denseFrame.setMaxCol(df.getMaxCol());
-        w.denseFrame.setMaxRow(df.getMaxRow());
-        w.denseFrame.setSerialNumber(df.getSerialNumber());
-        w.denseFrame.setStorehouseSN(df.getStorehouseSN());
+        EditFrameWindow w = new EditFrameWindow();
+        w.frame.setStorehouseName(frame.getStorehouseName());
+        w.frame.setFrameCode(frame.getFrameCode());
+        w.frame.setMaxColumn(frame.getMaxColumn());
+        w.frame.setMaxRow(frame.getMaxRow());
         
-        w.nameField.setValue(df.getName());
-        w.maxColField.setValue(df.getMaxCol()+"");
-        w.maxRowField.setValue(df.getMaxRow()+"");
-        w.SNField.setValue(df.getSerialNumber()+"");
+        w.maxColField.setValue(frame.getMaxColumn()+"");
+        w.maxRowField.setValue(frame.getMaxRow()+"");
+        w.frameCodeField.setValue(frame.getFrameCode()+"");
         
         w.btnAdd.setCaption("更改");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
-        		ui.storehouseService.updateDenseFrame(w.denseFrame);
+        		ui.frameService.updateFrame(w.frame);
     			w.close();
-    			callback.onSuccessful(w.denseFrame);
+    			callback.onSuccessful(w.frame);
 			}
         });
         UI.getCurrent().addWindow(w);
         w.center();
     }
 	
-	private TextField nameField = new TextField("密集架名:");
 	private DoubleField maxColField = new DoubleField("最大列数:");
 	private DoubleField maxRowField = new DoubleField("最大行数:");
-	private TextField SNField = new TextField("顺序号:");
+	private TextField frameCodeField = new TextField("顺序号:");
 	private Button btnAdd = new Button("添加");
 	private Button btnCancel = new Button("取消");
-	private Binder<DenseFrame> binder = new Binder<>();
-	private DenseFrame denseFrame = new DenseFrame();
+	private Binder<FrameNumber> binder = new Binder<>();
+	private FrameNumber frame = new FrameNumber();
 	private static DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private static DecimalFormat formatter = new DecimalFormat("000");
 	
