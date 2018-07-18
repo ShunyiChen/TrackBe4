@@ -198,30 +198,6 @@ Of course - if you want to get both scrollbars and the content size can not be s
         }
     }
 	
-//	private HorizontalLayout createOptions(PermissionCategory category) {
-//		HorizontalLayout hlayout = new HorizontalLayout();
-//		hlayout.setWidthUndefined();
-//		hlayout.setSpacing(false);
-//		hlayout.setMargin(false);
-//		
-//		int size = category.getPermissions().size();
-//		PermissionBox[] boxes = new PermissionBox[size];
-//		for (int i= 0; i < size; i++) {
-//			Permission permission = category.getPermissions().get(i);
-//			boxes[i] = new PermissionBox(permission);
-//			boxes[i].setWidth("135px");
-//			// 初始化选中
-//			if (assignedPermissionUniqueIDs.contains(permission.getPermissionUniqueId())) {
-//				boxes[i].setSelected(true);
-//			}
-//			
-//			hlayout.addComponents(boxes[i]);
-//			hlayout.setComponentAlignment(boxes[i], Alignment.TOP_LEFT);
-//		}
-//		allboxes.put(category.getName(), boxes);
-//		return hlayout;
-//	}
-
 	/**
 	 * 
 	 * @return

@@ -1,7 +1,6 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.util.StringUtils;
 
@@ -21,11 +20,11 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Notification.Type;
 
 /**
  * 
@@ -183,7 +182,6 @@ public class EditStorehouseWindow extends Window {
 	public static void edit(FrameNumber store, Callback callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditStorehouseWindow w = new EditStorehouseWindow();
-        w.storehouse.setCompanyUniqueId(store.getCompanyUniqueId());
         w.nameField.setValue(store.getStorehouseName());
         w.btnAdd.setCaption("保存");
         w.setCaption("编辑库房");

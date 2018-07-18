@@ -15,9 +15,8 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
+import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.FrameNumber;
-import com.maxtree.automotive.dashboard.domain.Site;
-import com.maxtree.automotive.dashboard.domain.SiteCapacity;
 
 @Component
 public class FrameNumberService {
@@ -28,6 +27,7 @@ public class FrameNumberService {
 	private JdbcTemplate jdbcTemplate;
 	
 	/**
+	 * 查询全部库房
 	 * 
 	 * @return
 	 */
@@ -37,6 +37,12 @@ public class FrameNumberService {
 		return results;
 	}
 	
+	/**
+	 * 查询全部密集架
+	 * 
+	 * @param storehouseName
+	 * @return
+	 */
 	public List<FrameNumber> findAllFrame(String storehouseName) {
 		String sql = "SELECT * FROM FRAMENUMBER WHERE STOREHOUSENAME=? AND FRAMECODE != ? AND CELLCODE=? ORDER BY FRAMEUNIQUEID";
 		List<FrameNumber> results = jdbcTemplate.query(sql, new Object[] {storehouseName,0,0}, new BeanPropertyRowMapper<FrameNumber>(FrameNumber.class));
@@ -44,6 +50,7 @@ public class FrameNumberService {
 	}
 	
 	/**
+	 * 查询全部单元格
 	 * 
 	 * @param storehouseName
 	 * @param frameCode
@@ -56,19 +63,36 @@ public class FrameNumberService {
 	}
 	
 	/**
+	 * 查询VIN值不为空的文件夹
 	 * 
 	 * @param storehouseName
 	 * @param frameCode
 	 * @return
 	 */
-	public List<FrameNumber> findAllBag(String storehouseName, int frameCode, int cellCode) {
+	public List<FrameNumber> findAllFolderWithVIN(String storehouseName, int frameCode) {
+		String sql = "SELECT * FROM FRAMENUMBER WHERE STOREHOUSENAME=? AND FRAMECODE=? AND CELLCODE != ? AND VIN IS NOT NULL ORDER BY FRAMEUNIQUEID";
+		List<FrameNumber> results = jdbcTemplate.query(sql, new Object[] {storehouseName, frameCode, 0}, new BeanPropertyRowMapper<FrameNumber>(FrameNumber.class));
+		return results;
+	}
+	
+	/**
+	 * 查询所有文件夹
+	 * 
+	 * @param storehouseName
+	 * @param frameCode
+	 * @param cellCode
+	 * @return
+	 */
+	public List<FrameNumber> findAllFolders(String storehouseName, int frameCode, int cellCode) {
 		String sql = "SELECT * FROM FRAMENUMBER WHERE STOREHOUSENAME=? AND FRAMECODE=? AND CELLCODE=? AND CODE IS NOT NULL ORDER BY FRAMEUNIQUEID";
 		List<FrameNumber> results = jdbcTemplate.query(sql, new Object[] {storehouseName,frameCode,cellCode}, new BeanPropertyRowMapper<FrameNumber>(FrameNumber.class));
 		return results;
 	}
 	
 	/**
+	 * 查找密集架的下一编号
 	 * 
+	 * @param storehouseName
 	 * @return
 	 */
 	public Integer findNextCodeOfFrame(String storehouseName) {
@@ -77,15 +101,15 @@ public class FrameNumberService {
 		return frameCode;
 	}
 	
-	
 	/**
+	 * 插入
 	 * 
-	 * @param storehouse
+	 * @param frameNumber
 	 * @return
 	 */
 	public int insert(FrameNumber frameNumber) {
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-		String INSERT_TRANS_SQL = "INSERT INTO FRAMENUMBER(STOREHOUSENAME,FRAMECODE,MAXCOLUMN,MAXROW,CELLCODE,COL,ROW,VIN,CODE,COMPANYUNIQUEID) VALUES(?,?,?,?,?,?,?,?,?,?)";
+		String INSERT_TRANS_SQL = "INSERT INTO FRAMENUMBER(STOREHOUSENAME,FRAMECODE,MAXCOLUMN,MAXROW,CELLCODE,COL,ROW,VIN,CODE) VALUES(?,?,?,?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -101,7 +125,6 @@ public class FrameNumberService {
 				ps.setInt(7, frameNumber.getRow());
 				ps.setString(8, frameNumber.getVin());
 				ps.setString(9, frameNumber.getCode());
-				ps.setInt(10, frameNumber.getCompanyUniqueId());
 				return ps;
 			}
 		}, keyHolder);
@@ -112,11 +135,12 @@ public class FrameNumberService {
 	
 	
 	/**
+	 * 批量插入
 	 * 
 	 * @param list
 	 */
 	public void insert(List<FrameNumber> list) {
-		String INSERT_TRANS_SQL = "INSERT INTO FRAMENUMBER(STOREHOUSENAME,FRAMECODE,MAXCOLUMN,MAXROW,CELLCODE,COL,ROW,VIN,CODE,COMPANYUNIQUEID) VALUES(?,?,?,?,?,?,?,?,?,?)";
+		String INSERT_TRANS_SQL = "INSERT INTO FRAMENUMBER(STOREHOUSENAME,FRAMECODE,MAXCOLUMN,MAXROW,CELLCODE,COL,ROW,VIN,CODE) VALUES(?,?,?,?,?,?,?,?,?)";
 		jdbcTemplate.batchUpdate(INSERT_TRANS_SQL, new BatchPreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -130,7 +154,6 @@ public class FrameNumberService {
 				ps.setInt(7, frameNumber.getRow());
 				ps.setString(8, frameNumber.getVin());
 				ps.setString(9, frameNumber.getCode());
-				ps.setInt(10, frameNumber.getCompanyUniqueId());
 			}
 
 			@Override
@@ -141,17 +164,45 @@ public class FrameNumberService {
 	}
 	
 	/**
+	 * 批量更新VIN
+	 * 
+	 * @param list
+	 */
+	public void batchUpdateVIN(List<FrameNumber> list) {
+		String INSERT_TRANS_SQL = "UPDATE FRAMENUMBER SET VIN=? WHERE CODE=?";
+		int[] opts = jdbcTemplate.batchUpdate(INSERT_TRANS_SQL, new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FrameNumber frameNumber = list.get(i);
+				ps.setString(1, frameNumber.getVin());
+				ps.setString(2, frameNumber.getCode());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return list.size();
+			}
+		});
+		for(int i=0; i < opts.length; i++) {
+			FrameNumber folder = list.get(i);
+			log.info(opts[i]+"-------------"+folder.getCode()+" "+folder.getVin());
+		}
+	}
+	
+	/**
+	 * 更新库房名称
 	 * 
 	 * @param storehouse
 	 * @param oldName
 	 */
 	public void updateStorehouse(FrameNumber storehouse, String oldName) {
-		String sql = "UPDATE FRAMENUMBER SET STOREHOUSENAME=?,COMPANYUNIQUEID=? WHERE STOREHOUSENAME=?";
-		int opt = jdbcTemplate.update(sql, new Object[] { storehouse.getStorehouseName(),storehouse.getCompanyUniqueId(),oldName});
+		String sql = "UPDATE FRAMENUMBER SET STOREHOUSENAME=? WHERE STOREHOUSENAME=?";
+		int opt = jdbcTemplate.update(sql, new Object[] { storehouse.getStorehouseName(),oldName});
 		log.info("Affected row:"+opt);
 	}
 	
 	/**
+	 * 更新密集架信息
 	 * 
 	 * @param frame
 	 */
@@ -161,20 +212,86 @@ public class FrameNumberService {
 		log.info("Affected row:"+opt);
 	}
 	
-	
-	
-	
-	public void deleteStorehouse(String storehouseName) {
+	/**
+	 * 删除库房及其全部的密集架
+	 * 
+	 * @param storehouseName
+	 */
+	public void deleteStorehouse(FrameNumber store) {
 		String sql = "DELETE FROM FRAMENUMBER WHERE STOREHOUSENAME=?";
-		int opt = jdbcTemplate.update(sql, new Object[] {storehouseName});
+		int opt = jdbcTemplate.update(sql, new Object[] {store.getStorehouseName()});
 		log.info("Affected row:"+opt);
-		
+
+		sql =  "UPDATE COMPANIES SET STOREHOUSEUNIQUEID=? WHERE STOREHOUSEUNIQUEID=?";
+		opt = jdbcTemplate.update(sql, new Object[] {0, store.getFrameUniqueId()});
+		log.info("Affected row:"+opt);
 	}
 	
+	/**
+	 * 删除密集架及其单元格
+	 * 
+	 * @param storehouseName
+	 * @param frameCode
+	 */
 	public void deleteFrame(String storehouseName, int frameCode) {
 		String sql = "DELETE FROM FRAMENUMBER WHERE STOREHOUSENAME=? AND FRAMECODE=?";
 		int opt = jdbcTemplate.update(sql, new Object[] {storehouseName, frameCode});
 		log.info("Affected row:"+opt);
 		
+	}
+	
+	/**
+	 * 删除密集架的全部单元格
+	 * 
+	 * @param storehouseName
+	 * @param frameCode
+	 */
+	public void deleteFrameCells(String storehouseName, int frameCode) {
+		String sql = "DELETE FROM FRAMENUMBER WHERE STOREHOUSENAME=? AND FRAMECODE=? AND CELLCODE <>? AND COL<>? AND ROW<>?";
+		int opt = jdbcTemplate.update(sql, new Object[] {storehouseName, frameCode,0,0,0});
+		log.info("Affected row:"+opt);
+		
+	}
+	
+	/**
+	 * 获取可用的机构列表
+	 * 
+	 * @param storeID
+	 * @return
+	 */
+	public List<Company> getAvailableCompanies(int storeID) {
+		String sql = "SELECT * FROM COMPANIES WHERE HASSTOREHOUSE=? AND STOREHOUSEUNIQUEID IN (?,?) ORDER BY COMPANYUNIQUEID";
+		List<Company> results = jdbcTemplate.query(sql, new Object[] {1,0,storeID}, new BeanPropertyRowMapper<Company>(Company.class));
+		return results;
+	}
+	
+	/**
+	 * 获取已经分配的机构
+	 * 
+	 * @param storeID
+	 * @return
+	 */
+	public Company findAssignedCompany(int storeID) {
+		String sql = "SELECT * FROM COMPANIES WHERE STOREHOUSEUNIQUEID=?";
+		List<Company> results = jdbcTemplate.query(sql, new Object[] {storeID}, new BeanPropertyRowMapper<Company>(Company.class));
+		if (results.size() > 0) {
+			return results.get(0);
+		}
+		return new Company();
+	}
+	
+	/**
+	 * 获取一个可用的上架号
+	 * 
+	 * @param storeID
+	 * @return
+	 */
+	public FrameNumber getAnAvailableCode(int storeID) {
+		String sql = "SELECT * FROM FRAMENUMBER WHERE STOREHOUSEUNIQUEID=? AND CODE IS NOT NULL AND VIN IS NULL ORDER BY FRAMEUNIQUEID LIMIT ?";
+		List<FrameNumber> results = jdbcTemplate.query(sql, new Object[] {storeID,1}, new BeanPropertyRowMapper<FrameNumber>(FrameNumber.class));
+		if (results.size() > 0) {
+			return results.get(0);
+		}
+		return new FrameNumber();
 	}
 }

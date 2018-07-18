@@ -49,7 +49,6 @@ public class AssigningRolesToPermissionWindow extends Window {
 		mainLayout.setWidth("100%");
 		mainLayout.setHeightUndefined();
  
-//		Image img = new Image(null, new ThemeResource("img/adminmenu/adminrole.png"));
 		Image img = new Image(null, new ThemeResource("img/adminmenu/userrole.png"));
 		Label permissionName = new Label(p.getName());
 		HorizontalLayout title = new HorizontalLayout();
@@ -79,7 +78,7 @@ public class AssigningRolesToPermissionWindow extends Window {
 		List<Role> selectedRoles = new ArrayList<>();
 		for (Role role : allRoles) {
 			for (Role assignRole : assignRoles) {
-				if (assignRole.getRoleUniqueId() == role.getRoleUniqueId()) {
+				if (assignRole.getRoleUniqueId().intValue() == role.getRoleUniqueId().intValue()) {
 					selectedRoles.add(role);
 				}
 			}

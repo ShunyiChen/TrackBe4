@@ -74,7 +74,7 @@ public class AssigningTenantsToCommunityWindow extends Window {
 		List<Tenant> selected = new ArrayList<>();
 		for (Tenant t : allTenants) {
 			for (Tenant assignedTenant : assignedTenants) {
-				if (assignedTenant.getTenantUniqueId() == t.getTenantUniqueId()) {
+				if (assignedTenant.getTenantUniqueId().intValue() == t.getTenantUniqueId().intValue()) {
 					selected.add(t);
 				}
 			}

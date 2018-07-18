@@ -73,7 +73,7 @@ public class AssigningBusinessesToCompanyWindow extends Window {
 		List<Business> selected = new ArrayList<>();
 		for (Business b : allBusinesses) {
 			for (Business assignedBusiness : assignedBusinesses) {
-				if (assignedBusiness.getBusinessUniqueId() == b.getBusinessUniqueId()) {
+				if (assignedBusiness.getBusinessUniqueId().intValue() == b.getBusinessUniqueId().intValue()) {
 					selected.add(b);
 				}
 			}

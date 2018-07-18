@@ -125,14 +125,14 @@ public class ManageStorehouseGrid extends VerticalLayout {
 				public void menuSelected(MenuItem selectedItem) {
 					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 					if (loginUser.isPermitted(PermissionCodes.P5)) {
-//						Callback callback = new Callback() {
-//
-//							@Override
-//							public void onSuccessful() {
-//								refreshTable();
-//							}
-//						};
-//						AssigningCompaniesToCommunityWindow.open(community, callback);
+						Callback callback = new Callback() {
+
+							@Override
+							public void onSuccessful() {
+								refreshTable();
+							}
+						};
+						AssigningCompanyToStoreWindow.open(store, callback);
 					}
 					else {
 		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
@@ -184,11 +184,11 @@ public class ManageStorehouseGrid extends VerticalLayout {
 						Callback event = new Callback() {
 							@Override
 							public void onSuccessful() {
-								ui.frameService.deleteStorehouse(store.getStorehouseName());
+								ui.frameService.deleteStorehouse(store);
 								refreshTable();
 							}
 						};
-						MessageBox.showMessage("提示", "注意：删除库房将会同步删除其下所有密集架、单元格和档案袋。<br>请确定是否彻底删除该库房?", MessageBox.WARNING, event, "删除");
+						MessageBox.showMessage("提示", "注意：删除库房将会同步删除其下所有密集架、单元格和文件夹。<br>请确定是否彻底删除该库房?", MessageBox.WARNING, event, "删除");
 					}
 				}
 			});

@@ -82,19 +82,12 @@ public class FrameNumber {
 		this.code = code;
 	}
 
-	public Integer getCompanyUniqueId() {
-		return companyUniqueId;
-	}
-
-	public void setCompanyUniqueId(Integer companyUniqueId) {
-		this.companyUniqueId = companyUniqueId;
-	}
-
 	@Override
 	public String toString() {
-		return String.format(
-				"FrameNumber[frameUniqueId=%d, storehouseName='%s', frameCode=%d,maxColumn=%d,maxRow=%d,cellCode=%d,col=%d,row=%d,vin='%s',code='%s',companyUniqueId=%d]",
-				frameUniqueId, storehouseName, frameCode, maxColumn, maxRow, cellCode, col, row, vin, code, companyUniqueId);
+		return storehouseName;
+//		return String.format(
+//				"FrameNumber[frameUniqueId=%d, storehouseName='%s', frameCode=%d,maxColumn=%d,maxRow=%d,cellCode=%d,col=%d,row=%d,vin='%s',code='%s']",
+//				frameUniqueId, storehouseName, frameCode, maxColumn, maxRow, cellCode, col, row, vin, code);
 	}
 
 	private Integer frameUniqueId = 0;
@@ -107,5 +100,4 @@ public class FrameNumber {
 	private Integer row = 0;
 	private String vin;// 车辆识别代码
 	private String code;// 上架号，例如014-002-003-001(密集架号-列-行-文件夹序号）
-	private Integer companyUniqueId = 0;//机构ID
 }

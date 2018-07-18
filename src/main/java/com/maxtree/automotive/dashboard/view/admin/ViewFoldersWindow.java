@@ -17,7 +17,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-public class ViewBagsWindow extends Window {
+public class ViewFoldersWindow extends Window {
 
 	/**
 	 * 
@@ -28,7 +28,7 @@ public class ViewBagsWindow extends Window {
 	 * 
 	 * @param fileBox
 	 */
-	public ViewBagsWindow(FrameNumber cell) {
+	public ViewFoldersWindow(FrameNumber cell) {
 		this.cell = cell;
 		initComponents();
 	}
@@ -47,7 +47,7 @@ public class ViewBagsWindow extends Window {
     	
 		setContent(main);
 		
-		List<FrameNumber> lst = ui.frameService.findAllBag(cell.getStorehouseName(), cell.getFrameCode(), cell.getCellCode());
+		List<FrameNumber> lst = ui.frameService.findAllFolders(cell.getStorehouseName(), cell.getFrameCode(), cell.getCellCode());
     	grid.setWidth("100%");
     	grid.setHeightUndefined();
     	grid.setHeightByRows(12);
@@ -81,7 +81,7 @@ public class ViewBagsWindow extends Window {
 	 */
 	public static void open(FrameNumber cell, Callback2 callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        ViewBagsWindow w = new ViewBagsWindow(cell);
+        ViewFoldersWindow w = new ViewFoldersWindow(cell);
         UI.getCurrent().addWindow(w);
         w.center();
     }

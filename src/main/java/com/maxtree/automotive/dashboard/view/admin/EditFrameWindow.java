@@ -137,6 +137,58 @@ public class EditFrameWindow extends Window {
 	
 	/**
 	 * 
+	 * @param store
+	 * @param frameCode
+	 */
+	private void insertCells(FrameNumber store, int frameCode) {
+		int cellCode = 0;//单元格顺序号
+		for (int i = 1; i <= frame.getMaxRow(); i++) {
+			
+			for (int j = 1; j <= frame.getMaxColumn(); j++) {
+				cellCode++;
+				FrameNumber cell = new FrameNumber();
+				cell.setStorehouseName(store.getStorehouseName());
+				cell.setFrameCode(frameCode);
+				cell.setMaxColumn(frame.getMaxColumn());
+				cell.setMaxRow(frame.getMaxRow());
+				cell.setCol(j);
+				cell.setRow(i);
+				cell.setCellCode(cellCode);
+				
+				int cellId = ui.frameService.insert(cell);
+				cell.setFrameUniqueId(cellId);
+				
+				List<FrameNumber> batch = new ArrayList<FrameNumber>();
+				for(int z=1; z<=100; z++) {
+					StringBuilder codes = new StringBuilder();
+					codes.append(formatter.format(frame.getFrameCode()));
+					codes.append("-");
+					codes.append(formatter.format(j));
+					codes.append("-");
+					codes.append(formatter.format(i));
+					codes.append("-");
+					codes.append(formatter.format(z));
+					
+					FrameNumber bag = new FrameNumber();
+					bag.setStorehouseName(store.getStorehouseName());
+					bag.setFrameCode(frameCode);
+					bag.setMaxColumn(frame.getMaxColumn());
+					bag.setMaxRow(frame.getMaxRow());
+					bag.setCol(j);
+					bag.setRow(i);
+					bag.setCellCode(cellCode);
+					bag.setCode(codes.toString());
+					bag.setVin(null);
+					batch.add(bag);
+				}
+				ui.frameService.insert(batch);
+				
+			}
+		}
+	}
+	
+	/**
+	 * 
 	 * @param storehouseCode
 	 * @param callback
 	 */
@@ -149,57 +201,10 @@ public class EditFrameWindow extends Window {
 			if (w.checkEmptyValues()) {
 				w.frame.setStorehouseName(store.getStorehouseName());
 				w.frame.setFrameCode(frameCode);
-				w.frame.setCompanyUniqueId(store.getCompanyUniqueId());
 				int frameId = ui.frameService.insert(w.frame);
 				w.frame.setFrameUniqueId(frameId);
 				
-				int cellCode = 0;//单元格顺序号
-				for (int i = 1; i <= w.frame.getMaxRow(); i++) {
-					
-					for (int j = 1; j <= w.frame.getMaxColumn(); j++) {
-						cellCode++;
-						FrameNumber cell = new FrameNumber();
-						cell.setStorehouseName(store.getStorehouseName());
-						cell.setFrameCode(frameCode);
-						cell.setMaxColumn(w.frame.getMaxColumn());
-						cell.setMaxRow(w.frame.getMaxRow());
-						cell.setCol(j);
-						cell.setRow(i);
-						cell.setCellCode(cellCode);
-						cell.setCompanyUniqueId(store.getCompanyUniqueId());
-						
-						int cellId = ui.frameService.insert(cell);
-						cell.setFrameUniqueId(cellId);
-						
-						List<FrameNumber> batch = new ArrayList<FrameNumber>();
-						for(int z=1; z<=100; z++) {
-							StringBuilder codes = new StringBuilder();
-							codes.append(formatter.format(w.frame.getFrameCode()));
-							codes.append("-");
-							codes.append(formatter.format(j));
-							codes.append("-");
-							codes.append(formatter.format(i));
-							codes.append("-");
-							codes.append(formatter.format(z));
-							
-							FrameNumber bag = new FrameNumber();
-							bag.setStorehouseName(store.getStorehouseName());
-							bag.setFrameCode(frameCode);
-							bag.setMaxColumn(w.frame.getMaxColumn());
-							bag.setMaxRow(w.frame.getMaxRow());
-							bag.setCol(j);
-							bag.setRow(i);
-							bag.setCellCode(cellCode);
-							bag.setCompanyUniqueId(store.getCompanyUniqueId());
-							bag.setCode(codes.toString());
-							bag.setVin(null);
-							batch.add(bag);
-						}
-						ui.frameService.insert(batch);
-						
-					}
-				}
-				
+				w.insertCells(store, frameCode);
 				
     			w.close();
     			callback.onSuccessful(w.frame);
@@ -214,7 +219,7 @@ public class EditFrameWindow extends Window {
 	 * @param denseFrame
 	 * @param callback
 	 */
-	public static void edit(FrameNumber frame, Callback2 callback) {
+	public static void edit(FrameNumber store, FrameNumber frame, Callback2 callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditFrameWindow w = new EditFrameWindow();
         w.frame.setStorehouseName(frame.getStorehouseName());
@@ -229,7 +234,21 @@ public class EditFrameWindow extends Window {
         w.btnAdd.setCaption("更改");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
+        		//更新frame信息
         		ui.frameService.updateFrame(w.frame);
+        		
+        		//取frame全部文件夹带有vin不为空的记录
+        		List<FrameNumber> folerWithVINList = ui.frameService.findAllFolderWithVIN(w.frame.getStorehouseName(), w.frame.getFrameCode());
+        		
+        		//删除原来frame下的所有cells
+        		ui.frameService.deleteFrameCells(w.frame.getStorehouseName(), w.frame.getFrameCode());
+        		
+        		//插入新的cells
+        		w.insertCells(store, frame.getFrameCode());
+        		
+        		//更新frame文件夹记录，把vin更新到新纪录上。
+        		ui.frameService.batchUpdateVIN(folerWithVINList);
+        		
     			w.close();
     			callback.onSuccessful(w.frame);
 			}

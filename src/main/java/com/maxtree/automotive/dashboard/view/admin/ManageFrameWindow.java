@@ -124,7 +124,7 @@ public class ManageFrameWindow extends Window {
 				}
 			};
 			
-			EditFrameWindow.edit(selected.get(0).getFrame(), callback);
+			EditFrameWindow.edit(storehouse, selected.get(0).getFrame(), callback);
         });
         
 		btnRemove.addClickListener(e -> {
@@ -165,7 +165,7 @@ public class ManageFrameWindow extends Window {
 					}
 				};
 				
-				MessageBox.showMessage("删除提示", "注意：删除密集架将会删除其所有的单元格和档案袋。<br>请确定是否彻底删除密集架？", MessageBox.INFO, okEvent, "删除");
+				MessageBox.showMessage("删除提示", "注意：删除密集架将会删除其所有的单元格和文件夹。<br>请确定是否彻底删除密集架？", MessageBox.INFO, okEvent, "删除");
 
 			}
 			
@@ -218,7 +218,6 @@ public class ManageFrameWindow extends Window {
 									cell.setCol(j);
 									cell.setRow(i);
 									cell.setCellCode(cellCode);
-									cell.setCompanyUniqueId(newFrame.getCompanyUniqueId());
 									
 									int cellId = ui.frameService.insert(cell);
 									cell.setFrameUniqueId(cellId);
@@ -242,7 +241,6 @@ public class ManageFrameWindow extends Window {
 										bag.setCol(j);
 										bag.setRow(i);
 										bag.setCellCode(cellCode);
-										bag.setCompanyUniqueId(newFrame.getCompanyUniqueId());
 										bag.setCode(codes.toString());
 										bag.setVin(null);
 										batch.add(bag);
@@ -285,7 +283,6 @@ public class ManageFrameWindow extends Window {
 	private void loadAllFrames(String storehouseName) {
 		List<FrameNumber> lstFrame = ui.frameService.findAllFrame(storehouseName);
 		for (FrameNumber frame : lstFrame) {
-			System.out.println(frame);
 			FrameComponent component = new FrameComponent(frame);
 			add(component);
 		}

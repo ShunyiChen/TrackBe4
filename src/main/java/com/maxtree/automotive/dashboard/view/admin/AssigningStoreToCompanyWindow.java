@@ -6,13 +6,11 @@ import java.util.Set;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.Box;
-import com.maxtree.automotive.dashboard.domain.Role;
-import com.maxtree.automotive.dashboard.domain.User;
-import com.maxtree.automotive.dashboard.event.DashboardEvent;
-import com.maxtree.automotive.dashboard.event.DashboardEventBus;
-import com.vaadin.server.ThemeResource;
+import com.maxtree.automotive.dashboard.component.Notifications;
+import com.maxtree.automotive.dashboard.domain.Company;
+import com.maxtree.automotive.dashboard.domain.FrameNumber;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -23,7 +21,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-public class AssigningRolesToUserWindow extends Window {
+public class AssigningStoreToCompanyWindow extends Window {
 
 	/**
 	 * 
@@ -32,55 +30,56 @@ public class AssigningRolesToUserWindow extends Window {
 
 	/**
 	 * 
-	 * @param user
+	 * @param company
 	 */
-	public AssigningRolesToUserWindow(User user) {
-		this.user = user;
+	public AssigningStoreToCompanyWindow(Company company) {
+		this.company = company;
 		this.setWidth("613px");
 		this.setHeight("513px");
 		this.setModal(true);
 		this.setResizable(false);
-		this.setCaption("为用户分配角色");
+		this.setCaption("为机构分配库房");
 		this.addStyleName("edit-window");
 		VerticalLayout mainLayout = new VerticalLayout(); 
 		mainLayout.setSpacing(true);
 		mainLayout.setMargin(false);
 		mainLayout.setWidth("100%");
 		mainLayout.setHeightUndefined();
-		Image img = new Image(null, new ThemeResource("img/adminmenu/userrole.png"));
-		Label userName = new Label(user.getUserName());
+ 
+		Image img = new Image(null, VaadinIcons.GROUP);
+		Label companyName = new Label(company.getCompanyName());
 		HorizontalLayout title = new HorizontalLayout();
 		title.setWidthUndefined();
 		title.setHeightUndefined();
 		title.setSpacing(false);
 		title.setMargin(false);
-		title.addComponents(img, Box.createHorizontalBox(5), userName);
+		title.addComponents(img, Box.createHorizontalBox(5), companyName);
 		title.setComponentAlignment(img, Alignment.MIDDLE_LEFT);
-		title.setComponentAlignment(userName, Alignment.MIDDLE_LEFT);
+		title.setComponentAlignment(companyName, Alignment.MIDDLE_LEFT);
 		
 		HorizontalLayout hlayout = new HorizontalLayout();
 		hlayout.setSizeFull();
 		hlayout.setSpacing(false);
 		hlayout.setMargin(false);
 		
-		List<Role> allRoles = ui.roleService.findAll();
-		select = new TwinColSelect<>(null, allRoles);
+		List<FrameNumber> allStores = ui.companyService.getAvailableStores(company.getCompanyUniqueId());
+		select = new TwinColSelect<>(null, allStores);
 		select.setWidth("100%");
 		select.setRows(14);
-		select.setLeftColumnCaption("未分配的角色");
-		select.setRightColumnCaption("已分配的角色");
-		List<Role> selectedRoles = new ArrayList<>();
-		for (Role role : allRoles) {
-			for (Role myrole : user.getRoles()) {
-				if (myrole.getRoleUniqueId().intValue() == role.getRoleUniqueId().intValue()) {
-					selectedRoles.add(role);
-				}
+		select.setLeftColumnCaption("未分配的库");
+		select.setRightColumnCaption("已分配的库");
+		
+		List<FrameNumber> selectedStored = new ArrayList<>();
+		assignedStore = ui.companyService.findAssignedStores(company.getStorehouseUniqueId());
+		for (FrameNumber store : allStores) {
+			if (assignedStore.getFrameUniqueId().intValue() == store.getFrameUniqueId().intValue()) {
+				selectedStored.add(store);
 			}
 		}
 		// set select
-		select.select(selectedRoles.toArray(new Role[selectedRoles.size()]));
+		select.select(selectedStored.toArray(new FrameNumber[selectedStored.size()]));
 		
-        hlayout.addComponent(select);
+		hlayout.addComponent(select);
         hlayout.setComponentAlignment(select, Alignment.TOP_CENTER);
 		
 		HorizontalLayout buttonPane = new HorizontalLayout();
@@ -109,34 +108,50 @@ public class AssigningRolesToUserWindow extends Window {
 		});
 	}
 	
-	private void apply() {
-		Set<Role> set = select.getSelectedItems();
-		List<Role> list = new ArrayList<>(set);
-		// update database
-		ui.userService.updateRoles(user.getUserUniqueId(), list);
-		// update the cache
-		CacheManager.getInstance().getPermissionCache().refresh(user.getUserUniqueId());
+	private boolean apply() {
+		Set<FrameNumber> set = select.getSelectedItems();
+		List<FrameNumber> list = new ArrayList<>(set);
+		if (list.size() > 1) {
+			Notifications.warning("一个机构只能分配一个库房。");
+			return false;
+		} 
+		//取消机构
+		else if(list.size() == 0) {
+			company.setStorehouseUniqueId(0);
+			ui.companyService.updateStorehouse(company);
+		}
+		//保存设置
+		else {
+			for(FrameNumber store : list) {
+				company.setStorehouseUniqueId(store.getFrameUniqueId());
+				// update database
+				ui.companyService.updateStorehouse(company);
+			}
+		}
+		return true;
 	}
 	
-	public static void open(Callback callback, User usr) {
-        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        AssigningRolesToUserWindow w = new AssigningRolesToUserWindow(usr);
+	public static void open(Company company, Callback callback) {
+//        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
+		AssigningStoreToCompanyWindow w = new AssigningStoreToCompanyWindow(company);
         w.btnApply.addClickListener(e -> {
-        	w.apply();
-        	callback.onSuccessful();
-		});
+        	if(w.apply())
+        		callback.onSuccessful();
+        });
         w.btnOK.addClickListener(e -> {
-        	w.apply();
-			w.close();
-			callback.onSuccessful();
+        	if(w.apply()) {
+        		w.close();
+    			callback.onSuccessful();
+        	}
 		});
         UI.getCurrent().addWindow(w);
         w.center();
     }
 	
-	private TwinColSelect<Role> select;
+	private FrameNumber assignedStore;
 	private Button btnApply;
 	private Button btnOK;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
-	private User user;
+	private TwinColSelect<FrameNumber> select;
+	private Company company = new Company();
 }

@@ -134,6 +134,11 @@ public class ManageCompanyGrid extends VerticalLayout {
 			// Create a context menu for 'someComponent'
 			ContextMenu menu = new ContextMenu(moreImg, true);
 			menu.addItem("分配用户", new Command() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
 					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
@@ -153,7 +158,40 @@ public class ManageCompanyGrid extends VerticalLayout {
 					
 				}
 			});
+			// 判断该机构是否可以有库房1：可以 2：不可以
+			if (company.getHasStoreHouse() == 1) {
+				menu.addItem("分配库房", new Command() {
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void menuSelected(MenuItem selectedItem) {
+						User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+						if (loginUser.isPermitted(PermissionCodes.F5)) {
+							Callback callback = new Callback() {
+								@Override
+								public void onSuccessful() {
+									refreshTable();
+								}
+							};
+							AssigningStoreToCompanyWindow.open(company, callback);
+						}
+						else {
+			        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
+			        	}
+					}
+				});
+			}
+			menu.addSeparator();
+			
 			menu.addItem("设置业务类型", new Command() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
 					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
@@ -172,41 +210,12 @@ public class ManageCompanyGrid extends VerticalLayout {
 				}
 			});
 			menu.addSeparator();
-			// 判断该机构是否可以有库房1：可以 2：不可以
-			if (company.getHasStoreHouse() == 1) {
-				menu.addItem("管理库房", new Command() {
-					@Override
-					public void menuSelected(MenuItem selectedItem) {
-						User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-						if (loginUser.isPermitted(PermissionCodes.F5)) {
-//							int storehouseUniqueId = company.getStorehouseUniqueId();
-//							Storehouse storehouse = new Storehouse();
-//							if (storehouseUniqueId == 0) {
-//								storehouse.setCode("001");
-//								storehouseUniqueId = ui.storehouseService.insertStorehouse(storehouse);
-//								storehouse.setStorehouseUniqueId(storehouseUniqueId);
-//								company.setStorehouseUniqueId(storehouseUniqueId);
-//								ui.companyService.updateStorehouse(company);
-//							} else {
-//								storehouse = ui.storehouseService.findById(storehouseUniqueId);
-//							}
-//							
-//							Callback callback = new Callback() {
-//								@Override
-//								public void onSuccessful() {
-//								}
-//							};
-//							OpenStorehouseWindow.open(storehouse, callback);
-						}
-						else {
-			        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
-			        	}
-					}
-				});
-				menu.addSeparator();
-			}
-			
 			menu.addItem("编辑", new Command() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
 					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
@@ -227,6 +236,11 @@ public class ManageCompanyGrid extends VerticalLayout {
 				}
 			});
 			menu.addItem("从列表删除", new Command() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
 					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());

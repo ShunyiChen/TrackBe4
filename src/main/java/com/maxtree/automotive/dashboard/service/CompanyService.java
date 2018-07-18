@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Company;
+import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.DataException;
 
@@ -230,4 +231,33 @@ public class CompanyService {
 			}
 		});
 	}
+	
+	/**
+	 * 获取全部可用的库房
+	 * 
+	 * @param companyUniqueId
+	 * @return
+	 */
+	public List<FrameNumber> getAvailableStores(int companyUniqueId) {
+		String sql = "SELECT * FROM FRAMENUMBER WHERE FRAMECODE=? AND FRAMEUNIQUEID NOT IN (SELECT STOREHOUSEUNIQUEID FROM COMPANIES WHERE STOREHOUSEUNIQUEID<>? AND COMPANYUNIQUEID <>?)";
+		List<FrameNumber> results = jdbcTemplate.query(sql, new Object[] {0,0,companyUniqueId}, new BeanPropertyRowMapper<FrameNumber>(FrameNumber.class));
+		return results;
+	}
+	
+	/**
+	 * 获取已安排的库房
+	 * 
+	 * @param storeId
+	 * @return
+	 */
+	public FrameNumber findAssignedStores(int storeId) {
+		String sql = "SELECT * FROM FRAMENUMBER WHERE FRAMEUNIQUEID=?";
+		List<FrameNumber> results = jdbcTemplate.query(sql, new Object[] {storeId}, new BeanPropertyRowMapper<FrameNumber>(FrameNumber.class));
+		if (results.size() > 0) {
+			return results.get(0);
+		}
+		return new FrameNumber();
+	}
+	
+	
 }

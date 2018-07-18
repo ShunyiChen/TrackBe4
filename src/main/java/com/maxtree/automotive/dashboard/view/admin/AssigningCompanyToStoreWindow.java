@@ -6,13 +6,11 @@ import java.util.Set;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.Box;
-import com.maxtree.automotive.dashboard.domain.Role;
-import com.maxtree.automotive.dashboard.domain.User;
-import com.maxtree.automotive.dashboard.event.DashboardEvent;
-import com.maxtree.automotive.dashboard.event.DashboardEventBus;
-import com.vaadin.server.ThemeResource;
+import com.maxtree.automotive.dashboard.component.Notifications;
+import com.maxtree.automotive.dashboard.domain.Company;
+import com.maxtree.automotive.dashboard.domain.FrameNumber;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -23,7 +21,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-public class AssigningRolesToUserWindow extends Window {
+public class AssigningCompanyToStoreWindow extends Window {
 
 	/**
 	 * 
@@ -32,23 +30,24 @@ public class AssigningRolesToUserWindow extends Window {
 
 	/**
 	 * 
-	 * @param user
+	 * @param storehouse
 	 */
-	public AssigningRolesToUserWindow(User user) {
-		this.user = user;
+	public AssigningCompanyToStoreWindow(FrameNumber storehouse) {
+		this.storehouse = storehouse;
 		this.setWidth("613px");
 		this.setHeight("513px");
 		this.setModal(true);
 		this.setResizable(false);
-		this.setCaption("为用户分配角色");
+		this.setCaption("为库房分配机构");
 		this.addStyleName("edit-window");
 		VerticalLayout mainLayout = new VerticalLayout(); 
 		mainLayout.setSpacing(true);
 		mainLayout.setMargin(false);
 		mainLayout.setWidth("100%");
 		mainLayout.setHeightUndefined();
-		Image img = new Image(null, new ThemeResource("img/adminmenu/userrole.png"));
-		Label userName = new Label(user.getUserName());
+ 
+		Image img = new Image(null, VaadinIcons.GROUP);
+		Label userName = new Label(storehouse.getStorehouseName());
 		HorizontalLayout title = new HorizontalLayout();
 		title.setWidthUndefined();
 		title.setHeightUndefined();
@@ -63,24 +62,24 @@ public class AssigningRolesToUserWindow extends Window {
 		hlayout.setSpacing(false);
 		hlayout.setMargin(false);
 		
-		List<Role> allRoles = ui.roleService.findAll();
-		select = new TwinColSelect<>(null, allRoles);
+		List<Company> allCompanies = ui.frameService.getAvailableCompanies(storehouse.getFrameUniqueId());
+		select = new TwinColSelect<>(null, allCompanies);
 		select.setWidth("100%");
 		select.setRows(14);
-		select.setLeftColumnCaption("未分配的角色");
-		select.setRightColumnCaption("已分配的角色");
-		List<Role> selectedRoles = new ArrayList<>();
-		for (Role role : allRoles) {
-			for (Role myrole : user.getRoles()) {
-				if (myrole.getRoleUniqueId().intValue() == role.getRoleUniqueId().intValue()) {
-					selectedRoles.add(role);
-				}
+		select.setLeftColumnCaption("未分配的机构");
+		select.setRightColumnCaption("已分配的机构");
+		
+		List<Company> selectedCompanies = new ArrayList<>();
+		assignedCompany = ui.frameService.findAssignedCompany(storehouse.getFrameUniqueId());
+		for (Company com : allCompanies) {
+			if (assignedCompany.getCompanyUniqueId().intValue() == com.getCompanyUniqueId().intValue()) {
+				selectedCompanies.add(com);
 			}
 		}
 		// set select
-		select.select(selectedRoles.toArray(new Role[selectedRoles.size()]));
+		select.select(selectedCompanies.toArray(new Company[selectedCompanies.size()]));
 		
-        hlayout.addComponent(select);
+		hlayout.addComponent(select);
         hlayout.setComponentAlignment(select, Alignment.TOP_CENTER);
 		
 		HorizontalLayout buttonPane = new HorizontalLayout();
@@ -109,34 +108,52 @@ public class AssigningRolesToUserWindow extends Window {
 		});
 	}
 	
-	private void apply() {
-		Set<Role> set = select.getSelectedItems();
-		List<Role> list = new ArrayList<>(set);
-		// update database
-		ui.userService.updateRoles(user.getUserUniqueId(), list);
-		// update the cache
-		CacheManager.getInstance().getPermissionCache().refresh(user.getUserUniqueId());
+	private boolean apply() {
+		Set<Company> set = select.getSelectedItems();
+		List<Company> list = new ArrayList<>(set);
+		if (list.size() > 1) {
+			Notifications.warning("一个库房只能分配一个机构。");
+			return false;
+		} 
+		//取消机构
+		else if(list.size() == 0) {
+			if (assignedCompany != null) {
+				assignedCompany.setStorehouseUniqueId(0);
+				ui.companyService.updateStorehouse(assignedCompany);
+			}
+		}
+		//保存设置
+		else {
+			for(Company com : list) {
+				com.setStorehouseUniqueId(storehouse.getFrameUniqueId());
+				// update database
+				ui.companyService.updateStorehouse(com);
+			}
+		}
+		return true;
 	}
 	
-	public static void open(Callback callback, User usr) {
-        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        AssigningRolesToUserWindow w = new AssigningRolesToUserWindow(usr);
+	public static void open(FrameNumber storehouse, Callback callback) {
+//        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
+		AssigningCompanyToStoreWindow w = new AssigningCompanyToStoreWindow(storehouse);
         w.btnApply.addClickListener(e -> {
-        	w.apply();
-        	callback.onSuccessful();
-		});
+        	if(w.apply())
+        		callback.onSuccessful();
+        });
         w.btnOK.addClickListener(e -> {
-        	w.apply();
-			w.close();
-			callback.onSuccessful();
+        	if(w.apply()) {
+        		w.close();
+    			callback.onSuccessful();
+        	}
 		});
         UI.getCurrent().addWindow(w);
         w.center();
     }
 	
-	private TwinColSelect<Role> select;
+	private Company assignedCompany;
 	private Button btnApply;
 	private Button btnOK;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
-	private User user;
+	private TwinColSelect<Company> select;
+	private FrameNumber storehouse = new FrameNumber();
 }

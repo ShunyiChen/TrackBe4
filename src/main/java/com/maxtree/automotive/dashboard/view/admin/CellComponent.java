@@ -53,7 +53,7 @@ public class CellComponent extends Button {
 				}
 			};
 			
-			ViewBagsWindow.open(cell, callback);
+			ViewFoldersWindow.open(cell, callback);
 		});
 	}
 	

@@ -69,13 +69,10 @@ public class AssigningDataitemToBusinessWindow extends Window {
 		select.setRows(14);
 		select.setLeftColumnCaption("未分配的材料");
 		select.setRightColumnCaption("已分配的材料");
-//		select.addSelectionListener(e->{
-//		});
-		
 		List<DataDictionary> selectedItems = new ArrayList<>();
 		for (DataDictionary item : allItems) {
 			for (DataDictionary assignItem : assignItems) {
-				if (assignItem.getDictionaryUniqueId() == item.getDictionaryUniqueId()) {
+				if (assignItem.getDictionaryUniqueId().intValue() == item.getDictionaryUniqueId().intValue()) {
 					selectedItems.add(item);
 				}
 			}

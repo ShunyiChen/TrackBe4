@@ -73,7 +73,7 @@ public class AssigningCompaniesToCommunityWindow extends Window {
 		List<Company> selected= new ArrayList<>();
 		for (Company c : allCompanies) {
 			for (Company assignedCompany : assignedCompanies) {
-				if (assignedCompany.getCompanyUniqueId() == c.getCompanyUniqueId()) {
+				if (assignedCompany.getCompanyUniqueId().intValue() == c.getCompanyUniqueId().intValue()) {
 					selected.add(c);
 				}
 			}

@@ -76,7 +76,7 @@ public class AssigningCommunitiesToSiteWindow extends Window {
 		
 		for (Community c : allCommunities) {
 			for (Community assignedCommunity : assignedCommunities) {
-				if (assignedCommunity.getCommunityUniqueId() == c.getCommunityUniqueId()) {
+				if (assignedCommunity.getCommunityUniqueId().intValue() == c.getCommunityUniqueId().intValue()) {
 					selectedCommunities.add(c);
 				}
 			}

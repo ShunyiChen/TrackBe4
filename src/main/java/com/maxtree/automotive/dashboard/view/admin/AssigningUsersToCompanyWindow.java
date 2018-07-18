@@ -73,7 +73,7 @@ public class AssigningUsersToCompanyWindow extends Window {
 		List<User> selected= new ArrayList<>();
 		for (User u : allUsers) {
 			for (User assignedUser : assignedUsers) {
-				if (assignedUser.getUserUniqueId() == u.getUserUniqueId()) {
+				if (assignedUser.getUserUniqueId().intValue() == u.getUserUniqueId().intValue()) {
 					selected.add(u);
 				}
 			}

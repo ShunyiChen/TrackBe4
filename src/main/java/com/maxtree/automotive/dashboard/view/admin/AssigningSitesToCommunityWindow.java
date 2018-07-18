@@ -46,8 +46,6 @@ public class AssigningSitesToCommunityWindow extends Window {
 		mainLayout.setMargin(false);
 		mainLayout.setWidth("100%");
 		mainLayout.setHeightUndefined();
- 
-//		Image img = new Image(null, new ThemeResource("img/adminmenu/adminrole.png"));
 		Image img = new Image(null, new ThemeResource("img/adminmenu/userrole.png"));
 		Label userName = new Label(community.getCommunityName());
 		HorizontalLayout title = new HorizontalLayout();
@@ -76,7 +74,7 @@ public class AssigningSitesToCommunityWindow extends Window {
 		List<Site> assignedSites = ui.communityService.findAssignedSites(community.getCommunityUniqueId());
 		for (Site site : allSites) {
 			for (Site mysite : assignedSites) {
-				if (mysite.getSiteUniqueId() == site.getSiteUniqueId()) {
+				if (mysite.getSiteUniqueId().intValue() == site.getSiteUniqueId().intValue()) {
 					selectedSites.add(site);
 				}
 			}
