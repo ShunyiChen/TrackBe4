@@ -29,6 +29,7 @@ import com.maxtree.automotive.dashboard.service.SiteService;
 import com.maxtree.automotive.dashboard.service.TenantService;
 import com.maxtree.automotive.dashboard.service.TransactionService;
 import com.maxtree.automotive.dashboard.service.TransitionService;
+import com.maxtree.automotive.dashboard.service.UserEventService;
 import com.maxtree.automotive.dashboard.service.UserService;
 import com.maxtree.automotive.dashboard.view.LoginView;
 import com.maxtree.automotive.dashboard.view.MainView;
@@ -95,7 +96,8 @@ public final class DashboardUI extends UI {
 	public FrameNumberService frameService;
 	@Autowired
 	public TransitionService transitionService;
-	
+	@Autowired
+	public UserEventService userEventService;
 	/*
 	 * This field stores an access to the dummy backend layer. In real applications
 	 * you most likely gain access to your beans trough lookup or injection; and not

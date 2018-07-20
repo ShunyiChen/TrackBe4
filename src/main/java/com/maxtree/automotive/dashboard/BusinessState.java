@@ -7,8 +7,17 @@ package com.maxtree.automotive.dashboard;
  */
 public enum BusinessState {
 
-	TYPEIN("待录入"), PUTAWAY("待上架"), STORAGE("已入库"), APPROVAL("待审核"), REVIEW("待复审"), FILLED("已归档"), QUALITY("待质检");
-
+	B1("待录入"),
+	B2("待上架"),
+	B3("已入库"),
+	B4("待审核"),
+	B5("待复审"),
+	B6("已归档"),
+	B7("待质检"),
+	B8("待查看"),//影像化检测
+	B9("待提档"),//影像化检测
+	B10("待归档"),//影像化检测
+	B11("完成");//影像化检测
 	private BusinessState(String name) {
 		this.name = name;
 	}

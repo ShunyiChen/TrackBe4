@@ -336,7 +336,14 @@
 	      <version>1.2.5.RELEASE</version>
 	    </dependency>
 	 
-	    
+	    <!-- https://mvnrepository.com/artifact/org.apache.ftpserver/ftpserver-core -->
+		<dependency>
+			<groupId>org.apache.ftpserver</groupId>
+			<artifactId>ftpserver-core</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		
+		
 		<!-- 
 		 Since the Tomcat is default in the spring boot,you should add the following two dependencies to switch to Jetty if you want.
 		 Note: if you want to deploy the final war file to a real server,you should comment out the following two dependencies.

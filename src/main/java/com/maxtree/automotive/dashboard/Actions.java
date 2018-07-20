@@ -2,7 +2,7 @@ package com.maxtree.automotive.dashboard;
 
 public enum Actions {
 
-	INPUT("录入");
+	INPUT("前台录入");
 	
 	private Actions(String name) {
 		this.name = name;

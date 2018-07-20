@@ -78,9 +78,7 @@ public class TransactionService {
 	 * @return
 	 */
 	public List<Transaction> findForList(String vin) {
-		int number = Integer.parseInt(vin.substring(vin.length() - 4));
-		int index = number % 256;
-		
+		int index = getTableIndex(vin);
 		String sql = "SELECT * FROM TRANSACTION_"+index+" WHERE VIN=? ORDER BY TRANSACTIONUNIQUEID";
 		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {vin}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
 		return result;
@@ -92,9 +90,7 @@ public class TransactionService {
 	 * @return
 	 */
 	public int insert(Transaction transaction) {
-		int number = Integer.parseInt(transaction.getVin().substring(transaction.getVin().length() - 4));
-		int index = number % 256;
-		
+		int index = getTableIndex(transaction.getVin());
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 		String INSERT_TRANS_SQL = "INSERT INTO TRANSACTION_"+index+"(BARCODE,PLATETYPE,PLATENUMBER,VIN,DATECREATED,STATUS,SITECODE,BUSINESSCODE,COMMUNITYUNIQUEID,COMPANYUNIQUEID,LOCATIONCODE,DATEMODIFIED,UUID,TYPIST,INDEXNUMBER) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
@@ -136,9 +132,7 @@ public class TransactionService {
 	 * @param transaction
 	 */
 	public void update(Transaction transaction) {
-		int number = Integer.parseInt(transaction.getVin().substring(transaction.getVin().length() - 4));
-		int index = number % 256;
-		
+		int index = getTableIndex(transaction.getVin());
 		String sql = "UPDATE TRANSACTION_"+index+" SET BARCODE=?,PLATETYPE=?,PLATENUMBER=?,VIN=?,STATUS=?,DATEMODIFIED=?,BUSINESSCODE=?,UUID=?,CODE=?,INDEXNUMBER=? WHERE TRANSACTIONUNIQUEID=?";
 	 	int affected = jdbcTemplate.update(sql, new Object[] {transaction.getBarcode(), transaction.getPlateType(), transaction.getPlateNumber(), 
 	 			transaction.getVin(), transaction.getStatus(),transaction.getDateModified(), transaction.getBusinessCode(), 
@@ -151,13 +145,23 @@ public class TransactionService {
 	 * @param vin
 	 * @return
 	 */
-	public int findIndexByVIN(String vin) {
-		int number = Integer.parseInt(vin.substring(vin.length() - 4));
-		int index = number % 256;
+	public int findIndexNumber(String vin) {
+		int index = getTableIndex(vin);
 		String sql = "SELECT COUNT(TRANSACTIONUNIQUEID) FROM TRANSACTION_"+index+" WHERE VIN=?";
 		int count = jdbcTemplate.queryForObject( sql, new Object[] {vin}, Integer.class);
 		return count;
 	}
+	
+	/**
+	 * 
+	 * @param vin
+	 * @return
+	 */
+	private int getTableIndex(String vin) {
+		int num = Integer.parseInt(vin.substring(vin.length() - 4));
+		return num % 256;
+	}
+	
 	
 //	/**
 //	 * 

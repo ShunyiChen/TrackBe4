@@ -11,7 +11,7 @@ import com.maxtree.automotive.dashboard.domain.Transition;
 @Component
 public class TransitionService {
 
-private static final Logger log = LoggerFactory.getLogger(TransitionService.class);
+	private static final Logger log = LoggerFactory.getLogger(TransitionService.class);
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -19,9 +19,11 @@ private static final Logger log = LoggerFactory.getLogger(TransitionService.clas
 	/**
 	 * 
 	 * @param transition
+	 * @param vin
 	 */
-	public void insert(Transition transition) {
-		String UPDATE_TRANS_SQL = "INSERT INTO TRANSITION(TRANSACTIONUUID,ACTION,DETAILS,USERNAME,DATEUPDATED) VALUES(?,?,?,?,?)";
+	public void insert(Transition transition, String vin) {
+		int index = getTableIndex(vin);
+		String UPDATE_TRANS_SQL = "INSERT INTO TRANSITION_"+index+"(TRANSACTIONUUID,ACTION,DETAILS,USERNAME,DATEUPDATED) VALUES(?,?,?,?,?)";
 		int opt = jdbcTemplate.update(UPDATE_TRANS_SQL, new Object[] {
 				transition.getTransactionUUID(), 
 				transition.getAction(),
@@ -31,4 +33,13 @@ private static final Logger log = LoggerFactory.getLogger(TransitionService.clas
 		log.info("Affected id:"+opt);
 	}
 	
+	/**
+	 * 
+	 * @param vin
+	 * @return
+	 */
+	private int getTableIndex(String vin) {
+		int num = Integer.parseInt(vin.substring(vin.length() - 4));
+		return num % 256;
+	}
 }

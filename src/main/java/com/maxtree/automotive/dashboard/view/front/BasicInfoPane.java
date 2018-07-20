@@ -138,6 +138,10 @@ public class BasicInfoPane extends Panel{
 //		.bind(Transaction::getVin, Transaction::setVin);
 	}
 	
+	/**
+	 * 有效性验证
+	 * @return
+	 */
 	public boolean emptyChecks() {
 		if (StringUtils.isEmpty(plateTypeField.getSelectedItem())) {
 			
@@ -228,10 +232,18 @@ public class BasicInfoPane extends Panel{
 		transaction.setVin(vinField.getValue());
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
+	public String getBarCode() {
+		return barCodeField.getValue();
+	}
+	
+	public String getPlateNumber() {
+		return plateNumberField.getValue();
+	}
+	
+	public String getPlateType() {
+		return plateTypeField.getValue();
+	}
+ 
 	public String getVIN() {
 		return vinField.getValue();
 	}
