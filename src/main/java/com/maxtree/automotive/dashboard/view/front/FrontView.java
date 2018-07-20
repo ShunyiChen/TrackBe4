@@ -1,14 +1,17 @@
 package com.maxtree.automotive.dashboard.view.front;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import com.google.common.eventbus.Subscribe;
+import com.maxtree.automotive.dashboard.Actions;
 import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
@@ -22,10 +25,12 @@ import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Company;
+import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.Transaction;
+import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
@@ -628,7 +633,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     		basicInfoPane.populate(editableTrans);//赋值基本信息
         	editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
-        	editableTrans.setStatus(BusinessState.PUTAWAY.name);
         	editableTrans.setSiteCode(editableSite.getCode());
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
@@ -642,18 +646,63 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         	editableTrans.setIndexNumber(1);
         	
         	// 是否跳过质检
-        	// 跳过质检，完成逻辑上架
         	if(editableCompany.getIgnoreChecker() == 1) {
-        		editableTrans.setCode("");//上架号
+        		FrameNumber frame = ui.frameService.getAnAvailableCode(editableCompany.getStorehouseUniqueId());
+        		if(StringUtils.isEmpty(frame.getCode())) {
+        			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
+        			return;
+        		} else {
+        			//跳过质检，完成逻辑上架
+        			editableTrans.setCode(frame.getCode()+"");//上架号
+        			ui.frameService.updateVIN(basicInfoPane.getVIN(), frame.getCode());
+        		}
+        		
+        		editableTrans.setStatus(BusinessState.PUTAWAY.name);
         		ui.transactionService.insert(editableTrans);
+        		
+        		
+        		// 插入流程表
+        		
+        		
+        		Transition transition = new Transition();
+        		transition.setTransactionUUID(uuid);
+        		transition.setAction(Actions.INPUT.name);
+        		
+        		Map<String, String> map = new HashMap<String, String>();
+        		map.put("", loggedInUser.getUserName());
+        		String json = new MessageBodyParser().map2Json(map);
+        		transition.setDetails("");
+        		ui.transitionService.insert(transition);
+        		
+        		
+        		// 清空舞台
+            	cleanStage();
+            	Notifications.info("操作成功。已完成逻辑上架。");
         	}
-        	// 提交给质检
+        	// 提交给质检队列
         	else {
+        		editableTrans.setStatus(BusinessState.QUALITY.name);
         		ui.transactionService.insert(editableTrans);
+        		
+        		// 添加到质检队列
+        		Queue newQueue = new Queue();
+        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
+        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
+        		ui.queueService.create(newQueue, serial);
+        		// 清空舞台
+            	cleanStage();
+            	Notifications.info("操作成功。记录已提交到质检队列等待质检。");
         	}
     	}
     	// 非审档流程
     	else if (businessTypePane.getSelected().getNeedToCheck() == 0) {
+    		basicInfoPane.populate(editableTrans);//赋值基本信息
+    		
+    		
     		
     	}
     	// 需要审档（一级）流程
@@ -664,9 +713,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     	else if (businessTypePane.getSelected().getNeedToCheck() == 1 && businessTypePane.getSelected().getCheckLevel().equals("二级")) {
     		
     	}
-    	
-    	
-    	
     	
     	
     	
@@ -696,29 +742,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 //    		ui.transactionService.update(editableTrans);
 //    	}
     	
-    	// 添加到质检队列
-		Queue newQueue = new Queue();
-		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
-		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
-		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
-		ui.queueService.create(newQueue, serial);
-    	
-		// 清空舞台
-		cleanStage();
-		
-		// 提示信息
-		Notification success = new Notification("信息提交成功！");
-		success.setDelayMsec(2000);
-		success.setStyleName("bar success small");
-		success.setPosition(Position.BOTTOM_CENTER);
-		success.show(Page.getCurrent());
-		
-		// 清空编辑变量
-		editableTrans = null;
-		editableCompany = null;
-		editableSite = null;
+		 
     }
     
 	@Override

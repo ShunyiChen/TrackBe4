@@ -120,16 +120,6 @@ private static final Logger log = LoggerFactory.getLogger(QueueService.class);
 		}
 	}
 	
-//	public void delete(int lockedUserUniqueId, int serial) throws DataException {
-//		try {
-//			String sql = "DELETE FROM QUEUE_"+serial+" WHERE LOCKEDBYUSER=?";
-//		 	int opt = jdbcTemplate.update(sql, new Object[] {lockedUserUniqueId});
-//		 	log.info("delete affected row "+opt);
-//		} catch (Exception e) {
-//			throw new DataException(e.getMessage());
-//		}
-//	}
-	
 	/**
 	 * 
 	 * @param queue

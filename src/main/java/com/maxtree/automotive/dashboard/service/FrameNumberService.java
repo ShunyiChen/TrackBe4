@@ -164,6 +164,17 @@ public class FrameNumberService {
 	}
 	
 	/**
+	 * 
+	 * @param vin
+	 * @param code
+	 */
+	public void updateVIN(String vin, String code) {
+		String UPDATE_TRANS_SQL = "UPDATE FRAMENUMBER SET VIN=? WHERE CODE=?";
+		int opt = jdbcTemplate.update(UPDATE_TRANS_SQL, new Object[] { vin, code});
+		log.info("Affected id:"+opt);
+	}
+	
+	/**
 	 * 批量更新VIN
 	 * 
 	 * @param list

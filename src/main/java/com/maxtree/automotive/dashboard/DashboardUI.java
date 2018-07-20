@@ -28,6 +28,7 @@ import com.maxtree.automotive.dashboard.service.RoleService;
 import com.maxtree.automotive.dashboard.service.SiteService;
 import com.maxtree.automotive.dashboard.service.TenantService;
 import com.maxtree.automotive.dashboard.service.TransactionService;
+import com.maxtree.automotive.dashboard.service.TransitionService;
 import com.maxtree.automotive.dashboard.service.UserService;
 import com.maxtree.automotive.dashboard.view.LoginView;
 import com.maxtree.automotive.dashboard.view.MainView;
@@ -92,6 +93,8 @@ public final class DashboardUI extends UI {
 	public TenantService tenantService;
 	@Autowired
 	public FrameNumberService frameService;
+	@Autowired
+	public TransitionService transitionService;
 	
 	/*
 	 * This field stores an access to the dummy backend layer. In real applications
