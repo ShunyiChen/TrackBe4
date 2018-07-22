@@ -52,10 +52,8 @@ import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -65,7 +63,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -283,7 +280,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     				
     				getUnreadCount();
     				
-    				openTransaction(transactionUniqueId, dateCreated);
+//    				openTransaction(transactionUniqueId, dateCreated);
     				
     			}
             });
@@ -431,7 +428,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 				@Override
 				public void onSuccessful(Object... objects) {
 					
-					openTransaction(Integer.parseInt(objects[0].toString()), new Date());
+//					openTransaction(Integer.parseInt(objects[0].toString()), new Date());
 				}
     		};
     		SearchAndPrintWindow.open("", callback);
@@ -473,9 +470,12 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         btnCommit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         btnCommit.setDescription("保存并提交给质检");
         btnCommit.addClickListener(e -> {
+        	// 新建
         	if (editMode == 0) {
         		newTransaction();
-        	} else if(editMode == 1){
+        	} 
+        	// 更改
+        	else if(editMode == 1){
         		updateTransaction();
         	}
         });
@@ -553,9 +553,10 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
      * @param transactionUniqueId
      * @param messageDateCreated
      */
-    private void openTransaction(int transactionUniqueId, Date messageDateCreated) {
-//    	// 1.取得业务
-//    	editableTrans = ui.transactionService.findById(transactionUniqueId);
+    private void openTransaction(int transactionUniqueId, String vin) {
+    	editableTrans = ui.transactionService.findById(transactionUniqueId, vin);
+    	
+    	
 //		if (editableTrans != null) {
 //			long time1 = editableTrans.getDateModified().getTime();
 //			long time2 = messageDateCreated.getTime();
@@ -631,7 +632,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 			Notifications.warning("请将业务材料上传完整。");
 			return;
     	}
-    	// 4大流程
+    	//4大流程
     	//新车注册流程
     	if (businessTypePane.getSelected().getName().equals("注册登记")) {
     		basicInfoPane.populate(editableTrans);//赋值基本信息
@@ -648,10 +649,25 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	editableTrans.setIndexNumber(1);
-        	
         	// 是否跳过质检
         	if(editableCompany.getIgnoreChecker() == 1) {
-        		FrameNumber frame = ui.frameService.getAnAvailableCode(editableCompany.getStorehouseUniqueId());
+        		// 获得社区内的全部机构
+        		List<Company> companies = ui.communityService.findAllCompanies(loggedInUser.getCommunityUniqueId());
+        		Company com = null;
+        		for(int i = 0; i < companies.size(); i++) {
+        			com = companies.get(i);
+        			if (com.getHasStoreHouse() == 1) {
+        				break;
+        			}
+        		}
+        		
+        		
+        		
+        		FrameNumber frame = ui.frameService.getNewCode(com.getStorehouseName());
+        		
+        		
+        		System.out.println(com.getStorehouseName()+"   "+frame.getCode());
+        		
         		if(StringUtils.isEmpty(frame.getCode())) {
         			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
         			return;
@@ -694,12 +710,74 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
             	Notifications.info("操作成功。记录已提交到质检队列等待质检。");
         	}
     	}
+    	
+    	
+    	
     	// 非审档流程
     	else if (businessTypePane.getSelected().getNeedToCheck() == 0) {
-    		
-    		if (imageCheck()) {
-    			
-    		}
+    		basicInfoPane.populate(editableTrans);//赋值基本信息
+    		editableTrans.setDateCreated(new Date());
+        	editableTrans.setDateModified(new Date());
+        	editableTrans.setSiteCode(editableSite.getCode());
+        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
+        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
+        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
+        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
+        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setUuid(uuid);
+        	editableTrans.setCreator(loggedInUser.getUserName());
+        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
+        	editableTrans.setIndexNumber(indexNumber);
+        	
+        	// 是否跳过质检
+        	if(editableCompany.getIgnoreChecker() == 1) {
+        		// 新车注册首个上架号
+        		String firstCode = ui.transactionService.findFirstCode(basicInfoPane.getVIN());
+        		if(StringUtils.isEmpty(firstCode)) {
+        			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
+        			return;
+        		} else {
+        			//跳过质检，完成逻辑上架
+        			editableTrans.setCode(firstCode+"");//上架号
+        		}
+        		editableTrans.setStatus(BusinessState.B2.name);
+        		ui.transactionService.insert(editableTrans);
+        		
+        		//操作记录
+        		recordEvent(Actions.INPUT);
+        		
+        		//清空舞台
+            	cleanStage();
+            	Notifications.info("操作成功。已完成逻辑上架。");
+        	}
+        	// 提交给质检队列
+        	else {
+        		editableTrans.setStatus(BusinessState.B7.name);
+        		ui.transactionService.insert(editableTrans);
+        		
+        		// 添加到质检队列
+        		Queue newQueue = new Queue();
+        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
+        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
+        		ui.queueService.create(newQueue, serial);
+        		
+        		//操作记录
+        		recordEvent(Actions.INPUT);
+        		
+        		// 清空舞台
+            	cleanStage();
+            	Notifications.info("操作成功。记录已提交到质检队列等待质检。");
+        	}
+    	}
+    	
+    	// 需要审档（一级）流程
+    	else if (businessTypePane.getSelected().getNeedToCheck() == 1 && businessTypePane.getSelected().getCheckLevel().equals("一级")) {
     		
     		basicInfoPane.populate(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
@@ -719,18 +797,104 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         	
         	// 是否跳过质检
         	if(editableCompany.getIgnoreChecker() == 1) {
-        		FrameNumber frame = ui.frameService.getAnAvailableCode(editableCompany.getStorehouseUniqueId());
-        		if(StringUtils.isEmpty(frame.getCode())) {
+        		// 新车注册首个上架号
+        		String firstCode = ui.transactionService.findFirstCode(basicInfoPane.getVIN());
+        		if(StringUtils.isEmpty(firstCode)) {
         			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
         			return;
         		} else {
         			//跳过质检，完成逻辑上架
-        			editableTrans.setCode(frame.getCode()+"");//上架号
-        			ui.frameService.updateVIN(basicInfoPane.getVIN(), frame.getCode());
+        			editableTrans.setCode(firstCode+"");//上架号
         		}
-        		
-        		editableTrans.setStatus(BusinessState.B2.name);
+        		editableTrans.setStatus(BusinessState.B4.name);
         		ui.transactionService.insert(editableTrans);
+        		
+        		// 插入待审档队列
+        		Queue newQueue = new Queue();
+        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
+        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
+        		ui.queueService.create(newQueue, serial);
+        		
+        		
+        		//操作记录
+        		recordEvent(Actions.INPUT);
+        		
+        		//清空舞台
+            	cleanStage();
+            	Notifications.info("操作成功。已完成逻辑上架。");
+        	}
+        	// 提交给质检队列
+        	else {
+        		editableTrans.setStatus(BusinessState.B7.name);
+        		ui.transactionService.insert(editableTrans);
+        		
+        		// 添加到质检队列
+        		Queue newQueue = new Queue();
+        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
+        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
+        		ui.queueService.create(newQueue, serial);
+        		
+        		//操作记录
+        		recordEvent(Actions.INPUT);
+        		
+        		// 清空舞台
+            	cleanStage();
+            	Notifications.info("操作成功。记录已提交到质检队列等待质检。");
+        	}
+    		
+    	}
+    	
+    	
+    	// 需要审档（二级）流程
+    	else if (businessTypePane.getSelected().getNeedToCheck() == 1 && businessTypePane.getSelected().getCheckLevel().equals("二级")) {
+    		basicInfoPane.populate(editableTrans);//赋值基本信息
+    		editableTrans.setDateCreated(new Date());
+        	editableTrans.setDateModified(new Date());
+        	editableTrans.setSiteCode(editableSite.getCode());
+        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
+        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
+        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
+        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
+        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setUuid(uuid);
+        	editableTrans.setCreator(loggedInUser.getUserName());
+        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
+        	editableTrans.setIndexNumber(indexNumber);
+        	
+        	// 是否跳过质检
+        	if(editableCompany.getIgnoreChecker() == 1) {
+        		// 新车注册首个上架号
+        		String firstCode = ui.transactionService.findFirstCode(basicInfoPane.getVIN());
+        		if(StringUtils.isEmpty(firstCode)) {
+        			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
+        			return;
+        		} else {
+        			//跳过质检，完成逻辑上架
+        			editableTrans.setCode(firstCode+"");//上架号
+        		}
+        		editableTrans.setStatus(BusinessState.B4.name);
+        		ui.transactionService.insert(editableTrans);
+        		
+        		// 插入待审档队列
+        		Queue newQueue = new Queue();
+        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
+        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
+        		ui.queueService.create(newQueue, serial);
+        		
         		
         		//操作记录
         		recordEvent(Actions.INPUT);
@@ -762,27 +926,174 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
             	Notifications.info("操作成功。记录已提交到质检队列等待质检。");
         	}
     	}
-    	// 需要审档（一级）流程
-    	else if (businessTypePane.getSelected().getNeedToCheck() == 1 && businessTypePane.getSelected().getCheckLevel().equals("一级")) {
-    		
-    		
-    		
-    		
-    	}
-    	// 需要审档（二级）流程
-    	else if (businessTypePane.getSelected().getNeedToCheck() == 1 && businessTypePane.getSelected().getCheckLevel().equals("二级")) {
-    		
-    		
-    		
-    		
-    	}
+    	editableTrans = null;
     }
     
     /**
      * 
      */
     private void updateTransaction() {
+    	if(!basicInfoPane.emptyChecks()) {
+			Notifications.warning("有效性验证失败。");
+			return;
+    	}
+    	if (fileGrid.emptyChecks()) {
+			Notifications.warning("请将业务材料上传完整。");
+			return;
+    	}
     	
+    	//2大流程
+    	// 需要审档（一级）流程
+    	else if (businessTypePane.getSelected().getNeedToCheck() == 1 && businessTypePane.getSelected().getCheckLevel().equals("一级")) {
+    		
+    		basicInfoPane.populate(editableTrans);//赋值基本信息
+    		editableTrans.setDateCreated(new Date());
+        	editableTrans.setDateModified(new Date());
+        	editableTrans.setSiteCode(editableSite.getCode());
+        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
+        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
+        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
+        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
+        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setUuid(uuid);
+        	editableTrans.setCreator(loggedInUser.getUserName());
+        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
+        	editableTrans.setIndexNumber(indexNumber);
+        	
+        	// 是否跳过质检
+        	if(editableCompany.getIgnoreChecker() == 1) {
+        		// 新车注册首个上架号
+        		String firstCode = ui.transactionService.findFirstCode(basicInfoPane.getVIN());
+        		if(StringUtils.isEmpty(firstCode)) {
+        			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
+        			return;
+        		} else {
+        			//跳过质检，完成逻辑上架
+        			editableTrans.setCode(firstCode+"");//上架号
+        		}
+        		editableTrans.setStatus(BusinessState.B4.name);
+        		ui.transactionService.update(editableTrans);
+        		
+        		// 插入待审档队列
+        		Queue newQueue = new Queue();
+        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
+        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
+        		ui.queueService.create(newQueue, serial);
+        		
+        		
+        		//操作记录
+        		recordEvent(Actions.INPUT);
+        		
+        		//清空舞台
+            	cleanStage();
+            	Notifications.info("操作成功。本次业务已添加到待审档队列中，等待审档。");
+        	}
+        	// 提交给质检队列
+        	else {
+        		editableTrans.setStatus(BusinessState.B7.name);
+        		ui.transactionService.update(editableTrans);
+        		
+        		// 添加到质检队列
+        		Queue newQueue = new Queue();
+        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
+        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
+        		ui.queueService.create(newQueue, serial);
+        		
+        		//操作记录
+        		recordEvent(Actions.INPUT);
+        		
+        		// 清空舞台
+            	cleanStage();
+            	Notifications.info("操作成功。本次业务已提交到质检队列中，等待质检。");
+        	}
+    		
+    	}
+    	
+    	
+    	// 需要审档（二级）流程
+    	else if (businessTypePane.getSelected().getNeedToCheck() == 1 && businessTypePane.getSelected().getCheckLevel().equals("二级")) {
+    		basicInfoPane.populate(editableTrans);//赋值基本信息
+    		editableTrans.setDateCreated(new Date());
+        	editableTrans.setDateModified(new Date());
+        	editableTrans.setSiteCode(editableSite.getCode());
+        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
+        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
+        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
+        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
+        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setUuid(uuid);
+        	editableTrans.setCreator(loggedInUser.getUserName());
+        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
+        	editableTrans.setIndexNumber(indexNumber);
+        	
+        	// 是否跳过质检
+        	if(editableCompany.getIgnoreChecker() == 1) {
+        		// 新车注册首个上架号
+        		String firstCode = ui.transactionService.findFirstCode(basicInfoPane.getVIN());
+        		if(StringUtils.isEmpty(firstCode)) {
+        			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
+        			return;
+        		} else {
+        			//跳过质检，完成逻辑上架
+        			editableTrans.setCode(firstCode+"");//上架号
+        		}
+        		editableTrans.setStatus(BusinessState.B4.name);
+        		ui.transactionService.update(editableTrans);
+        		
+        		// 插入待审档队列
+        		Queue newQueue = new Queue();
+        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
+        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
+        		ui.queueService.create(newQueue, serial);
+        		
+        		
+        		//操作记录
+        		recordEvent(Actions.INPUT);
+        		
+        		//清空舞台
+            	cleanStage();
+            	Notifications.info("操作成功。本次业务已添加到审档队列中，等待审档。");
+        	}
+        	// 提交给质检队列
+        	else {
+        		editableTrans.setStatus(BusinessState.B7.name);
+        		ui.transactionService.update(editableTrans);
+        		
+        		// 添加到质检队列
+        		Queue newQueue = new Queue();
+        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
+        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
+        		ui.queueService.create(newQueue, serial);
+        		
+        		//操作记录
+        		recordEvent(Actions.INPUT);
+        		
+        		// 清空舞台
+            	cleanStage();
+            	Notifications.info("操作成功。本次业务已添加到质检队列中，等待质检。");
+        	}
+    	}
+    	editableTrans = null;
     }
     
     /**
@@ -812,23 +1123,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 		details.put("BUSINESSTYPE", businessTypePane.getSelected().getName());
 		event.setDetails(jsonHelper.map2Json(details));
 		ui.userEventService.insert(event, loggedInUser.getUserName());
-    }
-    
-    /**
-     * 
-     * @return
-     */
-    private boolean imageCheck() {
-    	/*
-    	 需求：
-    	 设立一个影响化管理人，有单独角色单独界面，界面有列表，一行一个车牌号。全程自己手动更改业务状态（待查看，待提档，待归档，完成）
-    	 影像化录入，单独角色单独界面，根据纸质录入车辆信息，上传原文，提交给质检。
-    	 影响化质检，单独角色单独界面，根据纸质录入车辆信息，查看原文，退回质检或完成后将纸质档案放回。
-    	  
-    	 
-    	 
-    	 */
-    	return false;
     }
     
 	@Override
@@ -875,6 +1169,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 	public String uuid;	//UUID业务与原文关联号
 	public int batch;	//业务批次号。默认最大1000个批次，每批次最多放5000文件夹。
 	public String vin;	//车辆识别代码。用于分表。
+	public boolean flag = true;// 如果flag为false则停止后续操作。
 	
     private Label titleLabel;
     private Window notificationsWindow;
@@ -883,8 +1178,8 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private Binder<Transaction> binder = new Binder<>();
     //各个区域面板
-    private BasicInfoPane basicInfoPane = new BasicInfoPane(this);
-    private BusinessTypePane businessTypePane = new BusinessTypePane(this);
+    public BasicInfoPane basicInfoPane = new BasicInfoPane(this);
+    public BusinessTypePane businessTypePane = new BusinessTypePane(this);
     public ThumbnailGrid fileGrid = new ThumbnailGrid(this);
     public CapturePane capturePane = new CapturePane();
     

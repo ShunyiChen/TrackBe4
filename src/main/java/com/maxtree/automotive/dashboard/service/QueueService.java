@@ -126,8 +126,8 @@ private static final Logger log = LoggerFactory.getLogger(QueueService.class);
 	 * @param serial
 	 */
 	public void create(Queue queue, int serial) {
-		String sql = "INSERT INTO QUEUE_"+serial+"(TRANSACTIONUNIQUEID,LOCKEDBYUSER,SENTBYUSER,COMMUNITYUNIQUEID) VALUES(?,?,?,?)";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {queue.getTransactionUniqueId(), queue.getLockedByUser(), queue.getSentByUser(), queue.getCommunityUniqueId()});
+		String sql = "INSERT INTO QUEUE_"+serial+"(TRANSACTIONUNIQUEID,LOCKEDBYUSER,SENTBYUSER,COMPANYUNIQUEID,COMMUNITYUNIQUEID) VALUES(?,?,?,?,?)";
+	 	int opt = jdbcTemplate.update(sql, new Object[] {queue.getTransactionUniqueId(), queue.getLockedByUser(), queue.getSentByUser(),queue.getCompanyUniqueId(),queue.getCommunityUniqueId()});
 	 	log.info("QueueService inserted row "+opt);
 	}
 }

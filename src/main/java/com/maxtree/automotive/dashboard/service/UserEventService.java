@@ -22,7 +22,7 @@ public class UserEventService {
 	 */
 	public void insert(UserEvent event, String userName) {
 		int index = getTableIndex(userName);
-		String UPDATE_TRANS_SQL = "INSERT INTO USEREVENT"+index+"(USERNAME,ACTION,DETAILS,DATEUPDATED) VALUES(?,?,?,?)";
+		String UPDATE_TRANS_SQL = "INSERT INTO USEREVENT_"+index+"(USERNAME,ACTION,DETAILS,DATEUPDATED) VALUES(?,?,?,?)";
 		int opt = jdbcTemplate.update(UPDATE_TRANS_SQL, new Object[] {
 				event.getUserName(),
 				event.getAction(),

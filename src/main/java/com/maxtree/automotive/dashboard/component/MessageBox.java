@@ -60,13 +60,6 @@ public class MessageBox extends Window {
 			close();
 			onOK.onSuccessful();
 		});
-//		this.addCloseListener(e->{
-//			if (onCancel != null) 
-//				onCancel.onSuccessful();
-//			
-//		});
-		
-		
 		mainLayout.addComponents(messageLabel, wrapper);
 	}
 

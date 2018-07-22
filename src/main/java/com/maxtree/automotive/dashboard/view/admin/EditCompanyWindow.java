@@ -283,7 +283,7 @@ public class EditCompanyWindow extends Window {
 	private ComboBox<String> citySelector = new ComboBox<String>("地级市:");
 	private ComboBox<String> districtSelector = new ComboBox<String>("市、县级市:");
 	private ComboBox<String> hasStore = new ComboBox<String>("是否有库房:", Arrays.asList(new String[] {"是","否"}));
-	private ComboBox<String> hasChecker = new ComboBox<String>("是否有质检:", Arrays.asList(new String[] {"是","否"}));
+	private ComboBox<String> hasChecker = new ComboBox<String>("忽略质检:", Arrays.asList(new String[] {"是","否"}));
 	private ComboBox<Community> communitySelector = new ComboBox<Community>();
 	private TextField nameField;
 	private TextField addrField;

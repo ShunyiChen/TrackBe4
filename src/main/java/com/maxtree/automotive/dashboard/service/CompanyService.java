@@ -88,7 +88,7 @@ public class CompanyService {
 				ps.setString(5, company.getDistrict());
 				ps.setString(6, company.getAddress());
 				ps.setInt(7, company.getHasStoreHouse());
-				ps.setInt(8, company.getStorehouseUniqueId());
+				ps.setString(8, company.getStorehouseName());
 				ps.setInt(9, company.getIgnoreChecker());
 				return ps;
 			}
@@ -114,8 +114,8 @@ public class CompanyService {
 			jdbcTemplate.update(Sql2, new Object[] {u.getCommunityUniqueId(), u.getCompanyUniqueId(), u.getCompanyName(), u.getUserUniqueId()});
 		}
 		
-		String sql = "UPDATE COMPANIES SET COMMUNITYUNIQUEID=?,COMPANYNAME=?,PROVINCE=?,CITY=?,DISTRICT=?,ADDRESS=?,HASSTOREHOUSE=?,STOREHOUSEUNIQUEID=?,IGNORECHECKER=? WHERE COMPANYUNIQUEID=?";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {company.getCommunityUniqueId(), company.getCompanyName(),company.getProvince(),company.getCity(),company.getDistrict(), company.getAddress(), company.getHasStoreHouse(),company.getStorehouseUniqueId(),company.getIgnoreChecker(),company.getCompanyUniqueId()});
+		String sql = "UPDATE COMPANIES SET COMMUNITYUNIQUEID=?,COMPANYNAME=?,PROVINCE=?,CITY=?,DISTRICT=?,ADDRESS=?,HASSTOREHOUSE=?,STOREHOUSENAME=?,IGNORECHECKER=? WHERE COMPANYUNIQUEID=?";
+	 	int opt = jdbcTemplate.update(sql, new Object[] {company.getCommunityUniqueId(), company.getCompanyName(),company.getProvince(),company.getCity(),company.getDistrict(), company.getAddress(), company.getHasStoreHouse(),company.getStorehouseName(),company.getIgnoreChecker(),company.getCompanyUniqueId()});
 	 	log.info("Updated row "+opt);
 	}
 	
@@ -124,8 +124,8 @@ public class CompanyService {
 	 * @param company
 	 */
 	public void updateStorehouse(Company company) {
-		String sql = "UPDATE COMPANIES SET STOREHOUSEUNIQUEID=? WHERE COMPANYUNIQUEID=?";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {company.getStorehouseUniqueId(), company.getCompanyUniqueId()});
+		String sql = "UPDATE COMPANIES SET STOREHOUSENAME=? WHERE COMPANYUNIQUEID=?";
+	 	int opt = jdbcTemplate.update(sql, new Object[] {company.getStorehouseName(), company.getCompanyUniqueId()});
 	 	log.info("Updated row "+opt);
 	}
 	
@@ -247,12 +247,12 @@ public class CompanyService {
 	/**
 	 * 获取已安排的库房
 	 * 
-	 * @param storeId
+	 * @param storehouseName
 	 * @return
 	 */
-	public FrameNumber findAssignedStores(int storeId) {
-		String sql = "SELECT * FROM FRAMENUMBER WHERE FRAMEUNIQUEID=?";
-		List<FrameNumber> results = jdbcTemplate.query(sql, new Object[] {storeId}, new BeanPropertyRowMapper<FrameNumber>(FrameNumber.class));
+	public FrameNumber findAssignedStores(String storehouseName) {
+		String sql = "SELECT * FROM FRAMENUMBER WHERE STOREHOUSENAME=?";
+		List<FrameNumber> results = jdbcTemplate.query(sql, new Object[] {storehouseName}, new BeanPropertyRowMapper<FrameNumber>(FrameNumber.class));
 		if (results.size() > 0) {
 			return results.get(0);
 		}

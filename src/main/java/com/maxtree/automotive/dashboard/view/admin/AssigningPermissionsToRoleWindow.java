@@ -47,7 +47,8 @@ public class AssigningPermissionsToRoleWindow extends Window {
 		this.setWidth("900px");
 		this.setHeight("510px");
 		this.setModal(true);
-		this.setResizable(false);
+		this.setClosable(true);
+		this.setResizable(true);
 		this.setCaption("为角色分配权限 - "+role.getRoleName());
 		this.addStyleName("set-permissions-to-role-window-"+this.hashCode());
 		
@@ -75,7 +76,7 @@ public class AssigningPermissionsToRoleWindow extends Window {
 		gridLayout = new GridLayout();
 		gridLayout.setSpacing(false);
 		gridLayout.setMargin(false);
-        gridLayout.setWidth("100%");
+        gridLayout.setWidth("1290px");
         /*
          Did you mean 100% height and undefined width? (to get horizontal scrollbar, but no vertical one)
 Of course - if you want to get both scrollbars and the content size can not be set in pixels, one should use setSizeUndefined().
@@ -84,10 +85,7 @@ Of course - if you want to get both scrollbars and the content size can not be s
         
         generateMatrixGrid();
 		
-		HorizontalLayout buttonPane = new HorizontalLayout();
-		buttonPane.setSizeFull();
-		buttonPane.setSpacing(false);
-		buttonPane.setMargin(false);
+	 
 		Button btnCancel = new Button("取消");
 		btnOK = new Button("确定");
 		btnApply = new Button("应用");
@@ -97,26 +95,22 @@ Of course - if you want to get both scrollbars and the content size can not be s
 		btnApply.addStyleName("grid-button-without-border");
 		
 		HorizontalLayout subButtonPane = new HorizontalLayout();
-		subButtonPane.setSpacing(false);
-		subButtonPane.setMargin(false);
 		subButtonPane.setWidth("206px");
-		subButtonPane.setHeight("100%");
+		subButtonPane.setHeightUndefined();
 		subButtonPane.addComponents(btnCancel, btnOK, btnApply);
-		subButtonPane.setComponentAlignment(btnCancel, Alignment.BOTTOM_CENTER);
-		subButtonPane.setComponentAlignment(btnOK, Alignment.BOTTOM_CENTER);
-		subButtonPane.setComponentAlignment(btnApply, Alignment.BOTTOM_CENTER);
-		buttonPane.addComponent(subButtonPane);
-		buttonPane.setComponentAlignment(subButtonPane, Alignment.BOTTOM_RIGHT);
+		subButtonPane.setComponentAlignment(btnCancel, Alignment.MIDDLE_LEFT);
+		subButtonPane.setComponentAlignment(btnOK, Alignment.MIDDLE_LEFT);
+		subButtonPane.setComponentAlignment(btnApply, Alignment.MIDDLE_LEFT);
 		
 		Panel scrollPane = new Panel();
 		scrollPane.setWidth("100%");
 		scrollPane.setHeight("365px");
 		scrollPane.setContent(gridLayout);
 		
-		mainLayout.addComponents(header, Box.createVerticalBox(1), scrollPane, buttonPane);
+		mainLayout.addComponents(header, Box.createVerticalBox(1), scrollPane, subButtonPane);
 		mainLayout.setComponentAlignment(header,Alignment.MIDDLE_CENTER);
 		mainLayout.setComponentAlignment(scrollPane, Alignment.TOP_CENTER);
-		mainLayout.setComponentAlignment(buttonPane, Alignment.MIDDLE_CENTER);
+		mainLayout.setComponentAlignment(subButtonPane, Alignment.BOTTOM_RIGHT);
 		this.setContent(mainLayout);
 		
 		btnCancel.addClickListener(e -> {
@@ -130,7 +124,7 @@ Of course - if you want to get both scrollbars and the content size can not be s
 	 */
 	private Permission[][] getPermissionArray() {
 		// 最大值索引 = 权限分类数
-		Permission[][] array = new Permission[14][7];
+		Permission[][] array = new Permission[14][10];
 		List<Permission> values = ui.permissionService.findAll();
 		String key = null;
 		int i = 0;

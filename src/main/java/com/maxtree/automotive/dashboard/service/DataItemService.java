@@ -52,7 +52,9 @@ public class DataItemService {
 	
 	/**
 	 * 
-	 * @param itemType
+	 * 获取字典
+	 * 
+	 * @param itemType 1：号牌种类，2：地区代号，3：业务材料
 	 * @return
 	 */
 	public List<DataDictionary> findAllByType(int itemType) {

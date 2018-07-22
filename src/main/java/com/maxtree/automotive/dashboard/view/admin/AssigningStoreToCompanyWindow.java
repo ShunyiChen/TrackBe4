@@ -70,7 +70,7 @@ public class AssigningStoreToCompanyWindow extends Window {
 		select.setRightColumnCaption("已分配的库");
 		
 		List<FrameNumber> selectedStored = new ArrayList<>();
-		assignedStore = ui.companyService.findAssignedStores(company.getStorehouseUniqueId());
+		assignedStore = ui.companyService.findAssignedStores(company.getStorehouseName());
 		for (FrameNumber store : allStores) {
 			if (assignedStore.getFrameUniqueId().intValue() == store.getFrameUniqueId().intValue()) {
 				selectedStored.add(store);
@@ -117,13 +117,13 @@ public class AssigningStoreToCompanyWindow extends Window {
 		} 
 		//取消机构
 		else if(list.size() == 0) {
-			company.setStorehouseUniqueId(0);
+			company.setStorehouseName("");
 			ui.companyService.updateStorehouse(company);
 		}
 		//保存设置
 		else {
 			for(FrameNumber store : list) {
-				company.setStorehouseUniqueId(store.getFrameUniqueId());
+				company.setStorehouseName(store.getStorehouseName());
 				// update database
 				ui.companyService.updateStorehouse(company);
 			}

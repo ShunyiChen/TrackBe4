@@ -74,12 +74,12 @@ public class Company {
 		this.hasStoreHouse = hasStoreHouse;
 	}
 
-	public Integer getStorehouseUniqueId() {
-		return storehouseUniqueId;
+	public String getStorehouseName() {
+		return storehouseName;
 	}
 
-	public void setStorehouseUniqueId(Integer storehouseUniqueId) {
-		this.storehouseUniqueId = storehouseUniqueId;
+	public void setStorehouseName(String storehouseName) {
+		this.storehouseName = storehouseName;
 	}
 
 	public Integer getIgnoreChecker() {
@@ -111,7 +111,7 @@ public class Company {
 	private String district;				// 车辆所在市、县级市
 	private String address;                 // 详细地址
 	private Integer hasStoreHouse = 0; 		// 是否存在库房1存在,0不存在
-	private Integer storehouseUniqueId = 0; // 库房ID
+	private String storehouseName;		 	// 库房名称（作为唯一标识）
 	private Integer ignoreChecker = 0;   	// 忽略质检，1-忽略 0-未忽略
 	private List<User> employees;
 }

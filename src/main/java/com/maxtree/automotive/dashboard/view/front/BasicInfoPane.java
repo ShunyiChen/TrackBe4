@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Transaction;
@@ -119,9 +120,16 @@ public class BasicInfoPane extends Panel{
 //			ArrayList<HashMap<String, String>> lst = interF.getbusView(barCodeField.getValue(), plateTypeField.getValue(), plateNumberField.getValue());
 //			view.vin = lst.get(0).get("clsbdh");
 		}
-		view.vin = "LGB12YEA9DY001226";
+		view.vin = "LGB12YEA9DY001226"; /// 这句话可以删除
 		vinField.setValue(view.vin);
+		// 有效性验证
+		if(StringUtils.isEmpty(view.vin)) {
+			Notifications.warning("有效性验证失败。");
+			view.flag = false;
+		}
 	}
+	
+	
 	
 	/**
 	 * 
@@ -247,6 +255,18 @@ public class BasicInfoPane extends Panel{
 	public String getVIN() {
 		return vinField.getValue();
 	}
+	
+//	/**
+//	 * 
+//	 * @param enabled
+//	 */
+//	public void setEnabled2(boolean enabled) {
+//		barCodeField.setEnabled(enabled);
+//		plateNumberField.setEnabled(enabled);
+//		plateTypeField.setEnabled(enabled);
+//		vinField.setEnabled(enabled);
+//	}
+//	
 	
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private TextField barCodeField = new TextField("条形码:"); 			// 条形码文本框

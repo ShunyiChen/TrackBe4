@@ -292,17 +292,18 @@ public class FrameNumberService {
 	}
 	
 	/**
-	 * 获取一个可用的上架号
+	 * 获取一个新的的上架号
 	 * 
-	 * @param storeID
+	 * @param storeHouseName 库房名称
 	 * @return
 	 */
-	public FrameNumber getAnAvailableCode(int storeID) {
-		String sql = "SELECT * FROM FRAMENUMBER WHERE STOREHOUSEUNIQUEID=? AND CODE IS NOT NULL AND VIN IS NULL ORDER BY FRAMEUNIQUEID LIMIT ?";
-		List<FrameNumber> results = jdbcTemplate.query(sql, new Object[] {storeID,1}, new BeanPropertyRowMapper<FrameNumber>(FrameNumber.class));
+	public FrameNumber getNewCode(String storeHouseName) {
+		String sql = "SELECT * FROM FRAMENUMBER WHERE STOREHOUSENAME=? AND CODE IS NOT NULL AND VIN IS NULL ORDER BY FRAMEUNIQUEID LIMIT ?";
+		List<FrameNumber> results = jdbcTemplate.query(sql, new Object[] {storeHouseName,1}, new BeanPropertyRowMapper<FrameNumber>(FrameNumber.class));
 		if (results.size() > 0) {
 			return results.get(0);
 		}
 		return new FrameNumber();
 	}
+	
 }

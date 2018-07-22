@@ -62,7 +62,7 @@ public class AssigningDataitemToBusinessWindow extends Window {
 		hlayout.setSpacing(false);
 		hlayout.setMargin(false);
 		
-		List<DataDictionary> allItems = ui.dataItemService.findAllByType(2);
+		List<DataDictionary> allItems = ui.dataItemService.findAllByType(3);
 		List<DataDictionary> assignItems = ui.businessService.assignedItems(business.getCode());
 		select = new TwinColSelect<>(null, allItems);
 		select.setWidth("100%");

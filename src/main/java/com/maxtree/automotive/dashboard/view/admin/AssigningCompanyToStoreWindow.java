@@ -118,14 +118,14 @@ public class AssigningCompanyToStoreWindow extends Window {
 		//取消机构
 		else if(list.size() == 0) {
 			if (assignedCompany != null) {
-				assignedCompany.setStorehouseUniqueId(0);
+				assignedCompany.setStorehouseName("");
 				ui.companyService.updateStorehouse(assignedCompany);
 			}
 		}
 		//保存设置
 		else {
 			for(Company com : list) {
-				com.setStorehouseUniqueId(storehouse.getFrameUniqueId());
+				com.setStorehouseName(storehouse.getStorehouseName());
 				// update database
 				ui.companyService.updateStorehouse(com);
 			}

@@ -56,21 +56,22 @@ public class TransactionService {
 //		return result;
 //	}
 	
-//	/**
-//	 * 
-//	 * @param transactionUniqueId
-//	 * @return
-//	 */
-//	public Transaction findById(int transactionUniqueId) {
-//		Transaction trans = null;
-//		String sql = "SELECT * FROM TRANSACTION WHERE TRANSACTIONUNIQUEID = ?";
-//		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {transactionUniqueId}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
-//		if (result.size() > 0) {
-//			trans = result.get(0);
-//		}
-//		return trans;
-//	}
-	
+	/**
+	 * 
+	 * @param transactionUniqueId
+	 * @param vin
+	 * @return
+	 */
+	public Transaction findById(int transactionUniqueId, String vin) {
+		int index = getTableIndex(vin);
+		String sql = "SELECT * FROM TRANSACTION_"+index+" WHERE TRANSACTIONUNIQUEID=?";
+		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {transactionUniqueId}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
+		Transaction trans = null;
+		if (result.size() > 0) {
+			trans = result.get(0);
+		}
+		return trans;
+	}
 	
 	/**
 	 * 
@@ -92,7 +93,7 @@ public class TransactionService {
 	public int insert(Transaction transaction) {
 		int index = getTableIndex(transaction.getVin());
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-		String INSERT_TRANS_SQL = "INSERT INTO TRANSACTION_"+index+"(BARCODE,PLATETYPE,PLATENUMBER,VIN,DATECREATED,STATUS,SITECODE,BUSINESSCODE,COMMUNITYUNIQUEID,COMPANYUNIQUEID,LOCATIONCODE,DATEMODIFIED,UUID,TYPIST,INDEXNUMBER) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String INSERT_TRANS_SQL = "INSERT INTO TRANSACTION_"+index+"(BARCODE,PLATETYPE,PLATENUMBER,VIN,DATECREATED,STATUS,SITECODE,BUSINESSCODE,COMMUNITYUNIQUEID,COMPANYUNIQUEID,LOCATIONCODE,DATEMODIFIED,UUID,CREATOR,INDEXNUMBER) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -150,6 +151,19 @@ public class TransactionService {
 		String sql = "SELECT COUNT(TRANSACTIONUNIQUEID) FROM TRANSACTION_"+index+" WHERE VIN=?";
 		int count = jdbcTemplate.queryForObject( sql, new Object[] {vin}, Integer.class);
 		return count;
+	}
+	
+	/**
+	 * 获取新车注册业务的上架号
+	 * 
+	 * @param vin
+	 * @return
+	 */
+	public String findFirstCode(String vin) {
+		int index = getTableIndex(vin);
+		String sql = "SELECT CODE FROM TRANSACTION_"+index+" WHERE VIN=? AND INDEXNUMBER=?";
+		String code = jdbcTemplate.queryForObject( sql, new Object[] {vin, 1}, String.class);
+		return code;
 	}
 	
 	/**
