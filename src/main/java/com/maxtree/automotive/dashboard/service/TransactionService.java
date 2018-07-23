@@ -75,6 +75,23 @@ public class TransactionService {
 	
 	/**
 	 * 
+	 * @param uuid
+	 * @param vin
+	 * @return
+	 */
+	public Transaction findByUUID(String uuid, String vin) {
+		int index = getTableIndex(vin);
+		String sql = "SELECT * FROM TRANSACTION_"+index+" WHERE UUID=?";
+		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {uuid}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
+		Transaction trans = null;
+		if (result.size() > 0) {
+			trans = result.get(0);
+		}
+		return trans;
+	}
+	
+	/**
+	 * 
 	 * @param vin
 	 * @return
 	 */
@@ -121,9 +138,7 @@ public class TransactionService {
 			}
 		}, keyHolder);
 		int transactionUniqueId = keyHolder.getKey().intValue();
-		
-		log.info("Created transactionId = "+transactionUniqueId);
-		
+		log.info("Affected row = "+transactionUniqueId);
 		return transactionUniqueId;
 	}
 	

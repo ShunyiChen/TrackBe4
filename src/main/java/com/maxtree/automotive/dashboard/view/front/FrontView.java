@@ -165,7 +165,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 		ui.addPollListener(new UIEvents.PollListener() {
 			@Override
 			public void poll(UIEvents.PollEvent event) {
-				getUnreadCount();
+				updateUnreadCount();
 			}
 		});
 	}
@@ -257,32 +257,32 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
             notificationLayout.addLayoutClickListener(e -> {
             	
             	notificationsWindow.close();
-            	if ("text".equals(type)) {
-            		
-            		 showAll(allMessages, messageUniqueId);
-            		 
-    			} else if ("transaction".equals(type)) {
-//    				String senderUserName = m.get("username").toString();
-//    				String senderPicture = "../VAADIN/themes/dashboard/"+ m.get("picture").toString();
-//    				String subject = m.get("subject").toString();
-    				int transactionUniqueId = 0;
-//    				String status = null;
-    				if (type.equals("transaction")) {
-    					transactionUniqueId = Integer.parseInt(map.get("transactionUniqueId").toString());
-//    					status = map.get("status").toString();
-    				}
-//    				String read = m.get("read").toString().equals("1")?"已读":"未读";
-//    				MessageWrapper wrapper = new MessageWrapper(messageUniqueId, senderPicture+" "+senderUserName, senderPicture, subject, messageContent, transactionUniqueId, read, dateCreated, type, status);
-    				// 标记已读
-    				ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
-    				
-    				CacheManager.getInstance().refreshSendDetailsCache();
-    				
-    				getUnreadCount();
-    				
-//    				openTransaction(transactionUniqueId, dateCreated);
-    				
-    			}
+//            	if ("text".equals(type)) {
+//            		
+//            		 showAll(allMessages, messageUniqueId);
+//            		 
+//    			} else if ("transaction".equals(type)) {
+////    				String senderUserName = m.get("username").toString();
+////    				String senderPicture = "../VAADIN/themes/dashboard/"+ m.get("picture").toString();
+////    				String subject = m.get("subject").toString();
+//    				int transactionUniqueId = 0;
+////    				String status = null;
+//    				if (type.equals("transaction")) {
+//    					transactionUniqueId = Integer.parseInt(map.get("transactionUniqueId").toString());
+////    					status = map.get("status").toString();
+//    				}
+////    				String read = m.get("read").toString().equals("1")?"已读":"未读";
+////    				MessageWrapper wrapper = new MessageWrapper(messageUniqueId, senderPicture+" "+senderUserName, senderPicture, subject, messageContent, transactionUniqueId, read, dateCreated, type, status);
+//    				// 标记已读
+//    				ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
+//    				
+//    				CacheManager.getInstance().refreshSendDetailsCache();
+//    				
+//    				getUnreadCount();
+//    				
+////    				openTransaction(transactionUniqueId, dateCreated);
+//    				
+//    			}
             });
         }
         
@@ -330,7 +330,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 
     @Override
     public void enter(final ViewChangeEvent event) {
-    	getUnreadCount();
+//    	updateUnreadCount();
     }
 
     public static final class NotificationsButton extends Button {
@@ -375,7 +375,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     	Callback2 event = new Callback2() {
 			@Override
 			public void onSuccessful(Object... objects) {
-				getUnreadCount();
+//				getUnreadCount();
 			}
     	};
     	MessageInboxWindow.open(allMessages, event, selectedMessageUniqueId);
@@ -660,14 +660,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         				break;
         			}
         		}
-        		
-        		
-        		
         		FrameNumber frame = ui.frameService.getNewCode(com.getStorehouseName());
-        		
-        		
-        		System.out.println(com.getStorehouseName()+"   "+frame.getCode());
-        		
         		if(StringUtils.isEmpty(frame.getCode())) {
         			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
         			return;
@@ -681,7 +674,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		ui.transactionService.insert(editableTrans);
         		
         		//操作记录
-        		recordEvent(Actions.INPUT);
+        		track(Actions.INPUT);
         		
         		//清空舞台
             	cleanStage();
@@ -694,16 +687,16 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		
         		// 添加到质检队列
         		Queue newQueue = new Queue();
-        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setUuid(editableTrans.getUuid());
+        		newQueue.setVin(editableTrans.getVin());
         		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
         		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
         		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		recordEvent(Actions.INPUT);
+        		track(Actions.INPUT);
         		
         		// 清空舞台
             	cleanStage();
@@ -746,7 +739,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		ui.transactionService.insert(editableTrans);
         		
         		//操作记录
-        		recordEvent(Actions.INPUT);
+        		track(Actions.INPUT);
         		
         		//清空舞台
             	cleanStage();
@@ -759,16 +752,16 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		
         		// 添加到质检队列
         		Queue newQueue = new Queue();
-        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setUuid(editableTrans.getUuid());
+        		newQueue.setVin(editableTrans.getVin());
         		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
         		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
         		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		recordEvent(Actions.INPUT);
+        		track(Actions.INPUT);
         		
         		// 清空舞台
             	cleanStage();
@@ -811,9 +804,9 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		
         		// 插入待审档队列
         		Queue newQueue = new Queue();
-        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setUuid(editableTrans.getUuid());
+        		newQueue.setVin(editableTrans.getVin());
         		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
         		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
         		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
@@ -821,7 +814,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		
         		
         		//操作记录
-        		recordEvent(Actions.INPUT);
+        		track(Actions.INPUT);
         		
         		//清空舞台
             	cleanStage();
@@ -834,16 +827,16 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		
         		// 添加到质检队列
         		Queue newQueue = new Queue();
-        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setUuid(editableTrans.getUuid());
+        		newQueue.setVin(editableTrans.getVin());
         		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
         		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
         		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		recordEvent(Actions.INPUT);
+        		track(Actions.INPUT);
         		
         		// 清空舞台
             	cleanStage();
@@ -887,9 +880,9 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		
         		// 插入待审档队列
         		Queue newQueue = new Queue();
-        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setUuid(editableTrans.getUuid());
+        		newQueue.setVin(editableTrans.getVin());
         		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
         		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
         		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
@@ -897,7 +890,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		
         		
         		//操作记录
-        		recordEvent(Actions.INPUT);
+        		track(Actions.INPUT);
         		
         		//清空舞台
             	cleanStage();
@@ -910,16 +903,16 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		
         		// 添加到质检队列
         		Queue newQueue = new Queue();
-        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setUuid(editableTrans.getUuid());
+        		newQueue.setVin(editableTrans.getVin());
         		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
         		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
         		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		recordEvent(Actions.INPUT);
+        		track(Actions.INPUT);
         		
         		// 清空舞台
             	cleanStage();
@@ -978,9 +971,9 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		
         		// 插入待审档队列
         		Queue newQueue = new Queue();
-        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setUuid(editableTrans.getUuid());
+        		newQueue.setVin(editableTrans.getVin());
         		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
         		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
         		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
@@ -988,7 +981,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		
         		
         		//操作记录
-        		recordEvent(Actions.INPUT);
+        		track(Actions.INPUT);
         		
         		//清空舞台
             	cleanStage();
@@ -1001,16 +994,16 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		
         		// 添加到质检队列
         		Queue newQueue = new Queue();
-        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setUuid(editableTrans.getUuid());
+        		newQueue.setVin(editableTrans.getVin());
         		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
         		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
         		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		recordEvent(Actions.INPUT);
+        		track(Actions.INPUT);
         		
         		// 清空舞台
             	cleanStage();
@@ -1054,9 +1047,9 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		
         		// 插入待审档队列
         		Queue newQueue = new Queue();
-        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setUuid(editableTrans.getUuid());
+        		newQueue.setVin(editableTrans.getVin());
         		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
         		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
         		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
@@ -1064,7 +1057,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		
         		
         		//操作记录
-        		recordEvent(Actions.INPUT);
+        		track(Actions.INPUT);
         		
         		//清空舞台
             	cleanStage();
@@ -1077,16 +1070,16 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		
         		// 添加到质检队列
         		Queue newQueue = new Queue();
-        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
+        		newQueue.setUuid(editableTrans.getUuid());
+        		newQueue.setVin(editableTrans.getVin());
         		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
         		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
         		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		recordEvent(Actions.INPUT);
+        		track(Actions.INPUT);
         		
         		// 清空舞台
             	cleanStage();
@@ -1100,12 +1093,21 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
      * 
      * @param act
      */
-    private void recordEvent(Actions act) {
+    private void track(Actions act) {
+    	Map<String, String> details = new HashMap<String, String>();
+    	details.put("STATUS", editableTrans.getStatus());
+		details.put("BARCODE", basicInfoPane.getBarCode());
+		details.put("PLATETYPE", basicInfoPane.getPlateType());
+		details.put("PLATENUMBER", basicInfoPane.getPlateNumber());
+		details.put("VIN", basicInfoPane.getVIN());
+		details.put("BUSINESSTYPE", businessTypePane.getSelected().getName());
+		String json = jsonHelper.map2Json(details);
+    	
     	// 插入移行表
 		Transition transition = new Transition();
 		transition.setTransactionUUID(uuid);
 		transition.setAction(act.name);
-		transition.setDetails(null);
+		transition.setDetails(json);
 		transition.setUserName(loggedInUser.getUserName());
 		transition.setDateUpdated(new Date());
 		ui.transitionService.insert(transition,basicInfoPane.getVIN());
@@ -1115,13 +1117,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 		event.setAction(Actions.INPUT.name);
 		event.setUserName(loggedInUser.getUserName());
 		event.setDateUpdated(new Date());
-		Map<String, String> details = new HashMap<String, String>();
-		details.put("BARCODE", basicInfoPane.getBarCode());
-		details.put("PLATETYPE", basicInfoPane.getPlateType());
-		details.put("PLATENUMBER", basicInfoPane.getPlateNumber());
-		details.put("VIN", basicInfoPane.getVIN());
-		details.put("BUSINESSTYPE", businessTypePane.getSelected().getName());
-		event.setDetails(jsonHelper.map2Json(details));
+		event.setDetails(json);
 		ui.userEventService.insert(event, loggedInUser.getUserName());
     }
     
@@ -1142,7 +1138,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 	}
 
 	@Override
-	public void getUnreadCount() {
+	public void updateUnreadCount() {
 		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loggedInUser.getUserUniqueId());
 		int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {

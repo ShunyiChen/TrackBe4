@@ -84,7 +84,7 @@ private static final Logger log = LoggerFactory.getLogger(QueueService.class);
 	
 	/**
 	 * 
-	 * @param serial -队列（质检取） 2队列（审档取）
+	 * @param serial -队列（质检取） 2队列（审档取）,3-确认审档队列
 	 * @return
 	 */
 	public List<Queue> findAvaliable(int serial) {
@@ -98,7 +98,7 @@ private static final Logger log = LoggerFactory.getLogger(QueueService.class);
 	 * @param Queue
 	 * @param serial -队列（质检取） 2队列（审档取）
 	 */
-	public void update(Queue queue, int serial) {
+	public void lock(Queue queue, int serial) {
 		String sql = "UPDATE QUEUE_"+serial+" SET LOCKEDBYUSER=? WHERE QUEUEUNIQUEID = ? ";
 	 	int opt = jdbcTemplate.update(sql, new Object[] {queue.getLockedByUser(), queue.getQueueUniqueId()});
 	 	log.info("updated row "+opt);
@@ -126,8 +126,13 @@ private static final Logger log = LoggerFactory.getLogger(QueueService.class);
 	 * @param serial
 	 */
 	public void create(Queue queue, int serial) {
-		String sql = "INSERT INTO QUEUE_"+serial+"(TRANSACTIONUNIQUEID,LOCKEDBYUSER,SENTBYUSER,COMPANYUNIQUEID,COMMUNITYUNIQUEID) VALUES(?,?,?,?,?)";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {queue.getTransactionUniqueId(), queue.getLockedByUser(), queue.getSentByUser(),queue.getCompanyUniqueId(),queue.getCommunityUniqueId()});
-	 	log.info("QueueService inserted row "+opt);
+		String sql = "INSERT INTO QUEUE_"+serial+"(UUID,VIN,LOCKEDBYUSER,COMPANYUNIQUEID,COMMUNITYUNIQUEID) VALUES(?,?,?,?,?)";
+	 	int opt = jdbcTemplate.update(sql, new Object[] {
+	 			queue.getUuid(),
+	 			queue.getVin(),
+	 			queue.getLockedByUser(),
+	 			queue.getCompanyUniqueId(),
+	 			queue.getCommunityUniqueId()});
+	 	log.info("Affected row "+opt);
 	}
 }

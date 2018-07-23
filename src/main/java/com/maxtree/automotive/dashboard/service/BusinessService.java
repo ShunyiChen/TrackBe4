@@ -41,6 +41,22 @@ public class BusinessService {
 	
 	/**
 	 * 
+	 * @param businessCode
+	 * @return
+	 */
+	public Business findByCode(String businessCode) {
+		String sql = "SELECT * FROM BUSINESS WHERE CODE=?";
+		List<Business> results = jdbcTemplate.query(sql, new Object[] {businessCode}, new BeanPropertyRowMapper<Business>(Business.class));
+		for (Business business : results) {
+			List<DataDictionary> items = getDataDictionaries(business.getCode());
+			business.setItems(items);
+			return business;
+		}
+		return new Business();
+	}
+	
+	/**
+	 * 
 	 * @return
 	 */
 	public List<Business> findAll() {

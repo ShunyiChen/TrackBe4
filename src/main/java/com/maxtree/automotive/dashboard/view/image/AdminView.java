@@ -341,7 +341,7 @@ public class AdminView extends Panel implements View, FrontendViewIF{
     	Callback2 event = new Callback2() {
 			@Override
 			public void onSuccessful(Object... objects) {
-				getUnreadCount();
+//				updateUnreadCount();
 			}
     	};
     	MessageInboxWindow.open(allMessages, event, selectedMessageUniqueId);
@@ -448,7 +448,7 @@ public class AdminView extends Panel implements View, FrontendViewIF{
     }
     
     @Override
-	public void getUnreadCount() {
+	public void updateUnreadCount() {
 		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loginUser.getUserUniqueId());
     	int unreadCount = 0;

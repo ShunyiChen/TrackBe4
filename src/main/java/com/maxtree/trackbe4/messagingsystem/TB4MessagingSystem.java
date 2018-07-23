@@ -205,8 +205,8 @@ public class TB4MessagingSystem {
 	 * @param subject
 	 * @param messageBody  json
 	 */
-	public int sendMessageTo(User sender, String recipientName, int communityUniqueId, int companyUniqueId, int userUniqueId, String subject, String messageBody, String viewName) {
-		return 0;
+//	public int sendMessageTo(User sender, String recipientName, int communityUniqueId, int companyUniqueId, int userUniqueId, String subject, String messageBody, String viewName) {
+//		return 0;
 //		Message newMessage = new Message();
 //		newMessage.setCreatorUniqueId(sender.getUserUniqueId());
 //		newMessage.setRecipientName(recipientName);
@@ -258,7 +258,7 @@ public class TB4MessagingSystem {
 //		if (recipients.size() > 0)
 //			ui.messagingService.createMessageRecipients(recipients);
 //		return messageUniqueId;
-	}
+//	}
 	
 	// 定时发送消息
     public static Map<Integer, Timer> SCHEDULED = new HashMap<Integer, Timer>();

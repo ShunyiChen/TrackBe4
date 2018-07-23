@@ -65,8 +65,8 @@ public class ConfirmInformationGrid extends HorizontalLayout {
 		plateTypeField.setValue(transaction.getPlateType());
 		plateNumberField.setValue(transaction.getPlateNumber());
 		vinField.setValue(transaction.getVin());
-//		Business business = ui.businessService.findById(transaction.getBusinessUniqueId());
-//		businessTypeField.setValue(business.toString());
+		Business business = ui.businessService.findByCode(transaction.getBusinessCode());
+		businessTypeField.setValue(business.toString());
 	}
 	
 	private String htmlText(String text) {

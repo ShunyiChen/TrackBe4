@@ -154,7 +154,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		ui.addPollListener(new UIEvents.PollListener() {
 			@Override
 			public void poll(UIEvents.PollEvent event) {
-				getUnreadCount();
+				updateUnreadCount();
 			}
 		});
 	}
@@ -244,18 +244,18 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
             notificationLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
             	int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-            	if ("text".equals(type)) {
-            		
-            		showAll(allMessages, messageUniqueId);
-    			} else if ("transaction".equals(type)) {
-    				int transactionUniqueId = Integer.parseInt(map.get("transactionUniqueId").toString());
-    				
-    				// 标记已读
-    				ui.messagingService.markAsRead(messageUniqueId, currentUser.getUserUniqueId());
-    				getUnreadCount();
-    				// 打开业务
-    				openTransaction(transactionUniqueId, dateCreated);
-    			}
+//            	if ("text".equals(type)) {
+//            		
+//            		showAll(allMessages, messageUniqueId);
+//    			} else if ("transaction".equals(type)) {
+//    				int transactionUniqueId = Integer.parseInt(map.get("transactionUniqueId").toString());
+//    				
+//    				// 标记已读
+//    				ui.messagingService.markAsRead(messageUniqueId, currentUser.getUserUniqueId());
+//    				getUnreadCount();
+//    				// 打开业务
+//    				openTransaction(transactionUniqueId, dateCreated);
+//    			}
             });
             
         }
@@ -307,7 +307,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 
     @Override
     public void enter(final ViewChangeEvent event) {
-    	getUnreadCount();
+//    	updateUnreadCount();
     }
 
     public static final class NotificationsButton extends Button {
@@ -391,7 +391,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     	Callback2 event = new Callback2() {
 			@Override
 			public void onSuccessful(Object... objects) {
-				getUnreadCount();
+//				updateUnreadCount();
 			}
     	};
     	MessageInboxWindow.open(allMessages, event, selectedMessageUniqueId);
@@ -650,7 +650,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     }
     
     @Override
-	public void getUnreadCount() {
+	public void updateUnreadCount() {
     	User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
     	
     	List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loginUser.getUserUniqueId());

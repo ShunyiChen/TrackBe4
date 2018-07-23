@@ -10,12 +10,20 @@ public class Queue {
 		this.queueUniqueId = queueUniqueId;
 	}
 
-	public Integer getTransactionUniqueId() {
-		return transactionUniqueId;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setTransactionUniqueId(Integer transactionUniqueId) {
-		this.transactionUniqueId = transactionUniqueId;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getVin() {
+		return vin;
+	}
+
+	public void setVin(String vin) {
+		this.vin = vin;
 	}
 
 	public Integer getLockedByUser() {
@@ -26,14 +34,6 @@ public class Queue {
 		this.lockedByUser = lockedByUser;
 	}
 
-	public Integer getSentByUser() {
-		return sentByUser;
-	}
-
-	public void setSentByUser(Integer sentByUser) {
-		this.sentByUser = sentByUser;
-	}
-	
 	public Integer getCompanyUniqueId() {
 		return companyUniqueId;
 	}
@@ -52,14 +52,15 @@ public class Queue {
 
 	@Override
 	public String toString() {
-		return String.format("Queue[queueUniqueid=%d, transactionUniqueId='%d',lockedByUser='%d',sentByUser='%d',companyUniqueId='%d',communityUniqueId='%d']",
-				queueUniqueId, transactionUniqueId, lockedByUser, sentByUser,companyUniqueId,communityUniqueId);
+		return String.format(
+				"Queue[queueUniqueid=%d, uuid='%s',vin='%s',lockedByUser='%d',sentByUser='%d',companyUniqueId='%d',communityUniqueId='%d']",
+				queueUniqueId, uuid, vin, lockedByUser, companyUniqueId, communityUniqueId);
 	}
 
-	private Integer queueUniqueId = 0;       // 队列ID
-	private Integer transactionUniqueId = 0; // 事务ID
-	private Integer lockedByUser = 0; 		 // 锁定记录的用户ID，0-没锁，1-锁了
-	private Integer sentByUser = 0; 		 // 发送者
-	private Integer companyUniqueId = 0;	 // 机构ID 如果companyUniqueId为空，表示本社区内任何审档都可以取，否则只允许本机审档构取。
-	private Integer communityUniqueId = 0;   // 社区ID 如果communityUniqueId，本社区内的审档/质检只能取本社区队列。
+	private Integer queueUniqueId = 0; // 队列ID
+	private String uuid;// 文件挂载ID
+	private String vin; // VIN
+	private Integer lockedByUser = 0; // 锁定记录的用户ID，0-没锁，1-锁了
+	private Integer companyUniqueId = 0; // 机构ID 如果companyUniqueId为空，表示本社区内任何审档都可以取，否则只允许本机审档构取。
+	private Integer communityUniqueId = 0; // 社区ID 如果communityUniqueId，本社区内的审档/质检只能取本社区队列。
 }

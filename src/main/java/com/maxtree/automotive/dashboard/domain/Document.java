@@ -52,6 +52,13 @@ public class Document {
 	public void setAlias(String alias) {
 		this.alias = alias;
 	}
+	
+	/**
+	 * 
+	 */
+	public String toString() {
+		return alias;
+	}
 
 	private Integer documentUniqueId = 0; // 文档ID
 	private String uuid; // 文件UUID

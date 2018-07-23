@@ -149,7 +149,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
 		ui.addPollListener(new UIEvents.PollListener() {
 			@Override
 			public void poll(UIEvents.PollEvent event) {
-				getUnreadCount();
+				updateUnreadCount();
 			}
 		});
 	}
@@ -243,19 +243,19 @@ public class QCView extends Panel implements View, FrontendViewIF{
             	
             	int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
             	
-            	if ("text".equals(type)) {
-            		
-            		showAll(allMessages, messageUniqueId);
-            		
-    			} else if ("transaction".equals(type)) {
-    				int transactionUniqueId = Integer.parseInt(map.get("transactionUniqueId").toString());
-    				// 标记已读
-    				ui.messagingService.markAsRead(messageUniqueId, currentUser.getUserUniqueId());
-    				getUnreadCount();
-    				// 打开业务
-    				openTransaction(transactionUniqueId, dateCreated);
-    				
-    			}
+//            	if ("text".equals(type)) {
+//            		
+//            		showAll(allMessages, messageUniqueId);
+//            		
+//    			} else if ("transaction".equals(type)) {
+//    				int transactionUniqueId = Integer.parseInt(map.get("transactionUniqueId").toString());
+//    				// 标记已读
+//    				ui.messagingService.markAsRead(messageUniqueId, currentUser.getUserUniqueId());
+//    				getUnreadCount();
+//    				// 打开业务
+//    				openTransaction(transactionUniqueId, dateCreated);
+//    				
+//    			}
             });
             
         }
@@ -307,7 +307,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
 
     @Override
     public void enter(final ViewChangeEvent event) {
-    	getUnreadCount();
+//    	getUnreadCount();
     }
 
     public static final class NotificationsButton extends Button {
@@ -391,7 +391,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
     	Callback2 event = new Callback2() {
 			@Override
 			public void onSuccessful(Object... objects) {
-				getUnreadCount();
+//				getUnreadCount();
 			}
     	};
     	MessageInboxWindow.open(allMessages, event, selectedMessageUniqueId);
@@ -589,7 +589,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
 		} catch (DataException e) {
 			e.printStackTrace();
 		}
-    	User receiver = ui.userService.findById(queue.getSentByUser());
+//    	User receiver = ui.userService.findById(queue.getSentByUser());
     	
 //    	// 2.更改状态
 //		transaction.setStatus(Status.S1.name);///无状态，即前台可以再修改
@@ -645,13 +645,13 @@ public class QCView extends Panel implements View, FrontendViewIF{
 //		ui.transactionService.update(transaction);
 //    	
 		// 3.添加到审核队列
-		Queue newQueue = new Queue();
-		newQueue.setTransactionUniqueId(transaction.getTransactionUniqueId());
-		newQueue.setLockedByUser(0);	 // 默认为0标识任何人都可以取，除非被某人锁定
-		newQueue.setSentByUser(queue.getSentByUser());  // 前台发送者
-		newQueue.setCommunityUniqueId(loginUser.getCommunityUniqueId());
-	    serial = 2;// 1:质检，2：审档
-		ui.queueService.create(newQueue, serial);
+//		Queue newQueue = new Queue();
+//		newQueue.setTransactionUniqueId(transaction.getTransactionUniqueId());
+//		newQueue.setLockedByUser(0);	 // 默认为0标识任何人都可以取，除非被某人锁定
+//		newQueue.setSentByUser(queue.getSentByUser());  // 前台发送者
+//		newQueue.setCommunityUniqueId(loginUser.getCommunityUniqueId());
+//	    serial = 2;// 1:质检，2：审档
+//		ui.queueService.create(newQueue, serial);
 		
 //		// 4.审批记录
 //        Audit audit = new Audit();
@@ -741,7 +741,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
     }
     
     @Override
-   	public void getUnreadCount() {
+   	public void updateUnreadCount() {
    		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
    		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loginUser.getUserUniqueId());
     	int unreadCount = 0;

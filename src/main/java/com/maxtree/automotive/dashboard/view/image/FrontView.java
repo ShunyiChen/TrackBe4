@@ -168,7 +168,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 		ui.addPollListener(new UIEvents.PollListener() {
 			@Override
 			public void poll(UIEvents.PollEvent event) {
-				getUnreadCount();
+				updateUnreadCount();
 			}
 		});
 	}
@@ -260,32 +260,32 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
             notificationLayout.addLayoutClickListener(e -> {
             	
             	notificationsWindow.close();
-            	if ("text".equals(type)) {
-            		
-            		 showAll(allMessages, messageUniqueId);
-            		 
-    			} else if ("transaction".equals(type)) {
-//    				String senderUserName = m.get("username").toString();
-//    				String senderPicture = "../VAADIN/themes/dashboard/"+ m.get("picture").toString();
-//    				String subject = m.get("subject").toString();
-    				int transactionUniqueId = 0;
-//    				String status = null;
-    				if (type.equals("transaction")) {
-    					transactionUniqueId = Integer.parseInt(map.get("transactionUniqueId").toString());
-//    					status = map.get("status").toString();
-    				}
-//    				String read = m.get("read").toString().equals("1")?"已读":"未读";
-//    				MessageWrapper wrapper = new MessageWrapper(messageUniqueId, senderPicture+" "+senderUserName, senderPicture, subject, messageContent, transactionUniqueId, read, dateCreated, type, status);
-    				// 标记已读
-    				ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
-    				
-    				CacheManager.getInstance().refreshSendDetailsCache();
-    				
-    				getUnreadCount();
-    				
-    				openTransaction(transactionUniqueId, dateCreated);
-    				
-    			}
+//            	if ("text".equals(type)) {
+//            		
+//            		 showAll(allMessages, messageUniqueId);
+//            		 
+//    			} else if ("transaction".equals(type)) {
+////    				String senderUserName = m.get("username").toString();
+////    				String senderPicture = "../VAADIN/themes/dashboard/"+ m.get("picture").toString();
+////    				String subject = m.get("subject").toString();
+//    				int transactionUniqueId = 0;
+////    				String status = null;
+//    				if (type.equals("transaction")) {
+//    					transactionUniqueId = Integer.parseInt(map.get("transactionUniqueId").toString());
+////    					status = map.get("status").toString();
+//    				}
+////    				String read = m.get("read").toString().equals("1")?"已读":"未读";
+////    				MessageWrapper wrapper = new MessageWrapper(messageUniqueId, senderPicture+" "+senderUserName, senderPicture, subject, messageContent, transactionUniqueId, read, dateCreated, type, status);
+//    				// 标记已读
+//    				ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
+//    				
+//    				CacheManager.getInstance().refreshSendDetailsCache();
+//    				
+//    				updateUnreadCount();
+//    				
+//    				openTransaction(transactionUniqueId, dateCreated);
+//    				
+//    			}
             });
         }
         
@@ -333,7 +333,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 
     @Override
     public void enter(final ViewChangeEvent event) {
-    	getUnreadCount();
+//    	getUnreadCount();
     }
 
     public static final class NotificationsButton extends Button {
@@ -848,7 +848,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 	}
 
 	@Override
-	public void getUnreadCount() {
+	public void updateUnreadCount() {
 		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loggedInUser.getUserUniqueId());
 		int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {

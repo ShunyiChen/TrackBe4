@@ -59,6 +59,24 @@ public class SiteService {
 		}
 		return new Site();
 	}
+
+	/**
+	 * 
+	 * @param siteCode
+	 * @return
+	 */
+	public Site findByCode(String siteCode) {
+		String sql = "SELECT * FROM SITE WHERE CODE=?";
+		List<Site> results = jdbcTemplate.query(sql, new Object[] {siteCode}, new BeanPropertyRowMapper<Site>(Site.class));
+		if (results.size() > 0) {
+			Site site = results.get(0);
+			SiteCapacity siteCapacity = getSiteCapacity(site.getSiteUniqueId());
+			site.setSiteCapacity(siteCapacity);
+			return site;
+		}
+		return new Site();
+	}
+	
 	
 	/**
 	 * 

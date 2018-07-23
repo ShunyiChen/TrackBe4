@@ -199,7 +199,7 @@ public class Transaction {
 	private Date dateCreated; 				// 创建日期
 	private Date dateModified; 				// 最后修改日期
 	private Date dateFinished; 				// 完成日期
-	private String status; 					// 业务状态
+	private String status; 					// 业务状态,比如，待上架，待质检
 	private String siteCode; 				// 站点CODE
 	private String businessCode;   			// 业务CODE
 	private Integer communityUniqueId = 0; 	// 办理社区ID
