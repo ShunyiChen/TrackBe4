@@ -73,7 +73,7 @@ public class CompanyService {
 	 */
 	public int create(Company company) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		String sql = "INSERT INTO COMPANIES(COMMUNITYUNIQUEID,COMPANYNAME,PROVINCE,CITY,DISTRICT,ADDRESS,HASSTOREHOUSE,STOREHOUSEUNIQUEID,IGNORECHECKER) VALUES(?,?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO COMPANIES(COMMUNITYUNIQUEID,COMPANYNAME,PROVINCE,CITY,DISTRICT,ADDRESS,HASSTOREHOUSE,STOREHOUSENAME,IGNORECHECKER) VALUES(?,?,?,?,?,?,?,?,?)";
 		
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
@@ -239,8 +239,8 @@ public class CompanyService {
 	 * @return
 	 */
 	public List<FrameNumber> getAvailableStores(int companyUniqueId) {
-		String sql = "SELECT * FROM FRAMENUMBER WHERE FRAMECODE=? AND FRAMEUNIQUEID NOT IN (SELECT STOREHOUSEUNIQUEID FROM COMPANIES WHERE STOREHOUSEUNIQUEID<>? AND COMPANYUNIQUEID <>?)";
-		List<FrameNumber> results = jdbcTemplate.query(sql, new Object[] {0,0,companyUniqueId}, new BeanPropertyRowMapper<FrameNumber>(FrameNumber.class));
+		String sql = "SELECT * FROM FRAMENUMBER WHERE FRAMECODE=? AND STOREHOUSENAME NOT IN (SELECT STOREHOUSENAME FROM COMPANIES WHERE STOREHOUSENAME IS NOT NULL AND COMPANYUNIQUEID <>?)";
+		List<FrameNumber> results = jdbcTemplate.query(sql, new Object[] {0,companyUniqueId}, new BeanPropertyRowMapper<FrameNumber>(FrameNumber.class));
 		return results;
 	}
 	

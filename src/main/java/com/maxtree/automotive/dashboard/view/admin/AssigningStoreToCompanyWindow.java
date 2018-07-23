@@ -117,7 +117,7 @@ public class AssigningStoreToCompanyWindow extends Window {
 		} 
 		//取消机构
 		else if(list.size() == 0) {
-			company.setStorehouseName("");
+			company.setStorehouseName(null);
 			ui.companyService.updateStorehouse(company);
 		}
 		//保存设置

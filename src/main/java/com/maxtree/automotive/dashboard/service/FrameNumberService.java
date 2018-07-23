@@ -233,8 +233,8 @@ public class FrameNumberService {
 		int opt = jdbcTemplate.update(sql, new Object[] {store.getStorehouseName()});
 		log.info("Affected row:"+opt);
 
-		sql =  "UPDATE COMPANIES SET STOREHOUSEUNIQUEID=? WHERE STOREHOUSEUNIQUEID=?";
-		opt = jdbcTemplate.update(sql, new Object[] {0, store.getFrameUniqueId()});
+		sql =  "UPDATE COMPANIES SET STOREHOUSENAME=? WHERE STOREHOUSENAME=?";
+		opt = jdbcTemplate.update(sql, new Object[] {0, store.getStorehouseName()});
 		log.info("Affected row:"+opt);
 	}
 	
@@ -267,24 +267,24 @@ public class FrameNumberService {
 	/**
 	 * 获取可用的机构列表
 	 * 
-	 * @param storeID
+	 * @param storehouseName
 	 * @return
 	 */
-	public List<Company> getAvailableCompanies(int storeID) {
-		String sql = "SELECT * FROM COMPANIES WHERE HASSTOREHOUSE=? AND STOREHOUSEUNIQUEID IN (?,?) ORDER BY COMPANYUNIQUEID";
-		List<Company> results = jdbcTemplate.query(sql, new Object[] {1,0,storeID}, new BeanPropertyRowMapper<Company>(Company.class));
+	public List<Company> getAvailableCompanies(String storehouseName) {
+		String sql = "SELECT * FROM COMPANIES WHERE HASSTOREHOUSE=? AND STOREHOUSENAME IS NULL OR STOREHOUSENAME=? ORDER BY COMPANYUNIQUEID";
+		List<Company> results = jdbcTemplate.query(sql, new Object[] {1,storehouseName}, new BeanPropertyRowMapper<Company>(Company.class));
 		return results;
 	}
 	
 	/**
 	 * 获取已经分配的机构
 	 * 
-	 * @param storeID
+	 * @param storehouseName
 	 * @return
 	 */
-	public Company findAssignedCompany(int storeID) {
-		String sql = "SELECT * FROM COMPANIES WHERE STOREHOUSEUNIQUEID=?";
-		List<Company> results = jdbcTemplate.query(sql, new Object[] {storeID}, new BeanPropertyRowMapper<Company>(Company.class));
+	public Company findAssignedCompany(String storehouseName) {
+		String sql = "SELECT * FROM COMPANIES WHERE STOREHOUSENAME=?";
+		List<Company> results = jdbcTemplate.query(sql, new Object[] {storehouseName}, new BeanPropertyRowMapper<Company>(Company.class));
 		if (results.size() > 0) {
 			return results.get(0);
 		}

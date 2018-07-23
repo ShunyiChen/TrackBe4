@@ -62,7 +62,7 @@ public class AssigningCompanyToStoreWindow extends Window {
 		hlayout.setSpacing(false);
 		hlayout.setMargin(false);
 		
-		List<Company> allCompanies = ui.frameService.getAvailableCompanies(storehouse.getFrameUniqueId());
+		List<Company> allCompanies = ui.frameService.getAvailableCompanies(storehouse.getStorehouseName());
 		select = new TwinColSelect<>(null, allCompanies);
 		select.setWidth("100%");
 		select.setRows(14);
@@ -70,7 +70,7 @@ public class AssigningCompanyToStoreWindow extends Window {
 		select.setRightColumnCaption("已分配的机构");
 		
 		List<Company> selectedCompanies = new ArrayList<>();
-		assignedCompany = ui.frameService.findAssignedCompany(storehouse.getFrameUniqueId());
+		assignedCompany = ui.frameService.findAssignedCompany(storehouse.getStorehouseName());
 		for (Company com : allCompanies) {
 			if (assignedCompany.getCompanyUniqueId().intValue() == com.getCompanyUniqueId().intValue()) {
 				selectedCompanies.add(com);
@@ -118,7 +118,7 @@ public class AssigningCompanyToStoreWindow extends Window {
 		//取消机构
 		else if(list.size() == 0) {
 			if (assignedCompany != null) {
-				assignedCompany.setStorehouseName("");
+				assignedCompany.setStorehouseName(null);
 				ui.companyService.updateStorehouse(assignedCompany);
 			}
 		}
