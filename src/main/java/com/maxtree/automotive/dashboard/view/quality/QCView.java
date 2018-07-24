@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.qc;
+package com.maxtree.automotive.dashboard.view.quality;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -24,6 +24,7 @@ import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
+import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
@@ -51,7 +52,6 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -341,7 +341,6 @@ public class QCView extends Panel implements View, FrontendViewIF{
 
         @Subscribe
         public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-        	log.info("===============QCView Polling");
         	DashboardMenu.getInstance().qcCount(event.getCount());
         	setUnreadCount(event.getCount());
         }
@@ -488,7 +487,6 @@ public class QCView extends Panel implements View, FrontendViewIF{
     private void fetchTransaction() {
     	Queue lockedQueue = ui.queueService.getLockedQueue(1, loggedInUser.getUserUniqueId());
     	if (lockedQueue.getQueueUniqueId() > 0) {
-    		
 			Notification notification = new Notification("提示：", "正在导入上次业务。", Type.WARNING_MESSAGE);
 			notification.setDelayMsec(1000);
 			notification.show(Page.getCurrent());
@@ -508,7 +506,6 @@ public class QCView extends Panel implements View, FrontendViewIF{
     			resetComponents();
     			
     			Transition tran = ui.transitionService.findByUUID(availableQueue.getUuid(), availableQueue.getVin());
-//    			User input = ui.userService.getUserByUserName(tran.getUserName());
     			TB4MessagingSystem messageSystem = new TB4MessagingSystem();
     			Message newMessage = messageSystem.createNewMessage(loggedInUser, "获取一笔新业务", tran.getDetails());
     			Set<Name> names = new HashSet<Name>();
@@ -527,73 +524,84 @@ public class QCView extends Panel implements View, FrontendViewIF{
     /**
      * 合格并退回前台打印标签
      * 
-     * @param comments
+     * @param suggestions
      */
-    private void accept(String comments) {
-    	
-    	// 1.设置上架号
-//    	if (transaction.getCode() == null) {
-//         	Portfolio portfolio = ui.storehouseService.findAvailablePortfolio();
-//         	if (portfolio.getCode() == null) {
-//         		Notifications.warning("没有对应的上架号，请联系管理员设置库房。");
-//         		return;
-//         	}
-//         	transaction.setCode(portfolio.getCode());// 上架号
-//         	
-//         	portfolio.setVin(transaction.getVin());
-//         	ui.storehouseService.updatePortfolio(portfolio);
-//         }
-    	
-    	// 2.删除锁定队列
-    	User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		int serial = 1; //1:质检 2:审档
-		Queue queue = ui.queueService.getLockedQueue(serial, loginUser.getUserUniqueId());
-    	try {
-			ui.queueService.delete(queue.getQueueUniqueId(), serial);
-		} catch (DataException e) {
-			e.printStackTrace();
-		}
-//    	User receiver = ui.userService.findById(transaction.getTypist());
-//    	
-//    	// 3.更改状态
-//		transaction.setStatus(Status.S4.name);
-//		transaction.setDateModified(new Date());
-//		int index = ui.transactionService.findIndexByVIN(transaction.getVin());
-//		transaction.setIndexNumber(index);
-//		ui.transactionService.update(transaction);
-//		
-//		// 4.发送消息
-//		String subject = "质检合格";
-//        StringBuilder msg = new StringBuilder();
-//        msg.append(comments);
-//        String messageBody = "{\"type\":\"transaction\",\"status\":\""+Status.S4.name+"\",\"transactionUniqueId\":\""+transaction.getTransactionUniqueId()+"\",\"message\":\""+msg.toString()+"\"}";
-//        new TB4MessagingSystem().sendMessageTo(loginUser, receiver.getUserName(), 0, 0, receiver.getUserUniqueId(), subject, messageBody, DashboardViewType.DASHBOARD.getViewName());
-//		
-//        // 5.审批记录
-//        Audit audit = new Audit();
-//        audit.setTransactionUniqueId(transaction.getTransactionUniqueId());
-//        audit.setAuditor(loginUser.getUserUniqueId());
-//        audit.setAuditDate(new Date());
-//        audit.setAuditResults(msg.toString());
-//        ui.auditService.createAudit(audit);
-        
-		// 6.清空
-		cleanStage();
-		
-		// 提示信息
-		Notification success = new Notification("已完成！");
-		success.setDelayMsec(2000);
-		success.setStyleName("bar success small");
-		success.setPosition(Position.BOTTOM_CENTER);
-		success.show(Page.getCurrent());
+    private void accept(String suggestions) {
+    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
+    	// 不需要审档直接退回前台
+    	if (business.getNeedToCheck() == 0) {
+    		//1.删除锁定队列
+    		int serial = 1; //1:质检 2:审档 3:确认审档
+    		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());
+        	try {
+    			ui.queueService.delete(queue.getQueueUniqueId(), serial);
+    		} catch (DataException e) {
+    			log.info(e.getMessage());
+    		}
+        	//2.更改状态
+        	editableTrans.setStatus(BusinessState.B2.name);
+        	editableTrans.setDateModified(new Date());
+    		ui.transactionService.update(editableTrans);
+    		//3.记录跟踪
+    		String messageBody = track(Actions.APPROVED, suggestions);
+    		//4.发信给前台
+    		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
+    		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
+    		Message newMessage = messageSystem.createNewMessage(receiver, "质检合格", messageBody);
+    		Set<Name> names = new HashSet<Name>();
+    		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
+    		names.add(target);
+    		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.DASHBOARD.getViewName());
+    		// 更新消息轮询的缓存
+    		CacheManager.getInstance().refreshSendDetailsCache();
+    		// 5.清空
+    		cleanStage();
+    		// 6.提示信息
+    		Notifications.info("操作成功。已退回到前台。");
+    		
+    		editableTrans = null;
+    		
+    	}
+    	// 需要审档则继续提交
+    	else {
+    		//1.删除锁定队列
+    		int serial = 1; //1:质检 2:审档 3:确认审档
+    		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());
+        	try {
+    			ui.queueService.delete(queue.getQueueUniqueId(), serial);
+    		} catch (DataException e) {
+    			log.info(e.getMessage());
+    		}
+        	//2.更改状态
+        	editableTrans.setStatus(BusinessState.B4.name);
+        	editableTrans.setDateModified(new Date());
+    		ui.transactionService.update(editableTrans);
+    		
+    		//3.记录跟踪
+    		track(Actions.SUBMIT, suggestions);
+    		
+    		// 4.提交审档队列
+    		Queue newQueue = new Queue();
+    		newQueue.setUuid(editableTrans.getUuid());
+    		newQueue.setVin(editableTrans.getVin());
+    		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+    		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+    		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+    	    serial = 2;// 1:代表质检取队列，2：代表审档取队列
+    		ui.queueService.create(newQueue, serial);
+    		
+    		// 清空舞台
+        	cleanStage();
+        	Notifications.info("操作成功。本次业务已添加到审档队列中，等待审档。");
+    	}
     }
     
     /**
      * 不合格退回
      * 
-     * @param comments
+     * @param suggestions
      */
-    private void reject(String comments) {
+    private void reject(String suggestions) {
     	//1.删除锁定队列
 		int serial = 1; //1:质检 2:审档 3:确认审档
 		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());
@@ -606,55 +614,47 @@ public class QCView extends Panel implements View, FrontendViewIF{
     	editableTrans.setStatus(BusinessState.B1.name);
     	editableTrans.setDateModified(new Date());
 		ui.transactionService.update(editableTrans);
-		
 		//3.记录跟踪
-		track();
-		
-		//4.发信
-		
-		
-		
-//		// 3.发送消息
-//		String subject = "质检不合格";
-//        StringBuilder msg = new StringBuilder();
-//        msg.append(comments);
-//        String messageBody = "{\"type\":\"transaction\",\"status\":\""+Status.S1.name+"\",\"transactionUniqueId\":\""+transaction.getTransactionUniqueId()+"\",\"message\":\""+msg.toString()+"\"}";
-//        new TB4MessagingSystem().sendMessageTo(loginUser, receiver.getUserName(), 0, 0, receiver.getUserUniqueId(), subject, messageBody, DashboardViewType.DASHBOARD.getViewName());
-		
-//        // 4.审批记录
-//        Audit audit = new Audit();
-//        audit.setTransactionUniqueId(transaction.getTransactionUniqueId());
-//        audit.setAuditor(loginUser.getUserUniqueId());
-//        audit.setAuditDate(new Date());
-//        audit.setAuditResults(msg.toString());
-//        ui.auditService.createAudit(audit);
-        
+		String messageBody = track(Actions.REJECTED,suggestions);
+		//4.发信给前台
+		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
+		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
+		Message newMessage = messageSystem.createNewMessage(receiver, "收到反馈", messageBody);
+		Set<Name> names = new HashSet<Name>();
+		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
+		names.add(target);
+		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.SENDBACK.getViewName());
+		// 更新消息轮询的缓存
+		CacheManager.getInstance().refreshSendDetailsCache();
 		// 5.清空
 		cleanStage();
+		// 6.提示信息
+		Notifications.info("操作成功。已退回到前台。");
 		
-		// 提示信息
-		Notification success = new Notification("已退回！");
-		success.setDelayMsec(2000);
-		success.setStyleName("bar success small");
-		success.setPosition(Position.BOTTOM_CENTER);
-		success.show(Page.getCurrent());
-				
+		editableTrans = null;
     }
     
-    private void track() {
+    /**
+     * 
+     * @param act
+     * @param suggestions
+     * @return
+     */
+    private String track(Actions act, String suggestions) {
     	Map<String, String> details = new HashMap<String, String>();
-    	details.put("STATUS", editableTrans.getStatus());
-		details.put("BARCODE", editableTrans.getBarcode());
-		details.put("PLATETYPE", editableTrans.getPlateType());
-		details.put("PLATENUMBER", editableTrans.getPlateNumber());
-		details.put("VIN", editableTrans.getVin());
-		details.put("BUSINESSTYPE", editableTrans.getCode());
+    	details.put("1", editableTrans.getStatus());//STATUS
+		details.put("2", editableTrans.getBarcode());//BARCODE
+		details.put("3", editableTrans.getPlateType());//PLATETYPE
+		details.put("4", editableTrans.getPlateNumber());//PLATENUMBER
+		details.put("5", editableTrans.getVin());//VIN
+		details.put("6", editableTrans.getCode());//BUSINESSTYPE
+		details.put("7", suggestions);//SUGGEST
 		String json = jsonHelper.map2Json(details);
     	
     	// 插入移行表
 		Transition transition = new Transition();
 		transition.setTransactionUUID(editableTrans.getUuid());
-		transition.setAction(Actions.REJECTED.name);
+		transition.setAction(act.name);
 		transition.setDetails(json);
 		transition.setUserName(loggedInUser.getUserName());
 		transition.setDateUpdated(new Date());
@@ -662,60 +662,13 @@ public class QCView extends Panel implements View, FrontendViewIF{
 		
 		// 插入用户事件
 		UserEvent event = new UserEvent();
-		event.setAction(Actions.REJECTED.name);
+		event.setAction(act.name);
 		event.setUserName(loggedInUser.getUserName());
 		event.setDateUpdated(new Date());
 		event.setDetails(json);
 		ui.userEventService.insert(event, loggedInUser.getUserName());
-    }
-    
-    /**
-     * 合格并提交给审档
-     * 
-     * @param comments
-     */
-    private void submit(String comments) {
-    	// 1.删除锁定队列
-    	User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		int serial = 1; //1:质检 2:审档
-		Queue queue = ui.queueService.getLockedQueue(serial, loginUser.getUserUniqueId());
-    	try {
-			ui.queueService.delete(queue.getQueueUniqueId(), serial);
-		} catch (DataException e) {
-			e.printStackTrace();
-		}
-    	
-//    	// 2.更改状态
-//		transaction.setStatus(Status.S2.name);
-//		transaction.setDateModified(new Date());
-//		ui.transactionService.update(transaction);
-//    	
-		// 3.添加到审核队列
-//		Queue newQueue = new Queue();
-//		newQueue.setTransactionUniqueId(transaction.getTransactionUniqueId());
-//		newQueue.setLockedByUser(0);	 // 默认为0标识任何人都可以取，除非被某人锁定
-//		newQueue.setSentByUser(queue.getSentByUser());  // 前台发送者
-//		newQueue.setCommunityUniqueId(loginUser.getCommunityUniqueId());
-//	    serial = 2;// 1:质检，2：审档
-//		ui.queueService.create(newQueue, serial);
 		
-//		// 4.审批记录
-//        Audit audit = new Audit();
-//        audit.setTransactionUniqueId(transaction.getTransactionUniqueId());
-//        audit.setAuditor(loginUser.getUserUniqueId());
-//        audit.setAuditDate(new Date());
-//        audit.setAuditResults(comments);
-//        ui.auditService.createAudit(audit);
-		
-		// 5.清空
-		cleanStage();
- 
-		// 6.提示当前操作成功消息
-		Notification success = new Notification("信息提交成功！");
-		success.setDelayMsec(2000);
-		success.setStyleName("bar success small");
-		success.setPosition(Position.BOTTOM_CENTER);
-		success.show(Page.getCurrent());
+		return json;
     }
     
     /**
@@ -748,42 +701,21 @@ public class QCView extends Panel implements View, FrontendViewIF{
      * @param transactionUniqueId
      */
     public void commitTransaction() {
-//    	Business business = ui.businessService.findById(transaction.getBusinessUniqueId());
-//    	// 不需要审档，合格退回前台，不合格也退回前台
-//    	if (business.getFileCheck() == 0) {
-//    		Callback2 accept = new Callback2() {
-//
-//				@Override
-//				public void onSuccessful(Object... objects) {
-//					acceptAndBack(objects[0].toString());
-//				}
-//    		};
-//    		Callback2 back = new Callback2() {
-//
-//				@Override
-//				public void onSuccessful(Object... objects) {
-//					back(objects[0].toString());
-//				}
-//    		};
-//    		EditFeedbackWindow.open(accept, back);
-//    	}
-//    	// 需要审档，合格提交到审档，不合格退回前台
-//    	else {
-//    		Callback2 accept = new Callback2() {
-//				@Override
-//				public void onSuccessful(Object... objects) {
-//					submit(objects[0].toString());
-//				}
-//    		};
-//    		Callback2 back = new Callback2() {
-//
-//				@Override
-//				public void onSuccessful(Object... objects) {
-//					back(objects[0].toString());
-//				}
-//    		};
-//    		EditFeedbackWindow.open(accept, back);
-//    	}
+		Callback2 accept = new Callback2() {
+
+			@Override
+			public void onSuccessful(Object... objects) {
+				accept(objects[0].toString());
+			}
+		};
+		Callback2 reject = new Callback2() {
+
+			@Override
+			public void onSuccessful(Object... objects) {
+				reject(objects[0].toString());
+			}
+		};
+		Router.open(accept, reject);
     }
     
     @Override

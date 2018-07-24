@@ -347,7 +347,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 
         @Subscribe
         public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-//        	System.out.println("===============DashboardView Polling");
         	DashboardMenu.getInstance().updateNotificationsCount(event.getCount());
         	setUnreadCount(event.getCount());
         }
@@ -1095,12 +1094,12 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
      */
     private void track(Actions act) {
     	Map<String, String> details = new HashMap<String, String>();
-    	details.put("STATUS", editableTrans.getStatus());
-		details.put("BARCODE", basicInfoPane.getBarCode());
-		details.put("PLATETYPE", basicInfoPane.getPlateType());
-		details.put("PLATENUMBER", basicInfoPane.getPlateNumber());
-		details.put("VIN", basicInfoPane.getVIN());
-		details.put("BUSINESSTYPE", businessTypePane.getSelected().getName());
+    	details.put("1", editableTrans.getStatus());//STATUS
+		details.put("2", basicInfoPane.getBarCode());//BARCODE
+		details.put("3", basicInfoPane.getPlateType());//PLATETYPE
+		details.put("4", basicInfoPane.getPlateNumber());//PLATENUMBER
+		details.put("5", basicInfoPane.getVIN());//VIN
+		details.put("6", businessTypePane.getSelected().getName());//BUSINESSTYPE
 		String json = jsonHelper.map2Json(details);
     	
     	// 插入移行表

@@ -32,6 +32,13 @@ private static final Logger log = LoggerFactory.getLogger(QueueService.class);
 //		return count;
 //	}
 	
+	/**
+	 * 获取锁定的队列
+	 * 
+	 * @param serial //1:质检队列 2:审档队列,3,确认审档队列
+	 * @param userUniqueId
+	 * @return
+	 */
 	public Queue getLockedQueue(int serial, int userUniqueId) {
 		String sql = "SELECT * FROM QUEUE_"+serial+" WHERE LOCKEDBYUSER=?";
 		List<Queue> results = jdbcTemplate.query(sql, new Object[] {userUniqueId}, new BeanPropertyRowMapper<Queue>(Queue.class));

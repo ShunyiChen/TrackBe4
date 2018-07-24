@@ -23,7 +23,7 @@ public class Notifications {
 	 */
 	public static void info(String msg) {
 		Notification success = new Notification(msg);
-		success.setDelayMsec(2000);
+		success.setDelayMsec(3000);
 		success.setStyleName("bar success small");
 		success.setPosition(Position.BOTTOM_CENTER);
 		success.show(Page.getCurrent());

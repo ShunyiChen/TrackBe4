@@ -7,6 +7,25 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 public class Yaml {
 
+	/**
+	 * 
+	 * @return
+	 */
+	public static Suggestion readSuggestion() {
+		Suggestion suggestion = null;
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        try {
+        	suggestion = mapper.readValue(new File("configuration/Suggestion.yaml"), Suggestion.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return suggestion;
+    }
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public static Address readAddress() {
 		Address area = null;
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
@@ -35,6 +54,10 @@ public class Yaml {
         return admin;
     }
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public static SystemConfiguration readSystemConfiguration() {
 		SystemConfiguration sc = null;
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());

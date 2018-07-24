@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.qc;
+package com.maxtree.automotive.dashboard.view.quality;
 
 import java.io.InputStream;
 import java.util.ArrayList;

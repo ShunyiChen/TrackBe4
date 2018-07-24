@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.qc;
+package com.maxtree.automotive.dashboard.view.quality;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
