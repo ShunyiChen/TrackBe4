@@ -1,7 +1,6 @@
 package com.maxtree.automotive.dashboard.view.front;
 
 import com.maxtree.automotive.dashboard.domain.DataDictionary;
-import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
@@ -88,11 +87,18 @@ public class ThumbnailRow extends Panel {
 		return main.getComponentCount() > 1;
 	}
 	
-	
+	/**
+	 * 
+	 * @return
+	 */
 	public DataDictionary getDataDictionary() {
 		return dataDictionary;
 	}
 
+	/**
+	 * 
+	 * @param dataDictionary
+	 */
 	public void setDataDictionary(DataDictionary dataDictionary) {
 		this.dataDictionary = dataDictionary;
 	}

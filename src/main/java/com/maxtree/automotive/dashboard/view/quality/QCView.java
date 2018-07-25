@@ -216,7 +216,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
             titleLabel.addStyleName("notification-title");
             String json = m.get("messagebody").toString();
             Map<String, String> map = jsonHelper.json2Map(json);
-            Label plateNumber = new Label(map.get("PLATENUMBER"));
+            Label plateNumber = new Label(map.get("4"));//PLATENUMBER
             plateNumber.addStyleName("notification-content");
             
             Date dateCreated = (Date) m.get("datecreated");
@@ -228,6 +228,13 @@ public class QCView extends Panel implements View, FrontendViewIF{
             vLayout.addStyleName("switchbutton");
             vLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
+            	
+            	if(editableTrans == null) {
+        			fetchTransaction();
+        		}
+        		else {
+        			Notifications.warning("请先完成当前任务，再取下一条。");
+        		}
             });
             
 
@@ -623,7 +630,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
 		Set<Name> names = new HashSet<Name>();
 		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 		names.add(target);
-		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.QUALITY.getViewName());
+		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.INPUT.getViewName());
 		// 更新消息轮询的缓存
 		CacheManager.getInstance().refreshSendDetailsCache();
 		// 5.清空
@@ -648,7 +655,8 @@ public class QCView extends Panel implements View, FrontendViewIF{
 		details.put("4", editableTrans.getPlateNumber());//PLATENUMBER
 		details.put("5", editableTrans.getVin());//VIN
 		details.put("6", editableTrans.getCode());//BUSINESSTYPE
-		details.put("7", suggestions);//SUGGEST
+		details.put("7", editableTrans.getUuid());//UUID
+		details.put("8", suggestions);//SUGGEST
 		String json = jsonHelper.map2Json(details);
     	
     	// 插入移行表

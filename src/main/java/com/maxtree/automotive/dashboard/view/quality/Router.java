@@ -36,8 +36,8 @@ public class Router extends Window {
 		this.setModal(true);
 		this.setResizable(true);
 		this.setClosable(true);
-		this.setWidth("500px");
-		this.setHeight("350px");
+		this.setWidth("672px");
+		this.setHeight("400px");
 		this.setCaption("质检建议");
 		VerticalLayout vlayout = new VerticalLayout();
 		vlayout.setWidth("100%");
@@ -83,8 +83,8 @@ public class Router extends Window {
 		btnAdd.addClickListener(e->{
 			String item = combobox.getValue();
 			StringBuilder stb = new StringBuilder(content.getValue());
-			stb.append("\n");
 			stb.append(item);
+			stb.append("\n");
 			content.setValue(stb.toString());
 		});
 	}
@@ -98,8 +98,8 @@ public class Router extends Window {
         Router w = new Router();
         w.btnOk.addClickListener(e -> {
         	
-        	if (w.content.getValue().length() > 60) {
-        		Notifications.warning("字数不得超出60。");
+        	if (w.content.getValue().length() > 160) {
+        		Notifications.warning("字数不得超出160。");
         		return;
         	}
         	

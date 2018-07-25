@@ -3,7 +3,6 @@ package com.maxtree.automotive.dashboard.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -16,9 +15,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
 import com.maxtree.automotive.dashboard.domain.Transaction;
-import com.maxtree.automotive.dashboard.exception.DataException;
-import com.maxtree.automotive.dashboard.view.search.CriterionModel;
-import com.maxtree.automotive.dashboard.view.search.SearchModel;
 
 @Component
 public class TransactionService {
@@ -82,7 +78,7 @@ public class TransactionService {
 	public int insert(Transaction transaction) {
 		int index = getTableIndex(transaction.getVin());
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-		String INSERT_TRANS_SQL = "INSERT INTO TRANSACTION_"+index+"(BARCODE,PLATETYPE,PLATENUMBER,VIN,DATECREATED,STATUS,SITECODE,BUSINESSCODE,COMMUNITYUNIQUEID,COMPANYUNIQUEID,LOCATIONCODE,DATEMODIFIED,UUID,CREATOR,INDEXNUMBER) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String INSERT_TRANS_SQL = "INSERT INTO TRANSACTION_"+index+"(BARCODE,PLATETYPE,PLATENUMBER,VIN,DATECREATED,STATUS,SITECODE,BUSINESSCODE,COMMUNITYUNIQUEID,COMPANYUNIQUEID,LOCATIONCODE,DATEMODIFIED,BATCH,UUID,CREATOR,INDEXNUMBER) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -103,9 +99,10 @@ public class TransactionService {
 				ps.setString(11, transaction.getLocationCode());
 				java.sql.Timestamp modifyDate = new java.sql.Timestamp(transaction.getDateModified().getTime());
 				ps.setTimestamp(12, modifyDate);
-				ps.setString(13, transaction.getUuid());
-				ps.setString(14, transaction.getCreator());
-				ps.setInt(15, transaction.getIndexNumber());
+				ps.setInt(13, transaction.getBatch());
+				ps.setString(14, transaction.getUuid());
+				ps.setString(15, transaction.getCreator());
+				ps.setInt(16, transaction.getIndexNumber());
 				return ps;
 			}
 		}, keyHolder);

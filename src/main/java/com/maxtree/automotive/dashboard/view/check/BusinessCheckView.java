@@ -215,56 +215,34 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     	User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
     	List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(currentUser, DashboardViewType.CHECK.getViewName());
         for (Map<String, Object> m : allMessages) {
-        	VerticalLayout notificationLayout = new VerticalLayout();
-            notificationLayout.setMargin(false);
-            notificationLayout.setSpacing(false);
-            notificationLayout.addStyleName("notification-item");
+        	VerticalLayout vLayout = new VerticalLayout();
+        	vLayout.setMargin(false);
+        	vLayout.setSpacing(false);
+        	vLayout.addStyleName("notification-item");
+            Label timeLabel = new Label();
             String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
             Label titleLabel = new Label(m.get("subject")+readStr);
             titleLabel.addStyleName("notification-title");
+            String json = m.get("messagebody").toString();
+            Map<String, String> map = jsonHelper.json2Map(json);
+            Label plateNumber = new Label(map.get("4"));//PLATENUMBER
+            plateNumber.addStyleName("notification-content");
             
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
-            Label timeLabel = new Label();
             timeLabel.setValue(new TimeAgo().toDuration(duration));
             timeLabel.addStyleName("notification-time");
-            String json = m.get("messagebody").toString();
-            Map<String, String> map = new MessageBodyParser().json2Map(json);
-            String type = map.get("type").toString();
-            String messageContent = map.get("message");
-            Label contentLabel = new Label(messageContent);
-            contentLabel.addStyleName("notification-content");
-//            // 自动删除已过时的消息
-//            if ("transaction".equals(type)) {
-//            	int transId = Integer.parseInt(map.get("transactionUniqueId").toString());
-//            	Transaction trans = ui.transactionService.findById(transId);
-//	            long time1 = trans.getDateModified().getTime();
-//				long time2 = dateCreated.getTime();
-//				if (time1 > time2) {
-//					int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-//					ui.messagingService.deleteMessageRecipient(messageUniqueId, currentUser.getUserUniqueId());
-//					continue;
-//				}
-//            }
-
-            notificationLayout.addComponents(titleLabel, timeLabel, contentLabel);
-            listLayout.addComponent(notificationLayout);
-            notificationLayout.addStyleName("switchbutton");
-            notificationLayout.addLayoutClickListener(e -> {
+            vLayout.addComponents(titleLabel, timeLabel, plateNumber);
+            listLayout.addComponent(vLayout);
+            vLayout.addStyleName("switchbutton");
+            vLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
-            	int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-//            	if ("text".equals(type)) {
-//            		
-//            		showAll(allMessages, messageUniqueId);
-//    			} else if ("transaction".equals(type)) {
-//    				int transactionUniqueId = Integer.parseInt(map.get("transactionUniqueId").toString());
-//    				
-//    				// 标记已读
-//    				ui.messagingService.markAsRead(messageUniqueId, currentUser.getUserUniqueId());
-//    				getUnreadCount();
-//    				// 打开业务
-//    				openTransaction(transactionUniqueId, dateCreated);
-//    			}
+            	
+            	if(editableTrans == null) {
+        			 
+            	}else {
+        			Notifications.warning("请确保完成当前任务，再执行下一操作。");
+        		}
             });
             
         }
@@ -684,7 +662,8 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		details.put("4", editableTrans.getPlateNumber());//PLATENUMBER
 		details.put("5", editableTrans.getVin());//VIN
 		details.put("6", editableTrans.getCode());//BUSINESSTYPE
-		details.put("7", suggestions);//SUGGEST
+		details.put("7", editableTrans.getUuid());//UUID
+		details.put("8", suggestions);//SUGGESTIONS
 		String json = jsonHelper.map2Json(details);
     	
     	// 插入移行表

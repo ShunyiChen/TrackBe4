@@ -46,6 +46,13 @@ public class BusinessTypePane extends Panel{
 		return selector.getValue();
 	}
 	
+	/**
+	 * 
+	 */
+	public void populate(String code) {
+		selector.populate(code);
+	}
+	
 	private FrontView view = null;
 	private BusinessTypeSelector selector;
 }

@@ -111,8 +111,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
             }
         });
         
-        
-        
         // 开启轮询事件提醒
         startPolling();
         
@@ -217,35 +215,69 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         
         List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.INPUT.getViewName());
         for (Map<String, Object> m : allMessages) {
-        	
-        	int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-        	VerticalLayout notificationLayout = new VerticalLayout();
-            notificationLayout.setMargin(false);
-            notificationLayout.setSpacing(false);
-            notificationLayout.addStyleName("notification-item");
-            String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"(已读)";
+        	VerticalLayout vLayout = new VerticalLayout();
+        	vLayout.setMargin(false);
+        	vLayout.setSpacing(false);
+        	vLayout.addStyleName("notification-item");
+            Label timeLabel = new Label();
+            String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
             Label titleLabel = new Label(m.get("subject")+readStr);
             titleLabel.addStyleName("notification-title");
+            String json = m.get("messagebody").toString();
+            Map<String, String> map = jsonHelper.json2Map(json);
+            Label plateNumber = new Label(map.get("4"));//PLATENUMBER
+            String vin = map.get("5");
+            String uuid = map.get("7");
+            plateNumber.addStyleName("notification-content");
             
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
-            Label timeLabel = new Label();
             timeLabel.setValue(new TimeAgo().toDuration(duration));
             timeLabel.addStyleName("notification-time");
-            String json = m.get("messagebody").toString();
-            Map<String, String> map = new MessageBodyParser().json2Map(json);
-            String type = map.get("type").toString();
-            String messageContent = map.get("message");
-            Label contentLabel = new Label(messageContent);
-            contentLabel.addStyleName("notification-content");
-
-            
-            notificationLayout.addComponents(titleLabel, timeLabel, contentLabel);
-            listLayout.addComponent(notificationLayout);
-            notificationLayout.addStyleName("switchbutton");
-            notificationLayout.addLayoutClickListener(e -> {
-            	
+            vLayout.addComponents(titleLabel, timeLabel, plateNumber);
+            listLayout.addComponent(vLayout);
+            vLayout.addStyleName("switchbutton");
+            vLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
+            	
+            	if(editableTrans == null) {
+        			editMode = 1;//进入更新模式
+        			openTransaction(uuid, vin);
+        		}
+        		else {
+        			Notifications.warning("请确保完成当前任务，再执行下一操作。");
+        		}
+            });
+        	
+        	
+//        	int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
+//        	VerticalLayout notificationLayout = new VerticalLayout();
+//            notificationLayout.setMargin(false);
+//            notificationLayout.setSpacing(false);
+//            notificationLayout.addStyleName("notification-item");
+//            String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"(已读)";
+//            Label titleLabel = new Label(m.get("subject")+readStr);
+//            titleLabel.addStyleName("notification-title");
+//            
+//            Date dateCreated = (Date) m.get("datecreated");
+//            long duration = new Date().getTime() - dateCreated.getTime();
+//            Label timeLabel = new Label();
+//            timeLabel.setValue(new TimeAgo().toDuration(duration));
+//            timeLabel.addStyleName("notification-time");
+//            String json = m.get("messagebody").toString();
+//            Map<String, String> map = new MessageBodyParser().json2Map(json);
+//            String type = map.get("type").toString();
+//            String messageContent = map.get("message");
+//            Label contentLabel = new Label(messageContent);
+//            contentLabel.addStyleName("notification-content");
+//
+//            
+//            notificationLayout.addComponents(titleLabel, timeLabel, contentLabel);
+//            listLayout.addComponent(notificationLayout);
+//            notificationLayout.addStyleName("switchbutton");
+//            notificationLayout.addLayoutClickListener(e -> {
+//            	
+//            	notificationsWindow.close();
 //            	if ("text".equals(type)) {
 //            		
 //            		 showAll(allMessages, messageUniqueId);
@@ -272,7 +304,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 ////    				openTransaction(transactionUniqueId, dateCreated);
 //    				
 //    			}
-            });
+//            });
         }
         
         scrollPane.setContent(listLayout);
@@ -437,8 +469,8 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     	btnAdd.setDescription("创建或补充流水号");
     	btnAdd.addClickListener(e -> {
     		if(editableTrans == null) {
+    			editMode = 0;//进入录入模式
     			startTransaction();
-    			editMode = 0;//进入新建模式
     		}
     		else {
     			Notifications.warning("请确保完成当前任务，再执行下一操作。");
@@ -527,7 +559,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     	editableTrans.setPlateType("");
     	editableTrans.setPlateNumber(addr.getLicenseplate());
     	editableTrans.setVin("");
-    	basicInfoPane.setFieldValues(editableTrans);
+    	basicInfoPane.populate2(editableTrans);
     	
     	// validating the transaction information
     	basicInfoPane.validatingFieldValues(binder);
@@ -538,12 +570,48 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     
     /**
      * 
-     * @param transactionUniqueId
-     * @param messageDateCreated
+     * @param transUUID
+     * @param transVIN
      */
-    private void openTransaction(int transactionUniqueId, String vin) {
-    	editableTrans = ui.transactionService.findById(transactionUniqueId, vin);
+    private void openTransaction(String transUUID, String transVIN) {
+    	editableTrans = ui.transactionService.findByUUID(transUUID, transVIN);
+    	editableSite = ui.siteService.findByCode(editableTrans.getSiteCode());
+    	uuid = editableTrans.getUuid();
+    	batch = editableTrans.getBatch();
+    	vin = editableTrans.getVin();
+    	stoppedAtAnException = false;
     	
+    	int companyUniqueId = loggedInUser.getCompanyUniqueId();
+    	int communityUniqueId = loggedInUser.getCommunityUniqueId();
+    	if (companyUniqueId == 0) {
+    		Notifications.warning("当前用户没有加入任何机构，请联系管理员进行分配。");
+    		return;
+    	}
+    	if (communityUniqueId == 0) {
+    		Notifications.warning("当前用户没有加入任何社区，请联系管理员进行分配。");
+    		return;
+    	}
+    	editableCompany = ui.companyService.findById(companyUniqueId);
+    	List<Site> allSites = ui.siteService.getSites(communityUniqueId);
+    	for (int i = 0; i < allSites.size(); i++) {
+    		if (allSites.get(i).getRunningStatus() == 1) {
+    			editableSite = allSites.get(i);
+    			break;
+    		}
+    	}
+    	if (editableSite == null) {
+    		Notifications.warning("当前用户所在的社区不存在文件站点，或站点已关闭。请联系管理员进行设置。");
+    		return;
+    	}
+    	
+    	// validating the transaction information
+    	basicInfoPane.validatingFieldValues(binder);
+    	binder.setBean(editableTrans);
+    	
+    	resetComponents();
+    	
+    	basicInfoPane.populate2(editableTrans);
+    	businessTypePane.populate(editableTrans.getBusinessCode());
     	
 //		if (editableTrans != null) {
 //			long time1 = editableTrans.getDateModified().getTime();
@@ -634,6 +702,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
         	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
         	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	editableTrans.setIndexNumber(1);
@@ -800,7 +869,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
         		ui.queueService.create(newQueue, serial);
         		
-        		
         		//操作记录
         		track(Actions.INPUT);
         		
@@ -926,7 +994,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     	//2大流程
     	// 需要审档（一级）流程
     	else if (businessTypePane.getSelected().getNeedToCheck() == 1 && businessTypePane.getSelected().getCheckLevel().equals("一级")) {
-    		
     		basicInfoPane.populate(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -966,7 +1033,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
         		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
         		ui.queueService.create(newQueue, serial);
-        		
         		
         		//操作记录
         		track(Actions.INPUT);
@@ -1089,6 +1155,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 		details.put("4", basicInfoPane.getPlateNumber());//PLATENUMBER
 		details.put("5", basicInfoPane.getVIN());//VIN
 		details.put("6", businessTypePane.getSelected().getName());//BUSINESSTYPE
+		details.put("7", editableTrans.getUuid());//UUID
 		String json = jsonHelper.map2Json(details);
     	
     	// 插入移行表
@@ -1141,20 +1208,18 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 		notificationsButton.updateNotificationsCount(event);
 	}
     
-	private int editMode;//0-新建 1:修改
+	private int editMode;	//0-新建 1:修改
 	private MessageBodyParser jsonHelper = new MessageBodyParser();
 	public static final String EDIT_ID = "dashboard-edit";
 	public static final String TITLE_ID = "dashboard-title";
 	private Transaction editableTrans = null; 	//可编辑的编辑transaction
 	private Company editableCompany = null;	 	//前台所在机构
-	
 	public User loggedInUser;	//登录用户
 	public Site editableSite;	//业务站点
-	public String uuid;	//UUID业务与原文关联号
-	public int batch;	//业务批次号。默认最大1000个批次，每批次最多放5000文件夹。
-	public String vin;	//车辆识别代码。用于分表。
-	public boolean flag = true;// 如果flag为false则停止后续操作。
-	
+	public String uuid;			//UUID业务与原文关联号
+	public int batch;			//业务批次号。默认最大1000个批次，每批次最多放5000文件夹。
+	public String vin;			//车辆识别代码。用于分表。
+	public boolean stoppedAtAnException = false;// true：异常停止 false:继续正常录入。
     private Label titleLabel;
     private Window notificationsWindow;
     private VerticalLayout root;
@@ -1166,7 +1231,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     public BusinessTypePane businessTypePane = new BusinessTypePane(this);
     public ThumbnailGrid fileGrid = new ThumbnailGrid(this);
     public CapturePane capturePane = new CapturePane();
-    
     private Button btnPrint = new Button();
     private Button btnAdd = new Button();
     private Button btnCommit = new Button();

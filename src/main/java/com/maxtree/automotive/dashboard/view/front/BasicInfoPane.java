@@ -125,7 +125,7 @@ public class BasicInfoPane extends Panel{
 		// 有效性验证
 		if(StringUtils.isEmpty(view.vin)) {
 			Notifications.warning("有效性验证失败。");
-			view.flag = false;
+			view.stoppedAtAnException = true;
 		}
 	}
 	
@@ -222,7 +222,7 @@ public class BasicInfoPane extends Panel{
 	 * 
 	 * @param transaction
 	 */
-	public void setFieldValues(Transaction transaction) {
+	public void populate2(Transaction transaction) {
 		barCodeField.setValue(transaction.getBarcode());
 		plateTypeField.setValue(transaction.getPlateType());
 		plateNumberField.setValue(transaction.getPlateNumber());

@@ -1,5 +1,6 @@
 package com.maxtree.automotive.dashboard.view.front;
 
+import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -147,7 +148,7 @@ public class BusinessTypeSelector extends FormLayout {
 				//影像化检测无效
 				else {
 					Notifications.warning("缺少历史影像化记录，已提交申请。等待补充完整后再重新开始本次业务登记。");
-					view.flag = false;
+					view.stoppedAtAnException = true;
 					// 发信
 //					Administrator admin = Yaml.readAdministrator();
 //					System.out.println(admin.getUsername());
@@ -291,6 +292,30 @@ public class BusinessTypeSelector extends FormLayout {
 		return selector.getValue();
 	}
 	
+	/**
+	 * 
+	 * @param code
+	 */
+	public void populate(String code) {
+		for(Business business : data) {
+			if(business.getCode().equals(code)) {
+				selector.setSelectedItem(business);
+				break;
+			}
+		}
+		/// 为row添加缩略图
+		List<Document> documentList1 = ui.documentService.findAllDocument1(view.vin, view.uuid);
+		for (Document doc : documentList1) {
+			ThumbnailRow row = view.fileGrid.mapRows.get(doc.getDictionarycode());
+			row.addThumbnail(new Thumbnail(new ByteArrayInputStream(doc.getThumbnail())));
+		}
+		List<Document> documentList2 = ui.documentService.findAllDocument2(view.vin, view.uuid);
+		for (Document doc : documentList2) {
+			ThumbnailRow row = view.fileGrid.mapRows.get("$$$$");
+			row.addThumbnail(new Thumbnail(new ByteArrayInputStream(doc.getThumbnail())));
+		}
+	}
+
 	private FrontView view;
 	private List<Business> data;
 	private ComboBox<Business> selector;

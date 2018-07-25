@@ -18,7 +18,6 @@ import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
-import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
@@ -81,7 +80,6 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 //        dynamicallyVLayout.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
 //        root.addComponents(dynamicallyVLayout);
 //        root.setExpandRatio(dynamicallyVLayout, 7.0f);
-        
 //        root.addComponent(grid);
 //        root.setExpandRatio(grid, 1.0f);
         
@@ -135,6 +133,9 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
         });
     }
 	
+	/**
+	 * 
+	 */
 	private void startPolling() {
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
 //		ui.setPollInterval(sc.getPollinginterval() );
@@ -146,6 +147,10 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 //		});
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
     private Component buildSparklines() {
         CssLayout sparks = new CssLayout();
         sparks.addStyleName("sparks");
@@ -154,6 +159,10 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
         return sparks;
     }
 
+    /**
+     * 
+     * @return
+     */
     private Component buildHeader() {
         HorizontalLayout header = new HorizontalLayout();
         header.addStyleName("viewheader");
@@ -191,14 +200,12 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 //        VerticalLayout notificationsLayout = new VerticalLayout();
     	VerticalLayout listLayout = new VerticalLayout();
     	
-    	User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+    	 User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
     	
     	 List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(currentUser, DashboardViewType.INPUT.getViewName());
          for (Map<String, Object> m : allMessages) {
-         	
-         	int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-         	
-         	VerticalLayout notificationLayout = new VerticalLayout();
+         	 int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
+         	 VerticalLayout notificationLayout = new VerticalLayout();
              notificationLayout.setMargin(false);
              notificationLayout.setSpacing(false);
              notificationLayout.addStyleName("notification-item");
@@ -272,7 +279,7 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 
     @Override
     public void enter(final ViewChangeEvent event) {
-        notificationsButton.updateNotificationsCount(null);
+//        notificationsButton.updateNotificationsCount(null);
     }
 
     public static final class NotificationsButton extends Button {
@@ -448,18 +455,13 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 		event.setCount(unreadCount);
 		notificationsButton.updateNotificationsCount(event);
 	}
-
+    
 	@Override
 	public void cleanStage() {
-		// TODO Auto-generated method stub
 		
 	}
 	
-    public Transaction getCurrentTransaction() {
-    	return transaction;
-    }
-    
-//    private SearchModel searchModel = new SearchModel();
+    private TODOGrid grid = new TODOGrid();
     private Label titleLabel;
     private Window notificationsWindow;
     public static final String EDIT_ID = "dashboard-edit";
@@ -471,6 +473,4 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
     private Button btnAdvanceRearch = new Button();
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>无查询结果</span>", ContentMode.HTML);
-    private Transaction transaction = null;
-//    private SearchResultsGrid grid = new SearchResultsGrid();
 }

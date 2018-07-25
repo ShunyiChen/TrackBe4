@@ -115,6 +115,14 @@ public class Transaction {
 		this.companyUniqueId = companyUniqueId;
 	}
 
+	public Integer getBatch() {
+		return batch;
+	}
+
+	public void setBatch(Integer batch) {
+		this.batch = batch;
+	}
+	
 	public String getUuid() {
 		return uuid;
 	}
@@ -169,7 +177,7 @@ public class Transaction {
 		 "Transaction[transactionUniqueId=%d, barcode='%s', plateType='%s',plateNumber='%s',vin='%s', "
 		 + "dateCreated='%s', dateModified='%s', dateFinished='%s', status='%s',siteCode='%d',"
 		 + "businessCode='%d', communityUniqueID='%d',companyUniqueId='%d',locationCode='%s',"
-		 + "uuid='%s',code='%s',creator='%s',indexNumber='%d']",
+		 + "batch='%s', uuid='%s',code='%s',creator='%s',indexNumber='%d']",
 		 transactionUniqueId,
 		 barcode,
 		 plateType,
@@ -184,6 +192,7 @@ public class Transaction {
 		 communityUniqueId,
 		 companyUniqueId,
 		 locationCode,
+		 batch,
 		 uuid,
 		 code,
 		 creator,
@@ -205,6 +214,7 @@ public class Transaction {
 	private Integer communityUniqueId = 0; 	// 办理社区ID
 	private Integer companyUniqueId = 0;    // 办理机构ID
 	private String locationCode;   			// 车辆所在地地点CODE
+	private Integer batch = 0;					// 批次号
 	private String uuid;					// 文件挂接UUID
 	private String code;                 	// 上架号
 	private Site site;						// 文件站点
