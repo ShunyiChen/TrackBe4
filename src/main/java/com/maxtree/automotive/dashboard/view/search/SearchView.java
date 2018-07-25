@@ -207,7 +207,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     	
     	User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
     	
-    	 List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(currentUser, DashboardViewType.DASHBOARD.getViewName());
+    	 List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(currentUser, DashboardViewType.SEARCH.getViewName());
          for (Map<String, Object> m : allMessages) {
          	
          	int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());

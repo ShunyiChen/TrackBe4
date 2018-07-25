@@ -196,7 +196,7 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
         VerticalLayout listLayout = new VerticalLayout();
         
     	User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(currentUser, DashboardViewType.SENDBACK.getViewName());
+        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(currentUser, DashboardViewType.SHELF.getViewName());
         for (Map<String, Object> m : allMessages) {
         	
         	VerticalLayout notificationLayout = new VerticalLayout();

@@ -1,7 +1,5 @@
 package com.maxtree.automotive.dashboard.view;
 
-import java.io.File;
-
 import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.PermissionCodes;
 import com.maxtree.automotive.dashboard.component.ChangePasswordWindow;
@@ -9,7 +7,6 @@ import com.maxtree.automotive.dashboard.component.ProfilePreferencesWindow;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
-import com.vaadin.server.FileResource;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
@@ -36,19 +33,21 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 @SuppressWarnings({ "serial", "unchecked" })
 public final class DashboardMenu extends CustomComponent {
-
     public static final String ID = "dashboard-menu";
-    
     public static final String REPORTS_BADGE_ID = "dashboard-menu-reports-badge";
-//    public static final String NOTIFICATIONS_BADGE_ID = "dashboard-menu-notifications-badge";
     private static final String STYLE_VISIBLE = "valo-menu-visible";
-    private Label notificationsBadge;
-    private Label sendbackBadge;
-    private Label historyBadge;
+    
+    private Label inputBadge;
+    private Label qualityBadge;
+    private Label checkBadge;
     private Label searchBadge;
     private Label shelfBadge;
+    private Label imagingAdminBadge;
+    private Label imagingInputBadge;
+    private Label imagingQualityBadge;
+    
     private MenuItem settingsItem;
-
+    
     public static DashboardMenu DASHBOARD_MENU = null;
     
     public static DashboardMenu getInstance() { 
@@ -87,7 +86,7 @@ public final class DashboardMenu extends CustomComponent {
     }
 
     private Component buildTitle() {
-        Label logo = new Label("<font size=\"2px\" face=\"Microsoft YaHei\" color=\"white\">CarTrackBe4 <strong>控制面板</strong></font>", ContentMode.HTML);
+        Label logo = new Label("<font size=\"2px\" face=\"Microsoft YaHei\" color=\"white\">TrackBe4 <strong>控制面板</strong></font>", ContentMode.HTML);
         logo.setSizeUndefined();
         HorizontalLayout logoWrapper = new HorizontalLayout(logo);
         logoWrapper.setComponentAlignment(logo, Alignment.MIDDLE_CENTER);
@@ -165,23 +164,29 @@ public final class DashboardMenu extends CustomComponent {
     	User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
         for (final DashboardViewType view : DashboardViewType.values()) {
         	// 前台录入check
-        	if (view == DashboardViewType.DASHBOARD) {
+        	if (view == DashboardViewType.INPUT) {
         		if(!user.isPermitted(PermissionCodes.A2)) {
             		continue;
             	}
         	} 
-        	// 质检check
-        	else if (view == DashboardViewType.SENDBACK) {
+        	// 质检
+        	else if (view == DashboardViewType.QUALITY) {
         		if(!user.isPermitted(PermissionCodes.A3)) {
             		continue;
             	}
         	}
-        	// 审档check
-        	else if (view == DashboardViewType.HISTORY) {
+        	// 审档
+        	else if (view == DashboardViewType.CHECK) {
         		if(!user.isPermitted(PermissionCodes.A4)) {
             		continue;
             	}
-        	} 
+        	}
+        	// 确认审档
+        	else if (view == DashboardViewType.DOUBLECHECK) {
+        		if(!user.isPermitted(PermissionCodes.A7)) {
+            		continue;
+            	}
+        	}
         	// 查询数据
         	else if (view == DashboardViewType.SEARCH) {
         		if(!user.isPermitted(PermissionCodes.A5)) {
@@ -194,26 +199,43 @@ public final class DashboardMenu extends CustomComponent {
             		continue;
             	}
         	}
+        	// 影像化管理员
+        	else if (view == DashboardViewType.IMAGING_MANAGER) {
+        		if(!user.isPermitted(PermissionCodes.A8)) {
+            		continue;
+            	}
+        	}
+        	// 影像化录入
+        	else if (view == DashboardViewType.IMAGING_INPUT) {
+        		if(!user.isPermitted(PermissionCodes.A9)) {
+            		continue;
+            	}
+        	}
+        	// 影像化质检
+        	else if (view == DashboardViewType.IMAGING_QUALITY) {
+        		if(!user.isPermitted(PermissionCodes.A10)) {
+            		continue;
+            	}
+        	}
+        	
+        	
         	// 保存首个界面名称
         	Object firstView = VaadinSession.getCurrent().getAttribute(user.getUserUniqueId()+"");
         	if (firstView == null) {
         		VaadinSession.getCurrent().setAttribute(user.getUserUniqueId()+"", view.getViewName());
         	}
             Component menuItemComponent = new ValoMenuItemButton(view);
-            if (view == DashboardViewType.DASHBOARD) {
-                notificationsBadge = new Label();
-//                notificationsBadge.setId(NOTIFICATIONS_BADGE_ID);
-                menuItemComponent = buildBadgeWrapper(menuItemComponent, notificationsBadge);
+            if (view == DashboardViewType.INPUT) {
+                inputBadge = new Label();
+                menuItemComponent = buildBadgeWrapper(menuItemComponent, inputBadge);
             }
-            else if (view == DashboardViewType.SENDBACK) {
-            	sendbackBadge = new Label();
-//            	sendbackBadge.setId(NOTIFICATIONS_BADGE_ID);
-                menuItemComponent = buildBadgeWrapper(menuItemComponent, sendbackBadge);
+            else if (view == DashboardViewType.QUALITY) {
+            	qualityBadge = new Label();
+                menuItemComponent = buildBadgeWrapper(menuItemComponent, qualityBadge);
             }
-            else if (view == DashboardViewType.HISTORY) {
-            	historyBadge = new Label();
-//            	historyBadge.setId(NOTIFICATIONS_BADGE_ID);
-                menuItemComponent = buildBadgeWrapper(menuItemComponent, historyBadge);
+            else if (view == DashboardViewType.CHECK) {
+            	checkBadge = new Label();
+                menuItemComponent = buildBadgeWrapper(menuItemComponent, checkBadge);
             }
             else if (view == DashboardViewType.SEARCH) {
             	searchBadge = new Label();
@@ -223,6 +245,19 @@ public final class DashboardMenu extends CustomComponent {
             	shelfBadge = new Label();
                 menuItemComponent = buildBadgeWrapper(menuItemComponent, shelfBadge);
             }
+            else if (view == DashboardViewType.IMAGING_MANAGER) {
+            	imagingAdminBadge = new Label();
+                menuItemComponent = buildBadgeWrapper(menuItemComponent, imagingAdminBadge);
+            }
+            else if (view == DashboardViewType.IMAGING_INPUT) {
+            	imagingInputBadge = new Label();
+                menuItemComponent = buildBadgeWrapper(menuItemComponent, imagingInputBadge);
+            }
+            else if (view == DashboardViewType.IMAGING_QUALITY) {
+            	imagingQualityBadge = new Label();
+                menuItemComponent = buildBadgeWrapper(menuItemComponent, imagingQualityBadge);
+            }
+            
             menuItemsLayout.addComponent(menuItemComponent);
         }
         return menuItemsLayout;
@@ -258,9 +293,9 @@ public final class DashboardMenu extends CustomComponent {
      */
     @Subscribe
     public void updateNotificationsCount(int count) {
-    	if (notificationsBadge != null) {
-            notificationsBadge.setValue(String.valueOf(count));
-            notificationsBadge.setVisible(count > 0);
+    	if (inputBadge != null) {
+            inputBadge.setValue(String.valueOf(count));
+            inputBadge.setVisible(count > 0);
     	}
     }
 
@@ -270,9 +305,9 @@ public final class DashboardMenu extends CustomComponent {
      */
     @Subscribe
     public void qcCount(int count) {
-    	if (sendbackBadge != null) {
-    		sendbackBadge.setValue(String.valueOf(count));
-        	sendbackBadge.setVisible(count > 0);
+    	if (qualityBadge != null) {
+    		qualityBadge.setValue(String.valueOf(count));
+        	qualityBadge.setVisible(count > 0);
     	}
     }
     
@@ -282,9 +317,9 @@ public final class DashboardMenu extends CustomComponent {
      */
     @Subscribe
     public void checkerCount(int count) {
-    	if (historyBadge != null) {
-    		historyBadge.setValue(String.valueOf(count));
-    		historyBadge.setVisible(count > 0);
+    	if (checkBadge != null) {
+    		checkBadge.setValue(String.valueOf(count));
+    		checkBadge.setVisible(count > 0);
     	}
     }
     
@@ -303,6 +338,31 @@ public final class DashboardMenu extends CustomComponent {
     		shelfBadge.setVisible(count > 0);
     	}
     }
+    
+    @Subscribe
+    public void imagingAdminCount(int count) {
+    	if (imagingAdminBadge != null) {
+    		imagingAdminBadge.setValue(String.valueOf(count));
+    		imagingAdminBadge.setVisible(count > 0);
+    	}
+    }
+
+    @Subscribe
+    public void imagingInputCount(int count) {
+    	if (imagingInputBadge != null) {
+    		imagingInputBadge.setValue(String.valueOf(count));
+    		imagingInputBadge.setVisible(count > 0);
+    	}
+    }
+    
+    @Subscribe
+    public void imagingQualityCount(int count) {
+    	if (imagingQualityBadge != null) {
+    		imagingQualityBadge.setValue(String.valueOf(count));
+    		imagingQualityBadge.setVisible(count > 0);
+    	}
+    }
+    
 
     @Subscribe
     public void updateUserName(final DashboardEvent.ProfileUpdatedEvent event) {

@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.business;
+package com.maxtree.automotive.dashboard.view.check;
 
 public class ImageParameter {
 

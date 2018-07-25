@@ -1,9 +1,8 @@
-package com.maxtree.automotive.dashboard.view.image;
+package com.maxtree.automotive.dashboard.view.imaging;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -11,11 +10,9 @@ import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Actions;
-import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
@@ -28,14 +25,11 @@ import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Company;
-import com.maxtree.automotive.dashboard.domain.FrameNumber;
-import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
-import com.maxtree.automotive.dashboard.domain.UserEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
@@ -52,10 +46,8 @@ import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -65,7 +57,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -80,11 +71,11 @@ import de.schlichtherle.license.LicenseContent;
  *
  */
 @SuppressWarnings("serial")
-public final class FrontView extends Panel implements View, FrontendViewIF {
+public final class ImagingInputView extends Panel implements View, FrontendViewIF {
     
-	private static final Logger log = LoggerFactory.getLogger(FrontView.class);
+	private static final Logger log = LoggerFactory.getLogger(ImagingInputView.class);
 	
-    public FrontView() {
+    public ImagingInputView() {
         addStyleName(ValoTheme.PANEL_BORDERLESS);
         setSizeFull();
         DashboardEventBus.register(this);
@@ -218,7 +209,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     	scrollPane.setWidth("100%");
         VerticalLayout listLayout = new VerticalLayout();
         
-        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.DASHBOARD.getViewName());
+        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.INPUT.getViewName());
         for (Map<String, Object> m : allMessages) {
         	
         	int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
@@ -853,7 +844,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 		int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {
 			
-			if (sd.getViewName().equals(DashboardViewType.DASHBOARD.getViewName())
+			if (sd.getViewName().equals(DashboardViewType.INPUT.getViewName())
 					|| sd.getViewName().equals("")) {
 				unreadCount++;
 			}

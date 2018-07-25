@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.business;
+package com.maxtree.automotive.dashboard.view.check;
 
 import java.io.IOException;
 import java.io.InputStream;

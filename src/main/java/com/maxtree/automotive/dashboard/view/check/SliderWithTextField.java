@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.business;
+package com.maxtree.automotive.dashboard.view.check;
 
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.component.Box;

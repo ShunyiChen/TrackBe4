@@ -215,7 +215,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     	scrollPane.setWidth("100%");
         VerticalLayout listLayout = new VerticalLayout();
         
-        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.DASHBOARD.getViewName());
+        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.INPUT.getViewName());
         for (Map<String, Object> m : allMessages) {
         	
         	int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
@@ -239,17 +239,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
             Label contentLabel = new Label(messageContent);
             contentLabel.addStyleName("notification-content");
 
-//            // 自动删除已过时的消息
-//            if ("transaction".equals(type)) {
-//            	int transId = Integer.parseInt(map.get("transactionUniqueId").toString());
-//            	Transaction trans = ui.transactionService.findById(transId);
-//	            long time1 = trans.getDateModified().getTime();
-//				long time2 = dateCreated.getTime();
-//				if (time1 > time2) {
-//					ui.messagingService.deleteMessageRecipient(messageUniqueId, currentUser.getUserUniqueId());
-//					continue;
-//				}
-//            }
             
             notificationLayout.addComponents(titleLabel, timeLabel, contentLabel);
             listLayout.addComponent(notificationLayout);
@@ -1142,7 +1131,7 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 		int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {
 			
-			if (sd.getViewName().equals(DashboardViewType.DASHBOARD.getViewName())
+			if (sd.getViewName().equals(DashboardViewType.INPUT.getViewName())
 					|| sd.getViewName().equals("")) {
 				unreadCount++;
 			}

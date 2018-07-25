@@ -20,7 +20,7 @@ public class DashboardNavigator extends Navigator {
 	private static final long serialVersionUID = 1L;
 	// Provide a Google Analytics tracker id here
     private static final String TRACKER_ID = null;// "UA-658457-6";
-    private static final DashboardViewType ERROR_VIEW = DashboardViewType.DASHBOARD;
+    private static final DashboardViewType ERROR_VIEW = DashboardViewType.INPUT;
     private ViewProvider errorViewProvider;
     private GoogleAnalyticsTracker tracker;
     
