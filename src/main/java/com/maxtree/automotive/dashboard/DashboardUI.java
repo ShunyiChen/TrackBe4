@@ -146,7 +146,11 @@ public final class DashboardUI extends UI {
 					|| user.isPermitted(PermissionCodes.A3)
 					|| user.isPermitted(PermissionCodes.A4)
 					|| user.isPermitted(PermissionCodes.A5)
-					|| user.isPermitted(PermissionCodes.A6)) {
+					|| user.isPermitted(PermissionCodes.A6)
+					|| user.isPermitted(PermissionCodes.A7)
+					|| user.isPermitted(PermissionCodes.A8)
+					|| user.isPermitted(PermissionCodes.A9)
+					|| user.isPermitted(PermissionCodes.A10)) {
 				
 				MainView mainView = new MainView();
 				setContent(mainView);

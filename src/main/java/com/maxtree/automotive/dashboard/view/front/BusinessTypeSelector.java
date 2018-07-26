@@ -1,6 +1,7 @@
 package com.maxtree.automotive.dashboard.view.front;
 
 import java.io.ByteArrayInputStream;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -11,12 +12,12 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.data.Administrator;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.domain.Document;
+import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.FileException;
@@ -140,7 +141,7 @@ public class BusinessTypeSelector extends FormLayout {
 				
 			if(forTheFirstTimeToLoad) {
 				//影像化检测有效
-				if (visualization()) {
+				if (imagingCheck()) {
 					loadMaterials(opt.get().getCode());
 					ui.addPollListener(pollListener);
 					forTheFirstTimeToLoad = false;
@@ -150,8 +151,14 @@ public class BusinessTypeSelector extends FormLayout {
 					Notifications.warning("缺少历史影像化记录，已提交申请。等待补充完整后再重新开始本次业务登记。");
 					view.stoppedAtAnException = true;
 					// 发信
-//					Administrator admin = Yaml.readAdministrator();
-//					System.out.println(admin.getUsername());
+					Imaging imaging = new Imaging();
+					imaging.setCreator(view.loggedInUser.getUserName());
+					imaging.setDateCreated(new Date());
+					imaging.setDateModified(new Date());
+					imaging.setPlateNumber(view.basicInfoPane.getPlateNumber());
+					imaging.setPlateType(view.basicInfoPane.getPlateType());
+					imaging.setVin(view.basicInfoPane.getVIN());
+					
 				}
 			}
 			
@@ -163,14 +170,12 @@ public class BusinessTypeSelector extends FormLayout {
      * 
      * @return
      */
-    private boolean visualization() {
+    private boolean imagingCheck() {
     	/*
     	 需求：
 	    	 设立一个影响化管理人，有单独角色单独界面，界面有列表，一行一个车牌号。全程自己手动更改业务状态（待查看，待提档，待归档，完成）
 	    	 影像化录入，单独角色单独界面，根据纸质录入车辆信息，上传原文，提交给质检。
 	    	 影响化质检，单独角色单独界面，根据纸质录入车辆信息，查看原文，退回质检或完成后将纸质档案放回。
-    	 
-    	 
     	 */
     	if(view.businessTypePane.getSelected().getName().equals("注册登记")) {
     		return true;

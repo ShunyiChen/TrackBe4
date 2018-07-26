@@ -39,22 +39,6 @@ public class Yaml {
     }
 	
 	/**
-	 * 获取影像化部门管理员
-	 * 
-	 * @return
-	 */
-	public static Administrator readAdministrator() {
-		Administrator admin = null;
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        try {
-        	admin = mapper.readValue(new File("configuration/Administrator.yaml"), Administrator.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return admin;
-    }
-	
-	/**
 	 * 
 	 * @return
 	 */

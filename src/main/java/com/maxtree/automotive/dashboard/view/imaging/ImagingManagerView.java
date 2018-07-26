@@ -73,13 +73,16 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
         Responsive.makeResponsive(root);
         root.addComponent(buildHeader());
         root.addComponent(buildSparklines());
-//        dynamicallyVLayout.addStyleName("dynamicallyVLayout-check");
-//        dynamicallyVLayout.setWidth("100%");
-//        dynamicallyVLayout.setHeight("100%");
-//        dynamicallyVLayout.addComponents(blankLabel);
-//        dynamicallyVLayout.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
-//        root.addComponents(dynamicallyVLayout);
-//        root.setExpandRatio(dynamicallyVLayout, 7.0f);
+        VerticalLayout main = new VerticalLayout();
+        main.setSpacing(false);
+        main.setMargin(false);
+        main.addStyleName("main-check");
+        main.setWidth("100%");
+        main.setHeight("100%");
+        main.addComponents(grid);
+        main.setComponentAlignment(grid, Alignment.MIDDLE_CENTER);
+        root.addComponents(main);
+        root.setExpandRatio(main, 1.0f);
 //        root.addComponent(grid);
 //        root.setExpandRatio(grid, 1.0f);
         
@@ -461,16 +464,15 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 		
 	}
 	
-    private TODOGrid grid = new TODOGrid();
+    private TodoListGrid grid = new TodoListGrid();
     private Label titleLabel;
     private Window notificationsWindow;
     public static final String EDIT_ID = "dashboard-edit";
     public static final String TITLE_ID = "dashboard-title";
     private VerticalLayout root;
-//    private VerticalLayout dynamicallyVLayout = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private Button btnBasicRearch = new Button();
     private Button btnAdvanceRearch = new Button();
     private NotificationsButton notificationsButton;
-    private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>无查询结果</span>", ContentMode.HTML);
+//    private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>无查询结果</span>", ContentMode.HTML);
 }
