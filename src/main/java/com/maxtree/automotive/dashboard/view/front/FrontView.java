@@ -42,7 +42,7 @@ import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
-import com.maxtree.automotive.dashboard.view.FrontendViewIF;
+import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.vaadin.data.Binder;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
@@ -77,7 +77,7 @@ import de.schlichtherle.license.LicenseContent;
  *
  */
 @SuppressWarnings("serial")
-public final class FrontView extends Panel implements View, FrontendViewIF {
+public final class FrontView extends Panel implements View,InputViewIF {
     
 	private static final Logger log = LoggerFactory.getLogger(FrontView.class);
 	
@@ -1197,7 +1197,6 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loggedInUser.getUserUniqueId());
 		int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {
-			
 			if (sd.getViewName().equals(DashboardViewType.INPUT.getViewName())
 					|| sd.getViewName().equals("")) {
 				unreadCount++;
@@ -1207,19 +1206,69 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
 		event.setCount(unreadCount);
 		notificationsButton.updateNotificationsCount(event);
 	}
-    
-	private int editMode;	//0-新建 1:修改
-	private MessageBodyParser jsonHelper = new MessageBodyParser();
+	
+	@Override
+	public User loggedInUser() {
+		return loggedInUser;
+	}
+	
+	@Override
+	public int batch() {
+		return batch;
+	}
+	
+	@Override
+	public String uuid() {
+		return uuid;
+	}
+	
+	@Override
+	public String vin() {
+		return vin;
+	}
+
+	@Override
+	public Site editableSite() {
+		return editableSite;
+	}
+	
+	@Override
+	public void stoppedAtAnException(boolean stop) {
+		this.stoppedAtAnException = stop;
+	}
+	
+	@Override
+	public BasicInfoPane basicInfoPane() {
+		return basicInfoPane;
+	}
+	
+	@Override
+	public BusinessTypePane businessTypePane() {
+		return businessTypePane;
+	}
+	
+	@Override
+	public ThumbnailGrid thumbnailGrid() {
+		return fileGrid;
+	}
+	
+	@Override
+	public CapturePane capturePane() {
+		return capturePane;
+	}
+	
 	public static final String EDIT_ID = "dashboard-edit";
 	public static final String TITLE_ID = "dashboard-title";
+	private int editMode;//0-新建 1:修改
+	private MessageBodyParser jsonHelper = new MessageBodyParser();
 	private Transaction editableTrans = null; 	//可编辑的编辑transaction
 	private Company editableCompany = null;	 	//前台所在机构
-	public User loggedInUser;	//登录用户
-	public Site editableSite;	//业务站点
-	public String uuid;			//UUID业务与原文关联号
-	public int batch;			//业务批次号。默认最大1000个批次，每批次最多放5000文件夹。
-	public String vin;			//车辆识别代码。用于分表。
-	public boolean stoppedAtAnException = false;// true：异常停止 false:继续正常录入。
+	private User loggedInUser;	//登录用户
+	private Site editableSite;	//业务站点
+	private String uuid;			//UUID业务与原文关联号
+	private int batch;			//业务批次号。默认最大1000个批次，每批次最多放5000文件夹。
+	private String vin = "LGB12YEA9DY001226";			//车辆识别代码。用于分表。
+	private boolean stoppedAtAnException = false;// true：异常停止 false:继续正常录入。
     private Label titleLabel;
     private Window notificationsWindow;
     private VerticalLayout root;
@@ -1227,10 +1276,10 @@ public final class FrontView extends Panel implements View, FrontendViewIF {
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private Binder<Transaction> binder = new Binder<>();
     //各个区域面板
-    public BasicInfoPane basicInfoPane = new BasicInfoPane(this);
-    public BusinessTypePane businessTypePane = new BusinessTypePane(this);
-    public ThumbnailGrid fileGrid = new ThumbnailGrid(this);
-    public CapturePane capturePane = new CapturePane();
+    private BasicInfoPane basicInfoPane = new BasicInfoPane(this);
+    private BusinessTypePane businessTypePane = new BusinessTypePane(this);
+    private ThumbnailGrid fileGrid = new ThumbnailGrid(this);
+    private CapturePane capturePane = new CapturePane();
     private Button btnPrint = new Button();
     private Button btnAdd = new Button();
     private Button btnCommit = new Button();

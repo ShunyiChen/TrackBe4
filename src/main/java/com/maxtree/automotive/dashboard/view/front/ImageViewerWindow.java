@@ -13,17 +13,13 @@ import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.exception.FileException;
+import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.StreamResource;
-import com.vaadin.shared.ui.dnd.EffectAllowed;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Image;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.dnd.DragSourceExtension;
 
 public class ImageViewerWindow extends Window {
 
@@ -35,7 +31,7 @@ public class ImageViewerWindow extends Window {
 	/**
 	 * 
 	 */
-	public ImageViewerWindow(FrontView view, int selectDocumentId) {
+	public ImageViewerWindow(InputViewIF view, int selectDocumentId) {
 		this.view = view;
 		this.selectDocumentId = selectDocumentId;
 		initComponents();
@@ -49,8 +45,8 @@ public class ImageViewerWindow extends Window {
 		this.setWidth("800px");
 		this.setHeight("700px");
 		
-		List<Document> list1 = ui.documentService.findAllDocument1(view.vin, view.uuid);
-		List<Document> list2 = ui.documentService.findAllDocument2(view.vin, view.uuid);
+		List<Document> list1 = ui.documentService.findAllDocument1(view.vin(), view.uuid());
+		List<Document> list2 = ui.documentService.findAllDocument2(view.vin(), view.uuid());
 		allDocuments.addAll(list1);
 		allDocuments.addAll(list2);
 		
@@ -120,7 +116,7 @@ public class ImageViewerWindow extends Window {
  			public InputStream getStream() {
  				FileObject fileObj = null;
 				try {
-					fileObj = fileSystem.resolveFile(view.editableSite, doc.getFileFullPath());
+					fileObj = fileSystem.resolveFile(view.editableSite(), doc.getFileFullPath());
 					return fileObj.getContent().getInputStream();
 				} catch (FileException e) {
 					e.printStackTrace();
@@ -139,22 +135,23 @@ public class ImageViewerWindow extends Window {
 
 	}
 	
-	public static void open(FrontView view, int selectDocumentId) {
+	/**
+	 * 
+	 * @param view
+	 * @param selectDocumentId
+	 */
+	public static void open(InputViewIF view, int selectDocumentId) {
 //        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-		
 		ui.setPollInterval(-1);
-		
         ImageViewerWindow w = new ImageViewerWindow(view, selectDocumentId);
         UI.getCurrent().addWindow(w);
         w.center();
         w.focus();
-        
     }
 	
 	private List<Document> allDocuments = new ArrayList<Document>();
-//	private VerticalLayout main = new VerticalLayout();
 	private Image image = new Image();
-	private FrontView view;
+	private InputViewIF view;
 	private int selectDocumentId;
 	private static DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private TB4FileSystem fileSystem = new TB4FileSystem();

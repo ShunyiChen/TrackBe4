@@ -1,6 +1,7 @@
 package com.maxtree.automotive.dashboard.view.front;
 
 import com.maxtree.automotive.dashboard.domain.Business;
+import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
@@ -16,7 +17,7 @@ public class BusinessTypePane extends Panel{
 	 * 
 	 * @param view
 	 */
-	public BusinessTypePane(FrontView view) {
+	public BusinessTypePane(InputViewIF view) {
 		this.view = view;
 		initComponents();
 	}
@@ -48,11 +49,12 @@ public class BusinessTypePane extends Panel{
 	
 	/**
 	 * 
+	 * @param code
 	 */
 	public void populate(String code) {
 		selector.populate(code);
 	}
 	
-	private FrontView view = null;
+	private InputViewIF view = null;
 	private BusinessTypeSelector selector;
 }

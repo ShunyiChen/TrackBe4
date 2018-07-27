@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
 import com.maxtree.automotive.dashboard.servlet.UploadInDTO;
+import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.event.ShortcutListener;
@@ -33,7 +34,7 @@ public class ThumbnailGrid extends Panel{
 	 * 
 	 * @param view
 	 */
-	public ThumbnailGrid(FrontView view) {
+	public ThumbnailGrid(InputViewIF view) {
 		this.setCaption("上传材料");
 		this.view = view;
 		initComponents();
@@ -79,8 +80,8 @@ public class ThumbnailGrid extends Panel{
 				ThumbnailGrid.this.setScrollTop(pixels);
 				
 				
-				UploadInDTO inDto = new UploadInDTO(view.loggedInUser.getUserUniqueId(), view.vin, view.batch+"", view.editableSite.getSiteUniqueId(),view.uuid,row.getDataDictionary().getCode());
-				UploadFileServlet.IN_DTOs.put(view.loggedInUser.getUserUniqueId(), inDto);
+				UploadInDTO inDto = new UploadInDTO(view.loggedInUser().getUserUniqueId(), view.vin(), view.batch()+"", view.editableSite().getSiteUniqueId(),view.uuid(),row.getDataDictionary().getCode());
+				UploadFileServlet.IN_DTOs.put(view.loggedInUser().getUserUniqueId(), inDto);
 //				System.out.println("up! current is "+index+"   pixels="+pixels+"  "+inDto.getDictionaryCode());
 			}
 		};
@@ -106,8 +107,8 @@ public class ThumbnailGrid extends Panel{
 				ThumbnailGrid.this.setScrollTop(pixels);
 				
 				
-				UploadInDTO inDto = new UploadInDTO(view.loggedInUser.getUserUniqueId(), view.vin, view.batch+"", view.editableSite.getSiteUniqueId(),view.uuid,row.getDataDictionary().getCode());
-				UploadFileServlet.IN_DTOs.put(view.loggedInUser.getUserUniqueId(), inDto);
+				UploadInDTO inDto = new UploadInDTO(view.loggedInUser().getUserUniqueId(), view.vin(), view.batch()+"", view.editableSite().getSiteUniqueId(),view.uuid(),row.getDataDictionary().getCode());
+				UploadFileServlet.IN_DTOs.put(view.loggedInUser().getUserUniqueId(), inDto);
 //				System.out.println("down! current is "+index+"  pixels="+pixels+"  "+inDto.getDictionaryCode());
 			}
 		};
@@ -136,8 +137,8 @@ public class ThumbnailGrid extends Panel{
 				ThumbnailRow row = (ThumbnailRow) event.getComponent();
 				row.selected();
 				
-				UploadInDTO inDto = new UploadInDTO(view.loggedInUser.getUserUniqueId(), view.vin, view.batch+"", view.editableSite.getSiteUniqueId(),view.uuid,row.getDataDictionary().getCode());
-				UploadFileServlet.IN_DTOs.put(view.loggedInUser.getUserUniqueId(), inDto);
+				UploadInDTO inDto = new UploadInDTO(view.loggedInUser().getUserUniqueId(), view.vin(), view.batch()+"", view.editableSite().getSiteUniqueId(),view.uuid(),row.getDataDictionary().getCode());
+				UploadFileServlet.IN_DTOs.put(view.loggedInUser().getUserUniqueId(), inDto);
 //				System.out.println("put! current is "+index+"   "+inDto.getDictionaryCode());
 			}
 		};
@@ -191,5 +192,5 @@ public class ThumbnailGrid extends Panel{
 	private VerticalLayout vLayout = new VerticalLayout();
 	public HashMap<String, ThumbnailRow> mapRows = new HashMap<>();
 	private int index = 0;
-	private FrontView view;
+	private InputViewIF view;
 }

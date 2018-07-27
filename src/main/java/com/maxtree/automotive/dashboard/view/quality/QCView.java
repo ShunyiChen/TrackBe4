@@ -680,12 +680,11 @@ public class QCView extends Panel implements View, FrontendViewIF{
     }
     
     /**
-     * 打开业务
      * 
-     * @param transactionUniqueId
-     * @param messageDateCreated
+     * @param uuid
+     * @param vin
      */
-    public void openTransaction(int transactionUniqueId, Date messageDateCreated) {
+    public void openTransaction(String uuid, String vin) {
 //    	transaction = ui.transactionService.findById(transactionUniqueId);
 //		if (transaction != null) {
 //			long time1 = transaction.getDateModified().getTime();

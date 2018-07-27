@@ -8,7 +8,6 @@ import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Tenant;
-import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.icons.VaadinIcons;
@@ -40,7 +39,6 @@ public class BasicSearchWindow extends Window {
 		this.setResizable(false);
 		this.setCaption("基本查询");
 		
-//		User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		mainLayout = new VerticalLayout(); 
 		mainLayout.setWidth("100%");
 		mainLayout.setHeightUndefined();
@@ -75,7 +73,6 @@ public class BasicSearchWindow extends Window {
 		selectList.setTextInputAllowed(false);
 		selectList.setCaption("选择租户:");
 		selectList.setIcon(VaadinIcons.GROUP);
-		
 		plateField.setCaption("车牌号:");
 		plateField.setIcon(VaadinIcons.CAR);
 		Address addr = Yaml.readAddress();

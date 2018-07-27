@@ -3,6 +3,7 @@ package com.maxtree.automotive.dashboard.view.imaging;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Actions;
+import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
@@ -25,24 +27,29 @@ import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Company;
+import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.domain.UserEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
-import com.maxtree.automotive.dashboard.view.FrontendViewIF;
+import com.maxtree.automotive.dashboard.view.InputViewIF;
+import com.maxtree.automotive.dashboard.view.front.BasicInfoPane;
+import com.maxtree.automotive.dashboard.view.front.BusinessTypePane;
+import com.maxtree.automotive.dashboard.view.front.CapturePane;
+import com.maxtree.automotive.dashboard.view.front.ThumbnailGrid;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.vaadin.data.Binder;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
-import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -71,7 +78,7 @@ import de.schlichtherle.license.LicenseContent;
  *
  */
 @SuppressWarnings("serial")
-public final class ImagingInputView extends Panel implements View, FrontendViewIF {
+public final class ImagingInputView extends Panel implements View,InputViewIF {
     
 	private static final Logger log = LoggerFactory.getLogger(ImagingInputView.class);
 	
@@ -104,8 +111,6 @@ public final class ImagingInputView extends Panel implements View, FrontendViewI
                 DashboardEventBus.post(new DashboardEvent.CloseOpenWindowsEvent());
             }
         });
-        
-        
         
         // 开启轮询事件提醒
         startPolling();
@@ -155,13 +160,13 @@ public final class ImagingInputView extends Panel implements View, FrontendViewI
      */
 	private void startPolling() {
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
-		ui.setPollInterval(sc.getPollinginterval());
-		ui.addPollListener(new UIEvents.PollListener() {
-			@Override
-			public void poll(UIEvents.PollEvent event) {
-				updateUnreadCount();
-			}
-		});
+//		ui.setPollInterval(sc.getPollinginterval());
+//		ui.addPollListener(new UIEvents.PollListener() {
+//			@Override
+//			public void poll(UIEvents.PollEvent event) {
+//				updateUnreadCount();
+//			}
+//		});
 	}
 
     private Component buildSparklines() {
@@ -175,108 +180,67 @@ public final class ImagingInputView extends Panel implements View, FrontendViewI
     private Component buildHeader() {
         HorizontalLayout header = new HorizontalLayout();
         header.addStyleName("viewheader");
-
-        titleLabel = new Label("扫描录入");
+        titleLabel = new Label("影像录入");
         titleLabel.setId(TITLE_ID);
         titleLabel.setSizeUndefined();
         titleLabel.addStyleName(ValoTheme.LABEL_H1);
         titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         header.addComponent(titleLabel);
-
-        buildPrintButton();
         buildNotificationsButton();
         buildAddButton();
         buildCommitButton();
-        HorizontalLayout tools = new HorizontalLayout(btnPrint, btnAdd, btnCommit, notificationsButton);
+        HorizontalLayout tools = new HorizontalLayout(btnAdd, btnCommit, notificationsButton);
         tools.addStyleName("toolbar");
         header.addComponent(tools);
-
         return header;
     }
 
     private void openNotificationsPopup(final ClickEvent event) {
     	VerticalLayout mainVLayout = new VerticalLayout();
     	mainVLayout.setSpacing(false);
-        
         Label title = new Label("事件提醒");
         title.addStyleName(ValoTheme.LABEL_H3);
         title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         mainVLayout.addComponent(title);
-
         Panel scrollPane = new Panel();
     	scrollPane.addStyleName("reminder-scrollpane");
     	scrollPane.setHeight("220px");
     	scrollPane.setWidth("100%");
         VerticalLayout listLayout = new VerticalLayout();
-        
-        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.INPUT.getViewName());
+        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.IMAGING_INPUT.getViewName());
         for (Map<String, Object> m : allMessages) {
-        	
-        	int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-        	VerticalLayout notificationLayout = new VerticalLayout();
-            notificationLayout.setMargin(false);
-            notificationLayout.setSpacing(false);
-            notificationLayout.addStyleName("notification-item");
-            String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"(已读)";
+        	VerticalLayout vLayout = new VerticalLayout();
+        	vLayout.setMargin(false);
+        	vLayout.setSpacing(false);
+        	vLayout.addStyleName("notification-item");
+            Label timeLabel = new Label();
+            String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
             Label titleLabel = new Label(m.get("subject")+readStr);
             titleLabel.addStyleName("notification-title");
+            String json = m.get("messagebody").toString();
+            Map<String, String> map = jsonHelper.json2Map(json);
+            Label plateNumber = new Label(map.get("4"));//PLATENUMBER
+            String vin = map.get("5");
+            String uuid = map.get("7");
+            plateNumber.addStyleName("notification-content");
             
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
-            Label timeLabel = new Label();
             timeLabel.setValue(new TimeAgo().toDuration(duration));
             timeLabel.addStyleName("notification-time");
-            String json = m.get("messagebody").toString();
-            Map<String, String> map = new MessageBodyParser().json2Map(json);
-            String type = map.get("type").toString();
-            String messageContent = map.get("message");
-            Label contentLabel = new Label(messageContent);
-            contentLabel.addStyleName("notification-content");
-
-//            // 自动删除已过时的消息
-//            if ("transaction".equals(type)) {
-//            	int transId = Integer.parseInt(map.get("transactionUniqueId").toString());
-//            	Transaction trans = ui.transactionService.findById(transId);
-//	            long time1 = trans.getDateModified().getTime();
-//				long time2 = dateCreated.getTime();
-//				if (time1 > time2) {
-//					ui.messagingService.deleteMessageRecipient(messageUniqueId, currentUser.getUserUniqueId());
-//					continue;
-//				}
-//            }
-            
-            notificationLayout.addComponents(titleLabel, timeLabel, contentLabel);
-            listLayout.addComponent(notificationLayout);
-            notificationLayout.addStyleName("switchbutton");
-            notificationLayout.addLayoutClickListener(e -> {
-            	
+            vLayout.addComponents(titleLabel, timeLabel, plateNumber);
+            listLayout.addComponent(vLayout);
+            vLayout.addStyleName("switchbutton");
+            vLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
-//            	if ("text".equals(type)) {
-//            		
-//            		 showAll(allMessages, messageUniqueId);
-//            		 
-//    			} else if ("transaction".equals(type)) {
-////    				String senderUserName = m.get("username").toString();
-////    				String senderPicture = "../VAADIN/themes/dashboard/"+ m.get("picture").toString();
-////    				String subject = m.get("subject").toString();
-//    				int transactionUniqueId = 0;
-////    				String status = null;
-//    				if (type.equals("transaction")) {
-//    					transactionUniqueId = Integer.parseInt(map.get("transactionUniqueId").toString());
-////    					status = map.get("status").toString();
-//    				}
-////    				String read = m.get("read").toString().equals("1")?"已读":"未读";
-////    				MessageWrapper wrapper = new MessageWrapper(messageUniqueId, senderPicture+" "+senderUserName, senderPicture, subject, messageContent, transactionUniqueId, read, dateCreated, type, status);
-//    				// 标记已读
-//    				ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
-//    				
-//    				CacheManager.getInstance().refreshSendDetailsCache();
-//    				
-//    				updateUnreadCount();
-//    				
-//    				openTransaction(transactionUniqueId, dateCreated);
-//    				
-//    			}
+            	
+            	if(editableTrans == null) {
+        			editMode = 1;//进入更新模式
+        			openTransaction(uuid, vin);
+        		}
+        		else {
+        			Notifications.warning("请确保完成当前任务，再执行下一操作。");
+        		}
             });
         }
         
@@ -289,10 +253,8 @@ public final class ImagingInputView extends Panel implements View, FrontendViewI
         footer.setSpacing(false);
         Button showAll = new Button("查看全部事件");
         showAll.addClickListener(e->{
-
         	notificationsWindow.close();
-        	showAll(allMessages, 0);
-        	
+//        	showAll(allMessages, 0);
         });
         
         showAll.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
@@ -348,7 +310,6 @@ public final class ImagingInputView extends Panel implements View, FrontendViewI
 
         public void setUnreadCount(final int count) {
             setCaption(String.valueOf(count));
-
             String description = "事件提醒";
             if (count > 0) {
                 addStyleName(STYLE_UNREAD);
@@ -358,21 +319,6 @@ public final class ImagingInputView extends Panel implements View, FrontendViewI
             }
             setDescription(description);
         }
-    }
-    
-    /**
-     * 
-     * @param allMessages
-     * @param selectedMessageUniqueId
-     */
-    private void showAll(List<Map<String, Object>> allMessages, int selectedMessageUniqueId) {
-//    	Callback2 event = new Callback2() {
-//			@Override
-//			public void onSuccessful(Object... objects) {
-//				getUnreadCount();
-//			}
-//    	};
-//    	MessageInboxWindow.open(allMessages, event, selectedMessageUniqueId);
     }
     
     /**
@@ -392,41 +338,17 @@ public final class ImagingInputView extends Panel implements View, FrontendViewI
 //    	captureStage.setHeight("612px");
 //    	captureStage.addStyleName("picture-pane");
     	spliterSouth.setSizeFull();
-//    	spliterSouth.addComponents(fileGrid, capturePane);
-//    	
-//    	spliterNorth.setSizeFull();
-//    	spliterNorth.addComponents(basicInfoPane, businessTypePane);
-//    	spliterNorth.setExpandRatio(basicInfoPane, 3);
-//    	spliterNorth.setExpandRatio(businessTypePane, 1);
+    	spliterSouth.addComponents(fileGrid, capturePane);
+    	
+    	spliterNorth.setSizeFull();
+    	spliterNorth.addComponents(basicInfoPane, businessTypePane);
+    	spliterNorth.setExpandRatio(basicInfoPane, 3);
+    	spliterNorth.setExpandRatio(businessTypePane, 1);
     	main.addComponents(spliterNorth, spliterSouth);
     	
     	
     	main.setExpandRatio(spliterNorth, 1);
     	main.setExpandRatio(spliterSouth, 9);
-    	
-    }
-    
-    /**
-     * 
-     */
-    private void buildPrintButton() {
-    	btnPrint.setEnabled(true);
-    	btnPrint.setId(EDIT_ID);
-    	btnPrint.setIcon(VaadinIcons.PRINT);
-    	btnPrint.addStyleName("icon-edit");
-    	btnPrint.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-    	btnPrint.setDescription("查询待补充的记录");
-    	btnPrint.addClickListener(e -> {
-//    		Callback2 callback = new Callback2() {
-//
-//				@Override
-//				public void onSuccessful(Object... objects) {
-//					
-//					openTransaction(Integer.parseInt(objects[0].toString()), new Date());
-//				}
-//    		};
-//    		SearchAndPrintWindow.open("", callback);
-        });
     }
     
     /**
@@ -443,8 +365,8 @@ public final class ImagingInputView extends Panel implements View, FrontendViewI
     	btnAdd.setDescription("创建或补充流水号");
     	btnAdd.addClickListener(e -> {
     		if(editableTrans == null) {
-    			startTransaction();
     			editMode = 0;//进入新建模式
+    			startTransaction();
     		}
     		else {
     			Notifications.warning("请确保完成当前任务，再执行下一操作。");
@@ -530,10 +452,9 @@ public final class ImagingInputView extends Panel implements View, FrontendViewI
     	editableTrans.setPlateType("");
     	editableTrans.setPlateNumber(addr.getLicenseplate());
     	editableTrans.setVin("");
-//    	basicInfoPane.setFieldValues(editableTrans);
-//    	
-//    	// validating the transaction information
-//    	basicInfoPane.validatingFieldValues(binder);
+    	basicInfoPane.populate2(editableTrans);
+    	// validating the transaction information
+    	basicInfoPane.validatingFieldValues(binder);
     	binder.setBean(editableTrans);
     	
     	resetComponents();
@@ -541,285 +462,210 @@ public final class ImagingInputView extends Panel implements View, FrontendViewI
     
     /**
      * 
-     * @param transactionUniqueId
-     * @param messageDateCreated
+     * @param transUUID
+     * @param transVIN
      */
-    private void openTransaction(int transactionUniqueId, Date messageDateCreated) {
-//    	// 1.取得业务
-//    	editableTrans = ui.transactionService.findById(transactionUniqueId);
-//		if (editableTrans != null) {
-//			long time1 = editableTrans.getDateModified().getTime();
-//			long time2 = messageDateCreated.getTime();
-//			if (time1 > time2) {
-//				Notifications.warning("该业务已过时。");
-//				return;
-//			}
-//			// 2.重置文本框
-//			this.resetComponents();
-//			
-//			// 初始化更改信息
-//			User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-//			editableCompany = ui.companyService.findById(loginUser.getCompanyUniqueId());
-//			editableType.setSelected(editableTrans.getBusinessUniqueId());
-//			editableType.setSelectorEnabled(false);
-//			informationGrid.setFieldValues(editableTrans);
-//			editableSite = ui.siteService.findById(editableTrans.getSiteUniqueId());
-//			uuid = editableTrans.getUuid();
-//			
-//			// 获取主要材料
-//			Business business = editableType.getSelector().getValue();
-//			List<Document> documentList = ui.documentService.findPrimary(uuid, business.getBusinessUniqueId());
-//			List<Document> filledDocumentList = new ArrayList<Document>();
-//			for (DataItem item : business.getItems()) {
-//				Document doc = existCheck(item.getItemName(), documentList);
-//				if (doc == null) {
-//					doc = new Document();
-//					doc.setAlias(item.getItemName());
-//					doc.setFileName("");
-//					doc.setFileFullPath("");
-//					doc.setCategory(0); 
-//        			// 文件类别0：主要图片,1：次要图片
-//					doc.setBusinessUniqueId(business.getBusinessUniqueId());
-//					doc.setUuid(editableTrans.getUuid());
-//				}
-//				filledDocumentList.add(doc);
-//			}
-//			// 加载主要材料
-//    		primaryGrid.addUploadCells(editableSite, filledDocumentList.toArray(new Document[filledDocumentList.size()]));
-//
-//    		// 初始化次要材料
-//    		secondaryGrid.setBusinessUniqueId(business.getBusinessUniqueId());
-//    		secondaryGrid.setEnabledForUploadComponent(true);//如果业务类型已选，则可以启用选择上传组件
-//    		secondaryGrid.setSite(editableSite);
-//    		secondaryGrid.setUuid(uuid);
-//        	List<Document> doc2 = ui.documentService.findSecondary(uuid, business.getBusinessUniqueId());
-//        	// 加载次要材料
-//        	secondaryGrid.addUploadCells(editableSite, doc2.toArray(new Document[doc2.size()]));
-//        	
-//        	
-//        	if (editableTrans.getStatus().equals(Status.S4.name)) {
-//  	    		
-//  	    		// 打印文件标签和车辆标签
-//  	    		PrintingConfirmationWindow.open("打印确认", editableTrans.getTransactionUniqueId()); 
-//  	    		
-//  	    	} else if (editableTrans.getStatus().equals(Status.ReturnedToThePrint.name) 
-//  	    			|| editableTrans.getStatus().equals(Status.S3.name)) {
-//  	    		// 打印审核结果单
-//  	    		PrintingResultsWindow.open("打印确认", editableTrans.getTransactionUniqueId()); 
-//  	    	}
-//		}
+    private void openTransaction(String transUUID, String transVIN) {
+    	editableTrans = ui.transactionService.findByUUID(transUUID, transVIN);
+    	editableSite = ui.siteService.findByCode(editableTrans.getSiteCode());
+    	uuid = editableTrans.getUuid();
+    	batch = editableTrans.getBatch();
+    	vin = editableTrans.getVin();
+    	stoppedAtAnException = false;
+    	
+    	int companyUniqueId = loggedInUser.getCompanyUniqueId();
+    	int communityUniqueId = loggedInUser.getCommunityUniqueId();
+    	if (companyUniqueId == 0) {
+    		Notifications.warning("当前用户没有加入任何机构，请联系管理员进行分配。");
+    		return;
+    	}
+    	if (communityUniqueId == 0) {
+    		Notifications.warning("当前用户没有加入任何社区，请联系管理员进行分配。");
+    		return;
+    	}
+    	editableCompany = ui.companyService.findById(companyUniqueId);
+    	List<Site> allSites = ui.siteService.getSites(communityUniqueId);
+    	for (int i = 0; i < allSites.size(); i++) {
+    		if (allSites.get(i).getRunningStatus() == 1) {
+    			editableSite = allSites.get(i);
+    			break;
+    		}
+    	}
+    	if (editableSite == null) {
+    		Notifications.warning("当前用户所在的社区不存在文件站点，或站点已关闭。请联系管理员进行设置。");
+    		return;
+    	}
+    	
+    	// validating the transaction information
+    	basicInfoPane.validatingFieldValues(binder);
+    	binder.setBean(editableTrans);
+    	
+    	resetComponents();
+    	
+    	basicInfoPane.populate2(editableTrans);
+    	businessTypePane.populate(editableTrans.getBusinessCode());
     }
     
     /**
      * 
      */
     public void newTransaction() {
-//    	if(!basicInfoPane.emptyChecks()) {
-//			Notifications.warning("有效性验证失败。");
-//			return;
-//    	}
-//    	if (fileGrid.emptyChecks()) {
-//			Notifications.warning("请将业务材料上传完整。");
-//			return;
-//    	}
-//    	// 4大流程
-//    	//新车注册流程
-//    	if (businessTypePane.getSelected().getName().equals("注册登记")) {
-//    		basicInfoPane.populate(editableTrans);//赋值基本信息
-//        	editableTrans.setDateCreated(new Date());
-//        	editableTrans.setDateModified(new Date());
-//        	editableTrans.setSiteCode(editableSite.getCode());
-//        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
-//        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-//        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-//        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
-//        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
-//        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-//        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
-//        	editableTrans.setUuid(uuid);
-//        	editableTrans.setCreator(loggedInUser.getUserName());
-//        	editableTrans.setIndexNumber(1);
-//        	
-//        	// 是否跳过质检
-//        	if(editableCompany.getIgnoreChecker() == 1) {
-//        		FrameNumber frame = ui.frameService.getAnAvailableCode(editableCompany.getStorehouseUniqueId());
-//        		if(StringUtils.isEmpty(frame.getCode())) {
-//        			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
-//        			return;
-//        		} else {
-//        			//跳过质检，完成逻辑上架
-//        			editableTrans.setCode(frame.getCode()+"");//上架号
-//        			ui.frameService.updateVIN(basicInfoPane.getVIN(), frame.getCode());
-//        		}
-//        		
-//        		editableTrans.setStatus(BusinessState.B2.name);
-//        		ui.transactionService.insert(editableTrans);
-//        		
-//        		//操作记录
-//        		recordEvent(Actions.INPUT);
-//        		
-//        		//清空舞台
-//            	cleanStage();
-//            	Notifications.info("操作成功。已完成逻辑上架。");
-//        	}
-//        	// 提交给质检队列
-//        	else {
-//        		editableTrans.setStatus(BusinessState.B7.name);
-//        		ui.transactionService.insert(editableTrans);
-//        		
-//        		// 添加到质检队列
-//        		Queue newQueue = new Queue();
-//        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
-//        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-//        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
-//        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-//        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-//        		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
-//        		ui.queueService.create(newQueue, serial);
-//        		
-//        		//操作记录
-//        		recordEvent(Actions.INPUT);
-//        		
-//        		// 清空舞台
-//            	cleanStage();
-//            	Notifications.info("操作成功。记录已提交到质检队列等待质检。");
-//        	}
-//    	}
-//    	// 非审档流程
-//    	else if (businessTypePane.getSelected().getNeedToCheck() == 0) {
-//    		
-//    		if (imageCheck()) {
-//    			
-//    		}
-//    		
-//    		basicInfoPane.populate(editableTrans);//赋值基本信息
-//    		editableTrans.setDateCreated(new Date());
-//        	editableTrans.setDateModified(new Date());
-//        	editableTrans.setSiteCode(editableSite.getCode());
-//        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
-//        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-//        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-//        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
-//        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
-//        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-//        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
-//        	editableTrans.setUuid(uuid);
-//        	editableTrans.setCreator(loggedInUser.getUserName());
-//        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
-//        	editableTrans.setIndexNumber(indexNumber);
-//        	
-//        	// 是否跳过质检
-//        	if(editableCompany.getIgnoreChecker() == 1) {
-//        		FrameNumber frame = ui.frameService.getAnAvailableCode(editableCompany.getStorehouseUniqueId());
-//        		if(StringUtils.isEmpty(frame.getCode())) {
-//        			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
-//        			return;
-//        		} else {
-//        			//跳过质检，完成逻辑上架
-//        			editableTrans.setCode(frame.getCode()+"");//上架号
-//        			ui.frameService.updateVIN(basicInfoPane.getVIN(), frame.getCode());
-//        		}
-//        		
-//        		editableTrans.setStatus(BusinessState.B2.name);
-//        		ui.transactionService.insert(editableTrans);
-//        		
-//        		//操作记录
-//        		recordEvent(Actions.INPUT);
-//        		
-//        		//清空舞台
-//            	cleanStage();
-//            	Notifications.info("操作成功。已完成逻辑上架。");
-//        	}
-//        	// 提交给质检队列
-//        	else {
-//        		editableTrans.setStatus(BusinessState.B7.name);
-//        		ui.transactionService.insert(editableTrans);
-//        		
-//        		// 添加到质检队列
-//        		Queue newQueue = new Queue();
-//        		newQueue.setTransactionUniqueId(editableTrans.getTransactionUniqueId());
-//        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-//        		newQueue.setSentByUser(loggedInUser.getUserUniqueId());	// 发送者
-//        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-//        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-//        		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
-//        		ui.queueService.create(newQueue, serial);
-//        		
-//        		//操作记录
-//        		recordEvent(Actions.INPUT);
-//        		
-//        		// 清空舞台
-//            	cleanStage();
-//            	Notifications.info("操作成功。记录已提交到质检队列等待质检。");
-//        	}
-//    	}
-//    	// 需要审档（一级）流程
-//    	else if (businessTypePane.getSelected().getNeedToCheck() == 1 && businessTypePane.getSelected().getCheckLevel().equals("一级")) {
-//    		
-//    		
-//    		
-//    		
-//    	}
-//    	// 需要审档（二级）流程
-//    	else if (businessTypePane.getSelected().getNeedToCheck() == 1 && businessTypePane.getSelected().getCheckLevel().equals("二级")) {
-//    		
-//    		
-//    		
-//    		
-//    	}
+    	if(!basicInfoPane.emptyChecks()) {
+			Notifications.warning("有效性验证失败。");
+			return;
+    	}
+    	if (fileGrid.emptyChecks()) {
+			Notifications.warning("请将业务材料上传完整。");
+			return;
+    	}
+    	//新车注册流程
+    	if (businessTypePane.getSelected().getName().equals("注册登记")) {
+    		basicInfoPane.populate(editableTrans);//赋值基本信息
+        	editableTrans.setDateCreated(new Date());
+        	editableTrans.setDateModified(new Date());
+        	editableTrans.setSiteCode(editableSite.getCode());
+        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
+        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
+        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
+        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
+        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setBatch(batch);
+        	editableTrans.setUuid(uuid);
+        	editableTrans.setCreator(loggedInUser.getUserName());
+        	editableTrans.setIndexNumber(1);
+        	editableTrans.setStatus(BusinessState.B7.name);
+    		ui.transactionService.insert(editableTrans);
+    		//操作记录
+    		track(Actions.INPUT);
+    		// 清空舞台
+        	cleanStage();
+        	Notifications.info("操作成功。记录已提交,等待质检检验。");
+    	}
+    	else {
+    		
+    		basicInfoPane.populate(editableTrans);//赋值基本信息
+    		editableTrans.setDateCreated(new Date());
+        	editableTrans.setDateModified(new Date());
+        	editableTrans.setSiteCode(editableSite.getCode());
+        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
+        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
+        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
+        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
+        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setUuid(uuid);
+        	editableTrans.setCreator(loggedInUser.getUserName());
+        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
+        	editableTrans.setIndexNumber(indexNumber);
+        	
+        	editableTrans.setStatus(BusinessState.B7.name);
+    		ui.transactionService.insert(editableTrans);
+    		//操作记录
+    		track(Actions.INPUT);
+    		// 清空舞台
+        	cleanStage();
+        	Notifications.info("操作成功。记录已提交,等待质检检验。");
+    	}
     }
     
     /**
      * 
      */
     private void updateTransaction() {
-    	
+    	if(!basicInfoPane.emptyChecks()) {
+			Notifications.warning("有效性验证失败。");
+			return;
+    	}
+    	if (fileGrid.emptyChecks()) {
+			Notifications.warning("请将业务材料上传完整。");
+			return;
+    	}
+    	//新车注册流程
+    	if (businessTypePane.getSelected().getName().equals("注册登记")) {
+    		basicInfoPane.populate(editableTrans);//赋值基本信息
+        	editableTrans.setDateCreated(new Date());
+        	editableTrans.setDateModified(new Date());
+        	editableTrans.setSiteCode(editableSite.getCode());
+        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
+        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
+        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
+        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
+        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setBatch(batch);
+        	editableTrans.setUuid(uuid);
+        	editableTrans.setCreator(loggedInUser.getUserName());
+        	editableTrans.setIndexNumber(1);
+        	editableTrans.setStatus(BusinessState.B7.name);
+    		ui.transactionService.update(editableTrans);
+    		//操作记录
+    		track(Actions.INPUT);
+    		// 清空舞台
+        	cleanStage();
+        	Notifications.info("操作成功。记录已提交,等待质检检验。");
+    	}
+    	else {
+    		
+    		basicInfoPane.populate(editableTrans);//赋值基本信息
+    		editableTrans.setDateCreated(new Date());
+        	editableTrans.setDateModified(new Date());
+        	editableTrans.setSiteCode(editableSite.getCode());
+        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
+        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
+        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
+        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
+        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setUuid(uuid);
+        	editableTrans.setCreator(loggedInUser.getUserName());
+        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
+        	editableTrans.setIndexNumber(indexNumber);
+        	editableTrans.setStatus(BusinessState.B7.name);
+    		ui.transactionService.update(editableTrans);
+    		//操作记录
+    		track(Actions.INPUT);
+    		// 清空舞台
+        	cleanStage();
+        	Notifications.info("操作成功。记录已提交,等待质检检验。");
+    	}
     }
     
     /**
      * 
      * @param act
      */
-    private void recordEvent(Actions act) {
+    private void track(Actions act) {
+    	Map<String, String> details = new HashMap<String, String>();
+    	details.put("1", editableTrans.getStatus());//STATUS
+		details.put("2", basicInfoPane.getBarCode());//BARCODE
+		details.put("3", basicInfoPane.getPlateType());//PLATETYPE
+		details.put("4", basicInfoPane.getPlateNumber());//PLATENUMBER
+		details.put("5", basicInfoPane.getVIN());//VIN
+		details.put("6", businessTypePane.getSelected().getName());//BUSINESSTYPE
+		details.put("7", editableTrans.getUuid());//UUID
+		String json = jsonHelper.map2Json(details);
+    	
     	// 插入移行表
 		Transition transition = new Transition();
 		transition.setTransactionUUID(uuid);
 		transition.setAction(act.name);
-		transition.setDetails(null);
+		transition.setDetails(json);
 		transition.setUserName(loggedInUser.getUserName());
 		transition.setDateUpdated(new Date());
-//		ui.transitionService.insert(transition,basicInfoPane.getVIN());
+		ui.transitionService.insert(transition,basicInfoPane.getVIN());
 		
 		// 插入用户事件
-//		UserEvent event = new UserEvent();
-//		event.setAction(Actions.INPUT.name);
-//		event.setUserName(loggedInUser.getUserName());
-//		event.setDateUpdated(new Date());
-//		Map<String, String> details = new HashMap<String, String>();
-//		details.put("BARCODE", basicInfoPane.getBarCode());
-//		details.put("PLATETYPE", basicInfoPane.getPlateType());
-//		details.put("PLATENUMBER", basicInfoPane.getPlateNumber());
-//		details.put("VIN", basicInfoPane.getVIN());
-//		details.put("BUSINESSTYPE", businessTypePane.getSelected().getName());
-//		event.setDetails(jsonHelper.map2Json(details));
-//		ui.userEventService.insert(event, loggedInUser.getUserName());
-    }
-    
-    /**
-     * 
-     * @return
-     */
-    private boolean imageCheck() {
-    	/*
-    	 需求：
-    	 设立一个影响化管理人，有单独角色单独界面，界面有列表，一行一个车牌号。全程自己手动更改业务状态（待查看，待提档，待归档，完成）
-    	 影像化录入，单独角色单独界面，根据纸质录入车辆信息，上传原文，提交给质检。
-    	 影响化质检，单独角色单独界面，根据纸质录入车辆信息，查看原文，退回质检或完成后将纸质档案放回。
-    	  
-    	 
-    	 
-    	 */
-    	return false;
+		UserEvent event = new UserEvent();
+		event.setAction(Actions.INPUT.name);
+		event.setUserName(loggedInUser.getUserName());
+		event.setDateUpdated(new Date());
+		event.setDetails(json);
+		ui.userEventService.insert(event, loggedInUser.getUserName());
     }
     
 	@Override
@@ -836,6 +682,8 @@ public final class ImagingInputView extends Panel implements View, FrontendViewI
 		} catch (IOException e) {
 			log.info("删除"+"devices/"+loggedInUser.getUserUniqueId()+".html失败。");
 		}
+		
+		editableTrans = null;
 	}
 
 	@Override
@@ -844,7 +692,7 @@ public final class ImagingInputView extends Panel implements View, FrontendViewI
 		int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {
 			
-			if (sd.getViewName().equals(DashboardViewType.INPUT.getViewName())
+			if (sd.getViewName().equals(DashboardViewType.IMAGING_INPUT.getViewName())
 					|| sd.getViewName().equals("")) {
 				unreadCount++;
 			}
@@ -854,36 +702,84 @@ public final class ImagingInputView extends Panel implements View, FrontendViewI
 		notificationsButton.updateNotificationsCount(event);
 	}
     
+	@Override
+	public User loggedInUser() {
+		return loggedInUser;
+	}
+
+	@Override
+	public int batch() {
+		return batch;
+	}
+
+	@Override
+	public String uuid() {
+		return uuid;
+	}
+
+	@Override
+	public String vin() {
+		return vin;
+	}
+
+	@Override
+	public Site editableSite() {
+		return editableSite;
+	}
+
+	@Override
+	public void stoppedAtAnException(boolean stop) {
+		stoppedAtAnException = stop;
+	}
+	
+	@Override
+	public BasicInfoPane basicInfoPane() {
+		return basicInfoPane;
+	}
+	
+	@Override
+	public BusinessTypePane businessTypePane() {
+		return businessTypePane;
+	}
+	
+	@Override
+	public ThumbnailGrid thumbnailGrid() {
+		return fileGrid;
+	}
+	
+	@Override
+	public CapturePane capturePane() {
+		return capturePane;
+	}
+	
 	private int editMode;//0-新建 1:修改
 	private MessageBodyParser jsonHelper = new MessageBodyParser();
 	public static final String EDIT_ID = "dashboard-edit";
 	public static final String TITLE_ID = "dashboard-title";
 	private Transaction editableTrans = null; 	//可编辑的编辑transaction
 	private Company editableCompany = null;	 	//前台所在机构
-	
-	public User loggedInUser;	//登录用户
-	public Site editableSite;	//业务站点
-	public String uuid;	//UUID业务与原文关联号
-	public int batch;	//业务批次号。默认最大1000个批次，每批次最多放5000文件夹。
-	public String vin;	//车辆识别代码。用于分表。
-	
+	private User loggedInUser;	//登录用户
+	private Site editableSite;	//业务站点
+	private String uuid;	//UUID业务与原文关联号
+	private int batch;	//业务批次号。默认最大1000个批次，每批次最多放5000文件夹。
+	private String vin = "LGB12YEA9DY001226";	//车辆识别代码。用于分表。
+	private boolean stoppedAtAnException = false;// true：异常停止 false:继续正常录入。
     private Label titleLabel;
     private Window notificationsWindow;
     private VerticalLayout root;
     private VerticalLayout main = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private Binder<Transaction> binder = new Binder<>();
-//    //各个区域面板
-//    private BasicInfoPane basicInfoPane = new BasicInfoPane(this);
-//    private BusinessTypePane businessTypePane = new BusinessTypePane(this);
-//    public ThumbnailGrid fileGrid = new ThumbnailGrid(this);
-//    public CapturePane capturePane = new CapturePane();
-    
-    private Button btnPrint = new Button();
+    //各个区域面板
+    private BasicInfoPane basicInfoPane = new BasicInfoPane(this);
+    private BusinessTypePane businessTypePane = new BusinessTypePane(this);
+    private ThumbnailGrid fileGrid = new ThumbnailGrid(this);
+    private CapturePane capturePane = new CapturePane();
     private Button btnAdd = new Button();
     private Button btnCommit = new Button();
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
     private HorizontalLayout spliterNorth = new HorizontalLayout();
     private HorizontalLayout spliterSouth = new HorizontalLayout();
+	
 }

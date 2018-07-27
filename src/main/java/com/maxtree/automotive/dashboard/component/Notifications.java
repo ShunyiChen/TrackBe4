@@ -1,5 +1,6 @@
 package com.maxtree.automotive.dashboard.component;
 
+import com.maxtree.automotive.dashboard.Callback;
 import com.vaadin.server.Page;
 import com.vaadin.shared.Position;
 import com.vaadin.ui.Notification;
@@ -15,6 +16,20 @@ public class Notifications {
 		Notification notification = new Notification("提示：", msg, Type.WARNING_MESSAGE);
 		notification.setDelayMsec(2000);
 		notification.show(Page.getCurrent());
+	}
+	
+	/**
+	 * 
+	 * @param msg
+	 * @param callback
+	 */
+	public static void warning(String msg, Callback callback) {
+		Notification notification = new Notification("提示：", msg, Type.WARNING_MESSAGE);
+		notification.setDelayMsec(2000);
+		notification.show(Page.getCurrent());
+		notification.addCloseListener(e->{
+			callback.onSuccessful();
+		});
 	}
 	
 	/**

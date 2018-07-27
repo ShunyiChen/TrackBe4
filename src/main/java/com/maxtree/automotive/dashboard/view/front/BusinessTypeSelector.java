@@ -30,6 +30,8 @@ import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
 import com.maxtree.automotive.dashboard.servlet.UploadInDTO;
 import com.maxtree.automotive.dashboard.servlet.UploadOutDTO;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
+import com.maxtree.automotive.dashboard.view.InputViewIF;
+import com.maxtree.automotive.dashboard.view.imaging.ImagingInputView;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.messagingsystem.Name;
@@ -61,7 +63,7 @@ public class BusinessTypeSelector extends FormLayout {
 	 * 
 	 * @param view
 	 */
-	public BusinessTypeSelector(FrontView view) {
+	public BusinessTypeSelector(InputViewIF view) {
 		this.view = view;
 		this.setSpacing(false);
 		this.setMargin(false);
@@ -95,7 +97,7 @@ public class BusinessTypeSelector extends FormLayout {
 		 */
 		selector.addSelectionListener(e->{
 			
-			if (view.vin == null) {
+			if (view.vin() == null) {
 				Notifications.warning("车辆识别代码不能空。");
 				return;
 			}
@@ -109,26 +111,26 @@ public class BusinessTypeSelector extends FormLayout {
 						selectionHashDone = true;
 						
 						//删除旧原文1
-						List<Document> document1List = ui.documentService.findAllDocument1(view.vin, view.uuid);
+						List<Document> document1List = ui.documentService.findAllDocument1(view.vin(), view.uuid());
 						for(Document doc : document1List) {
 							try {
-								fileSystem.deleteFile(view.editableSite, doc.getFileFullPath());
+								fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
 							} catch (FileException e) {
 								e.printStackTrace();
 							}
 						}
 						//删除旧原文2
-						List<Document> document2List = ui.documentService.findAllDocument2(view.vin, view.uuid);
+						List<Document> document2List = ui.documentService.findAllDocument2(view.vin(), view.uuid());
 						for(Document doc : document2List) {
 							try {
-								fileSystem.deleteFile(view.editableSite, doc.getFileFullPath());
+								fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
 							} catch (FileException e) {
 								e.printStackTrace();
 							}
 						}
 						
 						//删除数据库记录
-						ui.documentService.deleteByUUID(view.uuid, view.vin);
+						ui.documentService.deleteByUUID(view.uuid(), view.vin());
 						
 						loadMaterials(opt.get().getCode());
 					}
@@ -157,26 +159,26 @@ public class BusinessTypeSelector extends FormLayout {
 				}
 				//影像化检测无效
 				else {
-					Notifications.warning("缺少历史影像化记录，已提交申请。等待补充完整后再重新开始本次业务登记。");
-					view.stoppedAtAnException = true;
+					
+					view.stoppedAtAnException(true);
 					//1.插入影像化记录
 					Imaging imaging = new Imaging();
-					imaging.setCreator(view.loggedInUser.getUserName());
+					imaging.setCreator(view.loggedInUser().getUserName());
 					imaging.setDateCreated(new Date());
 					imaging.setDateModified(new Date());
-					imaging.setPlateNumber(view.basicInfoPane.getPlateNumber());
-					imaging.setPlateType(view.basicInfoPane.getPlateType());
-					imaging.setVin(view.basicInfoPane.getVIN());
+					imaging.setPlateNumber(view.basicInfoPane().getPlateNumber());
+					imaging.setPlateType(view.basicInfoPane().getPlateType());
+					imaging.setVin(view.basicInfoPane().getVIN());
 					imaging.setStatus(BusinessState.B8.name);
 					ui.imagingService.insert(imaging);
 					//2.发信给影像化管理员
 					Map<String, String> details = new HashMap<String, String>();
 					details.put("0", "popup");// 消息自动弹出
-					details.put("3", view.basicInfoPane.getPlateType());//PLATETYPE
-					details.put("4", view.basicInfoPane.getPlateNumber());//PLATENUMBER
-					details.put("5", view.basicInfoPane.getVIN());//VIN
+					details.put("3", view.basicInfoPane().getPlateType());//PLATETYPE
+					details.put("4", view.basicInfoPane().getPlateNumber());//PLATENUMBER
+					details.put("5", view.basicInfoPane().getVIN());//VIN
 					String messageBody = jsonHelper.map2Json(details);
-					User receiver = ui.userService.findImagingAdmin(view.loggedInUser.getCommunityUniqueId());
+					User receiver = ui.userService.findImagingAdmin(view.loggedInUser().getCommunityUniqueId());
 					TB4MessagingSystem messageSystem = new TB4MessagingSystem();
 					Message newMessage = messageSystem.createNewMessage(receiver, "影像化检测消息", messageBody);
 					Set<Name> names = new HashSet<Name>();
@@ -186,9 +188,13 @@ public class BusinessTypeSelector extends FormLayout {
 					//3.更新消息轮询的缓存
 					CacheManager.getInstance().refreshSendDetailsCache();
 					
-					
-					view.stoppedAtAnException = true;
-					
+					Callback callback = new Callback() {
+						@Override
+						public void onSuccessful() {
+							view.cleanStage();
+						}
+					};
+					Notifications.warning("缺少历史影像化记录，已提交申请。等待补充完整后再重新开始本次业务登记。", callback);
 				}
 			}
 			
@@ -207,11 +213,14 @@ public class BusinessTypeSelector extends FormLayout {
 	    	 影像化录入，单独角色单独界面，根据纸质录入车辆信息，上传原文，提交给质检。
 	    	 影响化质检，单独角色单独界面，根据纸质录入车辆信息，查看原文，退回质检或完成后将纸质档案放回。
     	 */
-    	if(view.businessTypePane.getSelected().getName().equals("注册登记")) {
+    	if(view.businessTypePane().getSelected().getName().equals("注册登记")) {
+    		return true;
+    	}
+    	else if (view instanceof ImagingInputView){
     		return true;
     	}
     	else {
-    		List<Transaction> result = ui.transactionService.findForList(view.vin);
+    		List<Transaction> result = ui.transactionService.findForList(view.vin());
     		return (result.size() != 0);
     	}
     }
@@ -224,7 +233,7 @@ public class BusinessTypeSelector extends FormLayout {
 	 */
 	private void loadMaterials(String businessCode) {
 		// 加载文件上传表格
-		view.fileGrid.removeAllRows();
+		view.thumbnailGrid().removeAllRows();
 		
 		List<DataDictionary> list = ui.businessService.getDataDictionaries(businessCode);
 		int i = 0;
@@ -233,13 +242,13 @@ public class BusinessTypeSelector extends FormLayout {
 			ThumbnailRow row = new ThumbnailRow(i+"."+dd.getItemName());
 			row.setDataDictionary(dd);
 			
-			view.fileGrid.addRow(row);
+			view.thumbnailGrid().addRow(row);
 			// 选中第一个
 			if (i == 1) {
 				row.selected();
 				
-				UploadInDTO inDto = new UploadInDTO(view.loggedInUser.getUserUniqueId(), view.vin, view.batch+"", view.editableSite.getSiteUniqueId(),view.uuid,dd.getCode());
-				UploadFileServlet.IN_DTOs.put(view.loggedInUser.getUserUniqueId(), inDto);
+				UploadInDTO inDto = new UploadInDTO(view.loggedInUser().getUserUniqueId(), view.vin(), view.batch()+"", view.editableSite().getSiteUniqueId(),view.uuid(),dd.getCode());
+				UploadFileServlet.IN_DTOs.put(view.loggedInUser().getUserUniqueId(), inDto);
 			}
 		}
 		i++;
@@ -247,10 +256,10 @@ public class BusinessTypeSelector extends FormLayout {
 		DataDictionary dict = new DataDictionary();
 		dict.setCode("$$$$");
 		row.setDataDictionary(dict);
-		view.fileGrid.addRow(row);
-		view.fileGrid.focus();
+		view.thumbnailGrid().addRow(row);
+		view.thumbnailGrid().focus();
 		// 加载拍照影像
-		view.capturePane.displayImage(view.uuid);
+		view.capturePane().displayImage(view.uuid());
 	}
 	
 	/**
@@ -267,9 +276,9 @@ public class BusinessTypeSelector extends FormLayout {
 			@Override
 			public void poll(UIEvents.PollEvent event) {
 				// 定期获取上传文件表格焦点，从而可以按上下键控制
-				view.fileGrid.focus();
+				view.thumbnailGrid().focus();
 				
-				List<UploadOutDTO> list = UploadFileServlet.OUT_DTOs.get(view.loggedInUser.getUserUniqueId());
+				List<UploadOutDTO> list = UploadFileServlet.OUT_DTOs.get(view.loggedInUser().getUserUniqueId());
 				if (list != null) {
  
 					Iterator<UploadOutDTO> iter = list.iterator();
@@ -292,21 +301,21 @@ public class BusinessTypeSelector extends FormLayout {
 								public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
 									//从文件系统删除
 									try {
-										fileSystem.deleteFile(view.editableSite, ufq.getFileFullPath());
+										fileSystem.deleteFile(view.editableSite(), ufq.getFileFullPath());
 									} catch (FileException e) {
 										e.printStackTrace();
 									}
 									
 									//从数据库删除
-									ui.documentService.deleteById(ufq.getDocumentUniqueId(), ufq.getLocation() ,view.vin);
+									ui.documentService.deleteById(ufq.getDocumentUniqueId(), ufq.getLocation() ,view.vin());
 									
 									//从UI删除
-									ThumbnailRow row = view.fileGrid.mapRows.get(ufq.getDictionaryCode());
+									ThumbnailRow row = view.thumbnailGrid().mapRows.get(ufq.getDictionaryCode());
 									row.removeThumbnail(thumbnail);
 								}
 							});
 							
-							view.fileGrid.mapRows.get(ufq.getDictionaryCode()).addThumbnail(thumbnail);
+							view.thumbnailGrid().mapRows.get(ufq.getDictionaryCode()).addThumbnail(thumbnail);
 							ufq.setRemovable(1);
 						}
 						else {
@@ -339,19 +348,19 @@ public class BusinessTypeSelector extends FormLayout {
 			}
 		}
 		/// 为row添加缩略图
-		List<Document> documentList1 = ui.documentService.findAllDocument1(view.vin, view.uuid);
+		List<Document> documentList1 = ui.documentService.findAllDocument1(view.vin(), view.uuid());
 		for (Document doc : documentList1) {
-			ThumbnailRow row = view.fileGrid.mapRows.get(doc.getDictionarycode());
+			ThumbnailRow row = view.thumbnailGrid().mapRows.get(doc.getDictionarycode());
 			row.addThumbnail(new Thumbnail(new ByteArrayInputStream(doc.getThumbnail())));
 		}
-		List<Document> documentList2 = ui.documentService.findAllDocument2(view.vin, view.uuid);
+		List<Document> documentList2 = ui.documentService.findAllDocument2(view.vin(), view.uuid());
 		for (Document doc : documentList2) {
-			ThumbnailRow row = view.fileGrid.mapRows.get("$$$$");
+			ThumbnailRow row = view.thumbnailGrid().mapRows.get("$$$$");
 			row.addThumbnail(new Thumbnail(new ByteArrayInputStream(doc.getThumbnail())));
 		}
 	}
 
-	private FrontView view;
+	private InputViewIF view;
 	private List<Business> data;
 	private ComboBox<Business> selector;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();

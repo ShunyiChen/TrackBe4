@@ -1,7 +1,5 @@
 package com.maxtree.automotive.dashboard.view.front;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.util.StringUtils;
@@ -11,7 +9,7 @@ import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Transaction;
-import com.maxtree.trackbe4.external.tmri.InterF;
+import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.vaadin.data.Binder;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.server.ErrorMessage;
@@ -24,7 +22,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
-public class BasicInfoPane extends Panel{
+public class BasicInfoPane extends Panel {
 
 	/**
 	 * 
@@ -35,7 +33,7 @@ public class BasicInfoPane extends Panel{
 	 * 
 	 * @param view
 	 */
-	public BasicInfoPane(FrontView view) {
+	public BasicInfoPane(InputViewIF view) {
 		this.view = view;
 		initComponents();
 	}
@@ -78,19 +76,16 @@ public class BasicInfoPane extends Panel{
 		form4.setSpacing(false);
 		form4.setMargin(false);
 		form4.addComponent(vinField);
-		
 		main.addComponents(form1,form2,form3,form4);
 		setContent(main);
 		
 		List<String> data = ui.dataItemService.findNamesByType(1);
 		plateTypeField.setItems(data);
 		plateTypeField.setEmptySelectionAllowed(false);
- 
 		barCodeField.setWidth("100%");
 		plateTypeField.setWidth("100%");
 		plateNumberField.setWidth("100%");
 		vinField.setWidth("100%");
-		
 		barCodeField.setHeight(fieldHeight);
 		plateTypeField.setHeight(fieldHeight);
 		plateNumberField.setHeight(fieldHeight);
@@ -120,16 +115,14 @@ public class BasicInfoPane extends Panel{
 //			ArrayList<HashMap<String, String>> lst = interF.getbusView(barCodeField.getValue(), plateTypeField.getValue(), plateNumberField.getValue());
 //			view.vin = lst.get(0).get("clsbdh");
 		}
-		view.vin = "LGB12YEA9DY001226"; /// 这句话可以删除
-		vinField.setValue(view.vin);
+//		view.vin = "LGB12YEA9DY001226"; /// 这句话可以删除
+		vinField.setValue(view.vin());
 		// 有效性验证
-		if(StringUtils.isEmpty(view.vin)) {
+		if(StringUtils.isEmpty(view.vin())) {
 			Notifications.warning("有效性验证失败。");
-			view.stoppedAtAnException = true;
+			view.stoppedAtAnException(true);
 		}
 	}
-	
-	
 	
 	/**
 	 * 
@@ -274,6 +267,6 @@ public class BasicInfoPane extends Panel{
 	private TextField plateNumberField = new TextField("号码号牌:"); 		// 号码号牌文本框
 	private TextField vinField = new TextField("车辆识别代号:"); 			// 车辆识别码文本框
 	private String fieldHeight = "27px";
-	private InterF interF = new InterF();
-	private FrontView view;
+//	private InterF interF = new InterF();
+	private InputViewIF view;
 }

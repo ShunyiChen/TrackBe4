@@ -4,7 +4,10 @@
 
 
 注意：
-选管理员角色就不允许选前端角色
+1.选管理员角色就不允许选前端角色
+2.删除表：denseframe,filebox,portfolio,storehouse
+3.前台影像化检测给予提示，点击确定情况stage
+4.申请接口的事
 
 
 
