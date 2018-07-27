@@ -23,12 +23,12 @@ import com.vaadin.ui.themes.ValoTheme;
  * @author chens
  *
  */
-public class Router extends Window {
+public class RouterWindow extends Window {
 
 	/**
 	 * Constructor
 	 */
-	public Router() {
+	public RouterWindow() {
 		initComponents();
 	}
 	
@@ -95,7 +95,7 @@ public class Router extends Window {
 	 * @param reject
 	 */
 	public static void open(Callback2 accept, Callback2 reject) {
-        Router w = new Router();
+        RouterWindow w = new RouterWindow();
         w.btnOk.addClickListener(e -> {
         	
         	if (w.content.getValue().length() > 160) {

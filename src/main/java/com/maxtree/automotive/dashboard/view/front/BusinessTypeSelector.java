@@ -2,14 +2,18 @@ package com.maxtree.automotive.dashboard.view.front;
 
 import java.io.ByteArrayInputStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Set;
 
+import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
@@ -18,13 +22,18 @@ import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Imaging;
+import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
 import com.maxtree.automotive.dashboard.servlet.UploadInDTO;
 import com.maxtree.automotive.dashboard.servlet.UploadOutDTO;
+import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
+import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
+import com.maxtree.trackbe4.messagingsystem.Name;
+import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.event.UIEvents;
 import com.vaadin.event.UIEvents.PollEvent;
 import com.vaadin.event.UIEvents.PollListener;
@@ -150,7 +159,7 @@ public class BusinessTypeSelector extends FormLayout {
 				else {
 					Notifications.warning("缺少历史影像化记录，已提交申请。等待补充完整后再重新开始本次业务登记。");
 					view.stoppedAtAnException = true;
-					// 发信
+					//1.插入影像化记录
 					Imaging imaging = new Imaging();
 					imaging.setCreator(view.loggedInUser.getUserName());
 					imaging.setDateCreated(new Date());
@@ -158,6 +167,27 @@ public class BusinessTypeSelector extends FormLayout {
 					imaging.setPlateNumber(view.basicInfoPane.getPlateNumber());
 					imaging.setPlateType(view.basicInfoPane.getPlateType());
 					imaging.setVin(view.basicInfoPane.getVIN());
+					imaging.setStatus(BusinessState.B8.name);
+					ui.imagingService.insert(imaging);
+					//2.发信给影像化管理员
+					Map<String, String> details = new HashMap<String, String>();
+					details.put("0", "popup");// 消息自动弹出
+					details.put("3", view.basicInfoPane.getPlateType());//PLATETYPE
+					details.put("4", view.basicInfoPane.getPlateNumber());//PLATENUMBER
+					details.put("5", view.basicInfoPane.getVIN());//VIN
+					String messageBody = jsonHelper.map2Json(details);
+					User receiver = ui.userService.findImagingAdmin(view.loggedInUser.getCommunityUniqueId());
+					TB4MessagingSystem messageSystem = new TB4MessagingSystem();
+					Message newMessage = messageSystem.createNewMessage(receiver, "影像化检测消息", messageBody);
+					Set<Name> names = new HashSet<Name>();
+					Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
+					names.add(target);
+					messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_MANAGER.getViewName());
+					//3.更新消息轮询的缓存
+					CacheManager.getInstance().refreshSendDetailsCache();
+					
+					
+					view.stoppedAtAnException = true;
 					
 				}
 			}
@@ -329,4 +359,5 @@ public class BusinessTypeSelector extends FormLayout {
 	private UIEvents.PollListener pollListener;
 	private boolean selectionHashDone = false;
 	private boolean forTheFirstTimeToLoad = true;
+	private MessageBodyParser jsonHelper = new MessageBodyParser();
 }

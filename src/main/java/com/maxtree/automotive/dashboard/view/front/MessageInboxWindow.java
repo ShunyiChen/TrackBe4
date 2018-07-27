@@ -56,10 +56,10 @@ public class MessageInboxWindow extends Window {
 			String type = map.get("type");
 			int transactionUniqueId = 0;
 			String status = null;
-			if (type.equals("transaction")) {
-				transactionUniqueId = Integer.parseInt(map.get("transactionUniqueId").toString());
-				status = map.get("status").toString();
-			}
+//			if (type.equals("transaction")) {
+//				transactionUniqueId = Integer.parseInt(map.get("transactionUniqueId").toString());
+//				status = map.get("status").toString();
+//			}
 			String message = map.get("message");
 			String read = m.get("markedasread").toString().equals("1")?"已读":"未读";
 			Date dateCreated = (Date) m.get("datecreated");

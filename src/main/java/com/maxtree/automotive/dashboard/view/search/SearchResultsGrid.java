@@ -60,5 +60,5 @@ public class SearchResultsGrid extends VerticalLayout {
 	
 	private List<Transaction> allData;
 	private Grid<Transaction> grid = new Grid<>();
-	private ControlsLayout controls = new ControlsLayout(this);
+	private ControlsLayout controls = null;//new ControlsLayout(this);
 }

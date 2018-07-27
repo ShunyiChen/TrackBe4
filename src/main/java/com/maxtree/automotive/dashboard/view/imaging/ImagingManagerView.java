@@ -13,6 +13,7 @@ import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
+import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
@@ -22,6 +23,7 @@ import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
+import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
 import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
@@ -29,6 +31,7 @@ import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -81,11 +84,13 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
         main.setHeight("100%");
         main.addComponents(grid);
         main.setComponentAlignment(grid, Alignment.MIDDLE_CENTER);
+        
+        
         root.addComponents(main);
         root.setExpandRatio(main, 1.0f);
 //        root.addComponent(grid);
 //        root.setExpandRatio(grid, 1.0f);
-        
+        loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
         root.addLayoutClickListener(new LayoutClickListener() {
@@ -141,13 +146,13 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 	 */
 	private void startPolling() {
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
-//		ui.setPollInterval(sc.getPollinginterval() );
-//		ui.addPollListener(new UIEvents.PollListener() {
-//			@Override
-//			public void poll(UIEvents.PollEvent event) {
-//				getUnreadCount();
-//			}
-//		});
+		ui.setPollInterval(sc.getPollinginterval() );
+		ui.addPollListener(new UIEvents.PollListener() {
+			@Override
+			public void poll(UIEvents.PollEvent event) {
+				updateUnreadCount();
+			}
+		});
 	}
 
 	/**
@@ -170,7 +175,7 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
         HorizontalLayout header = new HorizontalLayout();
         header.addStyleName("viewheader");
 
-        titleLabel = new Label("高级查询");
+        titleLabel = new Label("影像化管理");
         titleLabel.setId(TITLE_ID);
         titleLabel.setSizeUndefined();
         titleLabel.addStyleName(ValoTheme.LABEL_H1);
@@ -178,10 +183,9 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
         header.addComponent(titleLabel);
 
         buildNotificationsButton();
-        buildAdvanceButton();
         buildBasicButton();
         
-        HorizontalLayout tools = new HorizontalLayout(btnBasicRearch, btnAdvanceRearch, notificationsButton);
+        HorizontalLayout tools = new HorizontalLayout(btnBasicRearch, notificationsButton);
         tools.addStyleName("toolbar");
         header.addComponent(tools);
 
@@ -200,38 +204,31 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
         Panel scrollPane = new Panel();
     	scrollPane.addStyleName("reminder-scrollpane");
     	scrollPane.setHeight("250px");
-//        VerticalLayout notificationsLayout = new VerticalLayout();
     	VerticalLayout listLayout = new VerticalLayout();
     	
-    	 User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-    	
-    	 List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(currentUser, DashboardViewType.INPUT.getViewName());
+    	 List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.IMAGING_MANAGER.getViewName());
          for (Map<String, Object> m : allMessages) {
-         	 int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-         	 VerticalLayout notificationLayout = new VerticalLayout();
-             notificationLayout.setMargin(false);
-             notificationLayout.setSpacing(false);
-             notificationLayout.addStyleName("notification-item");
-             String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"(已读)";
+        	 VerticalLayout vLayout = new VerticalLayout();
+         	vLayout.setMargin(false);
+         	vLayout.setSpacing(false);
+         	vLayout.addStyleName("notification-item");
+             Label timeLabel = new Label();
+             String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
              Label titleLabel = new Label(m.get("subject")+readStr);
              titleLabel.addStyleName("notification-title");
+             String json = m.get("messagebody").toString();
+             Map<String, String> map = jsonHelper.json2Map(json);
+             Label plateNumber = new Label(map.get("4"));//PLATENUMBER
+             plateNumber.addStyleName("notification-content");
              
              Date dateCreated = (Date) m.get("datecreated");
              long duration = new Date().getTime() - dateCreated.getTime();
-             Label timeLabel = new Label();
              timeLabel.setValue(new TimeAgo().toDuration(duration));
              timeLabel.addStyleName("notification-time");
-             String json = m.get("messagebody").toString();
-             Map<String, String> map = new MessageBodyParser().json2Map(json);
-             String type = map.get("type").toString();
-             String messageContent = map.get("message");
-             Label contentLabel = new Label(messageContent);
-             contentLabel.addStyleName("notification-content");
-
-             notificationLayout.addComponents(titleLabel, timeLabel, contentLabel);
-             listLayout.addComponent(notificationLayout);
-             notificationLayout.addStyleName("switchbutton");
-             notificationLayout.addLayoutClickListener(e -> {
+             vLayout.addComponents(titleLabel, timeLabel, plateNumber);
+             listLayout.addComponent(vLayout);
+             vLayout.addStyleName("switchbutton");
+             vLayout.addLayoutClickListener(e -> {
              	notificationsWindow.close();
              });
          }
@@ -283,6 +280,8 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
     @Override
     public void enter(final ViewChangeEvent event) {
 //        notificationsButton.updateNotificationsCount(null);
+    	
+    	grid.controls.first();
     }
 
     public static final class NotificationsButton extends Button {
@@ -303,16 +302,8 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 
         @Subscribe
         public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-        	event = new DashboardEvent.NotificationsCountUpdatedEvent();
-        	
-        	User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-        	DashboardUI ui = (DashboardUI) UI.getCurrent();
-//        	List<Reminder> reminders = ui.reminderService.findAll(currentUser.getUserUniqueId(), DashboardViewType.SENDBACK.getViewName());
-//        	event.setCount(reminders.size());
-//        	
-//        	log.info("==============SearchCView Polling");
-//        	DashboardMenu.getInstance().qcCount(reminders.size());
-//        	setUnreadCount(reminders.size());
+        	DashboardMenu.getInstance().imagingAdminCount(event.getCount());
+        	setUnreadCount(event.getCount());
         }
 
         public void setUnreadCount(final int count) {
@@ -341,21 +332,6 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 			}
     	};
     	MessageInboxWindow.open(allMessages, event, selectedMessageUniqueId);
-    }
-    
-    /**
-     * 高级查询按钮
-     */
-    private void buildAdvanceButton() {
-    	btnAdvanceRearch.setEnabled(true);
-    	btnAdvanceRearch.setId(EDIT_ID);
-    	btnAdvanceRearch.setIcon(VaadinIcons.CLOUD);
-    	btnAdvanceRearch.addStyleName("icon-edit");
-    	btnAdvanceRearch.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-    	btnAdvanceRearch.setDescription("高级查询");
-    	btnAdvanceRearch.addClickListener(e -> {
-    		advanceSearch();
-        });
     }
     
     /**
@@ -389,36 +365,6 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
         });
     }
     
-    /**
-     * 
-     * @param Transaction
-     */
-    private void advanceSearch() {
-//    	User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-//    	ResultCallback callback = new ResultCallback() {
-//
-//			@Override
-//			public void onSuccessful(List<Transaction> results) {
-//				System.out.println("resulkt  ="+results.size()+"   perPageSize="+searchModel.getResultsPerPage());
-//				
-//				grid.setAllData(results);
-//				
-//				if (results.size() > searchModel.getResultsPerPage()) {
-//					List<Transaction> currentList = results.subList(0, searchModel.getResultsPerPage());
-//					grid.setItems(currentList);
-//				} else {
-//					grid.setItems(results);
-//				}
-//				
-//				int pageCount = results.size() / searchModel.getResultsPerPage() + 1;
-//				grid.getControlsLayout().setCurrentPageIndex(1);
-//				grid.getControlsLayout().setPageCount(pageCount);
-//				grid.getControlsLayout().setSizePerPage(searchModel.getResultsPerPage());
-//			}
-//    	};
-//    	AdvancedSearchWindow.open(callback, searchModel);
-    }
-    
     private void basicSearch() {
 //    	User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 //    	ResultCallback callback = new ResultCallback() {
@@ -445,11 +391,10 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
     
     @Override
 	public void updateUnreadCount() {
-		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loginUser.getUserUniqueId());
+		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loggedInUser.getUserUniqueId());
     	int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {
-			if (sd.getViewName().equals(DashboardViewType.SEARCH.getViewName())
+			if (sd.getViewName().equals(DashboardViewType.IMAGING_MANAGER.getViewName())
 					|| sd.getViewName().equals("")) {
 				unreadCount++;
 			}
@@ -457,6 +402,19 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
 		event.setCount(unreadCount);
 		notificationsButton.updateNotificationsCount(event);
+		
+		if (oldUnreadCount != unreadCount && unreadCount != 0) {
+			Callback callback = new Callback() {
+
+				@Override
+				public void onSuccessful() {
+					grid.controls.first();
+				}
+				
+			};
+			ConfirmDialog.showDialog("提示", "您已收到 "+unreadCount+" 辆车的申请记录，请及时安排录入人员完成影像的补充。", callback);
+			oldUnreadCount = unreadCount;
+		}
 	}
     
 	@Override
@@ -464,6 +422,9 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 		
 	}
 	
+	
+	private int oldUnreadCount = 0;
+	private MessageBodyParser jsonHelper = new MessageBodyParser();
     private TodoListGrid grid = new TodoListGrid();
     private Label titleLabel;
     private Window notificationsWindow;
@@ -472,7 +433,6 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
     private VerticalLayout root;
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private Button btnBasicRearch = new Button();
-    private Button btnAdvanceRearch = new Button();
     private NotificationsButton notificationsButton;
-//    private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>无查询结果</span>", ContentMode.HTML);
+    private User loggedInUser;
 }

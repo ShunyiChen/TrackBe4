@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import com.maxtree.automotive.dashboard.PermissionCodes;
 import com.maxtree.automotive.dashboard.domain.Business;
-import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.domain.Permission;
 import com.maxtree.automotive.dashboard.domain.Role;
 import com.maxtree.automotive.dashboard.domain.RoleMember;
@@ -37,6 +36,28 @@ public class UserService {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
+	/**
+	 * 
+	 * @param communityUniqueId
+	 * @return
+	 * @throws EmptyResultDataAccessException
+	 */
+	public User findImagingAdmin(int communityUniqueId) throws EmptyResultDataAccessException {
+		String SQL = "SELECT D.* FROM PERMISSION AS A RIGHT JOIN ROLERIGHT AS B ON A.PERMISSIONUNIQUEID = B.PERMISSIONUNIQUEID RIGHT JOIN ROLEMEMBER AS C ON C.ROLEUNIQUEID = B.ROLEUNIQUEID RIGHT JOIN USERS AS D ON D.USERUNIQUEID = C.USERUNIQUEID WHERE A.CODE=? AND D.COMMUNITYUNIQUEID=?";
+		List<User> users = jdbcTemplate.query( SQL, new Object[] {"A8",communityUniqueId}, new BeanPropertyRowMapper<User>(User.class));
+		if (users.size() > 0) {
+			User user = users.get(0);
+			List<Role> roles = getRoles(user);
+			user.setRoles(roles);
+			
+			UserProfile profile = getUserProfile(user.getUserUniqueId());
+			user.setProfile(profile);
+			
+			return user;
+		}
+		return new User();
+	}
+	
 	/**
 	 * Get user object by user uniqueID
 	 * 

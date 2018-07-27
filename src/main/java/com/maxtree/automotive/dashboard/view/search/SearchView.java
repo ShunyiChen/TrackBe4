@@ -416,7 +416,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 				
 				int pageCount = results.size() / searchModel.getResultsPerPage() + 1;
 				grid.getControlsLayout().setCurrentPageIndex(1);
-				grid.getControlsLayout().setPageCount(pageCount);
+//				grid.getControlsLayout().setPageCount(pageCount);
 				grid.getControlsLayout().setSizePerPage(searchModel.getResultsPerPage());
 			}
     	};
@@ -440,7 +440,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 				
 				int pageCount = results.size() / searchModel.getResultsPerPage() + 1;
 				grid.getControlsLayout().setCurrentPageIndex(1);
-				grid.getControlsLayout().setPageCount(pageCount);
+//				grid.getControlsLayout().setPageCount(pageCount);
 				grid.getControlsLayout().setSizePerPage(searchModel.getResultsPerPage());
 			}
     	};
