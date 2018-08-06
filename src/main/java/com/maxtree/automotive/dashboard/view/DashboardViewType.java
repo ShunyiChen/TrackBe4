@@ -18,7 +18,7 @@ public enum DashboardViewType {
 	INPUT("扫描录入", FrontView.class, VaadinIcons.HOME, true),
 	QUALITY("质量检查", QCView.class, VaadinIcons.SPLIT, true),
     CHECK("业务审核", BusinessCheckView.class, VaadinIcons.TABLE, true),
-	SEARCH("数据查询", SearchView.class, VaadinIcons.SEARCH, true),
+	SEARCH("车辆查询", SearchView.class, VaadinIcons.SEARCH, true),
 	DOUBLECHECK("确认审档", DoubleCheckView.class, VaadinIcons.ADD_DOCK, true),
 	SHELF("上架下架", ShelfView.class, VaadinIcons.SPINNER, true),
 	IMAGING_MANAGER("影像管理", ImagingManagerView.class, VaadinIcons.SPINNER, true),

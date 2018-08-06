@@ -43,8 +43,6 @@ import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.automotive.dashboard.view.quality.ConfirmInformationGrid;
 import com.maxtree.automotive.dashboard.view.quality.ImageChecker;
 import com.maxtree.automotive.dashboard.view.quality.RouterWindow;
-import com.maxtree.automotive.dashboard.view.search.BasicSearchWindow;
-import com.maxtree.automotive.dashboard.view.search.ResultCallback;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.messagingsystem.Name;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;

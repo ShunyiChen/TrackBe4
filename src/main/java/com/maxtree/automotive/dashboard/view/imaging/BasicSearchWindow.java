@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.search;
+package com.maxtree.automotive.dashboard.view.imaging;
 
 import java.util.ArrayList;
 import java.util.List;

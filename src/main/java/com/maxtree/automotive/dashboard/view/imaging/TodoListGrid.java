@@ -6,7 +6,6 @@ import java.util.Set;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.Imaging;
-import com.maxtree.automotive.dashboard.view.search.ControlsLayout;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.Menu.Command;
 import com.vaadin.contextmenu.MenuItem;

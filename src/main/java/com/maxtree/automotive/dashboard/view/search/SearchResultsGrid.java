@@ -2,6 +2,7 @@ package com.maxtree.automotive.dashboard.view.search;
 
 import java.util.List;
 
+import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
@@ -36,18 +37,13 @@ public class SearchResultsGrid extends VerticalLayout {
         
 		// Set the selection mode
         grid.setSelectionMode(SelectionMode.MULTI);
-        
         this.addComponents(grid, controls);
-        
         this.setExpandRatio(grid, 1);
+        this.setExpandRatio(controls, 0);
 	}
 	
 	public void setItems(List<Transaction> data) {
 		grid.setItems(data);
-	}
-	
-	public ControlsLayout getControlsLayout() {
-		return controls;
 	}
 	
 	public void setAllData(List<Transaction> allData) {
@@ -58,7 +54,15 @@ public class SearchResultsGrid extends VerticalLayout {
     	return allData;
     }
 	
+	/**
+	 * 
+	 * @param perPageData
+	 */
+	public void setPerPageData(List<Transaction> perPageData) {
+    	grid.setItems(perPageData);
+    }
+	
 	private List<Transaction> allData;
 	private Grid<Transaction> grid = new Grid<>();
-	private ControlsLayout controls = null;//new ControlsLayout(this);
+	private ControlsLayout controls = new ControlsLayout(this);
 }

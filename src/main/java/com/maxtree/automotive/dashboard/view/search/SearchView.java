@@ -59,6 +59,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -86,18 +87,26 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         root.addStyleName("dashboard-view");
         setContent(root);
         Responsive.makeResponsive(root);
-        root.addComponent(buildHeader());
-        root.addComponent(buildSparklines());
-//        dynamicallyVLayout.addStyleName("dynamicallyVLayout-check");
-//        dynamicallyVLayout.setWidth("100%");
-//        dynamicallyVLayout.setHeight("100%");
-//        dynamicallyVLayout.addComponents(blankLabel);
-//        dynamicallyVLayout.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
-//        root.addComponents(dynamicallyVLayout);
-//        root.setExpandRatio(dynamicallyVLayout, 7.0f);
         
+        HorizontalLayout searchbar = new HorizontalLayout();
+        searchbar.setSpacing(false);
+        searchbar.setMargin(false);
+        searchbar.setWidthUndefined();
+        
+        TextField searchField = new TextField();
+        searchField.setWidth("400px");
+        searchField.setPlaceholder("请输入车牌号\\车架号\\业务流水号");
+        Button searchButton = new Button();
+        searchButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        searchButton.setIcon(VaadinIcons.SEARCH);
+        searchbar.addComponents(searchField,searchButton);
+        
+        root.addComponent(buildHeader());
+//        root.addComponent(buildSparklines());
+        root.addComponent(searchbar);
         root.addComponent(grid);
         root.setExpandRatio(grid, 1.0f);
+        loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
         
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
@@ -151,13 +160,13 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 	
 	private void startPolling() {
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
-//		ui.setPollInterval(sc.getPollinginterval() );
-//		ui.addPollListener(new UIEvents.PollListener() {
-//			@Override
-//			public void poll(UIEvents.PollEvent event) {
-//				getUnreadCount();
-//			}
-//		});
+		ui.setPollInterval(sc.getPollinginterval());
+		ui.addPollListener(new UIEvents.PollListener() {
+			@Override
+			public void poll(UIEvents.PollEvent event) {
+				updateUnreadCount();
+			}
+		});
 	}
 
     private Component buildSparklines() {
@@ -171,29 +180,26 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     private Component buildHeader() {
         HorizontalLayout header = new HorizontalLayout();
         header.addStyleName("viewheader");
-
-        titleLabel = new Label("高级查询");
+        titleLabel = new Label("车辆查询");
         titleLabel.setId(TITLE_ID);
         titleLabel.setSizeUndefined();
         titleLabel.addStyleName(ValoTheme.LABEL_H1);
         titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         header.addComponent(titleLabel);
-
         buildNotificationsButton();
-        buildAdvanceButton();
-        buildBasicButton();
-        
-        HorizontalLayout tools = new HorizontalLayout(btnBasicRearch, btnAdvanceRearch, notificationsButton);
+        HorizontalLayout tools = new HorizontalLayout(notificationsButton);
         tools.addStyleName("toolbar");
         header.addComponent(tools);
-
         return header;
     }
 
+    /**
+     * 
+     * @param event
+     */
     private void openNotificationsPopup(final ClickEvent event) {
     	VerticalLayout mainVLayout = new VerticalLayout();
     	mainVLayout.setSpacing(false);
-        
         Label title = new Label("事件提醒");
         title.addStyleName(ValoTheme.LABEL_H3);
         title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
@@ -207,37 +213,35 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     	
     	User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
     	
-    	 List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(currentUser, DashboardViewType.SEARCH.getViewName());
-         for (Map<String, Object> m : allMessages) {
-         	
-         	int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-         	
-         	VerticalLayout notificationLayout = new VerticalLayout();
-             notificationLayout.setMargin(false);
-             notificationLayout.setSpacing(false);
-             notificationLayout.addStyleName("notification-item");
-             String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"(已读)";
-             Label titleLabel = new Label(m.get("subject")+readStr);
-             titleLabel.addStyleName("notification-title");
-             
-             Date dateCreated = (Date) m.get("datecreated");
-             long duration = new Date().getTime() - dateCreated.getTime();
-             Label timeLabel = new Label();
-             timeLabel.setValue(new TimeAgo().toDuration(duration));
-             timeLabel.addStyleName("notification-time");
-             String json = m.get("messagebody").toString();
-             Map<String, String> map = new MessageBodyParser().json2Map(json);
-             String type = map.get("type").toString();
-             String messageContent = map.get("message");
-             Label contentLabel = new Label(messageContent);
-             contentLabel.addStyleName("notification-content");
-
-             notificationLayout.addComponents(titleLabel, timeLabel, contentLabel);
-             listLayout.addComponent(notificationLayout);
-             notificationLayout.addStyleName("switchbutton");
-             notificationLayout.addLayoutClickListener(e -> {
-             	notificationsWindow.close();
-             });
+    	List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(currentUser, DashboardViewType.SEARCH.getViewName());
+        for (Map<String, Object> m : allMessages) {
+//         	int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
+//         	VerticalLayout notificationLayout = new VerticalLayout();
+//             notificationLayout.setMargin(false);
+//             notificationLayout.setSpacing(false);
+//             notificationLayout.addStyleName("notification-item");
+//             String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"(已读)";
+//             Label titleLabel = new Label(m.get("subject")+readStr);
+//             titleLabel.addStyleName("notification-title");
+//             
+//             Date dateCreated = (Date) m.get("datecreated");
+//             long duration = new Date().getTime() - dateCreated.getTime();
+//             Label timeLabel = new Label();
+//             timeLabel.setValue(new TimeAgo().toDuration(duration));
+//             timeLabel.addStyleName("notification-time");
+//             String json = m.get("messagebody").toString();
+//             Map<String, String> map = new MessageBodyParser().json2Map(json);
+//             String type = map.get("type").toString();
+//             String messageContent = map.get("message");
+//             Label contentLabel = new Label(messageContent);
+//             contentLabel.addStyleName("notification-content");
+//
+//             notificationLayout.addComponents(titleLabel, timeLabel, contentLabel);
+//             listLayout.addComponent(notificationLayout);
+//             notificationLayout.addStyleName("switchbutton");
+//             notificationLayout.addLayoutClickListener(e -> {
+//             	notificationsWindow.close();
+//             });
          }
         scrollPane.setContent(listLayout);
         mainVLayout.addComponent(scrollPane);
@@ -286,7 +290,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 
     @Override
     public void enter(final ViewChangeEvent event) {
-        notificationsButton.updateNotificationsCount(null);
+//        notificationsButton.updateNotificationsCount(null);
     }
 
     public static final class NotificationsButton extends Button {
@@ -307,16 +311,8 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 
         @Subscribe
         public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-        	event = new DashboardEvent.NotificationsCountUpdatedEvent();
-        	
-        	User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-        	DashboardUI ui = (DashboardUI) UI.getCurrent();
-//        	List<Reminder> reminders = ui.reminderService.findAll(currentUser.getUserUniqueId(), DashboardViewType.SENDBACK.getViewName());
-//        	event.setCount(reminders.size());
-//        	
-//        	log.info("==============SearchCView Polling");
-//        	DashboardMenu.getInstance().qcCount(reminders.size());
-//        	setUnreadCount(reminders.size());
+        	DashboardMenu.getInstance().searchCount(event.getCount());
+        	setUnreadCount(event.getCount());
         }
 
         public void setUnreadCount(final int count) {
@@ -348,37 +344,6 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     }
     
     /**
-     * 高级查询按钮
-     */
-    private void buildAdvanceButton() {
-    	btnAdvanceRearch.setEnabled(true);
-    	btnAdvanceRearch.setId(EDIT_ID);
-    	btnAdvanceRearch.setIcon(VaadinIcons.CLOUD);
-    	btnAdvanceRearch.addStyleName("icon-edit");
-    	btnAdvanceRearch.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-    	btnAdvanceRearch.setDescription("高级查询");
-    	btnAdvanceRearch.addClickListener(e -> {
-    		advanceSearch();
-        });
-    }
-    
-    /**
-     * 基本查询按钮
-     */
-    private void buildBasicButton() {
-    	btnBasicRearch.setEnabled(true);
-    	btnBasicRearch.setId(EDIT_ID);
-    	btnBasicRearch.setIcon(VaadinIcons.SEARCH);
-    	btnBasicRearch.addStyleName("icon-edit");
-    	btnBasicRearch.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-    	btnBasicRearch.setDescription("基本查询");
-    	btnBasicRearch.addClickListener(e -> {
-    		basicSearch();
-        });
-    }
-    
-    
-    /**
      * 提醒按钮
      * 
      * @return
@@ -393,67 +358,65 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         });
     }
     
-    /**
-     * 
-     * @param Transaction
-     */
-    private void advanceSearch() {
-    	User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-    	ResultCallback callback = new ResultCallback() {
-
-			@Override
-			public void onSuccessful(List<Transaction> results) {
-				System.out.println("resulkt  ="+results.size()+"   perPageSize="+searchModel.getResultsPerPage());
-				
-				grid.setAllData(results);
-				
-				if (results.size() > searchModel.getResultsPerPage()) {
-					List<Transaction> currentList = results.subList(0, searchModel.getResultsPerPage());
-					grid.setItems(currentList);
-				} else {
-					grid.setItems(results);
-				}
-				
-				int pageCount = results.size() / searchModel.getResultsPerPage() + 1;
-				grid.getControlsLayout().setCurrentPageIndex(1);
-//				grid.getControlsLayout().setPageCount(pageCount);
-				grid.getControlsLayout().setSizePerPage(searchModel.getResultsPerPage());
-			}
-    	};
-    	AdvancedSearchWindow.open(callback, searchModel);
-    }
-    
-    private void basicSearch() {
+//    /**
+//     * 
+//     * @param Transaction
+//     */
+//    private void advanceSearch() {
 //    	User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-    	ResultCallback callback = new ResultCallback() {
-
-			@Override
-			public void onSuccessful(List<Transaction> results) {
-				grid.setAllData(results);
-				
-				if (results.size() > searchModel.getResultsPerPage()) {
-					List<Transaction> currentList = results.subList(0, searchModel.getResultsPerPage());
-					grid.setItems(currentList);
-				} else {
-					grid.setItems(results);
-				}
-				
-				int pageCount = results.size() / searchModel.getResultsPerPage() + 1;
-				grid.getControlsLayout().setCurrentPageIndex(1);
-//				grid.getControlsLayout().setPageCount(pageCount);
-				grid.getControlsLayout().setSizePerPage(searchModel.getResultsPerPage());
-			}
-    	};
-    	BasicSearchWindow.open(callback);
-    }
+//    	ResultCallback callback = new ResultCallback() {
+//
+//			@Override
+//			public void onSuccessful(List<Transaction> results) {
+//				System.out.println("resulkt  ="+results.size()+"   perPageSize="+searchModel.getResultsPerPage());
+//				
+//				grid.setAllData(results);
+//				
+//				if (results.size() > searchModel.getResultsPerPage()) {
+//					List<Transaction> currentList = results.subList(0, searchModel.getResultsPerPage());
+//					grid.setItems(currentList);
+//				} else {
+//					grid.setItems(results);
+//				}
+//				
+//				int pageCount = results.size() / searchModel.getResultsPerPage() + 1;
+//				grid.getControlsLayout().setCurrentPageIndex(1);
+////				grid.getControlsLayout().setPageCount(pageCount);
+//				grid.getControlsLayout().setSizePerPage(searchModel.getResultsPerPage());
+//			}
+//    	};
+//    	AdvancedSearchWindow.open(callback, searchModel);
+//    }
+//    
+//    private void basicSearch() {
+//    	ResultCallback callback = new ResultCallback() {
+//
+//			@Override
+//			public void onSuccessful(List<Transaction> results) {
+//				grid.setAllData(results);
+//				
+//				if (results.size() > searchModel.getResultsPerPage()) {
+//					List<Transaction> currentList = results.subList(0, searchModel.getResultsPerPage());
+//					grid.setItems(currentList);
+//				} else {
+//					grid.setItems(results);
+//				}
+//				
+//				int pageCount = results.size() / searchModel.getResultsPerPage() + 1;
+//				grid.getControlsLayout().setCurrentPageIndex(1);
+////				grid.getControlsLayout().setPageCount(pageCount);
+//				grid.getControlsLayout().setSizePerPage(searchModel.getResultsPerPage());
+//			}
+//    	};
+//    	BasicSearchWindow.open(callback);
+//    }
     
     @Override
 	public void updateUnreadCount() {
-		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loginUser.getUserUniqueId());
-    	int unreadCount = 0;
+    	List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loggedInUser.getUserUniqueId());
+		int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {
-			if (sd.getViewName().equals(DashboardViewType.SEARCH.getViewName())
+			if (sd.getViewName().equals(DashboardViewType.INPUT.getViewName())
 					|| sd.getViewName().equals("")) {
 				unreadCount++;
 			}
@@ -473,16 +436,14 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     	return transaction;
     }
     
-    private SearchModel searchModel = new SearchModel();
+    
+    private User loggedInUser;	//登录用户
     private Label titleLabel;
     private Window notificationsWindow;
     public static final String EDIT_ID = "dashboard-edit";
     public static final String TITLE_ID = "dashboard-title";
     private VerticalLayout root;
-//    private VerticalLayout dynamicallyVLayout = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
-    private Button btnBasicRearch = new Button();
-    private Button btnAdvanceRearch = new Button();
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>无查询结果</span>", ContentMode.HTML);
     private Transaction transaction = null;

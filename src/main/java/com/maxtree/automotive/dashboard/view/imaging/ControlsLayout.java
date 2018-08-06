@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.view.search;
+package com.maxtree.automotive.dashboard.view.imaging;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class ControlsLayout extends HorizontalLayout {
 	 * 
 	 * @param grid
 	 */
-	public ControlsLayout(SearchResultsGrid grid) {
+	public ControlsLayout(TodoListGrid grid) {
 		this.grid = grid;
 		initComponents();
 	}
@@ -61,6 +61,10 @@ public class ControlsLayout extends HorizontalLayout {
 	
 	public void first() {
 		if (grid != null) {
+//			int pages = ui.imagingService.findPagingCount(20);
+			List<Imaging> items = ui.imagingService.findAll(sizePerPage, 0); 
+			grid.setPerPageData(items);
+			
 			// Update inputs
 			numField.setValue((1)+"");
 			currentPageIndexLabel.setValue("第"+(1)+"页 ，");
@@ -74,7 +78,7 @@ public class ControlsLayout extends HorizontalLayout {
 				currentPageIndex = 0;
 			}
 			int fromIndex = currentPageIndex * sizePerPage;
-			List<Transaction> items = ui.imagingService.findAll(sizePerPage, fromIndex); 
+			List<Imaging> items = ui.imagingService.findAll(sizePerPage, fromIndex); 
 			grid.setPerPageData(items);
 			
 			// Update inputs
@@ -96,7 +100,7 @@ public class ControlsLayout extends HorizontalLayout {
 			}
 			
 			int fromIndex = (currentPageIndex -1) * sizePerPage;
-			List<Transaction> items = ui.imagingService.findAll(sizePerPage, fromIndex); 
+			List<Imaging> items = ui.imagingService.findAll(sizePerPage, fromIndex); 
 			grid.setPerPageData(items);
 			// Update inputs
 			numField.setValue(currentPageIndex+"");
@@ -106,6 +110,18 @@ public class ControlsLayout extends HorizontalLayout {
 	
 	private void last() {
 		if (grid != null) {
+//			if (grid.getAllData().size() > sizePerPage) {
+//				
+//				int pageIndex = grid.getAllData().size() / sizePerPage;
+//				int remainder = grid.getAllData().size() % sizePerPage;
+//				int fromIndex = pageIndex * sizePerPage;
+// 
+//				List<Imaging> items = ui.imagingService.findAll(sizePerPage, fromIndex); 
+//				grid.setItems(items);
+//			} else {
+//				grid.setItems(grid.getAllData());
+//			}
+			
 			// Update inputs
 			numField.setValue((pageCount)+"");
 			currentPageIndexLabel.setValue("第"+(pageCount)+"页 ，");
@@ -135,7 +151,7 @@ public class ControlsLayout extends HorizontalLayout {
 			Notifications.warning("当前页数范围应该在1-"+pageCount+"");
 		} else {
 			int fromIndex = num * sizePerPage;
-			List<Transaction> data = ui.imagingService.findAll(sizePerPage, fromIndex);
+			List<Imaging> data = ui.imagingService.findAll(sizePerPage, fromIndex);
 			grid.setPerPageData(data);
 		}
 	}
@@ -172,7 +188,7 @@ public class ControlsLayout extends HorizontalLayout {
 	private DoubleField numField = new DoubleField();
 	private Button next = new Button(">");
 	private Button last = new Button(">>");
-	private SearchResultsGrid grid;
+	private TodoListGrid grid;
 	private Label currentPageIndexLabel = new Label();
 	private Label pageSizeLabel = new Label();
 	private Label sizePerPageLabel = new Label();

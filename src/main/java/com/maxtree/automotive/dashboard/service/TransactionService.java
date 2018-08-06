@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
+import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 
 @Component
@@ -158,5 +159,17 @@ public class TransactionService {
 	private int getTableIndex(String vin) {
 		int num = Integer.parseInt(vin.substring(vin.length() - 4));
 		return num % 256;
+	}
+	
+	/**
+	 * 
+	 * @param limit
+	 * @param offset
+	 * @return
+	 */
+	public List<Imaging> findAll(int limit, int offset) {
+		String sql = "SELECT * FROM IMAGING ORDER BY DATECREATED  LIMIT ? OFFSET ? ";
+		List<Imaging> results = jdbcTemplate.query(sql, new Object[] {limit, offset}, new BeanPropertyRowMapper<Imaging>(Imaging.class));
+		return results;
 	}
 }

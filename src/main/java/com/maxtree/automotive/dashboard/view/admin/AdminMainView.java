@@ -819,7 +819,6 @@ public class AdminMainView extends VerticalLayout {
 	private HorizontalLayout createSearchPane() {
 		Image image = new Image(null, new ThemeResource("img/chrome_menu.png"));
         image.addClickListener(e -> {
-        	System.out.println("click menu");
         	AdminMenuWindow.open();
         });
         image.addStyleName("menu-button");
