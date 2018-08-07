@@ -62,6 +62,19 @@ public class SearchResultsGrid extends VerticalLayout {
     	grid.setItems(perPageData);
     }
 	
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+
+	public void execute() {
+		controls.execute();
+	}
+	
+	private String keyword;
 	private List<Transaction> allData;
 	private Grid<Transaction> grid = new Grid<>();
 	private ControlsLayout controls = new ControlsLayout(this);

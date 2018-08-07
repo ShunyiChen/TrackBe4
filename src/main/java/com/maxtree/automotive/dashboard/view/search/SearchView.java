@@ -40,6 +40,7 @@ import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
@@ -87,23 +88,8 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         root.addStyleName("dashboard-view");
         setContent(root);
         Responsive.makeResponsive(root);
-        
-        HorizontalLayout searchbar = new HorizontalLayout();
-        searchbar.setSpacing(false);
-        searchbar.setMargin(false);
-        searchbar.setWidthUndefined();
-        
-        TextField searchField = new TextField();
-        searchField.setWidth("400px");
-        searchField.setPlaceholder("请输入车牌号\\车架号\\业务流水号");
-        Button searchButton = new Button();
-        searchButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        searchButton.setIcon(VaadinIcons.SEARCH);
-        searchbar.addComponents(searchField,searchButton);
-        
         root.addComponent(buildHeader());
-//        root.addComponent(buildSparklines());
-        root.addComponent(searchbar);
+        root.addComponent(buildSparklines());
         root.addComponent(grid);
         root.setExpandRatio(grid, 1.0f);
         loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
@@ -185,7 +171,34 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         titleLabel.setSizeUndefined();
         titleLabel.addStyleName(ValoTheme.LABEL_H1);
         titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
-        header.addComponent(titleLabel);
+        
+        HorizontalLayout searchbar = new HorizontalLayout();
+        searchbar.setSpacing(false);
+        searchbar.setMargin(false);
+        searchbar.setWidthUndefined();
+        TextField searchField = new TextField();
+        searchField.setWidth("400px");
+        searchField.setPlaceholder("请输入车牌号\\车架号\\业务流水号");
+        ShortcutListener enter = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER,
+				null) {
+			@Override
+			public void handleAction(Object sender, Object target) {
+				grid.setKeyword(searchField.getValue());
+				grid.execute();
+			}
+		};
+        searchField.addShortcutListener(enter);
+        Button searchButton = new Button();
+        searchButton.addClickListener(e->{
+        	grid.setKeyword(searchField.getValue());
+        	grid.execute();
+        });
+        searchButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        searchButton.setIcon(VaadinIcons.SEARCH);
+        searchbar.addComponents(searchField, searchButton);
+        
+        
+        header.addComponents(titleLabel,searchbar);
         buildNotificationsButton();
         HorizontalLayout tools = new HorizontalLayout(notificationsButton);
         tools.addStyleName("toolbar");
@@ -279,8 +292,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         }
 
         if (!notificationsWindow.isAttached()) {
-            notificationsWindow.setPositionY(event.getClientY()
-                    - event.getRelativeY() + 40);
+            notificationsWindow.setPositionY(event.getClientY() - event.getRelativeY() + 40);
             getUI().addWindow(notificationsWindow);
             notificationsWindow.focus();
         } else {
@@ -294,9 +306,6 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     }
 
     public static final class NotificationsButton extends Button {
-        /**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
 		private static final String STYLE_UNREAD = "unread";
         public static final String ID = "dashboard-notifications";
@@ -428,14 +437,11 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 
 	@Override
 	public void cleanStage() {
-		// TODO Auto-generated method stub
-		
 	}
 	
     public Transaction getCurrentTransaction() {
     	return transaction;
     }
-    
     
     private User loggedInUser;	//登录用户
     private Label titleLabel;

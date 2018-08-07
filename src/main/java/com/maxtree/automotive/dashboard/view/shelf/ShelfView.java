@@ -12,16 +12,13 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
-import com.maxtree.automotive.dashboard.component.Hr;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
-import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
-import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
@@ -30,13 +27,12 @@ import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
 import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
-import com.maxtree.automotive.dashboard.view.quality.ConfirmInformationGrid;
-import com.maxtree.automotive.dashboard.view.quality.ImageChecker;
 import com.maxtree.automotive.dashboard.view.quality.QCView;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
@@ -53,6 +49,8 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -82,13 +80,29 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
         Responsive.makeResponsive(root);
         root.addComponent(buildHeader());
         root.addComponent(buildSparklines());
-        main.addStyleName("dynamicallyVLayout-check");
-        main.setWidth("100%");
-        main.setHeight("100%");
-        main.addComponents(blankLabel);
-        main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
+//        main.addStyleName("dynamicallyVLayout-check");
+//        main.setWidth("100%");
+//        main.setHeight("100%");
+//        main.addComponents(blankLabel);
+//        main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
+//        root.addComponents(main);
+//        root.setExpandRatio(main, 7.0f);
+        TabSheet main = new TabSheet();
+        main.addSelectedTabChangeListener(e->{
+        	
+        });
+        main.setHeight(100.0f, Unit.PERCENTAGE);
+        main.addStyleName(ValoTheme.TABSHEET_FRAMED);
+        main.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
+        final VerticalLayout layout1 = new VerticalLayout();
+        layout1.setMargin(true);
+        final VerticalLayout layout2 = new VerticalLayout();
+        layout2.setMargin(true);
+        main.addTab(layout1, "上架");
+        main.addTab(layout2, "下架");
         root.addComponents(main);
-        root.setExpandRatio(main, 7.0f);
+        root.setExpandRatio(main, 1.0f);
+        
         loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
@@ -167,13 +181,69 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
         titleLabel.setSizeUndefined();
         titleLabel.addStyleName(ValoTheme.LABEL_H1);
         titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
-        header.addComponent(titleLabel);
+        
+        HorizontalLayout searchbar = new HorizontalLayout();
+        searchbar.setSpacing(false);
+        searchbar.setMargin(false);
+        searchbar.setWidthUndefined();
+        TextField searchField = new TextField();
+        searchField.setWidth("400px");
+        searchField.setPlaceholder("请输入车牌号,例如:辽B12345");
+        ShortcutListener enter = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER, null) {
+			@Override
+			public void handleAction(Object sender, Object target) {
+//				grid.setKeyword(searchField.getValue());
+//				grid.execute();
+			}
+		};
+        searchField.addShortcutListener(enter);
+        Button searchButton = new Button();
+        searchButton.addClickListener(e->{
+//        	grid.setKeyword(searchField.getValue());
+//        	grid.execute();
+        });
+        searchButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        searchButton.setIcon(VaadinIcons.SEARCH);
+        searchbar.addComponents(searchField,searchButton);
+        header.addComponents(titleLabel, searchbar);
+        
         buildNotificationsButton();
-        HorizontalLayout tools = new HorizontalLayout(notificationsButton);
+        buildUpButton();
+        buildDownButton();
+        
+        HorizontalLayout tools = new HorizontalLayout(notificationsButton, btnUp, btnDown);
         tools.addStyleName("toolbar");
         header.addComponent(tools);
         return header;
     }
+    
+    /**
+     * 
+     */
+    private void buildUpButton() {
+		btnUp.setId(EDIT_ID);
+		btnUp.setIcon(VaadinIcons.ARROW_UP);
+		btnUp.addStyleName("icon-edit");
+		btnUp.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		btnUp.setDescription("上架");
+		btnUp.addClickListener(e -> {
+			
+		});
+	}
+    
+    /**
+     * 
+     */
+    private void buildDownButton() {
+    	btnDown.setId(EDIT_ID);
+    	btnDown.setIcon(VaadinIcons.ARROW_DOWN);
+    	btnDown.addStyleName("icon-edit");
+    	btnDown.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	btnDown.setDescription("上架");
+    	btnDown.addClickListener(e -> {
+			
+		});
+	}
 
     private void openNotificationsPopup(final ClickEvent event) {
     	VerticalLayout mainVLayout = new VerticalLayout();
@@ -190,7 +260,6 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
         VerticalLayout listLayout = new VerticalLayout();
         List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.SHELF.getViewName());
         for (Map<String, Object> m : allMessages) {
-        	
         	VerticalLayout notificationLayout = new VerticalLayout();
             notificationLayout.setMargin(false);
             notificationLayout.setSpacing(false);
@@ -198,7 +267,6 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
             String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
             Label titleLabel = new Label(m.get("subject")+readStr);
             titleLabel.addStyleName("notification-title");
-            
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
             Label timeLabel = new Label();
@@ -210,20 +278,15 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
             String messageContent = map.get("message");
             Label contentLabel = new Label(messageContent);
             contentLabel.addStyleName("notification-content");
- 
 
             notificationLayout.addComponents(titleLabel, timeLabel, contentLabel);
             listLayout.addComponent(notificationLayout);
             notificationLayout.addStyleName("switchbutton");
             notificationLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
-            	
-            	int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-            	
+//            	int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
 //            	if ("text".equals(type)) {
-//            		
 //            		showAll(allMessages, messageUniqueId);
-//            		
 //    			} else if ("transaction".equals(type)) {
 //    				int transactionUniqueId = Integer.parseInt(map.get("transactionUniqueId").toString());
 //    				// 标记已读
@@ -245,9 +308,7 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
         footer.setSpacing(false);
         Button showAll = new Button("查看全部事件");
         showAll.addClickListener(e->{
-        	
         	showAll(allMessages, 0);
-        	
         	notificationsWindow.close();
         });
         
@@ -304,8 +365,7 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
 
         @Subscribe
         public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-        	log.info("===============ShelfView Polling");
-        	DashboardMenu.getInstance().qcCount(event.getCount());
+        	DashboardMenu.getInstance().shelfCount(event.getCount());
         	setUnreadCount(event.getCount());
         }
 
@@ -315,42 +375,6 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
             if (count > 0) {
                 addStyleName(STYLE_UNREAD);
                 description += " (" + count + " 未执行)";
-            } else {
-                removeStyleName(STYLE_UNREAD);
-            }
-            setDescription(description);
-        }
-    }
-    
-    public static final class FetchButton extends Button {
-        /**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private static final String STYLE_UNREAD = "unread";
-        public static final String ID = "dashboard-notifications";
-
-        public FetchButton() {
-            setIcon(VaadinIcons.BELL);
-            setId(ID);
-            addStyleName("notifications");
-            addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-            DashboardEventBus.register(this);
-        }
-
-        @Subscribe
-        public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-//        	log.info("===============QCView Polling");
-//        	DashboardMenu.getInstance().qcCount(event.getCount());
-        	setUnreadCount(event.getCount());
-        }
-
-        public void setUnreadCount(final int count) {
-            setCaption(String.valueOf(count));
-            String description = "可用队列";
-            if (count > 0) {
-                addStyleName(STYLE_UNREAD);
-                description += " (" + count + " 未取)";
             } else {
                 removeStyleName(STYLE_UNREAD);
             }
@@ -371,20 +395,6 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
 			}
     	};
     	MessageInboxWindow.open(allMessages, event, selectedMessageUniqueId);
-    }
-    
-    /**
-     * 
-     */
-    private void resetComponents() {
-    	main.setSpacing(false);
-    	main.setMargin(false);
-    	main.removeAllComponents();
-    	main.setHeightUndefined();
-//    	confirmInformationGrid = new ConfirmInformationGrid(transaction);
-//		imageChecker = new ImageChecker(transaction);
-//		Hr hr = new Hr();
-//	    dynamicallyVLayout.addComponents(confirmInformationGrid, hr, imageChecker);
     }
     
     /**
@@ -432,23 +442,17 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
 
    	@Override
    	public void cleanStage() {
-   		main.removeAllComponents();
-   		main.setHeight("100%");
-		main.addComponents(blankLabel);
-		main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
-		
-		editableTrans = null;
    	}
     
    	public static final String EDIT_ID = "dashboard-edit";
     public static final String TITLE_ID = "dashboard-title";
-	private Transaction editableTrans = null; 	//可编辑的编辑transaction
    	private User loggedInUser;
     private Label titleLabel;
     private Window notificationsWindow;
     private VerticalLayout root;
-    private VerticalLayout main = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private NotificationsButton notificationsButton;
+    private Button btnUp = new Button();
+    private Button btnDown = new Button();
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
 }

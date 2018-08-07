@@ -3,17 +3,14 @@ package com.maxtree.automotive.dashboard.view.search;
 import java.util.List;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.component.DoubleField;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.maxtree.automotive.dashboard.domain.Transaction;
-import com.maxtree.automotive.dashboard.view.imaging.TodoListGrid;
-import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
 public class ControlsLayout extends HorizontalLayout {
@@ -51,43 +48,79 @@ public class ControlsLayout extends HorizontalLayout {
 		last.addClickListener(e -> {
 			last();
 		});
-		numField.addShortcutListener(createFocusableShortcutListener(numField, KeyCode.ENTER));
-		pageCount = ui.imagingService.findPagingCount(20);
-		pageSizeLabel.setValue("总共"+pageCount+"页");
 		
-		setCurrentPageIndex(0);
-		setSizePerPage(20);
-	}
-	
-	public void first() {
-		if (grid != null) {
-			// Update inputs
-			numField.setValue((1)+"");
-			currentPageIndexLabel.setValue("第"+(1)+"页 ，");
-		}
-	}
-	
-	private void previous() {
-		if (grid != null) {
-			currentPageIndex -= 2;
-			if (currentPageIndex < 0) {
-				currentPageIndex = 0;
+		ShortcutListener enter = new ShortcutListener("Shortcut123 Name", com.vaadin.event.ShortcutAction.KeyCode.DELETE,
+				null) {
+			@Override
+			public void handleAction(Object sender, Object target) {
+				
 			}
-			int fromIndex = currentPageIndex * sizePerPage;
-			List<Transaction> items = ui.imagingService.findAll(sizePerPage, fromIndex); 
+		};
+		numField.addValueChangeListener(e->{
+			try {
+				int num = Integer.parseInt(numField.getValue());
+				if (num > pageCount || num <0) {
+					Notifications.warning("当前页数范围应该在1~"+pageCount+"");
+				} 
+				currentPageIndex = num;
+				jumpTo();
+			} catch (NumberFormatException e2) {
+			}
+			
+		});
+		
+		sizePerPageLabel.setValue("每页显示"+sizePerPage+"行");
+		currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
+		numField.setValue(currentPageIndex+"");
+	}
+	
+	/**
+	 * 
+	 */
+	public void execute() {
+		pageCount = ui.transactionService.findPagingCount(sizePerPage, grid.getKeyword());
+		pageSizeLabel.setValue("总共"+pageCount+"页");
+		first();
+	}
+	
+	/**
+	 * 
+	 */
+	private void first() {
+		if (grid != null) {
+			List<Transaction> items = ui.transactionService.findAll(sizePerPage, 0, grid.getKeyword()); 
 			grid.setPerPageData(items);
 			
 			// Update inputs
-			numField.setValue((currentPageIndex+1)+"");
-			currentPageIndexLabel.setValue("第"+(currentPageIndex+1)+"页 ，");
-			
-			// For next 
-			if (currentPageIndex == 0) {
-				currentPageIndex = 1;
-			}
+			currentPageIndex = 1;
+			numField.setValue(currentPageIndex+"");
+			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
 		}
 	}
 	
+	/**
+	 * 
+	 */
+	private void previous() {
+		if (grid != null) {
+			currentPageIndex -= 1;
+			if (currentPageIndex < 1) {
+				currentPageIndex = 1;
+			}
+			int offset = (currentPageIndex - 1) * sizePerPage;
+			List<Transaction> items = ui.transactionService.findAll(sizePerPage, offset, grid.getKeyword()); 
+			grid.setPerPageData(items);
+			
+			// Update inputs
+			numField.setValue(currentPageIndex+"");
+			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
+		 
+		}
+	}
+	
+	/**
+	 * 
+	 */
 	private void next() {
 		if (grid != null) {
 			currentPageIndex++;
@@ -95,8 +128,8 @@ public class ControlsLayout extends HorizontalLayout {
 				currentPageIndex = pageCount;
 			}
 			
-			int fromIndex = (currentPageIndex -1) * sizePerPage;
-			List<Transaction> items = ui.imagingService.findAll(sizePerPage, fromIndex); 
+			int offset = (currentPageIndex -1) * sizePerPage;
+			List<Transaction> items = ui.transactionService.findAll(sizePerPage, offset, grid.getKeyword()); 
 			grid.setPerPageData(items);
 			// Update inputs
 			numField.setValue(currentPageIndex+"");
@@ -104,72 +137,34 @@ public class ControlsLayout extends HorizontalLayout {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void last() {
 		if (grid != null) {
+			
+			currentPageIndex = pageCount;
+			int offset = (currentPageIndex -1) * sizePerPage;
+			List<Transaction> items = ui.transactionService.findAll(sizePerPage, offset, grid.getKeyword()); 
+			grid.setPerPageData(items);
 			// Update inputs
-			numField.setValue((pageCount)+"");
-			currentPageIndexLabel.setValue("第"+(pageCount)+"页 ，");
+			numField.setValue(currentPageIndex+"");
+			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
 		}
 	}
 	
-	private ShortcutListener createFocusableShortcutListener(Focusable focusable, int keyCode, int... modifiers) {
-        return new ShortcutListener(null, keyCode, modifiers) {
-            /**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-            public void handleAction(Object sender, Object target) {
-            	if (!numField.getValue().trim().equals("")) {
-            		String num = numField.getValue();
-                	jumpTo(Integer.parseInt(num));
-            	}
-            }
-        };
-    }
-	
-	private void jumpTo(int num) {
-		num--;
-		if (num > pageCount || num <0) {
-			Notifications.warning("当前页数范围应该在1-"+pageCount+"");
-		} else {
-			int fromIndex = num * sizePerPage;
-			List<Transaction> data = ui.imagingService.findAll(sizePerPage, fromIndex);
-			grid.setPerPageData(data);
-		}
+	private void jumpTo() {
+		int offset = (currentPageIndex - 1) * sizePerPage;
+		List<Transaction> data = ui.transactionService.findAll(sizePerPage, offset, grid.getKeyword());
+		grid.setPerPageData(data);
 	}
 	
-	public int getPageCount() {
-		return pageCount;
-	}
-
- 
-
-	public int getSizePerPage() {
-		return sizePerPage;
-	}
-
-	public void setSizePerPage(int sizePerPage) {
-		this.sizePerPage = sizePerPage;
-		sizePerPageLabel.setValue("每页显示"+sizePerPage+"行");
-	}
-
-	public int getCurrentPageIndex() {
-		return currentPageIndex;
-	}
-
-	public void setCurrentPageIndex(int currentPageIndex) {
-		this.currentPageIndex = currentPageIndex;
-		currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
-		numField.setValue(currentPageIndex+"");
-	}
 	private int pageCount;
-	private int sizePerPage;
-	private int currentPageIndex;
+	private int sizePerPage = 2;//每页显示行数
+	private int currentPageIndex = 1;
 	private Button first = new Button("<<");
 	private Button previous = new Button("<");
-	private DoubleField numField = new DoubleField();
+	private TextField numField = new TextField();
 	private Button next = new Button(">");
 	private Button last = new Button(">>");
 	private SearchResultsGrid grid;

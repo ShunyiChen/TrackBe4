@@ -165,11 +165,26 @@ public class TransactionService {
 	 * 
 	 * @param limit
 	 * @param offset
+	 * @param keyword
 	 * @return
 	 */
-	public List<Imaging> findAll(int limit, int offset) {
-		String sql = "SELECT * FROM IMAGING ORDER BY DATECREATED  LIMIT ? OFFSET ? ";
-		List<Imaging> results = jdbcTemplate.query(sql, new Object[] {limit, offset}, new BeanPropertyRowMapper<Imaging>(Imaging.class));
+	public List<Transaction> findAll(int limit, int offset, String keyword) {
+		keyword = "%"+keyword+"%";
+		String sql = "SELECT * FROM CREATE_SEARCH(?,?,?)";
+		List<Transaction> results = jdbcTemplate.query(sql, new Object[] {limit, offset, keyword}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
 		return results;
+	}
+	
+	/**
+	 * 
+	 * @param limit
+	 * @param keyword
+	 * @return
+	 */
+	public int findPagingCount(int limit, String keyword) {
+		keyword = "%"+keyword+"%";
+		String sql = "SELECT * FROM CREATE_PAGINGCOUNT2(?,?)";
+		int count = jdbcTemplate.queryForObject( sql, new Object[] {limit, keyword}, Integer.class);
+		return count;
 	}
 }
