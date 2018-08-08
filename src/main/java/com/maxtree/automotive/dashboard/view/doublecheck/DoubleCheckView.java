@@ -592,7 +592,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
     		// 5.清空
     		cleanStage();
     		// 6.提示信息
-    		Notifications.info("操作成功。审档通过。");
+    		Notifications.bottomWarning("操作成功。审档通过。");
     		
     		editableTrans = null;
     	}
@@ -625,7 +625,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
     		// 5.清空舞台
         	cleanStage();
         	// 6.提示信息
-        	Notifications.info("操作成功。本次业务已添加到确认审档队列中，等待复审。");
+        	Notifications.bottomWarning("操作成功。本次业务已添加到确认审档队列中，等待复审。");
         	
         	editableTrans = null;
     	}
@@ -666,7 +666,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 		// 5.清空
 		cleanStage();
 		// 6.提示信息
-		Notifications.info("操作成功。已退回到前台。");
+		Notifications.bottomWarning("操作成功。已退回到前台。");
 		
 		editableTrans = null;
     }

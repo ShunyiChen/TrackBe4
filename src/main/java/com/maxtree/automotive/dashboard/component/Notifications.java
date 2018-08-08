@@ -36,7 +36,7 @@ public class Notifications {
 	 * 
 	 * @param msg
 	 */
-	public static void info(String msg) {
+	public static void bottomWarning(String msg) {
 		Notification success = new Notification(msg);
 		success.setDelayMsec(3000);
 		success.setStyleName("bar success small");

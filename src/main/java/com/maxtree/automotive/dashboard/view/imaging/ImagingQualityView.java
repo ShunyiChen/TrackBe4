@@ -448,7 +448,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		// 5.清空
 		cleanStage();
 		// 6.提示信息
-		Notifications.info("操作成功。质检合格，消息已发送。");
+		Notifications.bottomWarning("操作成功。质检合格，消息已发送。");
     }
     
     /**
@@ -476,8 +476,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		// 5.清空
 		cleanStage();
 		// 6.提示信息
-		Notifications.info("操作成功。已退回到前台。");
-		
+		Notifications.bottomWarning("操作成功。已退回到前台。");
     }
     
     private String track(Actions act, String suggestions) {

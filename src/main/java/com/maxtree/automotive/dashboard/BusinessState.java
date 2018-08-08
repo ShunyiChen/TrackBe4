@@ -17,7 +17,10 @@ public enum BusinessState {
 	B8("待查看"),//影像化检测
 	B9("待提档"),//影像化检测
 	B10("待归档"),//影像化检测
-	B11("完成");//影像化检测
+	B11("完成"),//影像化检测
+	B12("调档"),//下架
+	B13("转出");//下架
+	
 	private BusinessState(String name) {
 		this.name = name;
 	}

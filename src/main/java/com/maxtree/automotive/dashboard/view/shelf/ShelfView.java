@@ -1,6 +1,7 @@
 package com.maxtree.automotive.dashboard.view.shelf;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,18 +9,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.Subscribe;
+import com.maxtree.automotive.dashboard.Actions;
+import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
+import com.maxtree.automotive.dashboard.component.MessageBox;
+import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
+import com.maxtree.automotive.dashboard.domain.Transaction;
+import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.domain.UserEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
@@ -48,8 +56,10 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -80,26 +90,27 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
         Responsive.makeResponsive(root);
         root.addComponent(buildHeader());
         root.addComponent(buildSparklines());
-//        main.addStyleName("dynamicallyVLayout-check");
-//        main.setWidth("100%");
-//        main.setHeight("100%");
-//        main.addComponents(blankLabel);
-//        main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
-//        root.addComponents(main);
-//        root.setExpandRatio(main, 7.0f);
-        TabSheet main = new TabSheet();
+       
         main.addSelectedTabChangeListener(e->{
-        	
+        	// Find the tabsheet
+            TabSheet tabsheet = e.getTabSheet();
+            // Find the tab (here we know it's a layout)
+            Layout tab = (Layout) tabsheet.getSelectedTab();
+            // Get the tab caption from the tab object
+            String caption = tabsheet.getTab(tab).getCaption();
+        	if (caption.equals(TAB1_TITLE)) {
+        		tools.removeComponent(btnDown);
+        		tools.addComponent(btnUp, 0);
+        	} else {
+        		tools.removeComponent(btnUp);
+        		tools.addComponent(btnDown, 0);
+        	}
         });
         main.setHeight(100.0f, Unit.PERCENTAGE);
         main.addStyleName(ValoTheme.TABSHEET_FRAMED);
         main.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
-        final VerticalLayout layout1 = new VerticalLayout();
-        layout1.setMargin(true);
-        final VerticalLayout layout2 = new VerticalLayout();
-        layout2.setMargin(true);
-        main.addTab(layout1, "上架");
-        main.addTab(layout2, "下架");
+        main.addTab(upgrid, TAB1_TITLE);
+        main.addTab(downgrid, TAB2_TITLE);
         root.addComponents(main);
         root.setExpandRatio(main, 1.0f);
         
@@ -192,15 +203,34 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
         ShortcutListener enter = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER, null) {
 			@Override
 			public void handleAction(Object sender, Object target) {
-//				grid.setKeyword(searchField.getValue());
-//				grid.execute();
+				// Find the tabsheet
+	            // Find the tab (here we know it's a layout)
+	            Layout tab = (Layout) main.getSelectedTab();
+	            // Get the tab caption from the tab object
+	            String caption = main.getTab(tab).getCaption();
+	        	if (caption.equals(TAB1_TITLE)) {
+	        		upgrid.setKeyword(searchField.getValue());
+	        		upgrid.execute();
+	        	} else {
+	        		downgrid.setKeyword(searchField.getValue());
+	        		downgrid.execute();
+	        	}
+				
 			}
 		};
         searchField.addShortcutListener(enter);
         Button searchButton = new Button();
         searchButton.addClickListener(e->{
-//        	grid.setKeyword(searchField.getValue());
-//        	grid.execute();
+        	Layout tab = (Layout) main.getSelectedTab();
+            // Get the tab caption from the tab object
+            String caption = main.getTab(tab).getCaption();
+        	if (caption.equals(TAB1_TITLE)) {
+        		upgrid.setKeyword(searchField.getValue());
+        		upgrid.execute();
+        	} else {
+        		downgrid.setKeyword(searchField.getValue());
+        		downgrid.execute();
+        	}
         });
         searchButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         searchButton.setIcon(VaadinIcons.SEARCH);
@@ -210,8 +240,7 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
         buildNotificationsButton();
         buildUpButton();
         buildDownButton();
-        
-        HorizontalLayout tools = new HorizontalLayout(notificationsButton, btnUp, btnDown);
+        tools = new HorizontalLayout(btnUp,notificationsButton);
         tools.addStyleName("toolbar");
         header.addComponent(tools);
         return header;
@@ -225,9 +254,9 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
 		btnUp.setIcon(VaadinIcons.ARROW_UP);
 		btnUp.addStyleName("icon-edit");
 		btnUp.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-		btnUp.setDescription("上架");
+		btnUp.setDescription(TAB1_TITLE);
 		btnUp.addClickListener(e -> {
-			
+			putaway();
 		});
 	}
     
@@ -239,11 +268,87 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     	btnDown.setIcon(VaadinIcons.ARROW_DOWN);
     	btnDown.addStyleName("icon-edit");
     	btnDown.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-    	btnDown.setDescription("上架");
+    	btnDown.setDescription(TAB2_TITLE);
     	btnDown.addClickListener(e -> {
-			
+    		removeOff();
 		});
 	}
+    
+    /**
+     * 上架
+     */
+    private void putaway() {
+    	if(upgrid.editableTrans == null) {
+    		Notifications.warning("请选择一行上架。");
+    	} else {
+    		upgrid.editableTrans.setStatus(BusinessState.B3.name);
+    		upgrid.editableTrans.setDateModified(new Date());
+    		ui.transactionService.update(upgrid.editableTrans);
+    		track(Actions.PUTAWAY, upgrid.editableTrans);
+    		upgrid.clearSortOrder();
+    		Notifications.bottomWarning("操作成功。");
+    	}
+    }
+    
+    /**
+     * 下架
+     */
+    private void removeOff() {
+    	if(downgrid.editableTrans == null) {
+    		Notifications.warning("请选择一行下架。");
+    	} else {
+    		Callback okEvent = new Callback() {
+
+				@Override
+				public void onSuccessful() {
+					//更新库房
+		    		ui.frameService.updateVIN(null, downgrid.editableTrans.getCode());
+		    		//更新transaction
+		    		downgrid.editableTrans.setStatus(BusinessState.B12.name);
+		    		downgrid.editableTrans.setDateModified(new Date());
+		    		downgrid.editableTrans.setCode(null);
+		    		ui.transactionService.update(downgrid.editableTrans);
+		    		track(Actions.REMOVEOFF, downgrid.editableTrans);
+		    		downgrid.clearSortOrder();
+		    		Notifications.bottomWarning("操作成功。");
+				}
+    		};
+    		MessageBox.showMessage("提示", "上架号为"+downgrid.editableTrans.getCode()+"，请确认是否下架？", MessageBox.WARNING, okEvent, "确定");
+    	}
+    }
+    
+    /**
+     * 
+     * @param act
+     */
+    private void track(Actions act, Transaction trans) {
+    	Map<String, String> details = new HashMap<String, String>();
+    	details.put("1", trans.getStatus());//STATUS
+		details.put("2", trans.getBarcode());//BARCODE
+		details.put("3", trans.getPlateType());//PLATETYPE
+		details.put("4", trans.getPlateNumber());//PLATENUMBER
+		details.put("5", trans.getVin());//VIN
+		details.put("6", trans.getBusinessCode());//BUSINESSCODE
+		details.put("7", trans.getUuid());//UUID
+		String json = jsonHelper.map2Json(details);
+    	
+    	// 插入移行表
+		Transition transition = new Transition();
+		transition.setTransactionUUID(trans.getUuid());
+		transition.setAction(act.name);
+		transition.setDetails(json);
+		transition.setUserName(loggedInUser.getUserName());
+		transition.setDateUpdated(new Date());
+		ui.transitionService.insert(transition, trans.getVin());
+		
+		// 插入用户事件
+		UserEvent event = new UserEvent();
+		event.setAction(act.name);
+		event.setUserName(loggedInUser.getUserName());
+		event.setDateUpdated(new Date());
+		event.setDetails(json);
+		ui.userEventService.insert(event, loggedInUser.getUserName());
+    }
 
     private void openNotificationsPopup(final ClickEvent event) {
     	VerticalLayout mainVLayout = new VerticalLayout();
@@ -446,6 +551,8 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     
    	public static final String EDIT_ID = "dashboard-edit";
     public static final String TITLE_ID = "dashboard-title";
+    private static final String TAB1_TITLE = "上架";
+    private static final String TAB2_TITLE = "下架";
    	private User loggedInUser;
     private Label titleLabel;
     private Window notificationsWindow;
@@ -454,5 +561,10 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     private NotificationsButton notificationsButton;
     private Button btnUp = new Button();
     private Button btnDown = new Button();
-    private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
+    private HorizontalLayout tools = null;
+    private TabSheet main = new TabSheet();
+    private UpGrid upgrid = new UpGrid();
+    private DownGrid downgrid = new DownGrid();
+    private MessageBodyParser jsonHelper = new MessageBodyParser();
+//    private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
 }

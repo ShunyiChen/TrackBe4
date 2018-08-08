@@ -34,9 +34,7 @@ public class DocumentService {
 	 * @return
 	 */
 	public List<Document> findAllDocument1(String vin, String uuid) {
-		int number = Integer.parseInt(vin.substring(vin.length() - 4));
-		int index = number % 256;
-		
+		int index = getTableIndex(vin);
 		String sql = "SELECT A.*,B.ITEMNAME AS ALIAS FROM DOCUMENTS_1_"+index+" AS A LEFT JOIN DATADICTIONARY AS B ON A.DICTIONARYCODE=B.CODE WHERE A.UUID=? ORDER BY A.DOCUMENTUNIQUEID";
 		List<Document> result = jdbcTemplate.query(sql, new Object[] {uuid}, new BeanPropertyRowMapper<Document>(Document.class));
 		// decode
@@ -54,9 +52,7 @@ public class DocumentService {
 	 * @return
 	 */
 	public List<Document> findAllDocument2(String vin, String uuid) {
-		int number = Integer.parseInt(vin.substring(vin.length() - 4));
-		int index = number % 256;
-		
+		int index = getTableIndex(vin);
 		String sql = "SELECT * FROM DOCUMENTS_2_"+index+" WHERE UUID=? ORDER BY DOCUMENTUNIQUEID";
 		List<Document> result = jdbcTemplate.query(sql, new Object[] {uuid}, new BeanPropertyRowMapper<Document>(Document.class));
 		// decode
@@ -74,8 +70,7 @@ public class DocumentService {
 	 */
 	public int insert(Document document) {
 		String vin = document.vin;
-		int number = Integer.parseInt(vin.substring(vin.length() - 4));
-		int index = number % 256;
+		int index = getTableIndex(vin);
 	 	GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 	 	jdbcTemplate.update(new PreparedStatementCreator() {
 
@@ -117,8 +112,7 @@ public class DocumentService {
 	 */
 	public void update(Document document) {
 		String vin = document.vin;
-		int number = Integer.parseInt(vin.substring(vin.length() - 4));
-		int index = number % 256;
+		int index = getTableIndex(vin);
 		String SQL = "";
 		if (document.location == 1) {
 			SQL = "UPDATE DOCUMENTS_1_"+index+" SET FILEFULLPATH=?,THUMBNAIL=? WHERE DOCUMENTUNIQUEID=?";
@@ -139,8 +133,7 @@ public class DocumentService {
 	 * @param vin
 	 */
 	public void deleteById(int documentUniqueId, int location, String vin) {
-		int number = Integer.parseInt(vin.substring(vin.length() - 4));
-		int index = number % 256;
+		int index = getTableIndex(vin);
 		String sql = "DELETE FROM DOCUMENTS_"+location+"_"+index+" WHERE DOCUMENTUNIQUEID=?";
 		int affected = jdbcTemplate.update(sql, new Object[] {documentUniqueId});
 		log.info("Affected row "+affected);
@@ -152,8 +145,7 @@ public class DocumentService {
 	 * @param vin
 	 */
 	public void deleteByUUID(String uuid, String vin) {
-		int number = Integer.parseInt(vin.substring(vin.length() - 4));
-		int index = number % 256;
+		int index = getTableIndex(vin);
 		String sql = "DELETE FROM DOCUMENTS_"+1+"_"+index+" WHERE UUID=?";
 		int affected = jdbcTemplate.update(sql, new Object[] {uuid});
 		log.info("Affected row "+affected);
@@ -161,6 +153,16 @@ public class DocumentService {
 	    sql = "DELETE FROM DOCUMENTS_"+2+"_"+index+" WHERE UUID=?";
 		affected = jdbcTemplate.update(sql, new Object[] {uuid});
 		log.info("Affected row "+affected);
+	}
+	
+	/**
+	 * 
+	 * @param vin
+	 * @return
+	 */
+	private int getTableIndex(String vin) {
+		int num = Integer.parseInt(vin.substring(vin.length() - 4));
+		return num % 256;
 	}
 	
 }

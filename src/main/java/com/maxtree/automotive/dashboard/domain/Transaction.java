@@ -175,8 +175,8 @@ public class Transaction {
 	public String toString() {
 		 return String.format(
 		 "Transaction[transactionUniqueId=%d, barcode='%s', plateType='%s',plateNumber='%s',vin='%s', "
-		 + "dateCreated='%s', dateModified='%s', dateFinished='%s', status='%s',siteCode='%d',"
-		 + "businessCode='%d', communityUniqueID='%d',companyUniqueId='%d',locationCode='%s',"
+		 + "dateCreated='%s', dateModified='%s', dateFinished='%s', status='%s',siteCode='%s',"
+		 + "businessCode='%s', communityUniqueID='%d',companyUniqueId='%d',locationCode='%s',"
 		 + "batch='%s', uuid='%s',code='%s',creator='%s',indexNumber='%d']",
 		 transactionUniqueId,
 		 barcode,

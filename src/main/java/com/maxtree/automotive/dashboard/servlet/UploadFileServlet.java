@@ -170,8 +170,6 @@ public class UploadFileServlet extends HttpServlet {
 			out.flush();
 			out.close();
 		}
-		
-		
 	}
 
 	@Override

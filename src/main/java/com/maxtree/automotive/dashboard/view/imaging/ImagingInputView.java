@@ -541,7 +541,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     		track(Actions.INPUT);
     		// 清空舞台
         	cleanStage();
-        	Notifications.info("操作成功。记录已提交,等待质检检验。");
+        	Notifications.bottomWarning("操作成功。记录已提交,等待质检检验。");
     	}
     	else {
     		
@@ -567,7 +567,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     		track(Actions.INPUT);
     		// 清空舞台
         	cleanStage();
-        	Notifications.info("操作成功。记录已提交,等待质检检验。");
+        	Notifications.bottomWarning("操作成功。记录已提交,等待质检检验。");
     	}
     }
     
@@ -606,7 +606,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     		track(Actions.INPUT);
     		// 清空舞台
         	cleanStage();
-        	Notifications.info("操作成功。记录已提交,等待质检检验。");
+        	Notifications.bottomWarning("操作成功。记录已提交,等待质检检验。");
     	}
     	else {
     		
@@ -631,7 +631,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     		track(Actions.INPUT);
     		// 清空舞台
         	cleanStage();
-        	Notifications.info("操作成功。记录已提交,等待质检检验。");
+        	Notifications.bottomWarning("操作成功。记录已提交,等待质检检验。");
     	}
     }
     

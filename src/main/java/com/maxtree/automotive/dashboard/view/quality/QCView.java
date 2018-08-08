@@ -564,7 +564,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
     		// 5.清空
     		cleanStage();
     		// 6.提示信息
-    		Notifications.info("操作成功。已退回到前台。");
+    		Notifications.bottomWarning("操作成功。已退回到前台。");
     		
     		editableTrans = null;
     		
@@ -599,7 +599,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
     		
     		// 清空舞台
         	cleanStage();
-        	Notifications.info("操作成功。本次业务已添加到审档队列中，等待审档。");
+        	Notifications.bottomWarning("操作成功。本次业务已添加到审档队列中，等待审档。");
     	}
     }
     
@@ -636,7 +636,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
 		// 5.清空
 		cleanStage();
 		// 6.提示信息
-		Notifications.info("操作成功。已退回到前台。");
+		Notifications.bottomWarning("操作成功。已退回到前台。");
 		
 		editableTrans = null;
     }

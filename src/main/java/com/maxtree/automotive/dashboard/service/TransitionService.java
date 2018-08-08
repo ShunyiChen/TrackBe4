@@ -37,9 +37,6 @@ public class TransitionService {
 	 * @param vin
 	 */
 	public void insert(Transition transition, String vin) {
-		
-		System.out.println("======="+transition.getDetails());
-		
 		int index = getTableIndex(vin);
 		String UPDATE_TRANS_SQL = "INSERT INTO TRANSITION_"+index+"(TRANSACTIONUUID,ACTION,DETAILS,USERNAME,DATEUPDATED) VALUES(?,?,?,?,?)";
 		int opt = jdbcTemplate.update(UPDATE_TRANS_SQL, new Object[] {

@@ -735,7 +735,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//清空舞台
             	cleanStage();
-            	Notifications.info("操作成功。已完成逻辑上架。");
+            	Notifications.bottomWarning("操作成功。已完成逻辑上架。");
         	}
         	// 提交给质检队列
         	else {
@@ -757,7 +757,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		// 清空舞台
             	cleanStage();
-            	Notifications.info("操作成功。记录已提交到质检队列等待质检。");
+            	Notifications.bottomWarning("操作成功。记录已提交到质检队列等待质检。");
         	}
     	}
     	
@@ -800,7 +800,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//清空舞台
             	cleanStage();
-            	Notifications.info("操作成功。已完成逻辑上架。");
+            	Notifications.bottomWarning("操作成功。已完成逻辑上架。");
         	}
         	// 提交给质检队列
         	else {
@@ -822,7 +822,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		// 清空舞台
             	cleanStage();
-            	Notifications.info("操作成功。记录已提交到质检队列等待质检。");
+            	Notifications.bottomWarning("操作成功。记录已提交到质检队列等待质检。");
         	}
     	}
     	
@@ -874,7 +874,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//清空舞台
             	cleanStage();
-            	Notifications.info("操作成功。已完成逻辑上架。");
+            	Notifications.bottomWarning("操作成功。已完成逻辑上架。");
         	}
         	// 提交给质检队列
         	else {
@@ -896,7 +896,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		// 清空舞台
             	cleanStage();
-            	Notifications.info("操作成功。记录已提交到质检队列等待质检。");
+            	Notifications.bottomWarning("操作成功。记录已提交到质检队列等待质检。");
         	}
     		
     	}
@@ -950,7 +950,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//清空舞台
             	cleanStage();
-            	Notifications.info("操作成功。已完成逻辑上架。");
+            	Notifications.bottomWarning("操作成功。已完成逻辑上架。");
         	}
         	// 提交给质检队列
         	else {
@@ -972,7 +972,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		// 清空舞台
             	cleanStage();
-            	Notifications.info("操作成功。记录已提交到质检队列等待质检。");
+            	Notifications.bottomWarning("操作成功。记录已提交到质检队列等待质检。");
         	}
     	}
     	editableTrans = null;
@@ -1039,7 +1039,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//清空舞台
             	cleanStage();
-            	Notifications.info("操作成功。本次业务已添加到待审档队列中，等待审档。");
+            	Notifications.bottomWarning("操作成功。本次业务已添加到待审档队列中，等待审档。");
         	}
         	// 提交给质检队列
         	else {
@@ -1061,7 +1061,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		// 清空舞台
             	cleanStage();
-            	Notifications.info("操作成功。本次业务已提交到质检队列中，等待质检。");
+            	Notifications.bottomWarning("操作成功。本次业务已提交到质检队列中，等待质检。");
         	}
     		
     	}
@@ -1115,7 +1115,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//清空舞台
             	cleanStage();
-            	Notifications.info("操作成功。本次业务已添加到审档队列中，等待审档。");
+            	Notifications.bottomWarning("操作成功。本次业务已添加到审档队列中，等待审档。");
         	}
         	// 提交给质检队列
         	else {
@@ -1137,7 +1137,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		// 清空舞台
             	cleanStage();
-            	Notifications.info("操作成功。本次业务已添加到质检队列中，等待质检。");
+            	Notifications.bottomWarning("操作成功。本次业务已添加到质检队列中，等待质检。");
         	}
     	}
     	editableTrans = null;
