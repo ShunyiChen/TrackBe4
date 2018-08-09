@@ -129,8 +129,6 @@ public class ManageBusinessTypesGrid extends VerticalLayout {
 		row.addStyleName("grid-header-line");
 		// 业务名称
 		Label labelName = new Label(business.getName());
-		// 是否审档
-		Label labelFileCheck = new Label(business.getNeedToCheck() == 1 ? "是" : "否");
 		// 审档级别
 		Label labelLocal = new Label(business.getCheckLevel());
 		// 所需资料
@@ -219,12 +217,10 @@ public class ManageBusinessTypesGrid extends VerticalLayout {
 		});
 		
 		labelName.setWidth("155px");
-		labelFileCheck.setWidth("130px");
 		labelLocal.setWidth("60px");
 		labelMaterials.setWidth("180px");
-		row.addComponents(labelName,labelFileCheck,labelLocal,labelMaterials, moreImg);
+		row.addComponents(labelName, labelLocal,labelMaterials, moreImg);
 		row.setComponentAlignment(labelName, Alignment.MIDDLE_LEFT);
-		row.setComponentAlignment(labelFileCheck, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(labelLocal, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(labelMaterials, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(moreImg, Alignment.MIDDLE_RIGHT);

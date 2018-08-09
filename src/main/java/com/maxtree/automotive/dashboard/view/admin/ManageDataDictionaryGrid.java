@@ -138,8 +138,6 @@ public class ManageDataDictionaryGrid extends VerticalLayout {
 		Label labelName = new Label(dataItem.getItemName());
 		// 代码
 		Label labelCode = new Label(dataItem.getCode());
-		// 顺序
-		Label labelOrder = new Label(dataItem.getOrderNumber()+"");
 		
 		Image moreImg = new Image(null, new ThemeResource("img/adminmenu/more.png"));
 		moreImg.addStyleName("mycursor");
@@ -198,13 +196,11 @@ public class ManageDataDictionaryGrid extends VerticalLayout {
 		labelCategoryName.setWidth("137px");
 		labelName.setWidth("145px");
 		labelCode.setWidth("145px");
-		labelOrder.setWidth("95px");
 		
-		row.addComponents(labelCategoryName,labelName,labelCode,labelOrder,moreImg);
+		row.addComponents(labelCategoryName,labelName,labelCode,moreImg);
 		row.setComponentAlignment(labelCategoryName, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(labelName, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(labelCode, Alignment.MIDDLE_LEFT);
-		row.setComponentAlignment(labelOrder, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(moreImg, Alignment.MIDDLE_RIGHT);
 		return row;
 	}

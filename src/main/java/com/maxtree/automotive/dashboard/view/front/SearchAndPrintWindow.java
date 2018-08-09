@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
@@ -54,21 +55,22 @@ public class SearchAndPrintWindow extends Window {
         
         Label barCodeLabel = new Label("条形码:");
         TextField barCodeField = new TextField();
+        barCodeField.setPlaceholder("请输入条形码");
         barCodeField.focus();
         btnSearch.setIcon(VaadinIcons.SEARCH);
         btnSearch.addStyleName("icon-edit");
         btnSearch.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         btnSearch.setDescription("按照条形码查找");
         btnSearch.addClickListener(e -> {
-//        	List<Transaction> items = ui.transactionService.findAllByBarCode(barCodeField.getValue());
-//        	grid.setItems(items);
+        	List<Transaction> items = ui.transactionService.findAll(-1, 0, barCodeField.getValue());
+        	grid.setItems(items);
         });
         ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER,
 				null) {
 			@Override
 			public void handleAction(Object sender, Object target) {
-//				List<Transaction> items = ui.transactionService.findAllByBarCode(barCodeField.getValue());
-//	        	grid.setItems(items);
+				List<Transaction> items = ui.transactionService.findAll(-1, 0,barCodeField.getValue());
+	        	grid.setItems(items);
 			}
 		};
         barCodeField.addShortcutListener(enterListener);
@@ -123,23 +125,23 @@ public class SearchAndPrintWindow extends Window {
         btnPrint.addClickListener(e->{
         	Set<Transaction> selected = grid.getSelectedItems();
       	    if (selected.size() > 0) {
-//      	    	
-//      	    	List<Transaction> list = new ArrayList<>(selected);
-//      	    	Transaction selectedTransaction = list.get(0);
-//      	    	if (selectedTransaction.getStatus().equals(Status.S4.name)) {
-//      	    		
-//      	    		// 打印文件标签和车辆标签
-//      	    		PrintingConfirmationWindow.open("打印确认", selectedTransaction.getTransactionUniqueId()); 
-//      	    		
-//      	    	} else if (selectedTransaction.getStatus().equals(Status.ReturnedToThePrint.name) 
-//      	    			|| selectedTransaction.getStatus().equals(Status.S3.name)) {
-//      	    		// 打印审核结果单
-//      	    		PrintingResultsWindow.open("打印确认", selectedTransaction.getTransactionUniqueId()); 
-//      	    	}
-//      	    	else {
-//      	    		
-//      	    		Notifications.warning("不存在打印。");
-//      	    	}
+      	    	
+      	    	List<Transaction> list = new ArrayList<>(selected);
+      	    	Transaction selectedTransaction = list.get(0);
+      	    	if (selectedTransaction.getStatus().equals(BusinessState.B2.name)) {
+      	    		
+      	    		// 打印文件标签和车辆标签
+      	    		PrintingConfirmationWindow.open("打印确认", selectedTransaction); 
+      	    		
+      	    	} else if (selectedTransaction.getStatus().equals(BusinessState.B1.name) 
+      	    			|| selectedTransaction.getStatus().equals(BusinessState.B14.name)) {
+      	    		// 打印审核结果单
+      	    		PrintingResultsWindow.open("打印确认", selectedTransaction); 
+      	    	}
+      	    	else {
+      	    		
+      	    		Notifications.warning("不存在打印。");
+      	    	}
       	    	
       	    	
       	    } else {

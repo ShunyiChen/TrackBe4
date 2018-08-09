@@ -33,14 +33,6 @@ public class Business {
 		this.code = code;
 	}
 
-	public Integer getNeedToCheck() {
-		return needToCheck;
-	}
-
-	public void setNeedToCheck(Integer needToCheck) {
-		this.needToCheck = needToCheck;
-	}
-
 	public String getCheckLevel() {
 		return checkLevel;
 	}
@@ -59,13 +51,12 @@ public class Business {
 
 	@Override
 	public String toString() {
-		return name + "(" + (needToCheck == 0 ? "不需要审档" : "需要审档") + ")";
+		return name + "(" + checkLevel+ ")";
 	}
 
 	private Integer businessUniqueId = 0;
 	private String name; // 业务类型名称
 	private String code; // 快捷编码
-	private Integer needToCheck = 0; // 是否需要审档, 1:审档 0：非审档
-	private String checkLevel;// 审档级别（一级/二级）
+	private String checkLevel;// “”/一级审档/二级审档，“”表示不需要审档；一级审档标识本机构内部审档；二级审档指车管所审档
 	private List<DataDictionary> items;
 }

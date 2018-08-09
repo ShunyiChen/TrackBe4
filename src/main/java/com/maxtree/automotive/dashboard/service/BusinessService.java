@@ -101,10 +101,9 @@ public class BusinessService {
 	 * @return
 	 */
 	public Business insert(Business business) {
-		String sql = "INSERT INTO BUSINESS(NAME,NEEDTOCHECK,CHECKLEVEL,CODE) VALUES(?,?,?,?)";
+		String sql = "INSERT INTO BUSINESS(NAME,CHECKLEVEL,CODE) VALUES(?,?,?)";
 		jdbcTemplate.update(sql, new Object[] {
 				business.getName(),
-				business.getNeedToCheck(),
 				business.getCheckLevel(),
 				business.getCode() // 快捷代码
 		});
@@ -117,11 +116,10 @@ public class BusinessService {
 	 * @return
 	 */
 	public Business update(Business business) {
-		String sql = "UPDATE BUSINESS SET NAME=?,NEEDTOCHECK=?,CHECKLEVEL=?,CODE=? WHERE BUSINESSUNIQUEID=?";
+		String sql = "UPDATE BUSINESS SET NAME=?,CHECKLEVEL=?,CODE=? WHERE BUSINESSUNIQUEID=?";
 		jdbcTemplate.update(sql,
 				new Object[] {
 						business.getName(),
-						business.getNeedToCheck(),
 						business.getCheckLevel(),
 						business.getCode(), // 快捷编码
 						business.getBusinessUniqueId()

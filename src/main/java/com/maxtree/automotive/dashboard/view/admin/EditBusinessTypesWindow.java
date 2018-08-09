@@ -54,19 +54,9 @@ public class EditBusinessTypesWindow extends Window {
 		codeField.setIcon(VaadinIcons.CODE);
 		codeField.setWidth("350px");
 		codeField.setHeight("27px");
-		List<String> needToCheckItems = new ArrayList<String>();
-		needToCheckItems.add("是");
-		needToCheckItems.add("否");
-		needToCheckBox = new ComboBox<String>("是否审档:", needToCheckItems);
-		needToCheckBox.setIcon(VaadinIcons.LIFEBUOY);
-		needToCheckBox.setWidth("350px");
-		needToCheckBox.setHeight("27px");
-		needToCheckBox.setEmptySelectionAllowed(false);
-		needToCheckBox.setTextInputAllowed(false);
-		needToCheckBox.setSelectedItem("是");
 		List<String> checkLevelItems = new ArrayList<String>();
-		checkLevelItems.add("一级");
-		checkLevelItems.add("二级");
+		checkLevelItems.add("一级审档");
+		checkLevelItems.add("二级审档");
 		checkLevelBox = new ComboBox<String>("审档级别:", checkLevelItems);
 		checkLevelBox.setIcon(VaadinIcons.MALE);
 		checkLevelBox.setDescription("一级审档表示本社区本机构内部审档。二级审档表示本社区外部机构审档。");
@@ -76,7 +66,7 @@ public class EditBusinessTypesWindow extends Window {
 		checkLevelBox.setTextInputAllowed(false);
 		checkLevelBox.setSelectedItem("一级");
 		
-		form.addComponents(nameField,codeField,needToCheckBox,checkLevelBox);
+		form.addComponents(nameField,codeField,checkLevelBox);
 		
 		HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setSizeFull();
@@ -118,7 +108,6 @@ public class EditBusinessTypesWindow extends Window {
 			newInstance.setName(w.nameField.getValue());
 			newInstance.setCode(w.codeField.getValue());
 			newInstance.setCheckLevel(w.checkLevelBox.getValue());
-			newInstance.setNeedToCheck(w.needToCheckBox.getValue().equals("是")?1:0);
 			ui.businessService.insert(newInstance);
 			w.close();
 			callback.onSuccessful();
@@ -134,7 +123,6 @@ public class EditBusinessTypesWindow extends Window {
         w.nameField.focus();
         w.codeField.setValue(business.getCode());
         w.checkLevelBox.setValue(business.getCheckLevel());
-        w.needToCheckBox.setValue(business.getNeedToCheck() == 1?"是":"否");
         w.btnAdd.setCaption("保存");
         w.setCaption("编辑业务类型");
         w.btnAdd.addClickListener(e -> {
@@ -147,7 +135,6 @@ public class EditBusinessTypesWindow extends Window {
         	
         	business.setName(w.nameField.getValue());
         	business.setCheckLevel(w.checkLevelBox.getValue());
-        	business.setNeedToCheck(w.needToCheckBox.getValue().equals("是")?1:0);
         	business.setCode(w.codeField.getValue());
         	ui.businessService.update(business);
 			w.close();
@@ -159,8 +146,7 @@ public class EditBusinessTypesWindow extends Window {
 	
 	private TextField nameField; // 业务类型名
 	private TextField codeField; // 业务类型快捷编码
-	private ComboBox<String> needToCheckBox; //是否审档
-	private ComboBox<String> checkLevelBox;//审档级别
+	private ComboBox<String> checkLevelBox;//“”/一级审档/二级审档 ，“”表示非审档；一级审档标识本机构内部审档；二级审档指车管所审档
 	private Button btnAdd;
 	private static DashboardUI ui = (DashboardUI) UI.getCurrent();
 }

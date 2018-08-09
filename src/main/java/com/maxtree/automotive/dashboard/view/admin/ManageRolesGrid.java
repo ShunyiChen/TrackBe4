@@ -11,7 +11,6 @@ import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Role;
 import com.maxtree.automotive.dashboard.domain.User;
-import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.MenuItem;
 import com.vaadin.contextmenu.Menu.Command;
@@ -204,19 +203,16 @@ public class ManageRolesGrid extends VerticalLayout {
 					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 					if (loginUser.isPermitted(PermissionCodes.D3)) {
 						if (role.getRoleType().equals("自定义")) {
-							if (usernum != 0 || capabilitynum != 0) {
-								Callback okAction = new Callback() {
-									@Override
-									public void onSuccessful() {
-										ui.roleService.delete(role.getRoleUniqueId(), true);
-										refreshTable();
-									}
-								};
-								MessageBox.showMessage("删除提示", "当前角色正在使用中无法删除。", MessageBox.WARNING, okAction, "强制删除");
-							} else {
-								ui.roleService.delete(role.getRoleUniqueId(), false);
-								refreshTable();
-							}
+							boolean force = (usernum != 0 || capabilitynum != 0);
+							Callback okAction = new Callback() {
+								@Override
+								public void onSuccessful() {
+									ui.roleService.delete(role.getRoleUniqueId(), force);
+									refreshTable();
+								}
+							};
+							MessageBox.showMessage("删除提示", "请确认是否删除当前角色。", MessageBox.WARNING, okAction, "删除");
+ 
 						} else {
 							Notification notification = new Notification("提示：", "内建角色无法删除。", Type.WARNING_MESSAGE);
 							notification.setDelayMsec(2000);
@@ -259,6 +255,4 @@ public class ManageRolesGrid extends VerticalLayout {
 	
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private VerticalLayout tableBody;
-	private static final int STOP = 0;
-	private static final int RUNNING = 1;
 }

@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Actions;
@@ -536,7 +537,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
     private void accept(String suggestions) {
     	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
     	// 不需要审档直接退回前台
-    	if (business.getNeedToCheck() == 0) {
+    	if (StringUtils.isEmpty(business.getCheckLevel())) {
     		//1.删除锁定队列
     		int serial = 1; //1:质检 2:审档 3:确认审档
     		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());

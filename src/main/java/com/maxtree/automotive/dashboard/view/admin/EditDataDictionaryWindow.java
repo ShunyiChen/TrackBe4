@@ -7,13 +7,10 @@ import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.component.DoubleField;
-import com.maxtree.automotive.dashboard.component.EmptyValidator;
 import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.data.Binder;
-import com.vaadin.data.converter.StringToFloatConverter;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.ErrorMessage;
@@ -74,12 +71,7 @@ public class EditDataDictionaryWindow extends Window {
 		codeField = new TextField("代号:");
 		codeField.setIcon(VaadinIcons.CODE);
 		
-		//顺序
-		orderField = new DoubleField();
-		orderField.setCaption("顺序号:");
-		orderField.setIcon(VaadinIcons.CALC);
-		
-		form.addComponents(typeField, nameField, codeField, orderField);
+		form.addComponents(typeField, nameField, codeField);
 		HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setSizeFull();
 		buttonPane.setSpacing(false);
@@ -126,12 +118,10 @@ public class EditDataDictionaryWindow extends Window {
 		nameField.setWidth(w+"px");
 		typeField.setWidth(w+"px");
 		codeField.setWidth(w+"px");
-		orderField.setWidth(w+"px");
 		
 		nameField.setHeight(h+"px");
 		typeField.setHeight(h+"px");
 		codeField.setHeight(h+"px");
-		orderField.setHeight(h+"px");
 	}
 	
 	/**
@@ -155,10 +145,10 @@ public class EditDataDictionaryWindow extends Window {
 		binder.forField(codeField).withValidator(new StringLengthValidator(
 		        "快捷编码长度为1-7个字符",
 		        1, 7)) .bind(DataDictionary::getCode, DataDictionary::setCode);
-		binder.forField(orderField)
-		  .withValidator(new EmptyValidator("顺序号不能为空"))
-		  .withConverter(new StringToFloatConverter("请输入一个浮点数"))
-		  .bind(DataDictionary::getOrderNumber, DataDictionary::setOrderNumber);
+//		binder.forField(orderField)
+//		  .withValidator(new EmptyValidator("顺序号不能为空"))
+//		  .withConverter(new StringToFloatConverter("请输入一个浮点数"))
+//		  .bind(DataDictionary::getOrderNumber, DataDictionary::setOrderNumber);
 	}
 	
 	/**
@@ -211,21 +201,6 @@ public class EditDataDictionaryWindow extends Window {
 				}
 			});
 		}
-		else if (StringUtils.isEmpty(dict.getOrderNumber())) {
-			orderField.setComponentError(new ErrorMessage() {
-				@Override
-				public ErrorLevel getErrorLevel() {
-					// TODO Auto-generated method stub
-					return ErrorLevel.ERROR;
-				}
-
-				@Override
-				public String getFormattedHtmlMessage() {
-					// TODO Auto-generated method stub
-					return "顺序号不能为空。请输入一个浮点型数字。";
-				}
-			});
-		}
 		
 		if (typeField.getErrorMessage() != null) {
 			nameField.setComponentError(nameField.getErrorMessage());
@@ -237,10 +212,6 @@ public class EditDataDictionaryWindow extends Window {
 		}
 		else if (codeField.getErrorMessage() != null) {
 			codeField.setComponentError(codeField.getErrorMessage());
-			return false;
-		}
-		else if (orderField.getErrorMessage() != null) {
-			orderField.setComponentError(orderField.getErrorMessage());
 			return false;
 		}
 		return true;
@@ -257,7 +228,6 @@ public class EditDataDictionaryWindow extends Window {
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
         		w.dict.setItemType(w.typeField.getValue().getType());
-        		w.dict.setOrderNumber(Float.parseFloat(w.orderField.getValue().toString()));
     			ui.dataItemService.insert(w.dict);
     			w.close();
     			callback.onSuccessful();
@@ -284,7 +254,6 @@ public class EditDataDictionaryWindow extends Window {
         }
         w.nameField.setValue(r.getItemName());
         w.codeField.setValue(r.getCode());
-        w.orderField.setValue(r.getOrderNumber()+"");
         w.btnAdd.setCaption("保存");
         w.setCaption("编辑字典");
         w.btnAdd.addClickListener(e -> {
@@ -305,7 +274,6 @@ public class EditDataDictionaryWindow extends Window {
 	private ComboBox<DataDictionaryType> typeField = new ComboBox<DataDictionaryType>();
 	private TextField nameField;
 	private TextField codeField;
-	private DoubleField orderField;
 	private Button btnAdd;
 	private Binder<DataDictionary> binder = new Binder<>();
 	private DataDictionary dict = new DataDictionary();

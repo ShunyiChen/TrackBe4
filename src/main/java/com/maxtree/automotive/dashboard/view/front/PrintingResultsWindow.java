@@ -38,11 +38,11 @@ public class PrintingResultsWindow extends Window {
 	/**
 	 * 
 	 * @param caption
-	 * @param transactionUniqueId
+	 * @param trans
 	 */
-	public PrintingResultsWindow(String caption, int transactionUniqueId) {
+	public PrintingResultsWindow(String caption, Transaction trans) {
 		this.caption = caption;
-		this.transactionUniqueId = transactionUniqueId;
+		this.trans = trans;
 		initComponents();
 	}
 	
@@ -86,45 +86,45 @@ public class PrintingResultsWindow extends Window {
     		close();
     	});
     	radios.addValueChangeListener(e->{
-//    		Transaction selectedTransaction = ui.transactionService.findById(transactionUniqueId);
-//    		
-//    		List<PrintableBean> beans = new ArrayList<PrintableBean>();
-//			PrintableBean bean = new PrintableBean();
-//			SystemConfiguration sc = Yaml.readSystemConfiguration();
-//			SimpleDateFormat format = new SimpleDateFormat(sc.getDateformat());
-//			bean.setDateCreated(format.format(selectedTransaction.getDateCreated()));
-//			bean.setPlateType(selectedTransaction.getPlateType());
-//			bean.setPlateNumber(selectedTransaction.getPlateNumber());
-//			bean.setVin(selectedTransaction.getVin());
-//			
-//			StringBuilder info = new StringBuilder();
-//			info.append("号码种类:"+selectedTransaction.getPlateType()+"\n");
-//			info.append("号码号牌:"+selectedTransaction.getPlateNumber()+"\n");
-//			info.append("车辆识别代码:"+selectedTransaction.getVin()+"\n");
-//			bean.setBasicInformation(info.toString());// 基本信息
-//			
+    		Transaction selectedTransaction = ui.transactionService.findById(trans.getTransactionUniqueId(), trans.getVin());
+    		
+    		List<PrintableBean> beans = new ArrayList<PrintableBean>();
+			PrintableBean bean = new PrintableBean();
+			SystemConfiguration sc = Yaml.readSystemConfiguration();
+			SimpleDateFormat format = new SimpleDateFormat(sc.getDateformat());
+			bean.setDateCreated(format.format(selectedTransaction.getDateCreated()));
+			bean.setPlateType(selectedTransaction.getPlateType());
+			bean.setPlateNumber(selectedTransaction.getPlateNumber());
+			bean.setVin(selectedTransaction.getVin());
+			
+			StringBuilder info = new StringBuilder();
+			info.append("号码种类:"+selectedTransaction.getPlateType()+"\n");
+			info.append("号码号牌:"+selectedTransaction.getPlateNumber()+"\n");
+			info.append("车辆识别代码:"+selectedTransaction.getVin()+"\n");
+			bean.setBasicInformation(info.toString());// 基本信息
+			
 //			Audit audit = ui.auditService.findLastAuditByTransID(selectedTransaction.getTransactionUniqueId());
 //			bean.setObjection(audit.getAuditResults());
 //			bean.setChecker(audit.getAuditorLastName()+""+audit.getAuditorFirstName());
 //			bean.setDateChecked(format.format(audit.getAuditDate()));
 //			beans.add(bean);
-//			
-//			Callback callback = new Callback() {
-//				@Override
-//				public void onSuccessful() {
-//					opener = new BrowserWindowOpener(PrintUI.class);
-//					opener.setFeatures("height=595,width=842,resizable");
-//					opener.extend(btnOk);
-//					opener.setParameter("htmlFilePath", "reports/generates/"+transactionUniqueId+"/report.html");
-//					btnOk.setEnabled(true);
-//				}
-//			};
-//			try {
-//				new TB4Reports().jasperToHtml(beans, transactionUniqueId, "report1.jasper", callback);
-//				
-//			} catch (ReportException e1) {
-//				e1.printStackTrace();
-//			}
+			
+			Callback callback = new Callback() {
+				@Override
+				public void onSuccessful() {
+					opener = new BrowserWindowOpener(PrintUI.class);
+					opener.setFeatures("height=595,width=842,resizable");
+					opener.extend(btnOk);
+					opener.setParameter("htmlFilePath", "reports/generates/"+trans.getTransactionUniqueId()+"/report.html");
+					btnOk.setEnabled(true);
+				}
+			};
+			try {
+				new TB4Reports().jasperToHtml(beans, trans.getTransactionUniqueId(), "report1.jasper", callback);
+				
+			} catch (ReportException e1) {
+				e1.printStackTrace();
+			}
     	});
     	
     	this.addCloseListener(e -> {
@@ -138,17 +138,17 @@ public class PrintingResultsWindow extends Window {
 	 * 
 	 */
 	private void deleteReportFiles() {
-		new TB4Reports().deleteReportFiles("reports/generates/" + transactionUniqueId);
+		new TB4Reports().deleteReportFiles("reports/generates/" + trans.getTransactionUniqueId());
 	}
 	
 	/**
 	 * 
 	 * @param caption
-	 * @param transactionUniqueId
+	 * @param trans
 	 */
-	public static void open(String caption, int transactionUniqueId) {
+	public static void open(String caption, Transaction trans) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        PrintingResultsWindow w = new PrintingResultsWindow(caption, transactionUniqueId);
+        PrintingResultsWindow w = new PrintingResultsWindow(caption, trans);
         UI.getCurrent().addWindow(w);
         w.center();
     }
@@ -158,8 +158,8 @@ public class PrintingResultsWindow extends Window {
 	private Button btnOk = new Button("确定");
 	private RadioButtonGroup<String> radios;
 	private String caption;
-	private int transactionUniqueId;
 	private BrowserWindowOpener opener;
 	private HorizontalLayout buttonLayout = new HorizontalLayout();
+	private Transaction trans;
 
 }

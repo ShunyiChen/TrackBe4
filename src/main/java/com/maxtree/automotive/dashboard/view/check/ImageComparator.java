@@ -58,139 +58,127 @@ public class ImageComparator extends HorizontalSplitPanel {
 	}
 	
 	private void initComponents() {
-//		this.setSizeFull();
-//		this.setSplitPosition(150, Unit.PIXELS);
-//		leftTree.setSelectionMode(SelectionMode.SINGLE);
-//		leftTree.setWidth("180px");
-//    	leftTree.setHeight("100%");
-//    	// 获取site
-//    	Site site = ui.siteService.findById(transaction.getSiteUniqueId());
-//    	Document primary = new Document("主要材料");
-//    	Document secondary = new Document("次要材料");
-//        TreeData<Document> treeData = new TreeData<Document>();
-//        // Couple of childless root items
-//        treeData.addItem(null, primary);
-//        treeData.addItem(null, secondary);
-//
-//        // 主要文件
-//    	List<Document> primaryDocs = ui.documentService.findPrimary(transaction.getUuid(), transaction.getVin());
-//    	// 次要文件
-//    	List<Document> secondaryDocs = ui.documentService.findSecondary(transaction.getUuid(), transaction.getVin());
+		this.setSizeFull();
+		this.setSplitPosition(150, Unit.PIXELS);
+		leftTree.setSelectionMode(SelectionMode.SINGLE);
+		leftTree.setWidth("180px");
+    	leftTree.setHeight("100%");
+    	// 获取site
+    	Site site = ui.siteService.findByCode(transaction.getSiteCode());
+    	Document primary = new Document();
+    	primary.setAlias("主要材料");
+        TreeData<Document> treeData = new TreeData<Document>();
+        // Couple of childless root items
+        treeData.addItem(null, primary);
+
+        // 主要文件
+    	List<Document> primaryDocs = ui.documentService.findAllDocument1(transaction.getVin(),transaction.getUuid());
+        
+        for (Document d : primaryDocs) {
+        	treeData.addItem(primary, d);
+        }
+        
+        leftTree.setDataProvider(new TreeDataProvider<>(treeData));
+        // 展开树节点
+        leftTree.expand(primary);
+        
+        leftTree.setItemIconGenerator(item -> {
+            return VaadinIcons.FILE_PICTURE;
+        });
+        leftTree.addContextClickListener(event -> {
+        	TreeContextClickEvent<Document> e = (TreeContextClickEvent<Document>) event;
+        	Document item = e.getItem();
+        	leftTree.select(item);
+        });
+        leftTree.setSelectionMode(SelectionMode.SINGLE);
+        
+        com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(leftTree, true);
+        menu.addItem("加入比对", new com.vaadin.contextmenu.Menu.Command() {
+			@Override
+			public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+				Set<Document> set = leftTree.getSelectedItems();
+				List<Document> list = new ArrayList<Document>(set);
+				Document selectedDocument = list.get(0);
+				addForComparing(site, selectedDocument);
+			}
+		});
+        
+        
+        ///////////////////////////// 历史右树
+        
+        rightTree.setSelectionMode(SelectionMode.SINGLE);
+        rightTree.setWidthUndefined();
+        rightTree.setHeight("100%");
+        // 历史记录
+        List<Transaction> transList = ui.transactionService.findForList(transaction.getVin());
+        TreeData<Document> rightTreeData = new TreeData<Document>();
+        for (Transaction historyTrans : transList) {
+        	// 避免与历史业务重复
+        	if (historyTrans.getTransactionUniqueId() == transaction.getTransactionUniqueId()) {
+        		continue;
+        	}
+        	
+        	Business business = ui.businessService.findByCode(historyTrans.getBusinessCode());
+        	Document rootDoc = new Document();
+        	rootDoc.setAlias(business.getName());
+            // Couple of childless root items
+        	rightTreeData.addItem(null, rootDoc);
+        	Document primaryNode = new Document();
+        	primaryNode.setAlias("主要材料");
+        	rightTreeData.addItem(rootDoc, primaryNode);
+        	 // 展开树节点
+            rightTree.expand(primaryNode);
+        	
+            
+            // 主要文件
+        	List<Document> primaryDocuments = ui.documentService.findAllDocument1( historyTrans.getVin(),historyTrans.getUuid());
+            for (Document d : primaryDocuments) {
+            	rightTreeData.addItem(primaryNode, d);
+            }
+        }
+        
+        rightTree.setDataProvider(new TreeDataProvider<>(rightTreeData));
+        rightTree.setItemIconGenerator(item -> {
+            return VaadinIcons.FILE_PICTURE;
+        });
+        rightTree.addContextClickListener(event -> {
+        	TreeContextClickEvent<Document> e = (TreeContextClickEvent<Document>) event;
+        	Document item = e.getItem();
+        	rightTree.select(item);
+        });
+        rightTree.setSelectionMode(SelectionMode.SINGLE);
+        
+        com.vaadin.contextmenu.ContextMenu menu2 = new com.vaadin.contextmenu.ContextMenu(rightTree, true);
+        menu2.addItem("加入对比", new com.vaadin.contextmenu.Menu.Command() {
+			@Override
+			public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+				Set<Document> set = rightTree.getSelectedItems();
+				List<Document> list = new ArrayList<Document>(set);
+				Document selectedDocument = list.get(0);
+				selectedDocument.setAlias(selectedDocument.getAlias());
+				addForComparing(site, selectedDocument);
+			}
+        });
+        
+        TabSheet sheet = createCenterTabSheet();
+  
+        HorizontalSplitPanel subSplitor = new HorizontalSplitPanel();
+        subSplitor.setSizeFull();
+        subSplitor.setSplitPosition(750, Unit.PIXELS);
+        subSplitor.setFirstComponent(sheet);
+        subSplitor.setSecondComponent(rightTree);
+        
+        this.setFirstComponent(leftTree);
+        this.setSecondComponent(subSplitor);
+        
+//        this.addComponents(leftTree, sheet, rightTree);
+//        this.setComponentAlignment(leftTree, Alignment.TOP_LEFT);
+//        this.setComponentAlignment(sheet, Alignment.TOP_CENTER);
+//        this.setComponentAlignment(rightTree, Alignment.TOP_LEFT);
 //        
-//        for (Document d : primaryDocs) {
-//        	treeData.addItem(primary, d);
-//        }
-//        for (Document d : secondaryDocs) {
-//        	treeData.addItem(secondary, d);
-//        }
-//        
-//        leftTree.setDataProvider(new TreeDataProvider<>(treeData));
-//        // 展开树节点
-//        leftTree.expand(primary, secondary);
-//        
-//        leftTree.setItemIconGenerator(item -> {
-//            return VaadinIcons.FILE_PICTURE;
-//        });
-//        leftTree.addContextClickListener(event -> {
-//        	TreeContextClickEvent<Document> e = (TreeContextClickEvent<Document>) event;
-//        	Document item = e.getItem();
-//        	leftTree.select(item);
-//        });
-//        leftTree.setSelectionMode(SelectionMode.SINGLE);
-//        
-//        com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(leftTree, true);
-//        menu.addItem("加入比对", new com.vaadin.contextmenu.Menu.Command() {
-//			@Override
-//			public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
-//				Set<Document> set = leftTree.getSelectedItems();
-//				List<Document> list = new ArrayList<Document>(set);
-//				Document selectedDocument = list.get(0);
-//				addForComparing(site, selectedDocument);
-//			}
-//		});
-//        
-//        
-//        ///////////////////////////// 历史右树
-//        
-//        rightTree.setSelectionMode(SelectionMode.SINGLE);
-//        rightTree.setWidthUndefined();
-//        rightTree.setHeight("100%");
-//        // 历史记录
-//        List<Transaction> transList = ui.transactionService.findForList(transaction.getVin());
-//        TreeData<Document> rightTreeData = new TreeData<Document>();
-//        for (Transaction historyTrans : transList) {
-//        	// 避免与历史业务重复
-//        	if (historyTrans.getTransactionUniqueId() == transaction.getTransactionUniqueId()) {
-//        		continue;
-//        	}
-//        	
-//        	Business business = ui.businessService.findById(historyTrans.getBusinessUniqueId());
-//        	Document rootDoc = new Document(business.getName());
-//            // Couple of childless root items
-//        	rightTreeData.addItem(null, rootDoc);
-//        	Document primaryNode = new Document("主要材料");
-//        	Document secondaryNode = new Document("次要材料");
-//        	
-//        	rightTreeData.addItem(rootDoc, primaryNode);
-//        	rightTreeData.addItem(rootDoc, secondaryNode);
-//        	 // 展开树节点
-//            rightTree.expand(primaryNode, secondaryNode);
-//        	
-//            
-//            // 主要文件
-//        	List<Document> primaryDocuments = ui.documentService.findPrimary(historyTrans.getUuid(), historyTrans.getVin());
-//        	// 次要文件
-//        	List<Document> secondaryDocuments = ui.documentService.findSecondary(historyTrans.getUuid(), historyTrans.getVin());
-//            for (Document d : primaryDocuments) {
-//            	rightTreeData.addItem(primaryNode, d);
-//            }
-//            for (Document d : secondaryDocuments) {
-//            	rightTreeData.addItem(secondaryNode, d);
-//            }
-//        }
-//        
-//        rightTree.setDataProvider(new TreeDataProvider<>(rightTreeData));
-//        rightTree.setItemIconGenerator(item -> {
-//            return VaadinIcons.FILE_PICTURE;
-//        });
-//        rightTree.addContextClickListener(event -> {
-//        	TreeContextClickEvent<Document> e = (TreeContextClickEvent<Document>) event;
-//        	Document item = e.getItem();
-//        	rightTree.select(item);
-//        });
-//        rightTree.setSelectionMode(SelectionMode.SINGLE);
-//        
-//        com.vaadin.contextmenu.ContextMenu menu2 = new com.vaadin.contextmenu.ContextMenu(rightTree, true);
-//        menu2.addItem("加入对比", new com.vaadin.contextmenu.Menu.Command() {
-//			@Override
-//			public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
-//				Set<Document> set = rightTree.getSelectedItems();
-//				List<Document> list = new ArrayList<Document>(set);
-//				Document selectedDocument = list.get(0);
-//				selectedDocument.setAlias(selectedDocument.getAlias());
-//				addForComparing(site, selectedDocument);
-//			}
-//        });
-//        
-//        TabSheet sheet = createCenterTabSheet();
-//  
-//        HorizontalSplitPanel subSplitor = new HorizontalSplitPanel();
-//        subSplitor.setSizeFull();
-//        subSplitor.setSplitPosition(750, Unit.PIXELS);
-//        subSplitor.setFirstComponent(sheet);
-//        subSplitor.setSecondComponent(rightTree);
-//        
-//        this.setFirstComponent(leftTree);
-//        this.setSecondComponent(subSplitor);
-//        
-////        this.addComponents(leftTree, sheet, rightTree);
-////        this.setComponentAlignment(leftTree, Alignment.TOP_LEFT);
-////        this.setComponentAlignment(sheet, Alignment.TOP_CENTER);
-////        this.setComponentAlignment(rightTree, Alignment.TOP_LEFT);
-////        
-////        this.setExpandRatio(leftTree, 2.0f);
-////        this.setExpandRatio(sheet, 8.0f);
-////        this.setExpandRatio(rightTree, 2.0f);
+//        this.setExpandRatio(leftTree, 2.0f);
+//        this.setExpandRatio(sheet, 8.0f);
+//        this.setExpandRatio(rightTree, 2.0f);
 	}
 	
 	/**
@@ -232,22 +220,22 @@ public class ImageComparator extends HorizontalSplitPanel {
 	}
 	
 	private void addForComparing(Site site, Document doc) {
-//		if (doc.getFileFullPath() != null) {
-//			try {
-//				FileObject fobj = new TB4FileSystem().resolveFile(site, doc.getFileFullPath());
-//				
-//				ImageWindow imageWindow = new ImageWindow(doc.getAlias()+"-历史", fobj, 1.0f);
-//				toolbar.setEditingWindow(imageWindow);
-//				imageWindow.addFocusListener(e -> {
-//					toolbar.setEditingWindow(imageWindow);
-//		        });
-//				imageWindow.center();
-//				
-//			} catch (FileException e) {
-//				e.printStackTrace();
-//				Notifications.warning("读取文件异常。"+e.getMessage());
-//			}
-//		}
+		if (doc.getFileFullPath() != null) {
+			try {
+				FileObject fobj = new TB4FileSystem().resolveFile(site, doc.getFileFullPath());
+				
+				ImageWindow imageWindow = new ImageWindow(doc.getAlias()+"-历史", fobj, 1.0f);
+				toolbar.setEditingWindow(imageWindow);
+				imageWindow.addFocusListener(e -> {
+					toolbar.setEditingWindow(imageWindow);
+		        });
+				imageWindow.center();
+				
+			} catch (FileException e) {
+				e.printStackTrace();
+				Notifications.warning("读取文件异常。"+e.getMessage());
+			}
+		}
 	}
 	
 	public ToolbarWindow getToolbar() {

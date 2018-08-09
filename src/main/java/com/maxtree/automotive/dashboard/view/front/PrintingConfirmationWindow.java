@@ -49,11 +49,11 @@ public class PrintingConfirmationWindow extends Window {
 	/**
 	 * 
 	 * @param caption
-	 * @param transactionUniqueId
+	 * @param trans
 	 */
-	public PrintingConfirmationWindow(String caption, int transactionUniqueId) {
+	public PrintingConfirmationWindow(String caption, Transaction trans) {
 		this.caption = caption;
-		this.transactionUniqueId = transactionUniqueId;
+		this.trans = trans;
 		initComponents();
 	}
 	
@@ -110,65 +110,65 @@ public class PrintingConfirmationWindow extends Window {
     			buttonLayout.setComponentAlignment(btnOk, Alignment.MIDDLE_LEFT);
     		}
     		
-//    		Transaction trans = ui.transactionService.findById(transactionUniqueId);
-//    		if(e.getValue().equals("封皮标签")) {
-//    			List<PrintableBean> beans = new ArrayList<PrintableBean>();
-//    			PrintableBean bean = new PrintableBean();
-//    			bean.setPlateType(trans.getPlateType());
-//    			bean.setPlateNumber(trans.getPlateNumber());
-//    			bean.setVin(trans.getVin());
-//    			bean.setPutawayCode(trans.getCode());
-//    			beans.add(bean);
-//    			
-//    			Callback callback = new Callback() {
-//					@Override
-//					public void onSuccessful() {
-//						btnOk.setEnabled(true);
-//						opener = new BrowserWindowOpener(PrintUI.class);
-//						opener.setFeatures("height=595,width=842,resizable");
-//						opener.extend(btnOk);
-//						opener.setParameter("htmlFilePath", "reports/generates/"+transactionUniqueId+"/report.html");
-//					}
-//    			};
-//    			try {
-//					new TB4Reports().jasperToHtml(beans, transactionUniqueId, "report3.jasper", callback);
-//					
-//				} catch (ReportException e1) {
-//					e1.printStackTrace();
-//				}
-//    		} else {
-//    			List<PrintableBean> beans = new ArrayList<PrintableBean>();
-//    			PrintableBean bean = new PrintableBean();
-//    			bean.setPlateType(trans.getPlateType());
-//    			bean.setPlateNumber(trans.getPlateNumber());
-//    			Business business = ui.businessService.findById(trans.getBusinessUniqueId());
-//    			bean.setBusinessType(business.getName());
-//    			bean.setPutawayCode(trans.getCode()); // 上架号
-//    			bean.setIndexNumber(trans.getIndexNumber()+""); // 索引号
-//    			bean.setBarcode(trans.getBarcode()); // 流水号
-//    			beans.add(bean);
-//    			
-//    			Callback callback = new Callback() {
-//					@Override
-//					public void onSuccessful() {
-//						
-//						btnOk.setEnabled(true);
-//						
-//						// 打印PDF
-//						FileResource resource = new FileResource(new File("reports/generates/"+transactionUniqueId+"/report.pdf"));
-//						// Extend the print button with an opener
-//			            // for the PDF resource
-//			            opener = new BrowserWindowOpener(resource);
-//			            opener.extend(btnOk);
-//					}
-//    			};
-//    			try {
-//					new TB4Reports().jasperToPDF(beans, transactionUniqueId, "report2.jasper", callback);
-//				} catch (ReportException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-//    		}
+//    		Transaction trans2 = ui.transactionService.findById(trans.getTransactionUniqueId(), trans.getVin());
+    		if(e.getValue().equals("封皮标签")) {
+    			List<PrintableBean> beans = new ArrayList<PrintableBean>();
+    			PrintableBean bean = new PrintableBean();
+    			bean.setPlateType(trans.getPlateType());
+    			bean.setPlateNumber(trans.getPlateNumber());
+    			bean.setVin(trans.getVin());
+    			bean.setPutawayCode(trans.getCode());
+    			beans.add(bean);
+    			
+    			Callback callback = new Callback() {
+					@Override
+					public void onSuccessful() {
+						btnOk.setEnabled(true);
+						opener = new BrowserWindowOpener(PrintUI.class);
+						opener.setFeatures("height=595,width=842,resizable");
+						opener.extend(btnOk);
+						opener.setParameter("htmlFilePath", "reports/generates/"+trans.getTransactionUniqueId()+"/report.html");
+					}
+    			};
+    			try {
+					new TB4Reports().jasperToHtml(beans, trans.getTransactionUniqueId(), "report3.jasper", callback);
+					
+				} catch (ReportException e1) {
+					e1.printStackTrace();
+				}
+    		} else {
+    			List<PrintableBean> beans = new ArrayList<PrintableBean>();
+    			PrintableBean bean = new PrintableBean();
+    			bean.setPlateType(trans.getPlateType());
+    			bean.setPlateNumber(trans.getPlateNumber());
+    			Business business = ui.businessService.findByCode(trans.getBusinessCode());
+    			bean.setBusinessType(business.getName());
+    			bean.setPutawayCode(trans.getCode()); // 上架号
+    			bean.setIndexNumber(trans.getIndexNumber()+""); // 索引号
+    			bean.setBarcode(trans.getBarcode()); // 流水号
+    			beans.add(bean);
+    			
+    			Callback callback = new Callback() {
+					@Override
+					public void onSuccessful() {
+						
+						btnOk.setEnabled(true);
+						
+						// 打印PDF
+						FileResource resource = new FileResource(new File("reports/generates/"+trans.getTransactionUniqueId()+"/report.pdf"));
+						// Extend the print button with an opener
+			            // for the PDF resource
+			            opener = new BrowserWindowOpener(resource);
+			            opener.extend(btnOk);
+					}
+    			};
+    			try {
+					new TB4Reports().jasperToPDF(beans, trans.getTransactionUniqueId(), "report2.jasper", callback);
+				} catch (ReportException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+    		}
     		
     	});
     	btnCancel.addClickListener(e->{
@@ -187,16 +187,16 @@ public class PrintingConfirmationWindow extends Window {
 	 * 
 	 */
 	private void deleteReportFiles() {
-		new TB4Reports().deleteReportFiles("reports/generates/" + transactionUniqueId);
+		new TB4Reports().deleteReportFiles("reports/generates/" + trans.getTransactionUniqueId());
 	}
 	
 	/**
 	 * 
 	 * @param caption
 	 */
-	public static void open(String caption, int transactionUniqueId) {
+	public static void open(String caption, Transaction trans) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        PrintingConfirmationWindow w = new PrintingConfirmationWindow(caption, transactionUniqueId);
+        PrintingConfirmationWindow w = new PrintingConfirmationWindow(caption, trans);
         UI.getCurrent().addWindow(w);
         w.center();
     }
@@ -206,7 +206,7 @@ public class PrintingConfirmationWindow extends Window {
 	private Button btnOk = new Button("确定");
 	private RadioButtonGroup<String> radios;
 	private String caption;
-	private int transactionUniqueId;
+	private Transaction trans;
 	private BrowserWindowOpener opener;
 	private HorizontalLayout buttonLayout = new HorizontalLayout();
 }

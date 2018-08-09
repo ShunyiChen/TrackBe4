@@ -706,6 +706,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	editableTrans.setIndexNumber(1);
+        	
         	// 是否跳过质检
         	if(editableCompany.getIgnoreChecker() == 1) {
         		// 获得社区内的全部机构
@@ -762,9 +763,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	}
     	
     	
-    	
     	// 非审档流程
-    	else if (businessTypePane.getSelected().getNeedToCheck() == 0) {
+    	else if (StringUtils.isEmpty(businessTypePane.getSelected().getCheckLevel())) {
     		basicInfoPane.populate(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -827,8 +827,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	}
     	
     	// 需要审档（一级）流程
-    	else if (businessTypePane.getSelected().getNeedToCheck() == 1 && businessTypePane.getSelected().getCheckLevel().equals("一级")) {
-    		
+    	else if (businessTypePane.getSelected().getCheckLevel().equals("一级审档")) {
+    		System.out.println("进入一级审档");
     		basicInfoPane.populate(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -903,7 +903,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	
     	// 需要审档（二级）流程
-    	else if (businessTypePane.getSelected().getNeedToCheck() == 1 && businessTypePane.getSelected().getCheckLevel().equals("二级")) {
+    	else if (businessTypePane.getSelected().getCheckLevel().equals("二级审档")) {
     		basicInfoPane.populate(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -991,9 +991,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
 			return;
     	}
     	
-    	//2大流程
+    	// 两大流程
     	// 需要审档（一级）流程
-    	else if (businessTypePane.getSelected().getNeedToCheck() == 1 && businessTypePane.getSelected().getCheckLevel().equals("一级")) {
+    	else if (businessTypePane.getSelected().getCheckLevel().equals("一级审档")) {
     		basicInfoPane.populate(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -1068,7 +1068,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	
     	// 需要审档（二级）流程
-    	else if (businessTypePane.getSelected().getNeedToCheck() == 1 && businessTypePane.getSelected().getCheckLevel().equals("二级")) {
+    	else if (businessTypePane.getSelected().getCheckLevel().equals("二级审档")) {
     		basicInfoPane.populate(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -1195,16 +1195,19 @@ public final class FrontView extends Panel implements View,InputViewIF {
 	@Override
 	public void updateUnreadCount() {
 		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loggedInUser.getUserUniqueId());
-		int unreadCount = 0;
-		for (SendDetails sd : sendDetailsList) {
-			if (sd.getViewName().equals(DashboardViewType.INPUT.getViewName())
-					|| sd.getViewName().equals("")) {
-				unreadCount++;
+		if (sendDetailsList != null) {
+			int unreadCount = 0;
+			for (SendDetails sd : sendDetailsList) {
+				if (sd.getViewName().equals(DashboardViewType.INPUT.getViewName())
+						|| sd.getViewName().equals("")) {
+					unreadCount++;
+				}
 			}
+			NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
+			event.setCount(unreadCount);
+			notificationsButton.updateNotificationsCount(event);
 		}
-		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
-		event.setCount(unreadCount);
-		notificationsButton.updateNotificationsCount(event);
+		
 	}
 	
 	@Override
