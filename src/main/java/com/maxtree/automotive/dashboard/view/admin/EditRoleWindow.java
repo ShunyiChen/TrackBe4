@@ -150,6 +150,7 @@ public class EditRoleWindow extends Window {
         w.btnAdd.setCaption("添加");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
+        		
     			ui.roleService.insert(w.role);
     			w.close();
     			callback.onSuccessful();

@@ -190,18 +190,12 @@ public class UserService {
 		String sql = "";
 		List<User> lstUsers = null;
 		if (operator.isPermitted(PermissionCodes.O1)) {
-			if(operator.getCommunityUniqueId() > 0) {
-				sql = "SELECT * FROM USERS WHERE USERNAME <> 'system' AND COMMUNITYUNIQUEID=? ORDER BY USERUNIQUEID";
-				lstUsers = jdbcTemplate.query(sql, new Object[] {operator.getCommunityUniqueId()}, new BeanPropertyRowMapper<User>(User.class));
-			}
+			sql = "SELECT A.* FROM USERS AS A LEFT JOIN USERPROFILES B ON A.USERUNIQUEID=B.USERUNIQUEID WHERE A.USERNAME <> ? AND A.COMMUNITYUNIQUEID=? OR B.CREATEDBY=? ORDER BY A.USERUNIQUEID";
+			lstUsers = jdbcTemplate.query(sql, new Object[] {"system",operator.getCommunityUniqueId(),operator.getUserName()}, new BeanPropertyRowMapper<User>(User.class));
 		} else if (operator.isPermitted(PermissionCodes.O2)) {
-			if (operator.getCompanyUniqueId() > 0) {
-				sql = "SELECT * FROM USERS WHERE USERNAME <> 'system' AND COMPANYUNIQUEID=? ORDER BY USERUNIQUEID";
-				lstUsers = jdbcTemplate.query(sql, new Object[] {operator.getCompanyUniqueId()}, new BeanPropertyRowMapper<User>(User.class));
-			}
+			sql = "SELECT A.* FROM USERS AS A LEFT JOIN USERPROFILES B ON A.USERUNIQUEID=B.USERUNIQUEID WHERE A.USERNAME <> ? AND A.COMPANYUNIQUEID=? OR B.CREATEDBY=? ORDER BY A.USERUNIQUEID";
+			lstUsers = jdbcTemplate.query(sql, new Object[] {"system",operator.getCompanyUniqueId(),operator.getUserName()}, new BeanPropertyRowMapper<User>(User.class));
 		}
-		
-		
 		if (lstUsers == null) 
 			lstUsers = new ArrayList<User>();
 		
@@ -226,7 +220,7 @@ public class UserService {
 	public int create(User u, UserProfile profile) {
 		// 创建用户
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		String INSERT_USER_SQL = "INSERT INTO USERS (USERNAME,HASHED,ACTIVATED,COMPANYNAME,COMPANYUNIQUEID,COMMUNITYUNIQUEID,EMAIL,PHONE,FAX) VALUES (?,?,?,?,?,?,?,?,?)";
+		String INSERT_USER_SQL = "INSERT INTO USERS(USERNAME,HASHED,ACTIVATED,COMPANYNAME,COMPANYUNIQUEID,COMMUNITYUNIQUEID,EMAIL,PHONE,FAX) VALUES (?,?,?,?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override

@@ -49,9 +49,12 @@ public class RoleService {
 	 * 
 	 * @return
 	 */
-	public List<Role> findAll() {
-		String sql = "SELECT * FROM ROLE";
-		List<Role> lstRole = jdbcTemplate.query(sql, new Object[] {}, new BeanPropertyRowMapper<Role>(Role.class));
+	public List<Role> findAll(boolean includeSystem) {
+		String sql = "SELECT * FROM ROLE WHERE ROLENAME <> ?";
+		if (includeSystem) {
+			sql = "SELECT * FROM ROLE";
+		}
+		List<Role> lstRole = jdbcTemplate.query(sql, new Object[] {"系统管理员"}, new BeanPropertyRowMapper<Role>(Role.class));
 		return lstRole;
 	}
 	

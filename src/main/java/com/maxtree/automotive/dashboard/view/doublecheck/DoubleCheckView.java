@@ -160,7 +160,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 	
 	private void startPolling() {
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
-		ui.setPollInterval(sc.getPollinginterval());
+		ui.setPollInterval(sc.getInterval());
 		ui.addPollListener(new UIEvents.PollListener() {
 			@Override
 			public void poll(UIEvents.PollEvent event) {
@@ -528,7 +528,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
     			names.add(target);
     			messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.QUALITY.getViewName());
     		
-    			CacheManager.getInstance().refreshSendDetailsCache();
+    			CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
     		}
     		else {
     			Notifications.warning("没有可办的业务了。");
@@ -563,7 +563,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
      */
     private void accept(String suggestions) {
     	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
-    	if (business.getCheckLevel().equals("一级")) {
+    	if (business.getCheckLevel().equals("一级审档")) {
     		//1.删除锁定队列
     		int serial = 2; //1:质检 2:审档 3:确认审档
     		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());
@@ -588,7 +588,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
     		names.add(target);
     		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.INPUT.getViewName());
     		// 更新消息轮询的缓存
-    		CacheManager.getInstance().refreshSendDetailsCache();
+    		CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
     		// 5.清空
     		cleanStage();
     		// 6.提示信息
@@ -596,7 +596,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
     		
     		editableTrans = null;
     	}
-    	else if (business.getCheckLevel().equals("二级")) {
+    	else if (business.getCheckLevel().equals("二级审档")) {
     		//1.删除锁定队列
     		int serial = 1; //1:质检 2:审档 3:确认审档
     		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());
@@ -662,7 +662,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 		names.add(target);
 		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.QUALITY.getViewName());
 		// 更新消息轮询的缓存
-		CacheManager.getInstance().refreshSendDetailsCache();
+		CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
 		// 5.清空
 		cleanStage();
 		// 6.提示信息

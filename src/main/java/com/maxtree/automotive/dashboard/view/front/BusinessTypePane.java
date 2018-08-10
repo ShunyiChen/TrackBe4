@@ -49,6 +49,14 @@ public class BusinessTypePane extends Panel{
 	
 	/**
 	 * 
+	 * @param enabled
+	 */
+	public void setSelectorEnabled(boolean enabled) {
+		selector.setEnabled2(enabled);
+	}
+	
+	/**
+	 * 
 	 * @param code
 	 */
 	public void populate(String code) {

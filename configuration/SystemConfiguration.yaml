@@ -1,6 +1,7 @@
 # Details of a system configuration
 ---
-pollinginterval: 2000 #事件提醒轮询间隔为1000毫秒
-refreshcacheinterval: 300 #刷新权限缓存间隔为300秒
-dateformat: yyyy年MM月dd日 HH:mm:ss #打印结果单日期格式
+interval: 2000 #UI事件轮询间隔（毫秒），默认2000毫秒
+maximumSize: 10000 #Caffeine缓存最大行数，默认10000行
+expireAfterWrite: 5 #Caffeine缓存expireAfterWrite（分钟）
+refreshAfterWrite: 1 #Caffeine缓存refreshAfterWrite（分钟）
 --- #end

@@ -45,7 +45,7 @@ public class DataItemService {
 	 * @return
 	 */
 	public List<DataDictionary> findAll() {
-		String sql = "SELECT * FROM DATADICTIONARY ORDER BY ITEMTYPE,ORDERNUMBER";
+		String sql = "SELECT * FROM DATADICTIONARY ORDER BY ITEMTYPE,DICTIONARYUNIQUEID";
 		List<DataDictionary> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<DataDictionary>(DataDictionary.class));
 		return results;
 	}
@@ -80,7 +80,7 @@ public class DataItemService {
 	 * @return
 	 */
 	public String findCodeByName(String name) {
-		String sql = "SELECT CODE FROM DATADICTIONARY WHERE ITEMNAME=? ORDER BY ORDERNUMBER";
+		String sql = "SELECT CODE FROM DATADICTIONARY WHERE ITEMNAME=? ORDER BY DICTIONARYUNIQUEID";
 		List<String> results = jdbcTemplate.queryForList(sql, new Object[] {name}, String.class);
 		if(results.size() > 0) {
 			return results.get(0);

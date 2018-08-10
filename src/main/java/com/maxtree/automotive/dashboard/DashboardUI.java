@@ -186,7 +186,7 @@ public final class DashboardUI extends UI {
 				
 				if (user.getActivated() == 0) {
 					log.info("User["+event.getUserName()+"] not found.");
-					smoothNotification("没被激活", "当前用户没有被激活。请联系管理员设置并重新登录。");
+					smoothNotification("该账号尚未激活", "当前用户没有被激活，请联系管理员进行设置。");
 					
 				} else {
 					boolean successful = PasswordSecurity.check(event.getPassword(), user.getHashed());

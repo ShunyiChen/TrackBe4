@@ -103,7 +103,7 @@ public class MessageInboxWindow extends Window {
         	    updateUnreadEvent.onSuccessful();
         	    
         	    // 刷新缓存
-        	    CacheManager.getInstance().refreshSendDetailsCache();
+        	    CacheManager.getInstance().getSendDetailsCache().refresh(loginUser.getUserUniqueId());
         	    
     	    } 
     	});

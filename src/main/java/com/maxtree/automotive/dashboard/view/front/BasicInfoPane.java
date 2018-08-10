@@ -120,9 +120,11 @@ public class BasicInfoPane extends Panel {
 		vinField.setValue(view.vin());
 		// 有效性验证
 		if(StringUtils.isEmpty(view.vin())) {
-			Notifications.warning("有效性验证失败。");
+			Notifications.warning("有效性验证失败，VIN不能为空。");
 			view.stoppedAtAnException(true);
 		}
+		
+		view.businessTypePane().setSelectorEnabled(true);
 	}
 	
 	/**
@@ -216,18 +218,14 @@ public class BasicInfoPane extends Panel {
 	 * 
 	 * @param transaction
 	 */
-	public void populate2(Transaction transaction) {
+	public void transaction2Fields(Transaction transaction) {
 		barCodeField.setValue(transaction.getBarcode());
 		plateTypeField.setValue(transaction.getPlateType());
 		plateNumberField.setValue(transaction.getPlateNumber());
 		vinField.setValue(transaction.getVin());
 	}
 
-	/**
-	 * 
-	 * @param transaction
-	 */
-	public void populate(Transaction transaction) {
+	public void fields2Transaction(Transaction transaction) {
 		transaction.setBarcode(barCodeField.getValue()==null?"":barCodeField.getValue());
 		transaction.setPlateType(plateTypeField.getValue());
 		transaction.setPlateNumber(plateNumberField.getValue());

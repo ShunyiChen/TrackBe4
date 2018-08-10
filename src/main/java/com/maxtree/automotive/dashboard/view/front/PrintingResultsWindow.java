@@ -91,7 +91,7 @@ public class PrintingResultsWindow extends Window {
     		List<PrintableBean> beans = new ArrayList<PrintableBean>();
 			PrintableBean bean = new PrintableBean();
 			SystemConfiguration sc = Yaml.readSystemConfiguration();
-			SimpleDateFormat format = new SimpleDateFormat(sc.getDateformat());
+			SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
 			bean.setDateCreated(format.format(selectedTransaction.getDateCreated()));
 			bean.setPlateType(selectedTransaction.getPlateType());
 			bean.setPlateNumber(selectedTransaction.getPlateNumber());

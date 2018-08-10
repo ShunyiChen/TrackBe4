@@ -156,7 +156,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 	
 	private void startPolling() {
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
-		ui.setPollInterval(sc.getPollinginterval());
+		ui.setPollInterval(sc.getInterval());
 		ui.addPollListener(new UIEvents.PollListener() {
 			@Override
 			public void poll(UIEvents.PollEvent event) {
@@ -444,7 +444,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		names.add(target);
 		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_MANAGER.getViewName());
 		// 更新消息轮询的缓存
-		CacheManager.getInstance().refreshSendDetailsCache();
+		CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
 		// 5.清空
 		cleanStage();
 		// 6.提示信息
@@ -472,7 +472,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		names.add(target);
 		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_INPUT.getViewName());
 		// 更新消息轮询的缓存
-		CacheManager.getInstance().refreshSendDetailsCache();
+		CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
 		// 5.清空
 		cleanStage();
 		// 6.提示信息

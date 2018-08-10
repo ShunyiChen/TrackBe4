@@ -9,8 +9,10 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.DoubleField;
 import com.maxtree.automotive.dashboard.component.EmptyValidator;
+import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.SiteCapacity;
+import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
@@ -107,8 +109,7 @@ public class EditSiteWindow extends Window {
 		
 		FormLayout form3 = new FormLayout();
 		form3.setSizeFull();
-		codeField.setCaption("快捷编码:");
-		codeField.setReadOnly(true);
+		codeField.setCaption("4位代码:");
 		form3.addComponents(codeField);
 		tabSheet.addTab(form3, "其它");
  
@@ -223,7 +224,13 @@ public class EditSiteWindow extends Window {
 		binder.bind(textRemoteDirectory, Site::getDefaultRemoteDirectory, Site::setDefaultRemoteDirectory);
 		binder.bind(userName, Site::getUserName, Site::setUserName);
 		binder.bind(password, Site::getPassword, Site::setPassword);
-		binder.bind(codeField, Site::getCode, Site::setCode);
+		
+		binder.forField(codeField).withValidator(new StringLengthValidator(
+		        "代码长度为4",
+		        4, 4))
+		    .bind(Site::getCode, Site::setCode);
+		
+		
 //		binder.forField(maximizeAllowed)
 //		  .withValidator(new EmptyValidator("最大文件夹数不能为空"))
 //		  .withConverter(new StringToIntegerConverter("请输入一个大于零的整数"))
@@ -295,6 +302,25 @@ public class EditSiteWindow extends Window {
 			});
 			return false;
 		}
+		else if (StringUtils.isEmpty(site.getCode())) {
+			codeField.setComponentError(new ErrorMessage() {
+				@Override
+				public ErrorLevel getErrorLevel() {
+					return ErrorLevel.ERROR;
+				}
+
+				@Override
+				public String getFormattedHtmlMessage() {
+					return "4位代码不能为空。";
+				}
+			});
+			Notifications.warning("4位代码不能为空。");
+			return false;
+		}
+		if (codeField.getErrorMessage() != null) {
+			codeField.setComponentError(codeField.getErrorMessage());
+			return false;
+		} 
 		if (textFieldName.getErrorMessage() != null) {
 			textFieldName.setComponentError(textFieldName.getErrorMessage());
 			return false;
@@ -411,7 +437,11 @@ public class EditSiteWindow extends Window {
         w.sizePercentage.setCaption(0+"%");
 		w.folderPercentage.setCaption(0+"%");
         w.codeField.setValue("");
-		
+		w.maximum.setValue("2");
+        w.units.setSelectedItem("GB");
+		w.maxBatch.setValue("1000");
+        w.maxBusiness.setValue("3000");
+        
         w.btnAdd.setCaption("添加");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
@@ -420,8 +450,8 @@ public class EditSiteWindow extends Window {
         		siteCapacity.setUnit(w.units.getValue());
         		siteCapacity.setUnitNumber(w.maximum.getValue());
         		siteCapacity.setUpdateTimeMillis(System.currentTimeMillis());
-        		siteCapacity.setMaxBatch(1000);
-        		siteCapacity.setMaxBusiness(5000);
+        		siteCapacity.setMaxBatch(Integer.parseInt(w.maxBatch.getValue()));
+        		siteCapacity.setMaxBusiness(Integer.parseInt(w.maxBusiness.getValue()));
         		
         		long totalSize = 0L;
         		if (w.units.getValue().equals("PB")) {

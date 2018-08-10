@@ -107,7 +107,7 @@ public class ManageRolesGrid extends VerticalLayout {
 		tableBody = new VerticalLayout(); 
 		tableBody.setMargin(false);
 		tableBody.setSpacing(false);
-		List<Role> lstRole = ui.roleService.findAll();
+		List<Role> lstRole = ui.roleService.findAll(false);
 		for (Role role : lstRole) {
 			HorizontalLayout row1 = createDataRow(role);
 			tableBody.addComponents(row1);
@@ -245,7 +245,7 @@ public class ManageRolesGrid extends VerticalLayout {
 	 */
 	private void refreshTable() {
 		tableBody.removeAllComponents();
-		List<Role> lstRole = ui.roleService.findAll();
+		List<Role> lstRole = ui.roleService.findAll(false);
 		for (Role role : lstRole) {
 			HorizontalLayout row1 = createDataRow(role);
 			tableBody.addComponents(row1);

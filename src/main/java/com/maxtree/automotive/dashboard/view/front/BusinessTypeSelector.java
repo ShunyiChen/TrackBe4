@@ -77,6 +77,7 @@ public class BusinessTypeSelector extends FormLayout {
 		selector.setPlaceholder("请选择一个业务类型");
 		selector.setWidth("100%");
 		selector.setHeight("27px");
+		selector.setEnabled(false);
 		this.addComponent(selector);
 		
 		this.initPollListener();
@@ -89,7 +90,7 @@ public class BusinessTypeSelector extends FormLayout {
 		
 		selector.addBlurListener(e->{
 			SystemConfiguration sc = Yaml.readSystemConfiguration();
-			ui.setPollInterval(sc.getPollinginterval());
+			ui.setPollInterval(sc.getInterval());
 		});
 		
 		/**
@@ -186,7 +187,7 @@ public class BusinessTypeSelector extends FormLayout {
 					names.add(target);
 					messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_MANAGER.getViewName());
 					//3.更新消息轮询的缓存
-					CacheManager.getInstance().refreshSendDetailsCache();
+					CacheManager.getInstance().getSendDetailsCache().refresh(loginUser.getUserUniqueId());
 					
 					Callback callback = new Callback() {
 						@Override
@@ -235,7 +236,7 @@ public class BusinessTypeSelector extends FormLayout {
 		// 加载文件上传表格
 		view.thumbnailGrid().removeAllRows();
 		
-		List<DataDictionary> list = ui.businessService.getDataDictionaries(businessCode);
+		List<DataDictionary> list = ui.businessService.getDataDictionaries(businessCode,3);
 		int i = 0;
 		for (DataDictionary dd : list) {
 			i++;
@@ -338,6 +339,14 @@ public class BusinessTypeSelector extends FormLayout {
 	
 	/**
 	 * 
+	 * @param enabled
+	 */
+	public void setEnabled2(boolean enabled) {
+		selector.setEnabled(enabled);
+	}
+	
+	/**
+	 * 
 	 * @param code
 	 */
 	public void populate(String code) {
@@ -369,4 +378,5 @@ public class BusinessTypeSelector extends FormLayout {
 	private boolean selectionHashDone = false;
 	private boolean forTheFirstTimeToLoad = true;
 	private MessageBodyParser jsonHelper = new MessageBodyParser();
+	private User loginUser = null;
 }

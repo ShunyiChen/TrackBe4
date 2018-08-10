@@ -102,7 +102,7 @@ public class ImageViewerWindow extends Window {
 		
 		this.addCloseListener(e->{
 			SystemConfiguration config = Yaml.readSystemConfiguration();
-			ui.setPollInterval(config.getPollinginterval());
+			ui.setPollInterval(config.getInterval());
 		});
 	}
 	

@@ -154,7 +154,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
 	
 	private void startPolling() {
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
-		ui.setPollInterval(sc.getPollinginterval());
+		ui.setPollInterval(sc.getInterval());
 		ui.addPollListener(new UIEvents.PollListener() {
 			@Override
 			public void poll(UIEvents.PollEvent event) {
@@ -521,7 +521,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
     			names.add(target);
     			messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.QUALITY.getViewName());
     		
-    			CacheManager.getInstance().refreshSendDetailsCache();
+    			CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
     		}
     		else {
     			Notifications.warning("没有可办的业务了。");
@@ -561,7 +561,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
     		names.add(target);
     		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.INPUT.getViewName());
     		// 更新消息轮询的缓存
-    		CacheManager.getInstance().refreshSendDetailsCache();
+    		CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
     		// 5.清空
     		cleanStage();
     		// 6.提示信息
@@ -633,7 +633,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
 		names.add(target);
 		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.INPUT.getViewName());
 		// 更新消息轮询的缓存
-		CacheManager.getInstance().refreshSendDetailsCache();
+		CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
 		// 5.清空
 		cleanStage();
 		// 6.提示信息

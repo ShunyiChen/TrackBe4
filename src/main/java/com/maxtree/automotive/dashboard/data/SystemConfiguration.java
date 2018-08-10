@@ -2,31 +2,40 @@ package com.maxtree.automotive.dashboard.data;
 
 public class SystemConfiguration {
 
-	public int getPollinginterval() {
-		return pollinginterval;
+	public int getInterval() {
+		return interval;
 	}
 
-	public void setPollinginterval(int pollinginterval) {
-		this.pollinginterval = pollinginterval;
-	}
-	
-	public int getRefreshcacheinterval() {
-		return refreshcacheinterval;
+	public void setInterval(int interval) {
+		this.interval = interval;
 	}
 
-	public void setRefreshcacheinterval(int refreshcacheinterval) {
-		this.refreshcacheinterval = refreshcacheinterval;
+	public int getMaximumSize() {
+		return maximumSize;
 	}
 
-	public String getDateformat() {
-		return dateformat;
+	public void setMaximumSize(int maximumSize) {
+		this.maximumSize = maximumSize;
 	}
 
-	public void setDateformat(String dateformat) {
-		this.dateformat = dateformat;
+	public int getExpireAfterWrite() {
+		return expireAfterWrite;
 	}
 
-	private int pollinginterval; 	//全部事件(消息提醒,上传回显）轮询间隔为1秒
-	private int refreshcacheinterval; //刷新权限缓存间隔为300秒
-	private String dateformat;		// 打印结果单日期格式 yyyy年MM月dd日 HH:mm:SS
+	public void setExpireAfterWrite(int expireAfterWrite) {
+		this.expireAfterWrite = expireAfterWrite;
+	}
+
+	public int getRefreshAfterWrite() {
+		return refreshAfterWrite;
+	}
+
+	public void setRefreshAfterWrite(int refreshAfterWrite) {
+		this.refreshAfterWrite = refreshAfterWrite;
+	}
+
+	private int interval; // UI事件轮询间隔（毫秒）
+	private int maximumSize;// Caffeine缓存最大行数
+	private int expireAfterWrite; // Caffeine缓存expireAfterWrite（分钟）
+	private int refreshAfterWrite;// Caffeine缓存refreshAfterWrite（分钟）
 }

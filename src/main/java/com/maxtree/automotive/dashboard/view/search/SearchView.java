@@ -146,7 +146,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 	
 	private void startPolling() {
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
-		ui.setPollInterval(sc.getPollinginterval());
+		ui.setPollInterval(sc.getInterval());
 		ui.addPollListener(new UIEvents.PollListener() {
 			@Override
 			public void poll(UIEvents.PollEvent event) {

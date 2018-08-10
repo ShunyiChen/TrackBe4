@@ -159,7 +159,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
      */
 	private void startPolling() {
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
-		ui.setPollInterval(sc.getPollinginterval());
+		ui.setPollInterval(sc.getInterval());
 		ui.addPollListener(new UIEvents.PollListener() {
 			@Override
 			public void poll(UIEvents.PollEvent event) {
@@ -407,29 +407,15 @@ public final class FrontView extends Panel implements View,InputViewIF {
     private void resetComponents() {
     	main.removeAllComponents();
     	main.setHeightUndefined();
-    	
-//    	VerticalLayout leftChild = new VerticalLayout();
-//    	leftChild.setSizeFull();
-//    	leftChild.setSpacing(true);
-//    	leftChild.setMargin(false);
-//    	leftChild.addComponents(topGrid, bottomGrid);
-//    	Panel captureStage = new Panel("拍照");
-//    	captureStage.setSizeFull();
-//    	captureStage.setHeight("612px");
-//    	captureStage.addStyleName("picture-pane");
     	spliterSouth.setSizeFull();
     	spliterSouth.addComponents(fileGrid, capturePane);
-    	
     	spliterNorth.setSizeFull();
     	spliterNorth.addComponents(basicInfoPane, businessTypePane);
     	spliterNorth.setExpandRatio(basicInfoPane, 3);
     	spliterNorth.setExpandRatio(businessTypePane, 1);
     	main.addComponents(spliterNorth, spliterSouth);
-    	
-    	
     	main.setExpandRatio(spliterNorth, 1);
     	main.setExpandRatio(spliterSouth, 9);
-    	
     }
     
     /**
@@ -443,12 +429,12 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	btnPrint.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
     	btnPrint.setDescription("查询待补充的记录");
     	btnPrint.addClickListener(e -> {
+    		if (!validate()) {
+    			return;
+    		}
     		Callback2 callback = new Callback2() {
-
 				@Override
 				public void onSuccessful(Object... objects) {
-					
-//					openTransaction(Integer.parseInt(objects[0].toString()), new Date());
 				}
     		};
     		SearchAndPrintWindow.open("", callback);
@@ -520,28 +506,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
      * 
      */
     private void startTransaction() {
-		int companyUniqueId = loggedInUser.getCompanyUniqueId();
-    	int communityUniqueId = loggedInUser.getCommunityUniqueId();
-    	if (companyUniqueId == 0) {
-    		Notifications.warning("当前用户没有加入任何机构，请联系管理员进行分配。");
-    		return;
-    	}
-    	if (communityUniqueId == 0) {
-    		Notifications.warning("当前用户没有加入任何社区，请联系管理员进行分配。");
-    		return;
-    	}
-    	editableCompany = ui.companyService.findById(companyUniqueId);
-    	List<Site> allSites = ui.siteService.getSites(communityUniqueId);
-    	for (int i = 0; i < allSites.size(); i++) {
-    		if (allSites.get(i).getRunningStatus() == 1) {
-    			editableSite = allSites.get(i);
-    			break;
-    		}
-    	}
-    	if (editableSite == null) {
-    		Notifications.warning("当前用户所在的社区不存在文件站点，或站点已关闭。请联系管理员进行设置。");
-    		return;
-    	}
+		if (!validate()) {
+			return;
+		}
 		//创建UUID
     	uuid = UUID.randomUUID().toString();
 		//如果站点文件夹装满则提醒用户
@@ -555,17 +522,46 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	Address addr = Yaml.readAddress();
     	editableTrans = new Transaction();
-    	editableTrans.setBarcode("");
+    	editableTrans.setBarcode("123");
     	editableTrans.setPlateType("");
-    	editableTrans.setPlateNumber(addr.getLicenseplate());
+    	editableTrans.setPlateNumber("辽BD01848");//(addr.getLicenseplate());
     	editableTrans.setVin("");
-    	basicInfoPane.populate2(editableTrans);
+    	basicInfoPane.transaction2Fields(editableTrans);
     	
     	// validating the transaction information
     	basicInfoPane.validatingFieldValues(binder);
     	binder.setBean(editableTrans);
     	
     	resetComponents();
+    }
+    
+    /**
+     * 对当前用户做有效性验证
+     */
+    private boolean validate() {
+		int companyUniqueId = loggedInUser.getCompanyUniqueId();
+    	int communityUniqueId = loggedInUser.getCommunityUniqueId();
+    	if (companyUniqueId == 0) {
+    		Notifications.warning("当前用户没有加入任何机构，请联系管理员进行分配。");
+    		return false;
+    	}
+    	if (communityUniqueId == 0) {
+    		Notifications.warning("当前用户没有加入任何社区，请联系管理员进行分配。");
+    		return false;
+    	}
+    	editableCompany = ui.companyService.findById(companyUniqueId);
+    	List<Site> allSites = ui.siteService.getSites(communityUniqueId);
+    	for (int i = 0; i < allSites.size(); i++) {
+    		if (allSites.get(i).getRunningStatus() == 1) {
+    			editableSite = allSites.get(i);
+    			break;
+    		}
+    	}
+    	if (editableSite == null) {
+    		Notifications.warning("当前用户所在的社区不存在文件站点，或站点已关闭。请联系管理员进行设置。");
+    		return false;
+    	}
+    	return true;
     }
     
     /**
@@ -610,7 +606,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	resetComponents();
     	
-    	basicInfoPane.populate2(editableTrans);
+    	basicInfoPane.transaction2Fields(editableTrans);
     	businessTypePane.populate(editableTrans.getBusinessCode());
     	
 //		if (editableTrans != null) {
@@ -691,7 +687,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	//4大流程
     	//新车注册流程
     	if (businessTypePane.getSelected().getName().equals("注册登记")) {
-    		basicInfoPane.populate(editableTrans);//赋值基本信息
+    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
         	editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
         	editableTrans.setSiteCode(editableSite.getCode());
@@ -765,7 +761,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	// 非审档流程
     	else if (StringUtils.isEmpty(businessTypePane.getSelected().getCheckLevel())) {
-    		basicInfoPane.populate(editableTrans);//赋值基本信息
+    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
         	editableTrans.setSiteCode(editableSite.getCode());
@@ -829,7 +825,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	// 需要审档（一级）流程
     	else if (businessTypePane.getSelected().getCheckLevel().equals("一级审档")) {
     		System.out.println("进入一级审档");
-    		basicInfoPane.populate(editableTrans);//赋值基本信息
+    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
         	editableTrans.setSiteCode(editableSite.getCode());
@@ -904,7 +900,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	// 需要审档（二级）流程
     	else if (businessTypePane.getSelected().getCheckLevel().equals("二级审档")) {
-    		basicInfoPane.populate(editableTrans);//赋值基本信息
+    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
         	editableTrans.setSiteCode(editableSite.getCode());
@@ -994,7 +990,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	// 两大流程
     	// 需要审档（一级）流程
     	else if (businessTypePane.getSelected().getCheckLevel().equals("一级审档")) {
-    		basicInfoPane.populate(editableTrans);//赋值基本信息
+    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
         	editableTrans.setSiteCode(editableSite.getCode());
@@ -1063,13 +1059,11 @@ public final class FrontView extends Panel implements View,InputViewIF {
             	cleanStage();
             	Notifications.bottomWarning("操作成功。本次业务已提交到质检队列中，等待质检。");
         	}
-    		
     	}
-    	
     	
     	// 需要审档（二级）流程
     	else if (businessTypePane.getSelected().getCheckLevel().equals("二级审档")) {
-    		basicInfoPane.populate(editableTrans);//赋值基本信息
+    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
         	editableTrans.setSiteCode(editableSite.getCode());
@@ -1195,19 +1189,16 @@ public final class FrontView extends Panel implements View,InputViewIF {
 	@Override
 	public void updateUnreadCount() {
 		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loggedInUser.getUserUniqueId());
-		if (sendDetailsList != null) {
-			int unreadCount = 0;
-			for (SendDetails sd : sendDetailsList) {
-				if (sd.getViewName().equals(DashboardViewType.INPUT.getViewName())
-						|| sd.getViewName().equals("")) {
-					unreadCount++;
-				}
+		int unreadCount = 0;
+		for (SendDetails sd : sendDetailsList) {
+			if (sd.getViewName().equals(DashboardViewType.INPUT.getViewName())
+					|| sd.getViewName().equals("")) {
+				unreadCount++;
 			}
-			NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
-			event.setCount(unreadCount);
-			notificationsButton.updateNotificationsCount(event);
 		}
-		
+		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
+		event.setCount(unreadCount);
+		notificationsButton.updateNotificationsCount(event);
 	}
 	
 	@Override

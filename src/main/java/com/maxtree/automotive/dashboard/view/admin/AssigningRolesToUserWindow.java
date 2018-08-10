@@ -63,7 +63,7 @@ public class AssigningRolesToUserWindow extends Window {
 		hlayout.setSpacing(false);
 		hlayout.setMargin(false);
 		
-		List<Role> allRoles = ui.roleService.findAll();
+		List<Role> allRoles = ui.roleService.findAll(false);
 		select = new TwinColSelect<>(null, allRoles);
 		select.setWidth("100%");
 		select.setRows(14);

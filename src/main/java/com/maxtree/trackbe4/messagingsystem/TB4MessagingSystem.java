@@ -108,9 +108,6 @@ public class TB4MessagingSystem {
     		recipients.add(mr);
 		}
 		ui.messagingService.insertMessageRecipients(recipients);
-		
-		// 更新缓存
-		CacheManager.getInstance().refreshSendDetailsCache();
 	}
 	
 	/**
@@ -158,9 +155,6 @@ public class TB4MessagingSystem {
 				ui.messagingService.insertSendDetails(list);
     		}
 		}
-		
-		// 更新缓存
-		CacheManager.getInstance().refreshSendDetailsCache();
 	}
 	
 	/**

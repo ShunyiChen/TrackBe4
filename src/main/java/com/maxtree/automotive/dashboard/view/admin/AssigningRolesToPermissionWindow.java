@@ -48,7 +48,6 @@ public class AssigningRolesToPermissionWindow extends Window {
 		mainLayout.setMargin(false);
 		mainLayout.setWidth("100%");
 		mainLayout.setHeightUndefined();
- 
 		Image img = new Image(null, new ThemeResource("img/adminmenu/userrole.png"));
 		Label permissionName = new Label(p.getName());
 		HorizontalLayout title = new HorizontalLayout();
@@ -59,16 +58,12 @@ public class AssigningRolesToPermissionWindow extends Window {
 		title.addComponents(img, Box.createHorizontalBox(5), permissionName);
 		title.setComponentAlignment(img, Alignment.MIDDLE_LEFT);
 		title.setComponentAlignment(permissionName, Alignment.MIDDLE_LEFT);
-		
 		HorizontalLayout hlayout = new HorizontalLayout();
 		hlayout.setSizeFull();
 		hlayout.setSpacing(false);
 		hlayout.setMargin(false);
-		
-		List<Role> allRoles = ui.roleService.findAll();
-		
+		List<Role> allRoles = ui.roleService.findAll(false);
 		List<Role> assignRoles = ui.permissionService.assignedRoles(p.getPermissionUniqueId());
-		
 		select = new TwinColSelect<>(null, allRoles);
 		select.setWidth("100%");
 		select.setRows(14);

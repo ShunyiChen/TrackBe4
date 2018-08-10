@@ -452,7 +452,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	editableTrans.setPlateType("");
     	editableTrans.setPlateNumber(addr.getLicenseplate());
     	editableTrans.setVin("");
-    	basicInfoPane.populate2(editableTrans);
+    	basicInfoPane.transaction2Fields(editableTrans);
     	// validating the transaction information
     	basicInfoPane.validatingFieldValues(binder);
     	binder.setBean(editableTrans);
@@ -502,7 +502,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	
     	resetComponents();
     	
-    	basicInfoPane.populate2(editableTrans);
+    	basicInfoPane.transaction2Fields(editableTrans);
     	businessTypePane.populate(editableTrans.getBusinessCode());
     }
     
@@ -520,7 +520,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	}
     	//新车注册流程
     	if (businessTypePane.getSelected().getName().equals("注册登记")) {
-    		basicInfoPane.populate(editableTrans);//赋值基本信息
+    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
         	editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
         	editableTrans.setSiteCode(editableSite.getCode());
@@ -545,7 +545,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	}
     	else {
     		
-    		basicInfoPane.populate(editableTrans);//赋值基本信息
+    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
         	editableTrans.setSiteCode(editableSite.getCode());
@@ -585,7 +585,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	}
     	//新车注册流程
     	if (businessTypePane.getSelected().getName().equals("注册登记")) {
-    		basicInfoPane.populate(editableTrans);//赋值基本信息
+    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
         	editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
         	editableTrans.setSiteCode(editableSite.getCode());
@@ -609,8 +609,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	Notifications.bottomWarning("操作成功。记录已提交,等待质检检验。");
     	}
     	else {
-    		
-    		basicInfoPane.populate(editableTrans);//赋值基本信息
+    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
         	editableTrans.setSiteCode(editableSite.getCode());

@@ -61,9 +61,9 @@ public class EditUserWindow extends Window {
 		userNameField = new TextField("用户名:");
 		userNameField.setIcon(VaadinIcons.USER);
 		userNameField.focus();
-		passwordField = new PasswordField("密码:");
+		passwordField = new PasswordField("初始密码:");
 		passwordField.setIcon(VaadinIcons.PASSWORD);
-		confirmPasswordField = new PasswordField("重复密码:");
+		confirmPasswordField = new PasswordField("初始重复密码:");
 		confirmPasswordField.setIcon(VaadinIcons.PASSWORD);
 		firstNameField = new TextField("名:");
 		firstNameField.setIcon(VaadinIcons.TEXT_LABEL);
@@ -76,7 +76,7 @@ public class EditUserWindow extends Window {
 		companySelector.setTextInputAllowed(false);
 		companySelector.setItems(companies);
 		companySelector.setIcon(VaadinIcons.GROUP);
-		
+		activateBox.setIcon(VaadinIcons.FACTORY);
 		activateBox.setEmptySelectionAllowed(false);
 		activateBox.setTextInputAllowed(false);
 		activateBox.setSelectedItem("是");
@@ -341,6 +341,7 @@ public class EditUserWindow extends Window {
         w.oldUserName = user.getUserName();
         w.user.setUserUniqueId(user.getUserUniqueId());
         w.userNameField.setValue(user.getUserName());
+        w.userNameField.setReadOnly(true);
         w.firstNameField.setValue(user.getProfile().getFirstName());
         w.lastNameField.setValue(user.getProfile().getLastName());
         w.passwordField.setVisible(false);

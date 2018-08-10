@@ -32,7 +32,7 @@ public class BusinessService {
 		String sql = "SELECT * FROM BUSINESS WHERE BUSINESSUNIQUEID=?";
 		List<Business> results = jdbcTemplate.query(sql, new Object[] {businessUniqueId}, new BeanPropertyRowMapper<Business>(Business.class));
 		for (Business business : results) {
-			List<DataDictionary> items = getDataDictionaries(business.getCode());
+			List<DataDictionary> items = getDataDictionaries(business.getCode(),3);
 			business.setItems(items);
 			return business;
 		}
@@ -48,7 +48,7 @@ public class BusinessService {
 		String sql = "SELECT * FROM BUSINESS WHERE CODE=?";
 		List<Business> results = jdbcTemplate.query(sql, new Object[] {businessCode}, new BeanPropertyRowMapper<Business>(Business.class));
 		for (Business business : results) {
-			List<DataDictionary> items = getDataDictionaries(business.getCode());
+			List<DataDictionary> items = getDataDictionaries(business.getCode(),3);
 			business.setItems(items);
 			return business;
 		}
@@ -63,7 +63,7 @@ public class BusinessService {
 		String sql = "SELECT * FROM BUSINESS ORDER BY BUSINESSUNIQUEID";
 		List<Business> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<Business>(Business.class));
 		for (Business business : results) {
-			List<DataDictionary> items = getDataDictionaries(business.getCode());
+			List<DataDictionary> items = getDataDictionaries(business.getCode(),3);
 			business.setItems(items);
 		}
 		return results;
@@ -72,11 +72,15 @@ public class BusinessService {
 	/**
 	 * 
 	 * @param businessCode
+	 * @param type
 	 * @return
 	 */
-	public List<DataDictionary> getDataDictionaries(String businessCode) {
-		String sql = "SELECT B.* FROM BUSINESSITEMS AS A LEFT JOIN DATADICTIONARY AS B ON A.DICTIONARYCODE = B.CODE WHERE A.BUSINESSCODE=? AND B.ITEMNAME IS NOT NULL ORDER BY A.ITEMUNIQUEID";
-		List<DataDictionary> results = jdbcTemplate.query(sql, new Object[] {businessCode}, new BeanPropertyRowMapper<DataDictionary>(DataDictionary.class));
+	public List<DataDictionary> getDataDictionaries(String businessCode, int type) {
+		String sql = "SELECT B.* FROM BUSINESSITEMS AS A LEFT JOIN DATADICTIONARY AS B ON A.DICTIONARYCODE = B.CODE WHERE A.BUSINESSCODE=? AND B.ITEMNAME IS NOT NULL AND B.ITEMTYPE=? ORDER BY A.ITEMUNIQUEID";
+		if (type == -1) {
+			sql = "SELECT B.* FROM BUSINESSITEMS AS A LEFT JOIN DATADICTIONARY AS B ON A.DICTIONARYCODE = B.CODE WHERE A.BUSINESSCODE=? AND B.ITEMNAME IS NOT NULL ORDER BY A.ITEMUNIQUEID";
+		}
+		List<DataDictionary> results = jdbcTemplate.query(sql, new Object[] {businessCode, type}, new BeanPropertyRowMapper<DataDictionary>(DataDictionary.class));
 		return results;
 	}
 	
@@ -86,10 +90,10 @@ public class BusinessService {
 	 * @return
 	 */
 	public List<Business> findAllByCompanyUniqueId(int companyUniqueId) {
-		String sql = "SELECT B.* FROM COMPANYBUSINESSES AS A LEFT JOIN BUSINESS AS B ON A.BUSINESSUNIQUEID=B.BUSINESSUNIQUEID WHERE A.COMPANYUNIQUEID=? ORDER BY B.BUSINESSUNIQUEID";
+		String sql = "SELECT B.* FROM COMPANYBUSINESSES AS A LEFT JOIN BUSINESS AS B ON A.BUSINESSUNIQUEID=B.BUSINESSUNIQUEID WHERE A.COMPANYUNIQUEID=? AND B.ITEMTYPE=? ORDER BY B.BUSINESSUNIQUEID";
 		List<Business> results = jdbcTemplate.query(sql,  new Object[] {companyUniqueId}, new BeanPropertyRowMapper<Business>(Business.class));
 		for (Business business : results) {
-			List<DataDictionary> items = getDataDictionaries(business.getCode());
+			List<DataDictionary> items = getDataDictionaries(business.getCode(),3);
 			business.setItems(items);
 		}
 		return results;

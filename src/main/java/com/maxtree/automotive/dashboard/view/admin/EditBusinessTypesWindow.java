@@ -64,7 +64,7 @@ public class EditBusinessTypesWindow extends Window {
 		checkLevelBox.setHeight("27px");
 		checkLevelBox.setEmptySelectionAllowed(false);
 		checkLevelBox.setTextInputAllowed(false);
-		checkLevelBox.setSelectedItem("一级");
+		checkLevelBox.setSelectedItem("一级审档");
 		
 		form.addComponents(nameField,codeField,checkLevelBox);
 		
