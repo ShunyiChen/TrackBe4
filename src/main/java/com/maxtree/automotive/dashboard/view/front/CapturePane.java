@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +30,7 @@ import com.maxtree.automotive.dashboard.servlet.UploadInDTO;
 import com.maxtree.automotive.dashboard.servlet.UploadOutDTO;
 import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
+import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.Panel;
@@ -72,51 +74,50 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 		int height = UI.getCurrent().getPage().getBrowserWindowHeight() - 173;
 		this.setWidth("100%");
 		this.setHeight(height+"px");
-//		browser.setSizeFull();
-//		this.setContent(browser);
+		browser.setSizeFull();
+		this.setContent(browser);
 		
-		Upload upload = new Upload(null, this);
-		upload.setButtonCaption("选择文件");
-		upload.setButtonStyleName("upload-button");
-		upload.setImmediateMode(true);
-		upload.addSucceededListener(this);
-		this.setContent(upload);
-		loggedinUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+//		Upload upload = new Upload(null, this);
+//		upload.setButtonCaption("选择文件");
+//		upload.setButtonStyleName("upload-button");
+//		upload.setImmediateMode(true);
+//		upload.addSucceededListener(this);
+//		this.setContent(upload);
+//		loggedinUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 	}
-	
-	public void displayImage(String uuid) {
-		
-	}
+//	
+//	public void displayImage(String uuid) {
+//	}
 	
 	/**
 	 * 显示拍照影像
 	 * 
 	 * @param uuid
 	 */
-//	public void displayImage(String uuid) {
-//		try {
-//			generateNewHTML(uuid);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		
-//		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-//		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
-// 			@Override
-// 			public InputStream getStream() {
-// 				FileInputStream inputStream = null;
-//				try {
-//					inputStream = new FileInputStream("devices/"+user.getUserUniqueId()+".html");
-//				} catch (FileNotFoundException e) {
-//					e.printStackTrace();
-//				}
-//				return inputStream;
-// 			}
-// 		}; 
-// 		StreamResource streamResource = new StreamResource(streamSource, user.getUserUniqueId()+".html");
-// 		streamResource.setCacheTime(0);
-//		browser.setSource(streamResource);
-//	}
+	public void displayImage(String uuid) {
+		try {
+			generateNewHTML(uuid);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
+ 			@Override
+ 			public InputStream getStream() {
+ 				FileInputStream inputStream = null;
+				try {
+					inputStream = new FileInputStream("devices/"+user.getUserUniqueId()+".html");
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+				return inputStream;
+ 			}
+ 		}; 
+ 		StreamResource streamResource = new StreamResource(streamSource, user.getUserUniqueId()+".html");
+ 		streamResource.setCacheTime(0);
+		browser.setSource(streamResource);
+	}
 	
 	/**
 	 * 生成新的带参数的HTML文件
@@ -128,7 +129,7 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 		// 读取原来的html模板
 		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		String everything = "";
-		File template = new File("devices/templates/Sample_CamOCX_HTML_Device_IE.html");
+		File template = new File("devices/templates/HtmlDemo3.html");
 //		File template = new File("devices/templates/TempHtml.html");
 		FileInputStream in = new FileInputStream(template);
 		BufferedReader br = new BufferedReader(new UnicodeReader(in));

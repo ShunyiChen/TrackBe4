@@ -68,8 +68,8 @@ public class BusinessTypeSelector extends FormLayout {
 		this.setSpacing(false);
 		this.setMargin(false);
 		this.setSizeFull();
-		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		data = ui.userService.findAssignedBusinesses(loginUser.getUserUniqueId());
+		loggedinUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		data = ui.userService.findAssignedBusinesses(loggedinUser.getUserUniqueId());
 		selector = new ComboBox<Business>("业务类型:", data);
 		// Disallow null selections
 		selector.setEmptySelectionAllowed(false);
@@ -151,12 +151,14 @@ public class BusinessTypeSelector extends FormLayout {
 
 			}
 				
-			if(forTheFirstTimeToLoad) {
 				//影像化检测有效
 				if (imagingCheck()) {
 					loadMaterials(opt.get().getCode());
+					
 					ui.addPollListener(pollListener);
-					forTheFirstTimeToLoad = false;
+					
+//					ui.removePollListener(pollListener);
+					
 				}
 				//影像化检测无效
 				else {
@@ -180,6 +182,11 @@ public class BusinessTypeSelector extends FormLayout {
 					details.put("5", view.basicInfoPane().getVIN());//VIN
 					String messageBody = jsonHelper.map2Json(details);
 					User receiver = ui.userService.findImagingAdmin(view.loggedInUser().getCommunityUniqueId());
+					if (receiver.getUserUniqueId() == 0) {
+						Notifications.warning("无法找到影像化管理员，请联系系统管理员进行设置。");
+						return;
+					}
+					
 					TB4MessagingSystem messageSystem = new TB4MessagingSystem();
 					Message newMessage = messageSystem.createNewMessage(receiver, "影像化检测消息", messageBody);
 					Set<Name> names = new HashSet<Name>();
@@ -187,7 +194,7 @@ public class BusinessTypeSelector extends FormLayout {
 					names.add(target);
 					messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_MANAGER.getViewName());
 					//3.更新消息轮询的缓存
-					CacheManager.getInstance().getSendDetailsCache().refresh(loginUser.getUserUniqueId());
+					CacheManager.getInstance().getSendDetailsCache().refresh(loggedinUser.getUserUniqueId());
 					
 					Callback callback = new Callback() {
 						@Override
@@ -197,7 +204,6 @@ public class BusinessTypeSelector extends FormLayout {
 					};
 					Notifications.warning("缺少历史影像化记录，已提交申请。等待补充完整后再重新开始本次业务登记。", callback);
 				}
-			}
 			
 		});
 	}
@@ -376,7 +382,6 @@ public class BusinessTypeSelector extends FormLayout {
 	private TB4FileSystem fileSystem = new TB4FileSystem();
 	private UIEvents.PollListener pollListener;
 	private boolean selectionHashDone = false;
-	private boolean forTheFirstTimeToLoad = true;
 	private MessageBodyParser jsonHelper = new MessageBodyParser();
-	private User loginUser = null;
+	private User loggedinUser = null;
 }

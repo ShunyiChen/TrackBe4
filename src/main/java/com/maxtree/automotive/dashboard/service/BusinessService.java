@@ -90,7 +90,7 @@ public class BusinessService {
 	 * @return
 	 */
 	public List<Business> findAllByCompanyUniqueId(int companyUniqueId) {
-		String sql = "SELECT B.* FROM COMPANYBUSINESSES AS A LEFT JOIN BUSINESS AS B ON A.BUSINESSUNIQUEID=B.BUSINESSUNIQUEID WHERE A.COMPANYUNIQUEID=? AND B.ITEMTYPE=? ORDER BY B.BUSINESSUNIQUEID";
+		String sql = "SELECT B.* FROM COMPANYBUSINESSES AS A LEFT JOIN BUSINESS AS B ON A.BUSINESSUNIQUEID=B.BUSINESSUNIQUEID WHERE A.COMPANYUNIQUEID=? ORDER BY B.BUSINESSUNIQUEID";
 		List<Business> results = jdbcTemplate.query(sql,  new Object[] {companyUniqueId}, new BeanPropertyRowMapper<Business>(Business.class));
 		for (Business business : results) {
 			List<DataDictionary> items = getDataDictionaries(business.getCode(),3);

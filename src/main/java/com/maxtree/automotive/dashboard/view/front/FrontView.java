@@ -1188,7 +1188,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
 
 	@Override
 	public void updateUnreadCount() {
-		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loggedInUser.getUserUniqueId());
+		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().get(loggedInUser.getUserUniqueId());
 		int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {
 			if (sd.getViewName().equals(DashboardViewType.INPUT.getViewName())
