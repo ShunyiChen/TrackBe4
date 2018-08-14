@@ -515,7 +515,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	batch = ui.siteService.updateFolders(editableSite);
     	if (batch == 0) {
     		Notifications.warning("当前站点-"+editableSite.getSiteName()+"已满。请联系管理员进行重新分配。");
-    		editableTrans = null;
     		editableSite = null;
     		return;
     	}
@@ -608,68 +607,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	basicInfoPane.transaction2Fields(editableTrans);
     	businessTypePane.populate(editableTrans.getBusinessCode());
-    	
-//		if (editableTrans != null) {
-//			long time1 = editableTrans.getDateModified().getTime();
-//			long time2 = messageDateCreated.getTime();
-//			if (time1 > time2) {
-//				Notifications.warning("该业务已过时。");
-//				return;
-//			}
-//			// 2.重置文本框
-//			this.resetComponents();
-//			
-//			// 初始化更改信息
-//			User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-//			editableCompany = ui.companyService.findById(loginUser.getCompanyUniqueId());
-//			editableType.setSelected(editableTrans.getBusinessUniqueId());
-//			editableType.setSelectorEnabled(false);
-//			informationGrid.setFieldValues(editableTrans);
-//			editableSite = ui.siteService.findById(editableTrans.getSiteUniqueId());
-//			uuid = editableTrans.getUuid();
-//			
-//			// 获取主要材料
-//			Business business = editableType.getSelector().getValue();
-//			List<Document> documentList = ui.documentService.findPrimary(uuid, business.getBusinessUniqueId());
-//			List<Document> filledDocumentList = new ArrayList<Document>();
-//			for (DataItem item : business.getItems()) {
-//				Document doc = existCheck(item.getItemName(), documentList);
-//				if (doc == null) {
-//					doc = new Document();
-//					doc.setAlias(item.getItemName());
-//					doc.setFileName("");
-//					doc.setFileFullPath("");
-//					doc.setCategory(0); 
-//        			// 文件类别0：主要图片,1：次要图片
-//					doc.setBusinessUniqueId(business.getBusinessUniqueId());
-//					doc.setUuid(editableTrans.getUuid());
-//				}
-//				filledDocumentList.add(doc);
-//			}
-//			// 加载主要材料
-//    		primaryGrid.addUploadCells(editableSite, filledDocumentList.toArray(new Document[filledDocumentList.size()]));
-//
-//    		// 初始化次要材料
-//    		secondaryGrid.setBusinessUniqueId(business.getBusinessUniqueId());
-//    		secondaryGrid.setEnabledForUploadComponent(true);//如果业务类型已选，则可以启用选择上传组件
-//    		secondaryGrid.setSite(editableSite);
-//    		secondaryGrid.setUuid(uuid);
-//        	List<Document> doc2 = ui.documentService.findSecondary(uuid, business.getBusinessUniqueId());
-//        	// 加载次要材料
-//        	secondaryGrid.addUploadCells(editableSite, doc2.toArray(new Document[doc2.size()]));
-//        	
-//        	
-//        	if (editableTrans.getStatus().equals(Status.S4.name)) {
-//  	    		
-//  	    		// 打印文件标签和车辆标签
-//  	    		PrintingConfirmationWindow.open("打印确认", editableTrans.getTransactionUniqueId()); 
-//  	    		
-//  	    	} else if (editableTrans.getStatus().equals(Status.ReturnedToThePrint.name) 
-//  	    			|| editableTrans.getStatus().equals(Status.S3.name)) {
-//  	    		// 打印审核结果单
-//  	    		PrintingResultsWindow.open("打印确认", editableTrans.getTransactionUniqueId()); 
-//  	    	}
-//		}
     }
     
     /**
@@ -971,7 +908,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
             	Notifications.bottomWarning("操作成功。记录已提交到质检队列等待质检。");
         	}
     	}
-    	editableTrans = null;
+    	
     }
     
     /**
@@ -1134,7 +1071,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
             	Notifications.bottomWarning("操作成功。本次业务已添加到质检队列中，等待质检。");
         	}
     	}
-    	editableTrans = null;
+    	
     }
     
     /**
@@ -1184,6 +1121,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
 		} catch (IOException e) {
 			log.info("删除"+"devices/"+loggedInUser.getUserUniqueId()+".html失败。");
 		}
+		
+		editableTrans = null;
 	}
 
 	@Override
@@ -1255,7 +1194,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
 	public static final String TITLE_ID = "dashboard-title";
 	private int editMode;//0-新建 1:修改
 	private MessageBodyParser jsonHelper = new MessageBodyParser();
-	private Transaction editableTrans = null; 	//可编辑的编辑transaction
+	private Transaction editableTrans; 	//可编辑的编辑transaction
 	private Company editableCompany = null;	 	//前台所在机构
 	private User loggedInUser;	//登录用户
 	private Site editableSite;	//业务站点

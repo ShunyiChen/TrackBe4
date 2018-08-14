@@ -74,20 +74,17 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 		int height = UI.getCurrent().getPage().getBrowserWindowHeight() - 173;
 		this.setWidth("100%");
 		this.setHeight(height+"px");
-		browser.setSizeFull();
-		this.setContent(browser);
+//		browser.setSizeFull();
+//		this.setContent(browser);
 		
-//		Upload upload = new Upload(null, this);
-//		upload.setButtonCaption("选择文件");
-//		upload.setButtonStyleName("upload-button");
-//		upload.setImmediateMode(true);
-//		upload.addSucceededListener(this);
-//		this.setContent(upload);
-//		loggedinUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		Upload upload = new Upload(null, this);
+		upload.setButtonCaption("选择文件");
+		upload.setButtonStyleName("upload-button");
+		upload.setImmediateMode(true);
+		upload.addSucceededListener(this);
+		this.setContent(upload);
+		loggedinUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 	}
-//	
-//	public void displayImage(String uuid) {
-//	}
 	
 	/**
 	 * 显示拍照影像

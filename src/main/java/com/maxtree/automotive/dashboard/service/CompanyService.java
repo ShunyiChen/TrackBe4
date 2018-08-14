@@ -251,8 +251,8 @@ public class CompanyService {
 	 * @return
 	 */
 	public FrameNumber findAssignedStores(String storehouseName) {
-		String sql = "SELECT * FROM FRAMENUMBER WHERE STOREHOUSENAME=?";
-		List<FrameNumber> results = jdbcTemplate.query(sql, new Object[] {storehouseName}, new BeanPropertyRowMapper<FrameNumber>(FrameNumber.class));
+		String sql = "SELECT * FROM FRAMENUMBER WHERE STOREHOUSENAME=? AND FRAMECODE=? AND MAXCOLUMN=? AND MAXROW=?";
+		List<FrameNumber> results = jdbcTemplate.query(sql, new Object[] {storehouseName,0,0,0}, new BeanPropertyRowMapper<FrameNumber>(FrameNumber.class));
 		if (results.size() > 0) {
 			return results.get(0);
 		}

@@ -70,6 +70,10 @@ public class ManageBusinessTypesGrid extends VerticalLayout {
 		this.setComponentAlignment(addButton, Alignment.TOP_RIGHT);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	private HorizontalLayout createGridHeader() {
 		HorizontalLayout header = new HorizontalLayout();
 		header.setMargin(false);
@@ -79,15 +83,12 @@ public class ManageBusinessTypesGrid extends VerticalLayout {
 		header.addStyleName("grid-header-line");
 		Label columnName = new Label("名称");
 		columnName.addStyleName("grid-title");
-		Label colCheckFile = new Label("是否审档");
-		colCheckFile.addStyleName("grid-title");
 		Label colLocal= new Label("审档级别");
 		colLocal.addStyleName("grid-title");
 		Label colMaterials = new Label("业务材料");
 		colMaterials.addStyleName("grid-title");
-		header.addComponents(columnName,colCheckFile,colLocal,colMaterials);
+		header.addComponents(columnName,colLocal,colMaterials);
 		header.setComponentAlignment(columnName, Alignment.MIDDLE_LEFT);
-		header.setComponentAlignment(colCheckFile, Alignment.MIDDLE_LEFT);
 		header.setComponentAlignment(colLocal, Alignment.MIDDLE_LEFT);
 		header.setComponentAlignment(colMaterials, Alignment.MIDDLE_LEFT);
 		return header;
@@ -216,8 +217,8 @@ public class ManageBusinessTypesGrid extends VerticalLayout {
 			menu.open(e.getClientX(), e.getClientY());
 		});
 		
-		labelName.setWidth("155px");
-		labelLocal.setWidth("60px");
+		labelName.setWidth("175px");
+		labelLocal.setWidth("175px");
 		labelMaterials.setWidth("180px");
 		row.addComponents(labelName, labelLocal,labelMaterials, moreImg);
 		row.setComponentAlignment(labelName, Alignment.MIDDLE_LEFT);

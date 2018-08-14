@@ -62,7 +62,7 @@ public class EditBusinessTypesWindow extends Window {
 		checkLevelBox.setDescription("一级审档表示本社区本机构内部审档。二级审档表示本社区外部机构审档。");
 		checkLevelBox.setWidth("350px");
 		checkLevelBox.setHeight("27px");
-		checkLevelBox.setEmptySelectionAllowed(false);
+		checkLevelBox.setEmptySelectionAllowed(true);
 		checkLevelBox.setTextInputAllowed(false);
 		checkLevelBox.setSelectedItem("一级审档");
 		

@@ -80,13 +80,10 @@ public class ManageDataDictionaryGrid extends VerticalLayout {
 		columnProject.addStyleName("grid-title");
 		Label columnCode = new Label("代码");
 		columnCode.addStyleName("grid-title");
-		Label columnOrder = new Label("顺序");
-		columnOrder.addStyleName("grid-title");
-		header.addComponents(columnCategory,columnProject,columnCode,columnOrder);
+		header.addComponents(columnCategory,columnProject,columnCode);
 		header.setComponentAlignment(columnCategory, Alignment.MIDDLE_LEFT);
 		header.setComponentAlignment(columnProject, Alignment.MIDDLE_LEFT);
 		header.setComponentAlignment(columnCode, Alignment.MIDDLE_LEFT);
-		header.setComponentAlignment(columnOrder, Alignment.MIDDLE_LEFT);
 		return header;
 	}
 	
@@ -165,6 +162,11 @@ public class ManageDataDictionaryGrid extends VerticalLayout {
 			});
 			
 			menu.addItem("从列表删除", new Command() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
 					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
@@ -193,9 +195,9 @@ public class ManageDataDictionaryGrid extends VerticalLayout {
 			menu.open(e.getClientX(), e.getClientY());
 		});
 		
-		labelCategoryName.setWidth("137px");
-		labelName.setWidth("145px");
-		labelCode.setWidth("145px");
+		labelCategoryName.setWidth("177px");
+		labelName.setWidth("185px");
+		labelCode.setWidth("165px");
 		
 		row.addComponents(labelCategoryName,labelName,labelCode,moreImg);
 		row.setComponentAlignment(labelCategoryName, Alignment.MIDDLE_LEFT);
