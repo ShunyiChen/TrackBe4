@@ -407,12 +407,19 @@ public final class FrontView extends Panel implements View,InputViewIF {
     private void resetComponents() {
     	main.removeAllComponents();
     	main.setHeightUndefined();
+    	
+    	fileGrid.removeAllRows();
+    	businessTypePane.setSelectorEnabled(false);
+    	
+    	
     	spliterSouth.setSizeFull();
     	spliterSouth.addComponents(fileGrid, capturePane);
     	spliterNorth.setSizeFull();
     	spliterNorth.addComponents(basicInfoPane, businessTypePane);
     	spliterNorth.setExpandRatio(basicInfoPane, 3);
     	spliterNorth.setExpandRatio(businessTypePane, 1);
+    	
+    	
     	main.addComponents(spliterNorth, spliterSouth);
     	main.setExpandRatio(spliterNorth, 1);
     	main.setExpandRatio(spliterSouth, 9);
@@ -634,7 +641,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
         	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
         	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setLocationCode(provinceCode+","+city+","+district);
         	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
@@ -708,16 +715,17 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
         	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
         	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setLocationCode(provinceCode+","+city+","+district);
+        	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
-        	editableTrans.setIndexNumber(indexNumber);
+        	editableTrans.setIndexNumber(indexNumber + 1);
         	
         	// 是否跳过质检
         	if(editableCompany.getIgnoreChecker() == 1) {
         		// 新车注册首个上架号
-        		String firstCode = ui.transactionService.findFirstCode(basicInfoPane.getVIN());
+        		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
         		if(StringUtils.isEmpty(firstCode)) {
         			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
         			return;
@@ -772,16 +780,17 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
         	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
         	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setLocationCode(provinceCode+","+city+","+district);
+        	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
-        	editableTrans.setIndexNumber(indexNumber);
+        	editableTrans.setIndexNumber(indexNumber + 1);
         	
         	// 是否跳过质检
         	if(editableCompany.getIgnoreChecker() == 1) {
         		// 新车注册首个上架号
-        		String firstCode = ui.transactionService.findFirstCode(basicInfoPane.getVIN());
+        		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
         		if(StringUtils.isEmpty(firstCode)) {
         			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
         			return;
@@ -847,16 +856,16 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
         	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
         	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setLocationCode(provinceCode+","+city+","+district);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
-        	editableTrans.setIndexNumber(indexNumber);
+        	editableTrans.setIndexNumber(indexNumber + 1);
         	
         	// 是否跳过质检
         	if(editableCompany.getIgnoreChecker() == 1) {
         		// 新车注册首个上架号
-        		String firstCode = ui.transactionService.findFirstCode(basicInfoPane.getVIN());
+        		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
         		if(StringUtils.isEmpty(firstCode)) {
         			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
         			return;
@@ -937,16 +946,16 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
         	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
         	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setLocationCode(provinceCode+","+city+","+district);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
-        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
-        	editableTrans.setIndexNumber(indexNumber);
+//        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
+//        	editableTrans.setIndexNumber(indexNumber);
         	
         	// 是否跳过质检
         	if(editableCompany.getIgnoreChecker() == 1) {
         		// 新车注册首个上架号
-        		String firstCode = ui.transactionService.findFirstCode(basicInfoPane.getVIN());
+        		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
         		if(StringUtils.isEmpty(firstCode)) {
         			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
         			return;
@@ -1010,16 +1019,16 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
         	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
         	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setLocationCode(provinceCode+","+city+","+district);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
-        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
-        	editableTrans.setIndexNumber(indexNumber);
+//        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
+//        	editableTrans.setIndexNumber(indexNumber);
         	
         	// 是否跳过质检
         	if(editableCompany.getIgnoreChecker() == 1) {
         		// 新车注册首个上架号
-        		String firstCode = ui.transactionService.findFirstCode(basicInfoPane.getVIN());
+        		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
         		if(StringUtils.isEmpty(firstCode)) {
         			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
         			return;
@@ -1138,6 +1147,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
 		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
 		event.setCount(unreadCount);
 		notificationsButton.updateNotificationsCount(event);
+		
 	}
 	
 	@Override

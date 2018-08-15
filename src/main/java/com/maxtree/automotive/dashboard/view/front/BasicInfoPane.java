@@ -7,6 +7,7 @@ import org.springframework.util.StringUtils;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.data.Address;
+import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.view.InputViewIF;
@@ -92,14 +93,34 @@ public class BasicInfoPane extends Panel {
 		vinField.setHeight(fieldHeight);
 		vinField.setReadOnly(true);
 		
+		barCodeField.addFocusListener(e->{
+			ui.setPollInterval(-1);
+		});
+		plateTypeField.addFocusListener(e->{
+			ui.setPollInterval(-1);	
+		});
+		plateNumberField.addFocusListener(e->{
+			ui.setPollInterval(-1);
+		});
+		vinField.addFocusListener(e->{
+			ui.setPollInterval(-1);
+		});
+
+		
 		barCodeField.addBlurListener(e -> {
 			populateVIN();
+			ui.setPollInterval(config.getInterval());
 		});
 		plateTypeField.addBlurListener(e -> {
 			populateVIN();
+			ui.setPollInterval(config.getInterval());
 		});
 		plateNumberField.addBlurListener(e -> {
 			populateVIN();
+			ui.setPollInterval(config.getInterval());
+		});
+		vinField.addBlurListener(e -> {
+			ui.setPollInterval(config.getInterval());
 		});
 	}
 	
@@ -268,4 +289,5 @@ public class BasicInfoPane extends Panel {
 	private String fieldHeight = "27px";
 //	private InterF interF = new InterF();
 	private InputViewIF view;
+	private SystemConfiguration config = Yaml.readSystemConfiguration();
 }

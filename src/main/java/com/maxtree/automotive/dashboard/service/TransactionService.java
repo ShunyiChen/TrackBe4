@@ -81,7 +81,7 @@ public class TransactionService {
 	public int insert(Transaction transaction) {
 		int index = getTableIndex(transaction.getVin());
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-		String INSERT_TRANS_SQL = "INSERT INTO TRANSACTION_"+index+"(BARCODE,PLATETYPE,PLATENUMBER,VIN,DATECREATED,STATUS,SITECODE,BUSINESSCODE,COMMUNITYUNIQUEID,COMPANYUNIQUEID,LOCATIONCODE,DATEMODIFIED,BATCH,UUID,CREATOR,INDEXNUMBER) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String INSERT_TRANS_SQL = "INSERT INTO TRANSACTION_"+index+"(BARCODE,PLATETYPE,PLATENUMBER,VIN,DATECREATED,STATUS,SITECODE,BUSINESSCODE,COMMUNITYUNIQUEID,COMPANYUNIQUEID,LOCATIONCODE,DATEMODIFIED,BATCH,UUID,CODE,CREATOR,INDEXNUMBER) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -104,8 +104,9 @@ public class TransactionService {
 				ps.setTimestamp(12, modifyDate);
 				ps.setInt(13, transaction.getBatch());
 				ps.setString(14, transaction.getUuid());
-				ps.setString(15, transaction.getCreator());
-				ps.setInt(16, transaction.getIndexNumber());
+				ps.setString(15, transaction.getCode());
+				ps.setString(16, transaction.getCreator());
+				ps.setInt(17, transaction.getIndexNumber());
 				return ps;
 			}
 		}, keyHolder);
@@ -141,16 +142,19 @@ public class TransactionService {
 	}
 	
 	/**
-	 * 获取新车注册业务的上架号
+	 * 获取transaction上架号
 	 * 
 	 * @param vin
 	 * @return
 	 */
-	public String findFirstCode(String vin) {
+	public String findTransactionCode(String vin) {
 		try {
 			int index = getTableIndex(vin);
-			String sql = "SELECT CODE FROM TRANSACTION_"+index+" WHERE VIN=? AND INDEXNUMBER=?";
-			String code = jdbcTemplate.queryForObject( sql, new Object[] {vin, 1}, String.class);
+//			String sql = "SELECT CODE FROM TRANSACTION_"+index+" WHERE VIN=? AND INDEXNUMBER=?";
+			String sql = "SELECT CODE FROM TRANSACTION_"+index+" WHERE VIN=? LIMIT ?";
+			System.out.println(index+"  "+vin+"  ");
+			
+			String code = jdbcTemplate.queryForObject( sql, new Object[] {vin,1}, String.class);
 			return code;
 		} catch (IncorrectResultSizeDataAccessException e){
 //			throw new DataException(e.getMessage());

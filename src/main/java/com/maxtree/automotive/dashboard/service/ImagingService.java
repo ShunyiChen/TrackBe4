@@ -66,9 +66,14 @@ public class ImagingService {
 	 * @return
 	 */
 	public int insert(Imaging imaging) {
+		String querySQL = "SELECT * FROM IMAGING WHERE VIN=?";
+		List<Imaging> results = jdbcTemplate.query(querySQL, new Object[] {imaging.getVin()}, new BeanPropertyRowMapper<Imaging>(Imaging.class));
+		if (results.size() > 0) {
+			return 0;
+		}
+		
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		String INSERT_SQL = "INSERT INTO IMAGING(PLATETYPE,PLATENUMBER,VIN,DATECREATED,DATEMODIFIED,STATUS,CREATOR) VALUES(?,?,?,?,?,?,?)";
-		
 		jdbcTemplate.update(new PreparedStatementCreator() {
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
@@ -85,7 +90,6 @@ public class ImagingService {
 				ps.setString(7, imaging.getCreator());
 				return ps;
 			}
-			
 		}, keyHolder);
 		int imaginguniqueid  = keyHolder.getKey().intValue(); 
 		return imaginguniqueid;
