@@ -76,12 +76,26 @@ public class DataItemService {
 	
 	/**
 	 * 
-	 * @param itemType
+	 * @param name
 	 * @return
 	 */
 	public String findCodeByName(String name) {
 		String sql = "SELECT CODE FROM DATADICTIONARY WHERE ITEMNAME=? ORDER BY DICTIONARYUNIQUEID";
 		List<String> results = jdbcTemplate.queryForList(sql, new Object[] {name}, String.class);
+		if(results.size() > 0) {
+			return results.get(0);
+		}
+		return "";
+	}
+	
+	/**
+	 * 
+	 * @param code
+	 * @return
+	 */
+	public String findNameByCode(String code) {
+		String sql = "SELECT ITEMNAME FROM DATADICTIONARY WHERE CODE=? ORDER BY DICTIONARYUNIQUEID";
+		List<String> results = jdbcTemplate.queryForList(sql, new Object[] {code}, String.class);
 		if(results.size() > 0) {
 			return results.get(0);
 		}

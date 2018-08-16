@@ -68,6 +68,8 @@ public class EditCompanyWindow extends Window {
 		addrField = new TextField("详细地址:");
 		addrField.setIcon(VaadinIcons.EDIT);
 		
+		categorySelector.setItems("车管所","二手车","4S店");
+		
 		Address addr = Yaml.readAddress();
 		provinceSelector.setItems(addr.getProvince());
 		citySelector.setItems(addr.getCity());
@@ -79,7 +81,7 @@ public class EditCompanyWindow extends Window {
 		hasChecker.setEmptySelectionAllowed(false);
 		hasChecker.setTextInputAllowed(false);
 		hasChecker.setSelectedItem("是");
-		form.addComponents(nameField,provinceSelector,citySelector,districtSelector,addrField,communitySelector,hasStore,hasChecker);
+		form.addComponents(nameField,categorySelector,provinceSelector,citySelector,districtSelector,addrField,communitySelector,hasStore,hasChecker);
 		HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setSizeFull();
 		buttonPane.setSpacing(false);
@@ -126,6 +128,7 @@ public class EditCompanyWindow extends Window {
 		nameField.setWidth(w+"px");
 		addrField.setWidth(w+"px");
 		communitySelector.setWidth(w+"px");
+		categorySelector.setWidth(w+"px");
 		provinceSelector.setWidth(w+"px");
 		citySelector.setWidth(w+"px");
 		districtSelector.setWidth(w+"px");
@@ -135,6 +138,7 @@ public class EditCompanyWindow extends Window {
 		nameField.setHeight(h+"px");
 		addrField.setHeight(h+"px");
 		communitySelector.setHeight(h+"px");
+		categorySelector.setHeight(h+"px");
 		provinceSelector.setHeight(h+"px");
 		citySelector.setHeight(h+"px");
 		districtSelector.setHeight(h+"px");
@@ -149,6 +153,7 @@ public class EditCompanyWindow extends Window {
 		// Bind nameField to the Person.name property
 		// by specifying its getter and setter
 		binder.bind(nameField, Company::getCompanyName, Company::setCompanyName);
+		binder.bind(categorySelector, Company::getCategory, Company::setCategory);
 		binder.bind(provinceSelector, Company::getProvince, Company::setProvince);
 		binder.bind(citySelector, Company::getCity, Company::setCity);
 		binder.bind(districtSelector, Company::getDistrict, Company::setDistrict);
@@ -187,30 +192,33 @@ public class EditCompanyWindow extends Window {
 	 * @return
 	 */
 	private boolean checkEmptyValues() {
+		
 		if (StringUtils.isEmpty(company.getCompanyName())) {
 			Notification notification = new Notification("提示：", "机构名不能为空", Type.WARNING_MESSAGE);
 			notification.setDelayMsec(2000);
 			notification.show(Page.getCurrent());
-			
+			return false;
+		}
+		if (StringUtils.isEmpty(company.getCategory())) {
+			Notification notification = new Notification("提示：", "类别不能为空", Type.WARNING_MESSAGE);
+			notification.setDelayMsec(2000);
+			notification.show(Page.getCurrent());
 			return false;
 		}
 		if (nameField.getErrorMessage() != null) {
 			nameField.setComponentError(nameField.getErrorMessage());
 			return false;
 		}
-		
 		if (StringUtils.isEmpty(company.getProvince())) {
 			Notification notification = new Notification("提示：", "省不能为空", Type.WARNING_MESSAGE);
 			notification.setDelayMsec(2000);
 			notification.show(Page.getCurrent());
-			
 			return false;
 		}
 		if (provinceSelector.getErrorMessage() != null) {
 			provinceSelector.setComponentError(provinceSelector.getErrorMessage());
 			return false;
 		}
-		
 		return true;
 	}
 	
@@ -229,12 +237,26 @@ public class EditCompanyWindow extends Window {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param callback
+	 */
 	public static void open(Callback callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditCompanyWindow w = new EditCompanyWindow();
         w.btnAdd.setCaption("添加");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
+        		String name1 = w.provinceSelector.getValue();
+        		String code1 = ui.dataItemService.findCodeByName(name1);
+        		String name2 = w.citySelector.getValue();
+        		String code2 = ui.dataItemService.findCodeByName(name2);
+        		String name3 = w.districtSelector.getValue();
+        		String code3 = ui.dataItemService.findCodeByName(name3);
+        		w.company.setCategory(w.categorySelector.getValue().trim());
+        		w.company.setProvince(code1);
+        		w.company.setCity(code2);
+        		w.company.setDistrict(code3);
         		w.company.setCommunityUniqueId(w.communitySelector.getValue() == null?0:w.communitySelector.getValue().getCommunityUniqueId());
         		w.company.setHasStoreHouse(w.hasStore.getValue().equals("是")?1:0);
         		w.company.setIgnoreChecker(w.hasChecker.getValue().equals("是")?1:0);
@@ -247,6 +269,11 @@ public class EditCompanyWindow extends Window {
         w.center();
     }
  
+	/**
+	 * 
+	 * @param company
+	 * @param callback
+	 */
 	public static void edit(Company company, Callback callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditCompanyWindow w = new EditCompanyWindow();
@@ -254,9 +281,17 @@ public class EditCompanyWindow extends Window {
         w.selectItem(c.getCommunityUniqueId());
         w.company.setCompanyUniqueId(c.getCompanyUniqueId());
         w.nameField.setValue(c.getCompanyName());
-        w.provinceSelector.setSelectedItem(c.getProvince() ==null?"":c.getProvince());
-        w.citySelector.setSelectedItem(c.getCity() == null?"":c.getCity());
-        w.districtSelector.setSelectedItem(c.getDistrict()==null?"":c.getDistrict());
+        String code1 = company.getProvince();
+        String name1 = ui.dataItemService.findNameByCode(code1);
+        String code2 = company.getCity();
+        String name2 = ui.dataItemService.findNameByCode(code2);
+        String code3 = company.getDistrict();
+        String name3 = ui.dataItemService.findNameByCode(code3);
+        
+        w.categorySelector.setSelectedItem(c.getCategory().trim());
+        w.provinceSelector.setSelectedItem(name1);
+        w.citySelector.setSelectedItem(name2);
+        w.districtSelector.setSelectedItem(name3);
         w.hasStore.setSelectedItem(c.getHasStoreHouse()==1?"是":"否");
         w.hasChecker.setSelectedItem(c.getIgnoreChecker()==1?"是":"否");
         w.addrField.setValue(c.getAddress() == null? "":c.getAddress());
@@ -264,7 +299,16 @@ public class EditCompanyWindow extends Window {
         w.setCaption("编辑机构");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
-        		
+        		String name11 = w.provinceSelector.getValue();
+        		String code11 = ui.dataItemService.findCodeByName(name11);
+        		String name22 = w.citySelector.getValue();
+        		String code22 = ui.dataItemService.findCodeByName(name22);
+        		String name33 = w.districtSelector.getValue();
+        		String code33 = ui.dataItemService.findCodeByName(name33);
+        		w.company.setCategory(w.categorySelector.getValue().trim());
+        		w.company.setProvince(code11);
+        		w.company.setCity(code22);
+        		w.company.setDistrict(code33);
         		w.company.setEmployees(c.getEmployees());
         		w.company.setCommunityUniqueId(w.communitySelector.getValue() == null?0:w.communitySelector.getValue().getCommunityUniqueId());
         		w.company.setHasStoreHouse(w.hasStore.getValue().equals("是")?1:0);
@@ -279,6 +323,7 @@ public class EditCompanyWindow extends Window {
         w.center();
     }
 	
+	private ComboBox<String> categorySelector = new ComboBox<String>("类别:");
 	private ComboBox<String> provinceSelector = new ComboBox<String>("省份:");
 	private ComboBox<String> citySelector = new ComboBox<String>("地级市:");
 	private ComboBox<String> districtSelector = new ComboBox<String>("市、县级市:");

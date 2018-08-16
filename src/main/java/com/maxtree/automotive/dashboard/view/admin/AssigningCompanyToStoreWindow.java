@@ -46,16 +46,17 @@ public class AssigningCompanyToStoreWindow extends Window {
 		mainLayout.setWidth("100%");
 		mainLayout.setHeightUndefined();
  
-		Image img = new Image(null, VaadinIcons.GROUP);
-		Label userName = new Label(storehouse.getStorehouseName());
+		Image img = new Image(null);
+		img.setIcon(VaadinIcons.GROUP);
+		Label storeName = new Label(storehouse.getStorehouseName());
 		HorizontalLayout title = new HorizontalLayout();
 		title.setWidthUndefined();
 		title.setHeightUndefined();
 		title.setSpacing(false);
 		title.setMargin(false);
-		title.addComponents(img, Box.createHorizontalBox(5), userName);
+		title.addComponents(img, Box.createHorizontalBox(5), storeName);
 		title.setComponentAlignment(img, Alignment.MIDDLE_LEFT);
-		title.setComponentAlignment(userName, Alignment.MIDDLE_LEFT);
+		title.setComponentAlignment(storeName, Alignment.MIDDLE_LEFT);
 		
 		HorizontalLayout hlayout = new HorizontalLayout();
 		hlayout.setSizeFull();

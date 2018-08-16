@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Actions;
@@ -27,6 +28,7 @@ import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Company;
+import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Site;
@@ -50,6 +52,7 @@ import com.vaadin.data.Binder;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -160,13 +163,13 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
      */
 	private void startPolling() {
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
-//		ui.setPollInterval(sc.getPollinginterval());
-//		ui.addPollListener(new UIEvents.PollListener() {
-//			@Override
-//			public void poll(UIEvents.PollEvent event) {
-//				updateUnreadCount();
-//			}
-//		});
+		ui.setPollInterval(sc.getInterval());
+		ui.addPollListener(new UIEvents.PollListener() {
+			@Override
+			public void poll(UIEvents.PollEvent event) {
+				updateUnreadCount();
+			}
+		});
 	}
 
     private Component buildSparklines() {
@@ -303,7 +306,6 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 
         @Subscribe
         public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-//        	System.out.println("===============DashboardView Polling");
         	DashboardMenu.getInstance().updateNotificationsCount(event.getCount());
         	setUnreadCount(event.getCount());
         }
@@ -527,15 +529,31 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
-        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
-        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
         	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	editableTrans.setIndexNumber(1);
         	editableTrans.setStatus(BusinessState.B7.name);
+//        	FrameNumber frame = ui.frameService.getNewCode(editableCompany.getStorehouseName());
+        	// 获得社区内的全部机构
+    		List<Company> companies = ui.communityService.findAllCompanies(loggedInUser.getCommunityUniqueId());
+    		Company com = null;
+    		for(int i = 0; i < companies.size(); i++) {
+    			com = companies.get(i);
+    			if (com.getCategory().trim().equals("车管所")) {
+    				break;
+    			}
+    		}
+    		FrameNumber frame = ui.frameService.getNewCode(com.getStorehouseName());
+    		if(StringUtils.isEmpty(frame.getCode())) {
+    			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
+    			return;
+    		} else {
+    			//跳过质检，完成逻辑上架
+    			editableTrans.setCode(frame.getCode()+"");//上架号
+    			ui.frameService.updateVIN(basicInfoPane.getVIN(), frame.getCode());
+    		}
     		ui.transactionService.insert(editableTrans);
     		//操作记录
     		track(Actions.INPUT);
@@ -552,14 +570,11 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
-        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
-        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
-        	editableTrans.setIndexNumber(indexNumber);
+        	editableTrans.setIndexNumber(indexNumber + 1);
         	
         	editableTrans.setStatus(BusinessState.B7.name);
     		ui.transactionService.insert(editableTrans);
@@ -592,10 +607,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
-        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
-        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
         	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
@@ -616,14 +628,11 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
-        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
-        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-        	editableTrans.setLocationCode(provinceCode+""+city+""+district);
+        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
-        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
-        	editableTrans.setIndexNumber(indexNumber);
+//        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
+//        	editableTrans.setIndexNumber(indexNumber);
         	editableTrans.setStatus(BusinessState.B7.name);
     		ui.transactionService.update(editableTrans);
     		//操作记录
@@ -687,10 +696,9 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 
 	@Override
 	public void updateUnreadCount() {
-		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loggedInUser.getUserUniqueId());
+		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().get(loggedInUser.getUserUniqueId());
 		int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {
-			
 			if (sd.getViewName().equals(DashboardViewType.IMAGING_INPUT.getViewName())
 					|| sd.getViewName().equals("")) {
 				unreadCount++;

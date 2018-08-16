@@ -35,7 +35,6 @@ public class MessageBox extends Window {
 		this.setContent(mainLayout);
 		HorizontalLayout wrapper = new HorizontalLayout();
 		wrapper.setWidth("100%");
-		HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setWidthUndefined();
 		buttonPane.setHeightUndefined();
 		buttonPane.setSpacing(false);
@@ -61,6 +60,28 @@ public class MessageBox extends Window {
 			onOK.onSuccessful();
 		});
 		mainLayout.addComponents(messageLabel, wrapper);
+	}
+	
+	/**
+	 * 
+	 * @param caption
+	 * @param message
+	 * @param onOK
+	 */
+	public static void showMessage(String caption, String message, Callback onOK) {
+		MessageBox w = new MessageBox(WARNING);
+		w.buttonPane.removeAllComponents();
+		w.buttonPane.addComponents(w.btnOK, Box.createHorizontalBox(1));
+		w.buttonPane.setComponentAlignment(w.btnOK, Alignment.MIDDLE_LEFT);
+		w.setIcon(VaadinIcons.WARNING);
+		w.setCaption("&nbsp;&nbsp;" + caption);
+		w.setCaptionAsHtml(true);
+		w.btnOK.setCaption("确定");
+		w.messageLabel.setValue("<span style='font-size:14px;color: #000000;'>" + message + "</span>");
+		// w.messageLabel.setIcon(VaadinIcons.COMMENT);
+		w.onOK = onOK;
+		UI.getCurrent().addWindow(w);
+		w.center();
 	}
 
 	/**
@@ -117,5 +138,5 @@ public class MessageBox extends Window {
 	private Callback onCancel;
 	private Button btnCancel = new Button("取消");
 	private Button btnOK = new Button("确定");
-
+	private HorizontalLayout buttonPane = new HorizontalLayout();
 }

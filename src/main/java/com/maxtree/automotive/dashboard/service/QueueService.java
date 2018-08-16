@@ -19,23 +19,10 @@ private static final Logger log = LoggerFactory.getLogger(QueueService.class);
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-	
-//	/**
-//	 * 
-//	 * @param serial
-//	 * @param userUniqueId
-//	 * @return
-//	 */
-//	public int getLockedCount(int serial, int userUniqueId) {
-//		String sql = "SELECT COUNT(*) FROM QUEUE_"+serial+" WHERE LOCKEDBYUSER=?";
-//		int count = jdbcTemplate.queryForObject(sql, new Object[] {userUniqueId}, Integer.class);
-//		return count;
-//	}
-	
 	/**
 	 * 获取锁定的队列
 	 * 
-	 * @param serial //1:质检队列 2:审档队列,3,确认审档队列
+	 * @param serial //1:质检队列 2:审档队列
 	 * @param userUniqueId
 	 * @return
 	 */
@@ -49,14 +36,15 @@ private static final Logger log = LoggerFactory.getLogger(QueueService.class);
 	}
 	
 	/**
-	 * 从队列里取一条（ID最小的一条）
 	 * 
 	 * @param serial
+	 * @param companyUniqueId
+	 * @param communityUniqueId
 	 * @return
 	 */
-	public Queue poll(int serial, int communityUniqueId) {
-		String sql = "SELECT * FROM QUEUE_"+serial+" WHERE LOCKEDBYUSER=? AND COMMUNITYUNIQUEID=? ORDER BY QUEUEUNIQUEID ASC LIMIT ?";
-		List<Queue> results = jdbcTemplate.query(sql, new Object[] {0, communityUniqueId, 1}, new BeanPropertyRowMapper<Queue>(Queue.class));
+	public Queue poll(int serial, int companyUniqueId ,int communityUniqueId) {
+		String sql = "SELECT * FROM QUEUE_"+serial+" WHERE LOCKEDBYUSER=? AND COMPANYUNIQUEID=? AND COMMUNITYUNIQUEID=? ORDER BY QUEUEUNIQUEID ASC LIMIT ?";
+		List<Queue> results = jdbcTemplate.query(sql, new Object[] {0,companyUniqueId,communityUniqueId,1}, new BeanPropertyRowMapper<Queue>(Queue.class));
 		if (results.size() > 0) {
 			return results.get(0);
 		}
@@ -84,7 +72,7 @@ private static final Logger log = LoggerFactory.getLogger(QueueService.class);
 	 * @return
 	 */
 	public List<Queue> findAll(int serial) {
-		String sql = "SELECT * FROM QUEUE_"+serial;// +" WHERE LOCKEDBYUSER = 0 ORDER BY QUEUEUNIQUEID";
+		String sql = "SELECT * FROM QUEUE_"+serial;
 		List<Queue> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<Queue>(Queue.class));
 		return results;
 	}

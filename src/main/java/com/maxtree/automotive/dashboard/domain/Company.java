@@ -89,6 +89,14 @@ public class Company {
 	public void setIgnoreChecker(Integer ignoreChecker) {
 		this.ignoreChecker = ignoreChecker;
 	}
+	
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
 
 	public List<User> getEmployees() {
 		return employees;
@@ -113,5 +121,6 @@ public class Company {
 	private Integer hasStoreHouse = 0; 		// 是否存在库房1存在,0不存在
 	private String storehouseName;		 	// 库房名称（作为唯一标识）
 	private Integer ignoreChecker = 0;   	// 忽略质检，1-忽略 0-未忽略
+	private String category;				// 车管所/二手车/4S店
 	private List<User> employees;
 }

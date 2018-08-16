@@ -309,8 +309,12 @@ public class EditUserWindow extends Window {
         		user.setCommunityUniqueId(0);
     		}
     		
-    		// 不允许改别人的密码，只能通知重置
+    		// 不允许改别人的密码，只允许管理员重置
     		ui.userService.update(user, true);
+    		UserProfile up = user.getProfile();
+    		up.setFirstName(firstNameField.getValue());
+    		up.setLastName(lastNameField.getValue());
+    		ui.userService.updateProfile(up);
 		}
 		
 		return true;
@@ -340,6 +344,7 @@ public class EditUserWindow extends Window {
         EditUserWindow w = new EditUserWindow();
         w.oldUserName = user.getUserName();
         w.user.setUserUniqueId(user.getUserUniqueId());
+        w.user.setProfile(user.getProfile());
         w.userNameField.setValue(user.getUserName());
         w.userNameField.setReadOnly(true);
         w.firstNameField.setValue(user.getProfile().getFirstName());

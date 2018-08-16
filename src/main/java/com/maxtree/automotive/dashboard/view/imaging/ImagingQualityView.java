@@ -185,7 +185,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
         buildNotificationsButton();
         buildBasicButton();
         buildCommitButton();
-        HorizontalLayout tools = new HorizontalLayout(btnBasicRearch, btnCommit, notificationsButton);
+        HorizontalLayout tools = new HorizontalLayout(btnQuery, btnCommit, notificationsButton);
         tools.addStyleName("toolbar");
         header.addComponent(tools);
         return header;
@@ -306,7 +306,6 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 
         @Subscribe
         public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-        	log.info("===============QCView Polling");
         	DashboardMenu.getInstance().qcCount(event.getCount());
         	setUnreadCount(event.getCount());
         }
@@ -357,20 +356,21 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
      * 基本查询按钮
      */
     private void buildBasicButton() {
-    	btnBasicRearch.setEnabled(true);
-    	btnBasicRearch.setId(EDIT_ID);
-    	btnBasicRearch.setIcon(VaadinIcons.SEARCH);
-    	btnBasicRearch.addStyleName("icon-edit");
-    	btnBasicRearch.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-    	btnBasicRearch.setDescription("基本查询");
-    	btnBasicRearch.addClickListener(e -> {
+    	btnQuery.setEnabled(true);
+    	btnQuery.setId(EDIT_ID);
+    	btnQuery.setIcon(VaadinIcons.SEARCH);
+    	btnQuery.addStyleName("icon-edit");
+    	btnQuery.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	btnQuery.setDescription("按车牌号查询");
+    	btnQuery.addClickListener(e -> {
     		ResultCallback callback = new ResultCallback() {
-
 				@Override
 				public void onSuccessful(List<Transaction> results) {
+					editableTrans = results.get(0);
+					resetComponents();
 				}
     		};
-    		BasicSearchWindow.open(callback);
+    		QuickQueryWindow.open(callback);
         });
     }
     
@@ -538,7 +538,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     
     @Override
 	public void updateUnreadCount() {
-		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loggedInUser.getUserUniqueId());
+		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().get(loggedInUser.getUserUniqueId());
 		int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {
 			if (sd.getViewName().equals(DashboardViewType.IMAGING_QUALITY.getViewName())
@@ -583,7 +583,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private ConfirmInformationGrid confirmInformationGrid;
     private ImageChecker imageChecker;
-    private Button btnBasicRearch = new Button();
+    private Button btnQuery = new Button();
     private Button btnCommit = new Button();
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);

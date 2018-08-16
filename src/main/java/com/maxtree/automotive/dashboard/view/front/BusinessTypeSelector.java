@@ -97,10 +97,54 @@ public class BusinessTypeSelector extends FormLayout {
 				Notifications.warning("车辆识别代码不能空。");
 				return;
 			}
-			// 影像化检测
-			if (imagingCheck()) {
+			// 支持影像化检测
+			if (view instanceof FrontView) {
+				// 影像化检测
+				if (imagingCheck()) {
+					Optional<Business> opt = e.getSelectedItem();
+					if (opt.isPresent() && existCheck(view.vin(), opt.get().getCode())) {
+						Notifications.warning("此业务已经办理过。");
+						return;
+					}
+					
+					if (opt.isPresent() && opt.get() != e.getOldValue()) {
+						//删除旧原文1
+						List<Document> document1List = ui.documentService.findAllDocument1(view.vin(), view.uuid());
+						for(Document doc : document1List) {
+							try {
+								fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
+							} catch (FileException fe) {
+								fe.printStackTrace();
+							}
+						}
+						//删除旧原文2
+						List<Document> document2List = ui.documentService.findAllDocument2(view.vin(), view.uuid());
+						for(Document doc : document2List) {
+							try {
+								fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
+							} catch (FileException fe) {
+								fe.printStackTrace();
+							}
+						}
+						//删除数据库记录
+						ui.documentService.deleteByUUID(view.uuid(), view.vin());
+						loadMaterials(opt.get().getCode());
+					}
+					else {
+						view.thumbnailGrid().removeAllRows();
+					}
+				}
+				else {
+					insertImaging();
+				}
+			}
+			// 不支持影像化检查
+			else {
 				Optional<Business> opt = e.getSelectedItem();
-				
+				if (opt.isPresent() && existCheck(view.vin(), opt.get().getCode())) {
+					Notifications.warning("此业务已经办理过。");
+					return;
+				}
 				if (opt.isPresent() && opt.get() != e.getOldValue()) {
 					//删除旧原文1
 					List<Document> document1List = ui.documentService.findAllDocument1(view.vin(), view.uuid());
@@ -122,114 +166,12 @@ public class BusinessTypeSelector extends FormLayout {
 					}
 					//删除数据库记录
 					ui.documentService.deleteByUUID(view.uuid(), view.vin());
-//					if (StringUtils.isEmpty(opt.get())) {
-//						view.thumbnailGrid().removeAllRows();
-//					} else {
-//						
-//					}
 					loadMaterials(opt.get().getCode());
 				}
 				else {
-//					loadMaterials(opt.get().getCode());
 					view.thumbnailGrid().removeAllRows();
 				}
 			}
-			else {
-				insertImaging();
-			}
-			
-			
-			
-//			Optional<Business> opt = e.getSelectedItem();
-//			if (opt.get() != e.getOldValue() && e.getOldValue() != null) {
-//				
-//				Callback onOk = new Callback() {
-//					@Override
-//					public void onSuccessful() {
-//						//删除旧原文1
-//						List<Document> document1List = ui.documentService.findAllDocument1(view.vin(), view.uuid());
-//						for(Document doc : document1List) {
-//							try {
-//								fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
-//							} catch (FileException e) {
-//								e.printStackTrace();
-//							}
-//						}
-//						//删除旧原文2
-//						List<Document> document2List = ui.documentService.findAllDocument2(view.vin(), view.uuid());
-//						for(Document doc : document2List) {
-//							try {
-//								fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
-//							} catch (FileException e) {
-//								e.printStackTrace();
-//							}
-//						}
-//						
-//						//删除数据库记录
-//						ui.documentService.deleteByUUID(view.uuid(), view.vin());
-//						
-//						loadMaterials(opt.get().getCode());
-//					}
-//				};
-//				Callback onCancel = new Callback() {
-//					@Override
-//					public void onSuccessful() {
-//						selector.setValue(e.getOldValue());
-//					}
-//				};
-//				MessageBox.showMessage("提示", "更改业务类型将会删除上次上传的材料，请确认是否继续更改。", MessageBox.WARNING, onOk, onCancel, "是","否");
-//			}
-			
-			
-//			//开始进行影像化有效检测
-//			if (imagingCheck()) {
-//				loadMaterials(opt.get().getCode());
-//			}
-//			//影像化检测无效
-//			else {
-//				view.stoppedAtAnException(true);
-//				//1.插入影像化记录
-//				Imaging imaging = new Imaging();
-//				imaging.setCreator(view.loggedInUser().getUserName());
-//				imaging.setDateCreated(new Date());
-//				imaging.setDateModified(new Date());
-//				imaging.setPlateNumber(view.basicInfoPane().getPlateNumber());
-//				imaging.setPlateType(view.basicInfoPane().getPlateType());
-//				imaging.setVin(view.basicInfoPane().getVIN());
-//				imaging.setStatus(BusinessState.B8.name);
-//				ui.imagingService.insert(imaging);
-//				
-//				//2.发信给影像化管理员
-//				Map<String, String> details = new HashMap<String, String>();
-//				details.put("0", "popup");// 消息自动弹出
-//				details.put("3", view.basicInfoPane().getPlateType());//PLATETYPE
-//				details.put("4", view.basicInfoPane().getPlateNumber());//PLATENUMBER
-//				details.put("5", view.basicInfoPane().getVIN());//VIN
-//				String messageBody = jsonHelper.map2Json(details);
-//				User receiver = ui.userService.findImagingAdmin(view.loggedInUser().getCommunityUniqueId());
-//				if (receiver.getUserUniqueId() == 0) {
-//					Notifications.warning("无法找到影像化管理员，请联系系统管理员进行设置。");
-//					return;
-//				}
-//				
-//				TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-//				Message newMessage = messageSystem.createNewMessage(receiver, "影像化检测消息", messageBody);
-//				Set<Name> names = new HashSet<Name>();
-//				Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
-//				names.add(target);
-//				messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_MANAGER.getViewName());
-//				//3.更新消息轮询的缓存
-//				CacheManager.getInstance().getSendDetailsCache().refresh(loggedinUser.getUserUniqueId());
-//				
-//				Callback callback = new Callback() {
-//					@Override
-//					public void onSuccessful() {
-//						view.cleanStage();
-//					}
-//				};
-//				Notifications.warning("缺少历史影像化记录，已提交申请。等待补充完整后再重新开始本次业务登记。", callback);
-//			}
-			
 		});
 	}
 	
@@ -246,28 +188,29 @@ public class BusinessTypeSelector extends FormLayout {
 		imaging.setPlateType(view.basicInfoPane().getPlateType());
 		imaging.setVin(view.basicInfoPane().getVIN());
 		imaging.setStatus(BusinessState.B8.name);
-		ui.imagingService.insert(imaging);
-		
-		//2.发信给影像化管理员
-		Map<String, String> details = new HashMap<String, String>();
-		details.put("0", "popup");// 消息自动弹出
-		details.put("3", view.basicInfoPane().getPlateType());//PLATETYPE
-		details.put("4", view.basicInfoPane().getPlateNumber());//PLATENUMBER
-		details.put("5", view.basicInfoPane().getVIN());//VIN
-		String messageBody = jsonHelper.map2Json(details);
-		User receiver = ui.userService.findImagingAdmin(view.loggedInUser().getCommunityUniqueId());
-		if (receiver.getUserUniqueId() == 0) {
-			Notifications.warning("无法找到影像化管理员，请联系系统管理员进行设置。");
-			return;
+		int rs = ui.imagingService.insert(imaging);
+		if (rs != 0) {
+			//2.发信给影像化管理员
+			Map<String, String> details = new HashMap<String, String>();
+			details.put("0", "popup");// 消息自动弹出
+			details.put("3", view.basicInfoPane().getPlateType());//PLATETYPE
+			details.put("4", view.basicInfoPane().getPlateNumber());//PLATENUMBER
+			details.put("5", view.basicInfoPane().getVIN());//VIN
+			String messageBody = jsonHelper.map2Json(details);
+			User receiver = ui.userService.findImagingAdmin(view.loggedInUser().getCommunityUniqueId());
+			if (receiver.getUserUniqueId() == 0) {
+				Notifications.warning("无法找到影像化管理员，请联系系统管理员进行设置。");
+				return;
+			}
+			TB4MessagingSystem messageSystem = new TB4MessagingSystem();
+			Message newMessage = messageSystem.createNewMessage(receiver, "影像化检测消息", messageBody);
+			Set<Name> names = new HashSet<Name>();
+			Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
+			names.add(target);
+			messageSystem.sendMessageTo(newMessage.getMessageUniqueId(),names,DashboardViewType.IMAGING_MANAGER.getViewName());
+			//3.更新消息轮询的缓存
+			CacheManager.getInstance().getSendDetailsCache().refresh(loggedinUser.getUserUniqueId());
 		}
-		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-		Message newMessage = messageSystem.createNewMessage(receiver, "影像化检测消息", messageBody);
-		Set<Name> names = new HashSet<Name>();
-		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
-		names.add(target);
-		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_MANAGER.getViewName());
-		//3.更新消息轮询的缓存
-		CacheManager.getInstance().getSendDetailsCache().refresh(loggedinUser.getUserUniqueId());
 		
 		Callback callback = new Callback() {
 			@Override
@@ -275,7 +218,7 @@ public class BusinessTypeSelector extends FormLayout {
 				view.cleanStage();
 			}
 		};
-		Notifications.warning("缺少历史影像化记录，已提交申请。等待补充完整后再重新开始本次业务登记。", callback);
+		MessageBox.showMessage("提示","缺少历史影像化记录，已提交申请。等待补充完整后再重新开始本次业务登记。",callback);
 	}
 	
 	/**
@@ -305,7 +248,18 @@ public class BusinessTypeSelector extends FormLayout {
     	}
     }
 	
-	
+    /**
+     * 
+     * @param vin
+     * @param businessCode
+     * @return
+     */
+	private boolean existCheck(String vin, String businessCode) {
+		int count = ui.transactionService.getCount(vin, businessCode);
+		return (count > 0);
+	}
+    
+    
 	/**
 	 * 根据业务类型加载材料
 	 * 

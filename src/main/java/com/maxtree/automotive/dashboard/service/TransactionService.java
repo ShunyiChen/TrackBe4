@@ -150,10 +150,7 @@ public class TransactionService {
 	public String findTransactionCode(String vin) {
 		try {
 			int index = getTableIndex(vin);
-//			String sql = "SELECT CODE FROM TRANSACTION_"+index+" WHERE VIN=? AND INDEXNUMBER=?";
 			String sql = "SELECT CODE FROM TRANSACTION_"+index+" WHERE VIN=? LIMIT ?";
-			System.out.println(index+"  "+vin+"  ");
-			
 			String code = jdbcTemplate.queryForObject( sql, new Object[] {vin,1}, String.class);
 			return code;
 		} catch (IncorrectResultSizeDataAccessException e){
@@ -196,6 +193,19 @@ public class TransactionService {
 		keyword = "%"+keyword+"%";
 		String sql = "SELECT * FROM CREATE_PAGINGCOUNT2(?,?)";
 		int count = jdbcTemplate.queryForObject( sql, new Object[] {limit, keyword}, Integer.class);
+		return count;
+	}
+	
+	/**
+	 * 
+	 * @param vin
+	 * @param businessCode
+	 * @return
+	 */
+	public int getCount(String vin, String businessCode) {
+		int index = getTableIndex(vin);
+		String sql = "SELECT COUNT(TRANSACTIONUNIQUEID) FROM TRANSACTION_"+index+" WHERE BUSINESSCODE=?";
+		int count = jdbcTemplate.queryForObject( sql, new Object[] {businessCode}, Integer.class);
 		return count;
 	}
 }

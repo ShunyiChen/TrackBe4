@@ -207,9 +207,9 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
     	 List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.IMAGING_MANAGER.getViewName());
          for (Map<String, Object> m : allMessages) {
         	 VerticalLayout vLayout = new VerticalLayout();
-         	vLayout.setMargin(false);
-         	vLayout.setSpacing(false);
-         	vLayout.addStyleName("notification-item");
+         	 vLayout.setMargin(false);
+         	 vLayout.setSpacing(false);
+         	 vLayout.addStyleName("notification-item");
              Label timeLabel = new Label();
              String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
              Label titleLabel = new Label(m.get("subject")+readStr);
@@ -217,6 +217,8 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
              String json = m.get("messagebody").toString();
              Map<String, String> map = jsonHelper.json2Map(json);
              Label plateNumber = new Label(map.get("4"));//PLATENUMBER
+             String vin = map.get("5");
+             String uuid = map.get("7");
              plateNumber.addStyleName("notification-content");
              
              Date dateCreated = (Date) m.get("datecreated");
@@ -278,7 +280,6 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
     @Override
     public void enter(final ViewChangeEvent event) {
 //        notificationsButton.updateNotificationsCount(null);
-    	
     	grid.controls.first();
     }
 

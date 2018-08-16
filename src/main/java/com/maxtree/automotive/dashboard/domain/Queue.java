@@ -1,5 +1,5 @@
 package com.maxtree.automotive.dashboard.domain;
-
+//1:质检队列 2:审档队列,3,确认审档队列
 public class Queue {
 
 	public Integer getQueueUniqueId() {

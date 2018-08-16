@@ -179,35 +179,28 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     private Component buildHeader() {
         HorizontalLayout header = new HorizontalLayout();
         header.addStyleName("viewheader");
-
         titleLabel = new Label("业务审核");
         titleLabel.setId(TITLE_ID);
         titleLabel.setSizeUndefined();
         titleLabel.addStyleName(ValoTheme.LABEL_H1);
         titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         header.addComponent(titleLabel);
-
         buildFetchButton();
         buildFeedbackButton();
         buildNotificationsButton();
-        
-        HorizontalLayout tools = new HorizontalLayout(btnFetch, btnFeedback, notificationsButton);
+        HorizontalLayout tools = new HorizontalLayout(btnFetch,btnFeedback,btnCommit,notificationsButton);
         tools.addStyleName("toolbar");
         header.addComponent(tools);
-
         return header;
     }
 
     private void openNotificationsPopup(final ClickEvent event) {
-    	
     	VerticalLayout mainVLayout = new VerticalLayout();
     	mainVLayout.setSpacing(false);
-        
         Label title = new Label("事件提醒");
         title.addStyleName(ValoTheme.LABEL_H3);
         title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         mainVLayout.addComponent(title);
-
         Panel scrollPane = new Panel();
     	scrollPane.addStyleName("reminder-scrollpane");
     	scrollPane.setHeight("250px");
@@ -490,7 +483,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     	} else {
     		//1:质检队列 2:审档队列,3,确认审档队列
     		int serial = 2;
-    		Queue availableQueue = ui.queueService.poll(serial, loggedInUser.getCommunityUniqueId());
+    		Queue availableQueue = ui.queueService.poll(serial,loggedInUser.getCompanyUniqueId(),loggedInUser.getCommunityUniqueId());
     		if (availableQueue.getQueueUniqueId() != 0) {
     			availableQueue.setLockedByUser(loggedInUser.getUserUniqueId());
     			ui.queueService.lock(availableQueue, serial);// 锁定记录
@@ -504,7 +497,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     			Name target = new Name(loggedInUser.getUserUniqueId(), Name.USER, loggedInUser.getProfile().getLastName()+loggedInUser.getProfile().getFirstName(), loggedInUser.getProfile().getPicture());
     			names.add(target);
     			messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.CHECK.getViewName());
-    		
+    			
     			CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
     		}
     		else {
@@ -688,7 +681,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     
     @Override
 	public void updateUnreadCount() {
-    	List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loggedInUser.getUserUniqueId());
+    	List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().get(loggedInUser.getUserUniqueId());
     	int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {
 			if (sd.getViewName().equals(DashboardViewType.CHECK.getViewName())
@@ -737,6 +730,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     private ImageComparator imageComparator;
     private FetchButton btnFetch = new FetchButton();
     private Button btnFeedback = new Button();
+    private Button btnCommit = new Button();//提交给确认审档
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
 

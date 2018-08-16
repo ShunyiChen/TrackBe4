@@ -638,10 +638,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
-        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
-        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-        	editableTrans.setLocationCode(provinceCode+","+city+","+district);
+        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
         	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
@@ -654,7 +651,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		Company com = null;
         		for(int i = 0; i < companies.size(); i++) {
         			com = companies.get(i);
-        			if (com.getHasStoreHouse() == 1) {
+        			if (com.getCategory().trim().equals("车管所")) {
         				break;
         			}
         		}
@@ -712,10 +709,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
-        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
-        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-        	editableTrans.setLocationCode(provinceCode+","+city+","+district);
+        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
         	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
@@ -777,10 +771,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
-        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
-        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-        	editableTrans.setLocationCode(provinceCode+","+city+","+district);
+        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
         	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
@@ -853,10 +844,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
-        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
-        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-        	editableTrans.setLocationCode(provinceCode+","+city+","+district);
+        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
@@ -885,7 +873,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
         		ui.queueService.create(newQueue, serial);
-        		
         		
         		//操作记录
         		track(Actions.INPUT);
@@ -917,7 +904,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
             	Notifications.bottomWarning("操作成功。记录已提交到质检队列等待质检。");
         	}
     	}
-    	
     }
     
     /**
@@ -943,10 +929,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
-        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
-        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-        	editableTrans.setLocationCode(provinceCode+","+city+","+district);
+        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
 //        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
@@ -1016,10 +999,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	String provinceCode = ui.dataItemService.findCodeByName(editableCompany.getProvince());//省份
-        	String city = ui.dataItemService.findCodeByName(editableCompany.getCity());//地级市
-        	String district = ui.dataItemService.findCodeByName(editableCompany.getDistrict());//市、县级市
-        	editableTrans.setLocationCode(provinceCode+","+city+","+district);
+        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
 //        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());

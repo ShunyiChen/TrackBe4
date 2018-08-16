@@ -63,7 +63,7 @@ public class ConfirmDialog extends Window {
 	 */
 	public static void showDialog(String caption, String message, Callback event) {
 		w.messageLabel.setValue("<span style='font-size:14px;color: #000000;'>" + message + "</span>");
-		if (!w.isAttached()) {
+		if (!w.isVisible()) {
 			w.setIcon(VaadinIcons.WARNING);
 			w.setCaption("&nbsp;&nbsp;" + caption);
 			w.setCaptionAsHtml(true);

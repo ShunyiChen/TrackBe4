@@ -65,22 +65,22 @@ public class ImageComparator extends HorizontalSplitPanel {
     	leftTree.setHeight("100%");
     	// 获取site
     	Site site = ui.siteService.findByCode(transaction.getSiteCode());
-    	Document primary = new Document();
-    	primary.setAlias("主要材料");
+    	Document root = new Document();
+    	root.setAlias("当前业务材料");
         TreeData<Document> treeData = new TreeData<Document>();
         // Couple of childless root items
-        treeData.addItem(null, primary);
+        treeData.addItem(null, root);
 
         // 主要文件
     	List<Document> primaryDocs = ui.documentService.findAllDocument1(transaction.getVin(),transaction.getUuid());
         
         for (Document d : primaryDocs) {
-        	treeData.addItem(primary, d);
+        	treeData.addItem(root, d);
         }
         
         leftTree.setDataProvider(new TreeDataProvider<>(treeData));
         // 展开树节点
-        leftTree.expand(primary);
+        leftTree.expand(root);
         
         leftTree.setItemIconGenerator(item -> {
             return VaadinIcons.FILE_PICTURE;

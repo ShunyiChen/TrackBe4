@@ -73,7 +73,7 @@ public class CompanyService {
 	 */
 	public int create(Company company) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		String sql = "INSERT INTO COMPANIES(COMMUNITYUNIQUEID,COMPANYNAME,PROVINCE,CITY,DISTRICT,ADDRESS,HASSTOREHOUSE,STOREHOUSENAME,IGNORECHECKER) VALUES(?,?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO COMPANIES(COMMUNITYUNIQUEID,COMPANYNAME,PROVINCE,CITY,DISTRICT,ADDRESS,HASSTOREHOUSE,STOREHOUSENAME,IGNORECHECKER,CATEGORY) VALUES(?,?,?,?,?,?,?,?,?,?)";
 		
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
@@ -90,6 +90,7 @@ public class CompanyService {
 				ps.setInt(7, company.getHasStoreHouse());
 				ps.setString(8, company.getStorehouseName());
 				ps.setInt(9, company.getIgnoreChecker());
+				ps.setString(10, company.getCategory());
 				return ps;
 			}
 			
@@ -103,7 +104,6 @@ public class CompanyService {
 	 * @param Community
 	 */
 	public void update(Company company) {
-		
 		// 更新机构内的用户
 		List<User> employees = company.getEmployees();
 		for (User u : employees) {
@@ -114,8 +114,8 @@ public class CompanyService {
 			jdbcTemplate.update(Sql2, new Object[] {u.getCommunityUniqueId(), u.getCompanyUniqueId(), u.getCompanyName(), u.getUserUniqueId()});
 		}
 		
-		String sql = "UPDATE COMPANIES SET COMMUNITYUNIQUEID=?,COMPANYNAME=?,PROVINCE=?,CITY=?,DISTRICT=?,ADDRESS=?,HASSTOREHOUSE=?,STOREHOUSENAME=?,IGNORECHECKER=? WHERE COMPANYUNIQUEID=?";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {company.getCommunityUniqueId(), company.getCompanyName(),company.getProvince(),company.getCity(),company.getDistrict(), company.getAddress(), company.getHasStoreHouse(),company.getStorehouseName(),company.getIgnoreChecker(),company.getCompanyUniqueId()});
+		String sql = "UPDATE COMPANIES SET COMMUNITYUNIQUEID=?,COMPANYNAME=?,PROVINCE=?,CITY=?,DISTRICT=?,ADDRESS=?,HASSTOREHOUSE=?,STOREHOUSENAME=?,IGNORECHECKER=?,CATEGORY=? WHERE COMPANYUNIQUEID=?";
+	 	int opt = jdbcTemplate.update(sql, new Object[] {company.getCommunityUniqueId(), company.getCompanyName(),company.getProvince(),company.getCity(),company.getDistrict(), company.getAddress(), company.getHasStoreHouse(),company.getStorehouseName(),company.getIgnoreChecker(),company.getCategory(),company.getCompanyUniqueId()});
 	 	log.info("Updated row "+opt);
 	}
 	

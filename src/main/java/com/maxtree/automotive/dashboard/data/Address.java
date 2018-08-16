@@ -34,8 +34,9 @@ public class Address {
 		this.licenseplate = licenseplate;
 	}
 
-	private String[] province; //省份
-	private String[] city;//地级市
-	private String[] district;//市、县级市
+	private String[] province;  //省份
+	private String[] city;		//地级市
+	private String[] district;	//市、县级市
 	private String licenseplate;//辽B
+	
 }

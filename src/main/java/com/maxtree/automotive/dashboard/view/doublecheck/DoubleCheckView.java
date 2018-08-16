@@ -513,7 +513,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
     	} else {
     		//1:质检队列 2:审档队列,3,确认审档队列
     		int serial = 2;
-    		Queue availableQueue = ui.queueService.poll(serial, loggedInUser.getCommunityUniqueId());
+    		Queue availableQueue = ui.queueService.poll(serial,loggedInUser.getCompanyUniqueId(),loggedInUser.getCommunityUniqueId());
     		if (availableQueue.getQueueUniqueId() != 0) {
     			availableQueue.setLockedByUser(loggedInUser.getUserUniqueId());
     			ui.queueService.lock(availableQueue, serial);// 锁定记录
