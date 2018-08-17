@@ -24,10 +24,11 @@
 
 	function SaveJPG_onclick()
 	{
-		
-		 var userUniqueId = "";
-        var str=captrue.bSaveJPG("C:\\temp\\",userUniqueId+"_JPG");
- 	   var str2=captrue.bUpLoadImage("C:\\temp\\"+userUniqueId+"_JPG.JPG", "localhost", 8080, "/hello");
+		var myDate = new Date();
+		var ms = myDate.getMilliseconds();
+		var userUniqueId = "";
+        var str=captrue.bSaveJPG("C:\\temp\\",userUniqueId+"_JPG"+ms);
+ 	    var str2=captrue.bUpLoadImage("C:\\temp\\"+userUniqueId+"_JPG"+ms+".JPG", "localhost", 8080, "/hello");
         
 	}
 	

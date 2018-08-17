@@ -35,8 +35,8 @@ public class DocumentService {
 	 */
 	public List<Document> findAllDocument1(String vin, String uuid) {
 		int index = getTableIndex(vin);
-		String sql = "SELECT A.*,B.ITEMNAME AS ALIAS FROM DOCUMENTS_1_"+index+" AS A LEFT JOIN DATADICTIONARY AS B ON A.DICTIONARYCODE=B.CODE WHERE A.UUID=? ORDER BY A.DOCUMENTUNIQUEID";
-		List<Document> result = jdbcTemplate.query(sql, new Object[] {uuid}, new BeanPropertyRowMapper<Document>(Document.class));
+		String sql = "SELECT A.*,B.ITEMNAME AS ALIAS FROM DOCUMENTS_1_"+index+" AS A LEFT JOIN DATADICTIONARY AS B ON A.DICTIONARYCODE=B.CODE AND B.ITEMTYPE=? WHERE A.UUID=? ORDER BY A.DOCUMENTUNIQUEID";
+		List<Document> result = jdbcTemplate.query(sql, new Object[] {3,uuid}, new BeanPropertyRowMapper<Document>(Document.class));
 		// decode
 		for (Document doc : result) {
 			doc.setFileFullPath(EncryptionUtils.decryptString(doc.getFileFullPath()));
@@ -56,8 +56,11 @@ public class DocumentService {
 		String sql = "SELECT * FROM DOCUMENTS_2_"+index+" WHERE UUID=? ORDER BY DOCUMENTUNIQUEID";
 		List<Document> result = jdbcTemplate.query(sql, new Object[] {uuid}, new BeanPropertyRowMapper<Document>(Document.class));
 		// decode
+		int i = 1;
 		for (Document doc : result) {
 			doc.setFileFullPath(EncryptionUtils.decryptString(doc.getFileFullPath()));
+			doc.setAlias("其他材料_"+i);
+			i++;
 		}
 		return result;
 	}

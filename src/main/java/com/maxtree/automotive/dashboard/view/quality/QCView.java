@@ -426,7 +426,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
     	dynamicallyVLayout.removeAllComponents();
     	dynamicallyVLayout.setHeightUndefined();
     	confirmInformationGrid = new ConfirmInformationGrid(editableTrans);
-		imageChecker = new ImageChecker(editableTrans);
+		imageChecker = new SplitPanel(editableTrans);
 		Hr hr = new Hr();
 	    dynamicallyVLayout.addComponents(confirmInformationGrid, hr, imageChecker);
     }
@@ -728,7 +728,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
     
     @Override
    	public void updateUnreadCount() {
-   		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loggedInUser.getUserUniqueId());
+   		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().get(loggedInUser.getUserUniqueId());
     	int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {
 			if (sd.getViewName().equals(DashboardViewType.QUALITY.getViewName())
@@ -772,7 +772,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
     private VerticalLayout dynamicallyVLayout = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private ConfirmInformationGrid confirmInformationGrid;
-    private ImageChecker imageChecker;
+    private SplitPanel imageChecker;
     private FetchButton btnFetch = new FetchButton();
     private Button btnCommit = new Button();
     private NotificationsButton notificationsButton;

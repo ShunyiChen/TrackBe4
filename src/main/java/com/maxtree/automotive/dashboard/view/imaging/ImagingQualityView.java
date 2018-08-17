@@ -41,7 +41,7 @@ import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
 import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.automotive.dashboard.view.quality.ConfirmInformationGrid;
-import com.maxtree.automotive.dashboard.view.quality.ImageChecker;
+import com.maxtree.automotive.dashboard.view.quality.SplitPanel;
 import com.maxtree.automotive.dashboard.view.quality.RouterWindow;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.messagingsystem.Name;
@@ -96,13 +96,12 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
         Responsive.makeResponsive(root);
         root.addComponent(buildHeader());
         root.addComponent(buildSparklines());
-        dynamicallyVLayout.addStyleName("dynamicallyVLayout-check");
-        dynamicallyVLayout.setWidth("100%");
-        dynamicallyVLayout.setHeight("100%");
-        dynamicallyVLayout.addComponents(blankLabel);
-        dynamicallyVLayout.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
-        root.addComponents(dynamicallyVLayout);
-        root.setExpandRatio(dynamicallyVLayout, 7.0f);
+        main.addStyleName("main-check");
+        main.setSizeFull();
+        main.addComponents(blankLabel);
+        main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
+        root.addComponents(main);
+        root.setExpandRatio(main, 7.0f);
         loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
@@ -342,14 +341,14 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
      * 
      */
     private void resetComponents() {
-    	dynamicallyVLayout.setSpacing(false);
-    	dynamicallyVLayout.setMargin(false);
-    	dynamicallyVLayout.removeAllComponents();
-    	dynamicallyVLayout.setHeightUndefined();
+    	main.setSpacing(false);
+    	main.setMargin(false);
+    	main.removeAllComponents();
     	confirmInformationGrid = new ConfirmInformationGrid(editableTrans);
-		imageChecker = new ImageChecker(editableTrans);
+    	splitPanel = new SplitPanel(editableTrans);
 		Hr hr = new Hr();
-	    dynamicallyVLayout.addComponents(confirmInformationGrid, hr, imageChecker);
+	    main.addComponents(confirmInformationGrid, hr, splitPanel);
+	    main.setExpandRatio(splitPanel, 1);
     }
     
     /**
@@ -563,10 +562,10 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     
    	@Override
    	public void cleanStage() {
-   		dynamicallyVLayout.removeAllComponents();
-		dynamicallyVLayout.setHeight("100%");
-		dynamicallyVLayout.addComponents(blankLabel);
-		dynamicallyVLayout.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
+   		main.removeAllComponents();
+		main.setHeight("100%");
+		main.addComponents(blankLabel);
+		main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
 		
 		editableTrans = null;
    	}
@@ -579,10 +578,10 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     private Label titleLabel;
     private Window notificationsWindow;
     private VerticalLayout root;
-    private VerticalLayout dynamicallyVLayout = new VerticalLayout();
+    private VerticalLayout main = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private ConfirmInformationGrid confirmInformationGrid;
-    private ImageChecker imageChecker;
+    private SplitPanel splitPanel;
     private Button btnQuery = new Button();
     private Button btnCommit = new Button();
     private NotificationsButton notificationsButton;

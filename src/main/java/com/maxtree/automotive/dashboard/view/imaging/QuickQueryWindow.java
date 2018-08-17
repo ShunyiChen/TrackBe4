@@ -13,12 +13,15 @@ import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -41,19 +44,25 @@ public class QuickQueryWindow extends Window {
 		this.setModal(true);
 		this.setResizable(false);
 		this.setCaption("基本查询");
-		
 		mainLayout = new VerticalLayout(); 
 		mainLayout.setSizeFull();
- 
-		FormLayout form = new FormLayout();
-		form.setSizeFull();
+		HorizontalLayout toolbar = new HorizontalLayout();
+		toolbar.setWidthUndefined();
+		toolbar.setHeight("30px");
 		btnSearch.setStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		btnSearch.setIcon(VaadinIcons.SEARCH);
-		plateField.setIcon(VaadinIcons.CAR);
 		Address addr = Yaml.readAddress();
+		plateField.setPlaceholder("请输入车牌号");
 		plateField.setValue(addr.getLicenseplate());
 		plateField.focus();
-		form.addComponents(plateField, btnSearch);
+//		Image img = new Image();
+//		img.setIcon(VaadinIcons.CAR);
+		Label fieldName = new Label(VaadinIcons.CAR.getHtml()+"车牌号:");
+		fieldName.setContentMode(ContentMode.HTML);
+		toolbar.addComponents(fieldName,plateField,btnSearch);
+		toolbar.setComponentAlignment(fieldName, Alignment.MIDDLE_LEFT);
+		toolbar.setComponentAlignment(plateField, Alignment.MIDDLE_LEFT);
+		toolbar.setComponentAlignment(btnSearch, Alignment.MIDDLE_LEFT);
 		
 		grid.setSizeFull();
 		grid.addColumn(Transaction::getPlateType).setCaption("号牌种类");
@@ -65,10 +74,6 @@ public class QuickQueryWindow extends Window {
 		
 		// 按钮
 		buttonPane = new HorizontalLayout();
-		buttonPane.setWidth("90%");
-		buttonPane.setHeight("30px");
-		buttonPane.setSpacing(false);
-		buttonPane.setMargin(false);
 		HorizontalLayout subButtonPane = new HorizontalLayout();
 		subButtonPane.setSpacing(false);
 		subButtonPane.setMargin(false);
@@ -79,10 +84,11 @@ public class QuickQueryWindow extends Window {
 		subButtonPane.setComponentAlignment(btnOK, Alignment.BOTTOM_CENTER);
 		buttonPane.addComponent(subButtonPane);
 		buttonPane.setComponentAlignment(subButtonPane, Alignment.BOTTOM_RIGHT);
+		mainLayout.addComponents(toolbar,grid,buttonPane);
+		mainLayout.setExpandRatio(toolbar, 0);
+		mainLayout.setExpandRatio(grid, 1);
+		mainLayout.setExpandRatio(buttonPane, 0);
 		
-		mainLayout.addComponents(form,grid,buttonPane,Box.createVerticalBox(5));
-		mainLayout.setComponentAlignment(form, Alignment.TOP_LEFT);
-		mainLayout.setComponentAlignment(buttonPane, Alignment.BOTTOM_RIGHT);
 		this.setContent(mainLayout);
 		
 		btnCancel.addClickListener(e -> {
@@ -124,7 +130,7 @@ public class QuickQueryWindow extends Window {
     }
 	
 	private Grid<Transaction> grid = new Grid();
-	private TextField plateField = new TextField("车牌号:");
+	private TextField plateField = new TextField();
 	private HorizontalLayout buttonPane = null;
 	private VerticalLayout mainLayout =null;
 	private Button btnSearch = new Button();

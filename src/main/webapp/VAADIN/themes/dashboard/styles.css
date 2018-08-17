@@ -14936,6 +14936,10 @@ div.v-layout.v-horizontal.v-widget {
 	border: 0px;
 }
 
+.dashboard .imagestage-header {
+	background-color: dimgray;
+}
+
 .dashboard .v-window-foo .v-window-outerheader {
 	background: white;
 }
