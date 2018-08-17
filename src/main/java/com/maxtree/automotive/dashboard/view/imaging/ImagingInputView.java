@@ -306,7 +306,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 
         @Subscribe
         public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-        	DashboardMenu.getInstance().updateNotificationsCount(event.getCount());
+        	DashboardMenu.getInstance().imagingInputCount(event.getCount());
         	setUnreadCount(event.getCount());
         }
 

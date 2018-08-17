@@ -40,6 +40,7 @@ public final class DashboardMenu extends CustomComponent {
     private Label inputBadge;
     private Label qualityBadge;
     private Label checkBadge;
+    private Label doubleCheckBadge;
     private Label searchBadge;
     private Label shelfBadge;
     private Label imagingAdminBadge;
@@ -237,6 +238,10 @@ public final class DashboardMenu extends CustomComponent {
             	checkBadge = new Label();
                 menuItemComponent = buildBadgeWrapper(menuItemComponent, checkBadge);
             }
+            else if (view == DashboardViewType.DOUBLECHECK) {
+            	doubleCheckBadge = new Label();
+                menuItemComponent = buildBadgeWrapper(menuItemComponent, doubleCheckBadge);
+            }
             else if (view == DashboardViewType.SEARCH) {
             	searchBadge = new Label();
                 menuItemComponent = buildBadgeWrapper(menuItemComponent, searchBadge);
@@ -320,6 +325,14 @@ public final class DashboardMenu extends CustomComponent {
     	if (checkBadge != null) {
     		checkBadge.setValue(String.valueOf(count));
     		checkBadge.setVisible(count > 0);
+    	}
+    }
+    
+    @Subscribe
+    public void doubleCheckCount(int count) {
+    	if (doubleCheckBadge != null) {
+    		doubleCheckBadge.setValue(String.valueOf(count));
+    		doubleCheckBadge.setVisible(count > 0);
     	}
     }
     

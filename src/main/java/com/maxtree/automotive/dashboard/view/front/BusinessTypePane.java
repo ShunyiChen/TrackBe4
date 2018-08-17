@@ -56,7 +56,7 @@ public class BusinessTypePane extends Panel{
 	}
 	
 	/**
-	 * 
+	 * 业务代码
 	 * @param code
 	 */
 	public void populate(String code) {

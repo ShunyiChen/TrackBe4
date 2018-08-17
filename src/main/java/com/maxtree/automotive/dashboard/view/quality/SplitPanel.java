@@ -1,36 +1,19 @@
 package com.maxtree.automotive.dashboard.view.quality;
 
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.FileSystemException;
-
-import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.Transaction;
-import com.maxtree.automotive.dashboard.exception.FileException;
-import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
-import com.vaadin.event.ShortcutListener;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.Sizeable;
-import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalSplitPanel;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Tree;
-import com.vaadin.ui.Tree.TreeContextClickEvent;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 
 /**
  * 
@@ -52,47 +35,35 @@ public class SplitPanel extends Panel {
 		tree.setSizeFull();
     	// 获取site
     	site = ui.siteService.findByCode(transaction.getSiteCode());
-    	Document primary = new Document();
-    	primary.setAlias("当前业务材料");
-        TreeData<Document> treeData = new TreeData<Document>();
+    	root.setAlias("当前业务材料");
+    	
         // Couple of childless root items
-        treeData.addItem(null, primary);
+        treeData.addItem(null, root);
         List<Document> primaryDocs = ui.documentService.findAllDocument1(transaction.getVin(),transaction.getUuid());
     	List<Document> secondaryDocs = ui.documentService.findAllDocument2(transaction.getVin(),transaction.getUuid());
         for (Document d : primaryDocs) {
-        	treeData.addItem(primary, d);
+        	treeData.addItem(root, d);
         }
         for (Document d : secondaryDocs) {
-        	treeData.addItem(primary, d);
+        	treeData.addItem(root, d);
         }
         tree.setDataProvider(new TreeDataProvider<>(treeData));
         // 展开树节点
-        tree.expand(primary);
+        tree.expand(root);
         tree.setItemIconGenerator(item -> {
             return VaadinIcons.FILE_PICTURE;
         });
-        tree.addContextClickListener(event -> {
-        	TreeContextClickEvent<Document> e = (TreeContextClickEvent<Document>) event;
-        	Document item = e.getItem();
-        	tree.select(item);
-        });
+//        tree.addContextClickListener(event -> {
+//        	TreeContextClickEvent<Document> e = (TreeContextClickEvent<Document>) event;
+//        	Document item = e.getItem();
+//        	tree.select(item);
+//        });
         tree.setSelectionMode(SelectionMode.SINGLE);
         tree.addItemClickListener(e -> {
-			selectedDocument = e.getItem();
 			// 排除根节点
-			if (!selectedDocument.getAlias().equals("当前业务材料")) {
-//				embeddedImageViewer.showPicture(selectedDocument.getDocumentUniqueId(), selectedDocument.getCategory());
-//				Image image = convertDocument2Image(selectedDocument);
-//				int index = photoViewer.getDocuments().indexOf(selectedDocument);
-//				photoViewer.setIndex(index);
-//				try {
-//					photoViewer.actualSize();
-//				} catch (FileException e1) {
-//					e1.printStackTrace();
-//				}
-				
-				stage.display(site, selectedDocument);
-				
+			if (!e.getItem().getAlias().equals("当前业务材料")) {
+				selectedNode = e.getItem();
+				stage.display(site, selectedNode);
 			}
         });
         
@@ -111,8 +82,6 @@ public class SplitPanel extends Panel {
 //			
 //			}
 //		});
-//        vlayout.addComponent(tree);
-//        vlayout.setExpandRatio(tree, 1);
         
         HorizontalSplitPanel hsplit = new HorizontalSplitPanel();
 		this.setContent(hsplit);
@@ -121,31 +90,47 @@ public class SplitPanel extends Panel {
 		hsplit.setFirstComponent(tree);
 		hsplit.setSecondComponent(stage);
 		this.setSizeFull();
-        
-        
-        
- 
- 
-//		
-//		
-//		embeddedImageViewer.setCascadingCallback(new Callback2() {
-//
-//			@Override
-//			public void onSuccessful(Object... objects) {
-//				for (Document d : primaryDocs) {
-//					if (d.getDocumentUniqueId() == ((Document)objects[0]).getDocumentUniqueId()) {
-//						tree.select(d);
-//						break;
-//					}
-//				}
-//			}
-//        });
-		
 	}
 	
+	public void previous() {
+		List<Document> children = treeData.getChildren(root);
+		for(int i=0; i < children.size(); i++) {
+			Document doc = children.get(i);
+			if(doc == selectedNode) {
+				i--;
+				if(i < 0) {
+					i = children.size() - 1;
+				}
+				selectedNode = children.get(i);
+				tree.select(selectedNode);
+				stage.display(site, selectedNode);
+				break;
+			}
+		}
+	}
+	
+	public void next() {
+		List<Document> children = treeData.getChildren(root);
+		for(int i=0; i < children.size(); i++) {
+			Document doc = children.get(i);
+			if(doc == selectedNode) {
+				i++;
+				if(i > children.size()-1) {
+					i = 0;
+				}
+				selectedNode = children.get(i);
+				tree.select(selectedNode);
+				stage.display(site, selectedNode);
+				break;
+			}
+		}
+	}
+	
+	private TreeData<Document> treeData = new TreeData<Document>();
+	private Document root = new Document();
 	private Tree<Document> tree = new Tree<>();
-	private ImageStage stage = new ImageStage();
+	private ImageStage stage = new ImageStage(this);
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private Site site;
-	private Document selectedDocument;
+	private Document selectedNode;
 }

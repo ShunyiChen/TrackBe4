@@ -11,21 +11,6 @@ public class Yaml {
 	 * 
 	 * @return
 	 */
-	public static Suggestion readSuggestion() {
-		Suggestion suggestion = null;
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        try {
-        	suggestion = mapper.readValue(new File("configuration/Suggestion.yaml"), Suggestion.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return suggestion;
-    }
-	
-	/**
-	 * 
-	 * @return
-	 */
 	public static Address readAddress() {
 		Address area = null;
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
@@ -52,5 +37,21 @@ public class Yaml {
             e.printStackTrace();
         }
         return sc;
+    }
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static Comment readComments() {
+		Comment comment = null;
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        try {
+        	comment = mapper.readValue(new File("configuration/Comments.yaml"), Comment.class);
+//            System.out.println(ReflectionToStringBuilder.toString(user,ToStringStyle.MULTI_LINE_STYLE));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return comment;
     }
 }

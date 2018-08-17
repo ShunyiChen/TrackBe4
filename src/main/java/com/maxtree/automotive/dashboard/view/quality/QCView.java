@@ -384,8 +384,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
 
         @Subscribe
         public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-//        	log.info("===============QCView Polling");
-//        	DashboardMenu.getInstance().qcCount(event.getCount());
+        	DashboardMenu.getInstance().qcCount(event.getCount());
         	setUnreadCount(event.getCount());
         }
 

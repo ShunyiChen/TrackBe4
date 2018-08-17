@@ -5,8 +5,9 @@ import java.util.Arrays;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.data.Suggestion;
+import com.maxtree.automotive.dashboard.data.Comment;
 import com.maxtree.automotive.dashboard.data.Yaml;
+import com.vaadin.event.ShortcutListener;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -34,7 +35,7 @@ public class RouterWindow extends Window {
 	
 	private void initComponents() {
 		this.setModal(true);
-		this.setResizable(true);
+		this.setResizable(false);
 		this.setClosable(true);
 		this.setWidth("672px");
 		this.setHeight("400px");
@@ -42,36 +43,52 @@ public class RouterWindow extends Window {
 		VerticalLayout vlayout = new VerticalLayout();
 		vlayout.setWidth("100%");
 		vlayout.setHeightUndefined();
-		Suggestion suggest = Yaml.readSuggestion();
-		HorizontalLayout hLayout = new HorizontalLayout();
-		hLayout.setWidth("100%");
-		combobox.setItems(Arrays.asList(suggest.getSuggestions()));
+		Comment obj = Yaml.readComments();
+		HorizontalLayout header = new HorizontalLayout();
+		header.setMargin(false);
+		header.setSpacing(false);
+		header.setWidthUndefined();
+		header.setHeightUndefined();
+		combobox.setItems(Arrays.asList(obj.getComments()));
+		combobox.setWidth("490px");
 		combobox.setTextInputAllowed(true);
-		combobox.setEmptySelectionAllowed(false);
-		combobox.setWidth("100%");
-		combobox.setSelectedItem(suggest.getSuggestions()[0]);
+		combobox.setEmptySelectionAllowed(true);
+		ShortcutListener keyListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER, null) {
+			/**/
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void handleAction(Object sender, Object target) {
+				add();
+			}
+		};
+		combobox.addShortcutListener(keyListener);
+		
+		
 		Button btnAdd = new Button("添加");
-		hLayout.addComponents(combobox,btnAdd);
-		hLayout.setComponentAlignment(combobox, Alignment.MIDDLE_LEFT);
-		hLayout.setComponentAlignment(btnAdd, Alignment.MIDDLE_LEFT);
+		Button btnClear = new Button("清空");
+		header.addComponents(combobox,Box.createHorizontalBox(5),btnAdd,Box.createHorizontalBox(5),btnClear);
+		header.setComponentAlignment(combobox, Alignment.TOP_LEFT);
+		header.setComponentAlignment(btnAdd, Alignment.TOP_LEFT);
+		header.setComponentAlignment(btnClear, Alignment.TOP_LEFT);
 		
 		content.setValue("");
         content.setRows(9);
         content.setWidth("100%");
         content.setIcon(VaadinIcons.EDIT);
-        btnOk.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        btnApproved.addStyleName(ValoTheme.BUTTON_PRIMARY);
         HorizontalLayout buttonLayout = new HorizontalLayout();
     	buttonLayout.setSpacing(false);
     	buttonLayout.setMargin(false);
     	buttonLayout.setWidthUndefined();
     	buttonLayout.setHeight("40px");
-    	buttonLayout.addComponents(btnBad, Box.createHorizontalBox(5), btnOk, Box.createHorizontalBox(5), btnCancel);
-    	buttonLayout.setComponentAlignment(btnOk, Alignment.MIDDLE_LEFT);
-    	buttonLayout.setComponentAlignment(btnBad, Alignment.MIDDLE_LEFT);
+    	buttonLayout.addComponents(btnReject, Box.createHorizontalBox(5), btnApproved, Box.createHorizontalBox(5), btnCancel);
+    	buttonLayout.setComponentAlignment(btnApproved, Alignment.MIDDLE_LEFT);
+    	buttonLayout.setComponentAlignment(btnReject, Alignment.MIDDLE_LEFT);
     	buttonLayout.setComponentAlignment(btnCancel, Alignment.MIDDLE_LEFT);
         
-        vlayout.addComponents(hLayout,content,buttonLayout);
-        vlayout.setComponentAlignment(hLayout, Alignment.TOP_CENTER);
+        vlayout.addComponents(header,content,buttonLayout);
+        vlayout.setComponentAlignment(header, Alignment.TOP_CENTER);
         vlayout.setComponentAlignment(content, Alignment.TOP_CENTER);
         vlayout.setComponentAlignment(buttonLayout, Alignment.TOP_RIGHT);
         
@@ -81,12 +98,28 @@ public class RouterWindow extends Window {
 			close();
 		});
 		btnAdd.addClickListener(e->{
-			String item = combobox.getValue();
-			StringBuilder stb = new StringBuilder(content.getValue());
-			stb.append(item);
-			stb.append("\n");
-			content.setValue(stb.toString());
+			add();
 		});
+		btnClear.addClickListener(e->{
+			clear();
+		});
+	}
+	
+	private void add() {
+		String item = combobox.getValue();
+		StringBuilder stb = new StringBuilder(content.getValue());
+		stb.append(rowCount);
+		stb.append(".");
+		stb.append(item.substring(2));
+		stb.append("\n");
+		content.setValue(stb.toString());
+		rowCount++;
+		combobox.setSelectedItem("");
+	}
+	
+	private void clear() {
+		content.setValue("");
+		rowCount = 1;
 	}
 	
 	/**
@@ -96,7 +129,7 @@ public class RouterWindow extends Window {
 	 */
 	public static void open(Callback2 accept, Callback2 reject) {
         RouterWindow w = new RouterWindow();
-        w.btnOk.addClickListener(e -> {
+        w.btnApproved.addClickListener(e -> {
         	
         	if (w.content.getValue().length() > 160) {
         		Notifications.warning("字数不得超出160。");
@@ -107,7 +140,7 @@ public class RouterWindow extends Window {
         	accept.onSuccessful(w.content.getValue());
 		});
         
-        w.btnBad.addClickListener(e -> {
+        w.btnReject.addClickListener(e -> {
         	
         	w.close();
         	reject.onSuccessful(w.content.getValue());
@@ -119,10 +152,10 @@ public class RouterWindow extends Window {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
 	private ComboBox<String> combobox = new ComboBox<String>();
+	private int rowCount = 1;
 	private TextArea content = new TextArea("审批建议:");
 	private Button btnCancel = new Button("取消");
-	private Button btnOk = new Button("合格");
-	private Button btnBad = new Button("不合格");
+	private Button btnApproved = new Button("合格");
+	private Button btnReject = new Button("不合格");
 }

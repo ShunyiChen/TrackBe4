@@ -1,6 +1,7 @@
 package com.maxtree.automotive.dashboard.view.imaging;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
+import com.vaadin.event.ShortcutListener;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
@@ -55,8 +57,17 @@ public class QuickQueryWindow extends Window {
 		plateField.setPlaceholder("请输入车牌号");
 		plateField.setValue(addr.getLicenseplate());
 		plateField.focus();
-//		Image img = new Image();
-//		img.setIcon(VaadinIcons.CAR);
+		ShortcutListener keyListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER, null) {
+			/**/
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void handleAction(Object sender, Object target) {
+				doSearch();
+			}
+		};
+		plateField.addShortcutListener(keyListener);
+		
 		Label fieldName = new Label(VaadinIcons.CAR.getHtml()+"车牌号:");
 		fieldName.setContentMode(ContentMode.HTML);
 		toolbar.addComponents(fieldName,plateField,btnSearch);
@@ -71,6 +82,14 @@ public class QuickQueryWindow extends Window {
 		grid.addColumn(Transaction::getStatus).setCaption("状态");
 		// Set the selection mode
         grid.setSelectionMode(SelectionMode.SINGLE);
+        grid.addItemClickListener(e->{
+        	if(e.getMouseEventDetails().isDoubleClick()) {
+        		close();
+            	Set<Transaction> set = new HashSet<>();
+            	set.add(e.getItem());
+    			callback.onSuccessful(new ArrayList<Transaction>(set));
+        	}
+        });
 		
 		// 按钮
 		buttonPane = new HorizontalLayout();
@@ -95,9 +114,13 @@ public class QuickQueryWindow extends Window {
 			close();
 		});
 		btnSearch.addClickListener(e -> {
-			List<Transaction> rs = ui.transactionService.findAll(20, 0, plateField.getValue());
-			setPerPageData(rs);
+			doSearch();
 		});
+	}
+	
+	private void doSearch() {
+		List<Transaction> rs = ui.transactionService.findAll(20, 0, plateField.getValue());
+		setPerPageData(rs);
 	}
 	
 	/**
@@ -115,6 +138,7 @@ public class QuickQueryWindow extends Window {
 	public static void open(ResultCallback callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         QuickQueryWindow w = new QuickQueryWindow();
+        w.callback = callback;
         w.btnOK.addClickListener(e -> {
 			Set<Transaction> set = w.grid.getSelectedItems();
 			if (set.size() > 0) {
@@ -129,7 +153,8 @@ public class QuickQueryWindow extends Window {
         w.center();
     }
 	
-	private Grid<Transaction> grid = new Grid();
+	private ResultCallback callback;
+	private Grid<Transaction> grid = new Grid<>();
 	private TextField plateField = new TextField();
 	private HorizontalLayout buttonPane = null;
 	private VerticalLayout mainLayout =null;

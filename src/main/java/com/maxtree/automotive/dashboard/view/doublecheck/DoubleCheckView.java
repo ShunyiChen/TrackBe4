@@ -338,7 +338,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 
         @Subscribe
         public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-        	DashboardMenu.getInstance().checkerCount(event.getCount());
+        	DashboardMenu.getInstance().doubleCheckCount(event.getCount());
         	setUnreadCount(event.getCount());
         }
 

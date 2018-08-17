@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Actions;
@@ -35,7 +36,6 @@ import com.maxtree.automotive.dashboard.domain.UserEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
-import com.maxtree.automotive.dashboard.exception.DataException;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
@@ -53,10 +53,8 @@ import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -182,7 +180,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
         titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         header.addComponent(titleLabel);
         buildNotificationsButton();
-        buildBasicButton();
+        buildQueryButton();
         buildCommitButton();
         HorizontalLayout tools = new HorizontalLayout(btnQuery, btnCommit, notificationsButton);
         tools.addStyleName("toolbar");
@@ -246,9 +244,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
         footer.setSpacing(false);
         Button showAll = new Button("查看全部事件");
         showAll.addClickListener(e->{
-        	
         	showAll(allMessages, 0);
-        	
         	notificationsWindow.close();
         });
         
@@ -305,7 +301,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 
         @Subscribe
         public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-        	DashboardMenu.getInstance().qcCount(event.getCount());
+        	DashboardMenu.getInstance().imagingQualityCount(event.getCount());
         	setUnreadCount(event.getCount());
         }
 
@@ -354,7 +350,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     /**
      * 基本查询按钮
      */
-    private void buildBasicButton() {
+    private void buildQueryButton() {
     	btnQuery.setEnabled(true);
     	btnQuery.setId(EDIT_ID);
     	btnQuery.setIcon(VaadinIcons.SEARCH);
@@ -416,7 +412,6 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 			}
 		};
 		Callback2 reject = new Callback2() {
-
 			@Override
 			public void onSuccessful(Object... objects) {
 				reject(objects[0].toString());
@@ -425,25 +420,46 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		RouterWindow.open(accept, reject);
     }
     
-    
-    private void accept(String suggestions) {
-//    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
-    	//2.更改状态
-    	editableTrans.setStatus(BusinessState.B2.name);
+    /**
+     * 
+     * @param comments
+     */
+    private void accept(String comments) {
+    	//1.取同社区内的影像化管理员
+    	User receiver = ui.userService.findImagingAdmin(loggedInUser.getCommunityUniqueId());
+		if (receiver.getUserUniqueId() == 0) {
+			Notifications.warning("无法找到影像化管理员，请联系系统管理员进行设置。");
+			return;
+		}
+    	//2.取业务类型
+    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
+    	//3.更改状态
+    	if (business.getName().equals("注册登记")) {
+    		editableTrans.setStatus(BusinessState.B2.name);
+    	}
+    	else if(StringUtils.isEmpty(business.getCheckLevel())) {
+    		editableTrans.setStatus(BusinessState.B2.name);
+    	}
+    	else if(business.getCheckLevel().equals("一级审档")) {
+    		editableTrans.setStatus(BusinessState.B4.name);
+    	}
+    	else if(business.getCheckLevel().equals("二级审档")) {
+    		editableTrans.setStatus(BusinessState.B4.name);
+    	}
     	editableTrans.setDateModified(new Date());
 		ui.transactionService.update(editableTrans);
-		//3.记录跟踪
-		String messageBody = track(Actions.APPROVED, suggestions);
-		//4.发信给前台
-		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
+    	
+		//4.记录跟踪
+		String messageBody = track(Actions.APPROVED, comments);
+		//5.给影像化管理员发信
 		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-		Message newMessage = messageSystem.createNewMessage(receiver, "质检合格", messageBody);
+		Message newMessage = messageSystem.createNewMessage(receiver, editableTrans.getPlateNumber()+",质检合格", messageBody);
 		Set<Name> names = new HashSet<Name>();
 		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 		names.add(target);
 		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_MANAGER.getViewName());
 		// 更新消息轮询的缓存
-		CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+		CacheManager.getInstance().getSendDetailsCache().refresh(receiver.getUserUniqueId());
 		// 5.清空
 		cleanStage();
 		// 6.提示信息
@@ -453,32 +469,32 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     /**
      * 不合格退回
      * 
-     * @param suggestions
+     * @param comments
      */
-    private void reject(String suggestions) {
-    	//2.更改状态
+    private void reject(String comments) {
+    	//1.更改状态
     	editableTrans.setStatus(BusinessState.B1.name);
     	editableTrans.setDateModified(new Date());
 		ui.transactionService.update(editableTrans);
-		//3.记录跟踪
-		String messageBody = track(Actions.REJECTED,suggestions);
-		//4.发信给前台
+		//2.记录跟踪
+		String messageBody = track(Actions.REJECTED,comments);
+		//3.发信给前台
 		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
 		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-		Message newMessage = messageSystem.createNewMessage(receiver, "收到反馈", messageBody);
+		Message newMessage = messageSystem.createNewMessage(receiver, editableTrans.getPlateNumber()+",质检不合格", messageBody);
 		Set<Name> names = new HashSet<Name>();
 		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 		names.add(target);
 		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_INPUT.getViewName());
 		// 更新消息轮询的缓存
-		CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+		CacheManager.getInstance().getSendDetailsCache().refresh(receiver.getUserUniqueId());
 		// 5.清空
 		cleanStage();
 		// 6.提示信息
 		Notifications.bottomWarning("操作成功。已退回到前台。");
     }
     
-    private String track(Actions act, String suggestions) {
+    private String track(Actions act, String comments) {
     	Map<String, String> details = new HashMap<String, String>();
     	details.put("1", editableTrans.getStatus());//STATUS
 		details.put("2", editableTrans.getBarcode());//BARCODE
@@ -487,7 +503,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		details.put("5", editableTrans.getVin());//VIN
 		details.put("6", editableTrans.getCode());//BUSINESSTYPE
 		details.put("7", editableTrans.getUuid());//UUID
-		details.put("8", suggestions);//SUGGEST
+		details.put("8", comments);//comments
 		String json = jsonHelper.map2Json(details);
     	
     	// 插入移行表
@@ -510,30 +526,6 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		return json;
     }
     
-    /**
-     * 打开业务
-     * 
-     * @param transactionUniqueId
-     * @param messageDateCreated
-     */
-    public void openTransaction(String uuid, String vin) {
-//    	transaction = ui.transactionService.findById(transactionUniqueId);
-//		if (transaction != null) {
-//			long time1 = transaction.getDateModified().getTime();
-//			long time2 = messageDateCreated.getTime();
-//			if (time1 > time2) {
-//				Notifications.warning("该行记录已过时。");
-//				transaction = null;
-//				return;
-//			}
-//			else if (transaction.getStatus().equals(Status.S1.name)) {
-//				this.resetComponents();
-//			}
-//			
-//		} else {
-//			Notifications.warning("当前业务不存在。");
-//		}
-    }
     
     @Override
 	public void updateUnreadCount() {
@@ -548,17 +540,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
 		event.setCount(unreadCount);
 		notificationsButton.updateNotificationsCount(event);
-		updateQueueSize();
 	}
-    
-    /**
-     * 更新队列剩余记录数
-     */
-    private void updateQueueSize() {
-    	List<Queue> listQue = ui.queueService.findAvaliable(1);
-    	NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
-   		event.setCount(listQue.size());
-    }
     
    	@Override
    	public void cleanStage() {

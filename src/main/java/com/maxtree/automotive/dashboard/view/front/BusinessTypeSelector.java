@@ -41,6 +41,8 @@ import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.event.UIEvents;
 import com.vaadin.event.UIEvents.PollEvent;
 import com.vaadin.event.UIEvents.PollListener;
+import com.vaadin.event.selection.SingleSelectionEvent;
+import com.vaadin.event.selection.SingleSelectionListener;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.EventId;
 import com.vaadin.shared.Registration;
@@ -54,7 +56,7 @@ import com.vaadin.ui.UI;
  * @author Chen
  *
  */
-public class BusinessTypeSelector extends FormLayout {
+public class BusinessTypeSelector extends FormLayout implements SingleSelectionListener<Business>{
 
 	/**
 	 * 
@@ -92,59 +94,27 @@ public class BusinessTypeSelector extends FormLayout {
 			ui.setPollInterval(sc.getInterval());
 		});
 		
-		selector.addSelectionListener(e->{
-			if (view.vin() == null) {
-				Notifications.warning("车辆识别代码不能空。");
-				return;
-			}
-			// 支持影像化检测
-			if (view instanceof FrontView) {
-				// 影像化检测
-				if (imagingCheck()) {
-					Optional<Business> opt = e.getSelectedItem();
-					if (opt.isPresent() && existCheck(view.vin(), opt.get().getCode())) {
-						Notifications.warning("此业务已经办理过。");
-						return;
-					}
-					
-					if (opt.isPresent() && opt.get() != e.getOldValue()) {
-						//删除旧原文1
-						List<Document> document1List = ui.documentService.findAllDocument1(view.vin(), view.uuid());
-						for(Document doc : document1List) {
-							try {
-								fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
-							} catch (FileException fe) {
-								fe.printStackTrace();
-							}
-						}
-						//删除旧原文2
-						List<Document> document2List = ui.documentService.findAllDocument2(view.vin(), view.uuid());
-						for(Document doc : document2List) {
-							try {
-								fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
-							} catch (FileException fe) {
-								fe.printStackTrace();
-							}
-						}
-						//删除数据库记录
-						ui.documentService.deleteByUUID(view.uuid(), view.vin());
-						loadMaterials(opt.get().getCode());
-					}
-					else {
-						view.thumbnailGrid().removeAllRows();
-					}
-				}
-				else {
-					insertImaging();
-				}
-			}
-			// 不支持影像化检查
-			else {
+		selector.addSelectionListener(this);
+	}
+	
+	@Override
+	public void selectionChange(SingleSelectionEvent<Business> e) {
+		System.out.println("-----------addSelectionListener");
+		
+		if (view.vin() == null) {
+			Notifications.warning("车辆识别代码不能空。");
+			return;
+		}
+		// 支持影像化检测
+		if (view instanceof FrontView) {
+			// 影像化检测
+			if (imagingCheck()) {
 				Optional<Business> opt = e.getSelectedItem();
 				if (opt.isPresent() && existCheck(view.vin(), opt.get().getCode())) {
 					Notifications.warning("此业务已经办理过。");
 					return;
 				}
+				
 				if (opt.isPresent() && opt.get() != e.getOldValue()) {
 					//删除旧原文1
 					List<Document> document1List = ui.documentService.findAllDocument1(view.vin(), view.uuid());
@@ -172,7 +142,44 @@ public class BusinessTypeSelector extends FormLayout {
 					view.thumbnailGrid().removeAllRows();
 				}
 			}
-		});
+			else {
+				insertImaging();
+			}
+		}
+		// 不支持影像化检查
+		else {
+			Optional<Business> opt = e.getSelectedItem();
+			if (opt.isPresent() && existCheck(view.vin(), opt.get().getCode())) {
+				Notifications.warning("此业务已经办理过。");
+				return;
+			}
+			if (opt.isPresent() && opt.get() != e.getOldValue()) {
+				//删除旧原文1
+				List<Document> document1List = ui.documentService.findAllDocument1(view.vin(), view.uuid());
+				for(Document doc : document1List) {
+					try {
+						fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
+					} catch (FileException fe) {
+						fe.printStackTrace();
+					}
+				}
+				//删除旧原文2
+				List<Document> document2List = ui.documentService.findAllDocument2(view.vin(), view.uuid());
+				for(Document doc : document2List) {
+					try {
+						fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
+					} catch (FileException fe) {
+						fe.printStackTrace();
+					}
+				}
+				//删除数据库记录
+				ui.documentService.deleteByUUID(view.uuid(), view.vin());
+				loadMaterials(opt.get().getCode());
+			}
+			else {
+				view.thumbnailGrid().removeAllRows();
+			}
+		}
 	}
 	
 	/**
@@ -266,6 +273,7 @@ public class BusinessTypeSelector extends FormLayout {
 	 * @param businessCode
 	 */
 	private void loadMaterials(String businessCode) {
+		System.out.println("--------------loadMaterials");
 		// 加载文件上传表格
 		view.thumbnailGrid().removeAllRows();
 		List<DataDictionary> list = ui.businessService.getDataDictionaries(businessCode,3);
@@ -287,7 +295,7 @@ public class BusinessTypeSelector extends FormLayout {
 		i++;
 		ThumbnailRow row = new ThumbnailRow(i+"."+"其它材料");
 		DataDictionary dict = new DataDictionary();
-		dict.setCode("$$$$");
+		dict.setCode("$$$$"); // $$$$为辅助材料code
 		row.setDataDictionary(dict);
 		view.thumbnailGrid().addRow(row);
 		view.thumbnailGrid().focus();
@@ -380,25 +388,33 @@ public class BusinessTypeSelector extends FormLayout {
 	}
 	
 	/**
-	 * 
-	 * @param code
+	 * 业务编码
+	 * @param businessCode
 	 */
-	public void populate(String code) {
+	public void populate(String businessCode) {
+		// 删除
+		selector.removeListener(SingleSelectionEvent.class, this);
+		
 		for(Business business : data) {
-			if(business.getCode().equals(code)) {
+			if(business.getCode().equals(businessCode)) {
 				selector.setSelectedItem(business);
 				break;
 			}
 		}
-		/// 为row添加缩略图
+		// 重新加载Row
+		loadMaterials(businessCode);
+		/// 为每个Row添加缩略图
 		List<Document> documentList1 = ui.documentService.findAllDocument1(view.vin(), view.uuid());
+		int i = 1;
 		for (Document doc : documentList1) {
+			System.out.println(doc.getDictionarycode()+"   "+view.thumbnailGrid().mapRows+"  "+view.vin() +"  "+ view.uuid());
+			
 			ThumbnailRow row = view.thumbnailGrid().mapRows.get(doc.getDictionarycode());
 			row.addThumbnail(new Thumbnail(new ByteArrayInputStream(doc.getThumbnail())));
 		}
 		List<Document> documentList2 = ui.documentService.findAllDocument2(view.vin(), view.uuid());
 		for (Document doc : documentList2) {
-			ThumbnailRow row = view.thumbnailGrid().mapRows.get("$$$$");
+			ThumbnailRow row = view.thumbnailGrid().mapRows.get("$$$$");// $$$$为辅助材料code
 			row.addThumbnail(new Thumbnail(new ByteArrayInputStream(doc.getThumbnail())));
 		}
 	}
@@ -411,4 +427,5 @@ public class BusinessTypeSelector extends FormLayout {
 	private UIEvents.PollListener pollListener;
 	private MessageBodyParser jsonHelper = new MessageBodyParser();
 	private User loggedinUser = null;
+
 }

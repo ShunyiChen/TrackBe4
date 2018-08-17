@@ -14937,7 +14937,8 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .imagestage-header {
-	background-color: dimgray;
+	background-color: gainsboro;
+	border-bottom: 1px;
 }
 
 .dashboard .v-window-foo .v-window-outerheader {
