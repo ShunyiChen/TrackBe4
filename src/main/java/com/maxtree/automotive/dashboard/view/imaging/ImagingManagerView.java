@@ -17,7 +17,9 @@ import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
+import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
+import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
@@ -181,7 +183,7 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
         header.addComponent(titleLabel);
 
         buildNotificationsButton();
-        buildBasicButton();
+        buildSearchButton();
         
         HorizontalLayout tools = new HorizontalLayout(btnBasicRearch, notificationsButton);
         tools.addStyleName("toolbar");
@@ -216,7 +218,9 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
              titleLabel.addStyleName("notification-title");
              String json = m.get("messagebody").toString();
              Map<String, String> map = jsonHelper.json2Map(json);
-             Label plateNumber = new Label(map.get("4"));//PLATENUMBER
+
+             String licensePlateNumber = map.get("4").toString();
+             Label plateNumber = new Label(licensePlateNumber);//PLATENUMBER
              String vin = map.get("5");
              String uuid = map.get("7");
              plateNumber.addStyleName("notification-content");
@@ -230,6 +234,9 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
              vLayout.addStyleName("switchbutton");
              vLayout.addLayoutClickListener(e -> {
              	notificationsWindow.close();
+             	
+             	editableImaging = ui.imagingService.findByPlateNumber(licensePlateNumber);
+             	grid.select(editableImaging.getImagingUniqueId()); 
              });
          }
         scrollPane.setContent(listLayout);
@@ -336,7 +343,7 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
     /**
      * 基本查询按钮
      */
-    private void buildBasicButton() {
+    private void buildSearchButton() {
     	btnBasicRearch.setEnabled(true);
     	btnBasicRearch.setId(EDIT_ID);
     	btnBasicRearch.setIcon(VaadinIcons.SEARCH);
@@ -364,28 +371,11 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
         });
     }
     
+    /**
+     * 
+     */
     private void basicSearch() {
-//    	User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-//    	ResultCallback callback = new ResultCallback() {
-//
-//			@Override
-//			public void onSuccessful(List<Transaction> results) {
-//				grid.setAllData(results);
-//				
-//				if (results.size() > searchModel.getResultsPerPage()) {
-//					List<Transaction> currentList = results.subList(0, searchModel.getResultsPerPage());
-//					grid.setItems(currentList);
-//				} else {
-//					grid.setItems(results);
-//				}
-//				
-//				int pageCount = results.size() / searchModel.getResultsPerPage() + 1;
-//				grid.getControlsLayout().setCurrentPageIndex(1);
-//				grid.getControlsLayout().setPageCount(pageCount);
-//				grid.getControlsLayout().setSizePerPage(searchModel.getResultsPerPage());
-//			}
-//    	};
-//    	BasicSearchWindow.open(callback);
+    	FuzzyQueryWindow.open(grid);
     }
     
     @Override
@@ -421,6 +411,7 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 	}
 	
 	
+	private Imaging editableImaging;
 	private int oldUnreadCount = 0;
 	private MessageBodyParser jsonHelper = new MessageBodyParser();
     private TodoListGrid grid = new TodoListGrid();

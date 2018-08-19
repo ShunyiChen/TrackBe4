@@ -173,6 +173,16 @@ public class MessagingService {
 	
 	/**
 	 * 
+	 * @param messageUniqueId
+	 * @param recipientUniqueId
+	 */
+	public void deleteSendDetails(int messageUniqueId, int recipientUniqueId) {
+		String sql = "DELETE FROM SENDDETAILS WHERE MESSAGEUNIQUEID=? AND RECIPIENTUNIQUEID=?";
+		jdbcTemplate.update(sql, new Object[] {messageUniqueId,recipientUniqueId});
+	}
+	
+	/**
+	 * 
 	 * @param user
 	 * @param viewName
 	 * @return

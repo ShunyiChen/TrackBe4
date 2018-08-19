@@ -122,10 +122,15 @@ public class TransactionService {
 	 */
 	public void update(Transaction transaction) {
 		int index = getTableIndex(transaction.getVin());
-		String sql = "UPDATE TRANSACTION_"+index+" SET BARCODE=?,PLATETYPE=?,PLATENUMBER=?,VIN=?,STATUS=?,DATEMODIFIED=?,BUSINESSCODE=?,UUID=?,CODE=?,INDEXNUMBER=? WHERE TRANSACTIONUNIQUEID=?";
+//		String sql = "UPDATE TRANSACTION_"+index+" SET BARCODE=?,PLATETYPE=?,PLATENUMBER=?,VIN=?,STATUS=?,DATEMODIFIED=?,BUSINESSCODE=?,UUID=?,CODE=?,INDEXNUMBER=? WHERE TRANSACTIONUNIQUEID=?";
+//	 	int affected = jdbcTemplate.update(sql, new Object[] {transaction.getBarcode(), transaction.getPlateType(), transaction.getPlateNumber(), 
+//	 			transaction.getVin(), transaction.getStatus(),transaction.getDateModified(), transaction.getBusinessCode(), 
+//	 			transaction.getUuid(), transaction.getCode(), transaction.getIndexNumber(), transaction.getTransactionUniqueId()});
+		
+		String sql = "UPDATE TRANSACTION_"+index+" SET BARCODE=?,PLATETYPE=?,PLATENUMBER=?,VIN=?,STATUS=?,DATEMODIFIED=? WHERE TRANSACTIONUNIQUEID=?";
 	 	int affected = jdbcTemplate.update(sql, new Object[] {transaction.getBarcode(), transaction.getPlateType(), transaction.getPlateNumber(), 
-	 			transaction.getVin(), transaction.getStatus(),transaction.getDateModified(), transaction.getBusinessCode(), 
-	 			transaction.getUuid(), transaction.getCode(), transaction.getIndexNumber(), transaction.getTransactionUniqueId()});
+	 			transaction.getVin(), transaction.getStatus(),transaction.getDateModified(),transaction.getTransactionUniqueId()});
+		
 	 	log.info("Updated.Affected row = "+affected);
 	}
 	

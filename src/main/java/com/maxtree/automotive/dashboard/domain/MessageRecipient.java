@@ -50,7 +50,7 @@ public class MessageRecipient {
 
 	private Integer messageRecipientUniqueId = 0;
 	private Integer recipientUniqueId = 0; // 接收方ID
-	private String recipientName;  // 接收方名称
+	private String recipientName;  		   // 接收方名称
 	private Integer recipientType = 0;	   // 接收方类别，1-社区，2-机构，3-用户
 	private Integer messageUniqueId = 0;   // 消息ID
 }

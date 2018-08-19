@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.maxtree.automotive.dashboard.BusinessCode;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -79,6 +80,7 @@ public class QuickQueryWindow extends Window {
 		grid.addColumn(Transaction::getPlateType).setCaption("号牌种类");
 		grid.addColumn(Transaction::getPlateNumber).setCaption("号码号牌");
 		grid.addColumn(Transaction::getVin).setCaption("车辆识别代码");
+		grid.addColumn(Transaction::getBusinessName).setCaption("业务名称");
 		grid.addColumn(Transaction::getStatus).setCaption("状态");
 		// Set the selection mode
         grid.setSelectionMode(SelectionMode.SINGLE);
@@ -128,6 +130,11 @@ public class QuickQueryWindow extends Window {
 	 * @param perPageData
 	 */
 	private void setPerPageData(List<Transaction> perPageData) {
+		
+		for(Transaction trans : perPageData) {
+			trans.setBusinessName(BusinessCode.get(trans.getBusinessCode()));
+		}
+		
     	grid.setItems(perPageData);
     }
 	

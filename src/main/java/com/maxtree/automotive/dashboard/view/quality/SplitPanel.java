@@ -8,6 +8,7 @@ import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
+import com.vaadin.event.ShortcutListener;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalSplitPanel;
@@ -67,10 +68,6 @@ public class SplitPanel extends Panel {
 			}
         });
         
-        tree.addAttachListener(e->{
-        	System.out.println(e);
-        });
-        
 //        com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(tree, true);
 //        menu.addItem("查看", new com.vaadin.contextmenu.Menu.Command() {
 //			@Override
@@ -82,6 +79,47 @@ public class SplitPanel extends Panel {
 //			
 //			}
 //		});
+        
+        ShortcutListener leftListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_LEFT, null) {
+			/**/
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void handleAction(Object sender, Object target) {
+				previous();
+			}
+		};
+		ShortcutListener rightListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_RIGHT, null) {
+			/**/
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void handleAction(Object sender, Object target) {
+				next();
+			}
+		};
+		ShortcutListener upListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_UP, null) {
+			/**/
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void handleAction(Object sender, Object target) {
+				previous();
+			}
+		};
+		ShortcutListener downListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_DOWN, null) {
+			/**/
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void handleAction(Object sender, Object target) {
+				next();
+			}
+		};
+		tree.addShortcutListener(leftListener);
+		tree.addShortcutListener(rightListener);
+		tree.addShortcutListener(upListener);
+		tree.addShortcutListener(downListener);
         
         HorizontalSplitPanel hsplit = new HorizontalSplitPanel();
 		this.setContent(hsplit);

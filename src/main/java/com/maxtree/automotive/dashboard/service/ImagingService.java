@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.domain.Imaging;
 
@@ -30,22 +31,47 @@ public class ImagingService {
 	 * 
 	 * @param limit
 	 * @param offset
+	 * @param keyword
 	 * @return
 	 */
-	public List<Imaging> findAll(int limit, int offset) {
-		String sql = "SELECT * FROM IMAGING ORDER BY DATECREATED  LIMIT ? OFFSET ? ";
-		List<Imaging> results = jdbcTemplate.query(sql, new Object[] {limit, offset}, new BeanPropertyRowMapper<Imaging>(Imaging.class));
-		return results;
+	public List<Imaging> findAll(int limit, int offset, String keyword) {
+		String sql = "";
+		if(StringUtils.isEmpty(keyword)) {
+			sql = "SELECT * FROM IMAGING ORDER BY DATECREATED  LIMIT ? OFFSET ? ";
+			List<Imaging> results = jdbcTemplate.query(sql, new Object[] {limit, offset}, new BeanPropertyRowMapper<Imaging>(Imaging.class));
+			return results;
+		}
+		else {
+			keyword = "%"+keyword+"%";
+			sql = "SELECT * FROM IMAGING WHERE PLATENUMBER LIKE ? ORDER BY DATECREATED  LIMIT ? OFFSET ? ";
+			List<Imaging> results = jdbcTemplate.query(sql, new Object[] {keyword,limit, offset}, new BeanPropertyRowMapper<Imaging>(Imaging.class));
+			return results;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param plateNumber
+	 * @return
+	 */
+	public Imaging findByPlateNumber(String plateNumber) {
+		String sql = "SELECT * FROM IMAGING WHERE PLATENUMBER=?";
+		List<Imaging> results = jdbcTemplate.query(sql, new Object[] {plateNumber}, new BeanPropertyRowMapper<Imaging>(Imaging.class));
+		if(results.size() > 0) {
+			return results.get(0);
+		}
+		return new Imaging();
 	}
 	
 	/**
 	 * 
 	 * @param limit
+	 * @param keyword
 	 * @return
 	 */
-	public int findPagingCount(int limit) {
-		String sql = "SELECT * FROM CREATE_PAGINGCOUNT(?)";
-		int count = jdbcTemplate.queryForObject( sql, new Object[] {limit}, Integer.class);
+	public int findPagingCount(int limit,String keyword) {
+		String sql = "SELECT * FROM CREATE_PAGINGCOUNT(?,?)";
+		int count = jdbcTemplate.queryForObject( sql, new Object[] {limit,keyword}, Integer.class);
 		return count;
 	}
 	

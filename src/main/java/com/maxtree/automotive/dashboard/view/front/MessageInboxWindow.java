@@ -51,20 +51,35 @@ public class MessageInboxWindow extends Window {
 			String senderUserName = m.get("username").toString();
 			String senderPicture = "VAADIN/themes/dashboard/"+ m.get("picture").toString();
 			String subject = m.get("subject").toString();
-			String jsonmessage = m.get("messagebody").toString();
-			Map<String, String> map = new MessageBodyParser().json2Map(jsonmessage);
-			String type = map.get("type");
-			int transactionUniqueId = 0;
-			String status = null;
-//			if (type.equals("transaction")) {
-//				transactionUniqueId = Integer.parseInt(map.get("transactionUniqueId").toString());
-//				status = map.get("status").toString();
-//			}
-			String message = map.get("message");
+			String json = m.get("messagebody").toString();
+			
+			System.out.println("json="+json);
+			
+			Map<String, String> map = new MessageBodyParser().json2Map(json);
+			String status = map.get("1").toString();
+			String plateType = map.get("3").toString();
+			String uuid = map.get("7").toString();
+//			String message = map.get("message");
+	/*		
+			details.put("1", editableTrans.getStatus());//STATUS
+			details.put("2", basicInfoPane.getBarCode());//BARCODE
+			details.put("3", basicInfoPane.getPlateType());//PLATETYPE
+			details.put("4", basicInfoPane.getPlateNumber());//PLATENUMBER
+			details.put("5", basicInfoPane.getVIN());//VIN
+			details.put("6", businessTypePane.getSelected().getName());//BUSINESSTYPE
+			details.put("7", editableTrans.getUuid());//UUID
+			*/
+			
+			StringBuilder content = new StringBuilder();
+			content.append("状态："+map.get("1")+"\n");
+			content.append("条形码："+map.get("2")+"\n");
+			content.append("号牌种类："+map.get("3")+"\n");
+			content.append("车牌号："+map.get("4")+"\n");
+			content.append("车辆识别代码："+map.get("5")+"\n");
+			content.append("业务类型："+map.get("6")+"\n");
 			String read = m.get("markedasread").toString().equals("1")?"已读":"未读";
 			Date dateCreated = (Date) m.get("datecreated");
-			
-			MessageWrapper wrapper = new MessageWrapper(messageUniqueId, senderPicture+" "+senderUserName, senderPicture, subject, message, transactionUniqueId, read, dateCreated, type, status);
+			MessageWrapper wrapper = new MessageWrapper(messageUniqueId, senderPicture+" "+senderUserName, senderPicture, subject, content.toString(), uuid, read, dateCreated, plateType, status);
 			
 			messageWrapperList.add(wrapper);
 			
@@ -94,7 +109,7 @@ public class MessageInboxWindow extends Window {
     		Set<MessageWrapper> selected = event.getAllSelectedItems();
     	    if (selected.size() > 0) {
     	    	List<MessageWrapper> selectreminders = new ArrayList<>(selected);
-        	    textarea.setValue(selectreminders.get(0).getMessage());
+        	    textarea.setValue(selectreminders.get(0).getMessage()==null?"":selectreminders.get(0).getMessage());
         	    // 标记选中记录为已读
         	    User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
         	    ui.messagingService.markAsRead(selectreminders.get(0).getMessageUniqueId(), loginUser.getUserUniqueId());

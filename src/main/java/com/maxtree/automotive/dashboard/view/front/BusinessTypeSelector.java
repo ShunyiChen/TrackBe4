@@ -210,13 +210,13 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 				return;
 			}
 			TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-			Message newMessage = messageSystem.createNewMessage(receiver, "影像化检测消息", messageBody);
+			Message newMessage = messageSystem.createNewMessage(loggedinUser, view.basicInfoPane().getPlateNumber()+",收到新的影像化检测记录", messageBody);
 			Set<Name> names = new HashSet<Name>();
 			Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 			names.add(target);
 			messageSystem.sendMessageTo(newMessage.getMessageUniqueId(),names,DashboardViewType.IMAGING_MANAGER.getViewName());
 			//3.更新消息轮询的缓存
-			CacheManager.getInstance().getSendDetailsCache().refresh(loggedinUser.getUserUniqueId());
+			CacheManager.getInstance().getSendDetailsCache().refresh(receiver.getUserUniqueId());
 		}
 		
 		Callback callback = new Callback() {
@@ -407,15 +407,74 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 		List<Document> documentList1 = ui.documentService.findAllDocument1(view.vin(), view.uuid());
 		int i = 1;
 		for (Document doc : documentList1) {
-			System.out.println(doc.getDictionarycode()+"   "+view.thumbnailGrid().mapRows+"  "+view.vin() +"  "+ view.uuid());
+			
+			Thumbnail thumbnail = new Thumbnail(new ByteArrayInputStream(doc.getThumbnail()));
+			// 右键菜单
+			com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(thumbnail, true);
+			menu.addItem("查看", new com.vaadin.contextmenu.Menu.Command() {
+				@Override
+				public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+					ImageViewerWindow.open(view, doc.getDocumentUniqueId());
+				}
+			});
+			menu.addSeparator();
+			menu.addItem("删除", new com.vaadin.contextmenu.Menu.Command() {
+				@Override
+				public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+					//从文件系统删除
+					try {
+						fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
+					} catch (FileException e) {
+						e.printStackTrace();
+					}
+					
+					//从数据库删除
+					ui.documentService.deleteById(doc.getDocumentUniqueId(),1,view.vin());
+					
+					//从UI删除
+					ThumbnailRow row = view.thumbnailGrid().mapRows.get(doc.getDictionarycode());
+					row.removeThumbnail(thumbnail);
+				}
+			});
+			
 			
 			ThumbnailRow row = view.thumbnailGrid().mapRows.get(doc.getDictionarycode());
-			row.addThumbnail(new Thumbnail(new ByteArrayInputStream(doc.getThumbnail())));
+			row.addThumbnail(thumbnail);
 		}
 		List<Document> documentList2 = ui.documentService.findAllDocument2(view.vin(), view.uuid());
 		for (Document doc : documentList2) {
+			
+			Thumbnail thumbnail = new Thumbnail(new ByteArrayInputStream(doc.getThumbnail()));
+			// 右键菜单
+			com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(thumbnail, true);
+			menu.addItem("查看", new com.vaadin.contextmenu.Menu.Command() {
+				@Override
+				public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+					ImageViewerWindow.open(view, doc.getDocumentUniqueId());
+				}
+			});
+			menu.addSeparator();
+			menu.addItem("删除", new com.vaadin.contextmenu.Menu.Command() {
+				@Override
+				public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+					//从文件系统删除
+					try {
+						fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
+					} catch (FileException e) {
+						e.printStackTrace();
+					}
+					
+					//从数据库删除
+					ui.documentService.deleteById(doc.getDocumentUniqueId(),2,view.vin());
+					
+					//从UI删除
+					ThumbnailRow row = view.thumbnailGrid().mapRows.get(doc.getDictionarycode());
+					row.removeThumbnail(thumbnail);
+				}
+			});
+			
 			ThumbnailRow row = view.thumbnailGrid().mapRows.get("$$$$");// $$$$为辅助材料code
-			row.addThumbnail(new Thumbnail(new ByteArrayInputStream(doc.getThumbnail())));
+			row.addThumbnail(thumbnail);
 		}
 	}
 

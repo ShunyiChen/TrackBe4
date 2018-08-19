@@ -207,30 +207,48 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
         	vLayout.setSpacing(false);
         	vLayout.addStyleName("notification-item");
             Label timeLabel = new Label();
+            int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
+//            messageCreatorUniqueId = Integer.parseInt(m.get("creatoruniqueid").toString());
             String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
             Label titleLabel = new Label(m.get("subject")+readStr);
             titleLabel.addStyleName("notification-title");
             String json = m.get("messagebody").toString();
             Map<String, String> map = jsonHelper.json2Map(json);
-            Label plateNumber = new Label(map.get("4"));//PLATENUMBER
-            plateNumber.addStyleName("notification-content");
-            
+            String plateNumber = map.get("4").toString();
+            Label plateNumberLabel = new Label(plateNumber);
+            String vin = map.get("5").toString();
+            String uuid = map.get("7").toString();
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
             timeLabel.setValue(new TimeAgo().toDuration(duration));
             timeLabel.addStyleName("notification-time");
-            vLayout.addComponents(titleLabel, timeLabel, plateNumber);
+            vLayout.addComponents(titleLabel, timeLabel, plateNumberLabel);
             listLayout.addComponent(vLayout);
             vLayout.addStyleName("switchbutton");
             vLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
+            	editableTrans = ui.transactionService.findByUUID(uuid, vin);
+            	removeMessage = new Callback() {
+					@Override
+					public void onSuccessful() {
+						ui.messagingService.deleteSendDetails(messageUniqueId,loggedInUser.getUserUniqueId());
+						ui.messagingService.deleteMessageRecipient(messageUniqueId,loggedInUser.getUserUniqueId());
+						ui.messagingService.deleteMessage(messageUniqueId);
+						
+						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+					}
+            	};
             	
-            	if(editableTrans == null) {
-//        			fetchTransaction();
-        		}
-        		else {
-        			Notifications.warning("请先完成当前任务，再取下一条。");
-        		}
+            	if(editableTrans.getStatus().equals(BusinessState.B2.name)
+            			|| editableTrans.getStatus().equals(BusinessState.B4.name)) {
+            		Notifications.warning("该记录已经质检通过。");
+            		removeMessage.onSuccessful();
+            		return;
+            	}
+            	else {
+            		resetComponents();
+            	}
+				
             });
             
         }
@@ -451,9 +469,13 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     	
 		//4.记录跟踪
 		String messageBody = track(Actions.APPROVED, comments);
+		
+		//删除当前消息
+		removeMessage.onSuccessful();
+		
 		//5.给影像化管理员发信
 		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-		Message newMessage = messageSystem.createNewMessage(receiver, editableTrans.getPlateNumber()+",质检合格", messageBody);
+		Message newMessage = messageSystem.createNewMessage(loggedInUser, editableTrans.getPlateNumber()+",质检合格", messageBody);
 		Set<Name> names = new HashSet<Name>();
 		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 		names.add(target);
@@ -481,7 +503,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		//3.发信给前台
 		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
 		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-		Message newMessage = messageSystem.createNewMessage(receiver, editableTrans.getPlateNumber()+",质检不合格", messageBody);
+		Message newMessage = messageSystem.createNewMessage(loggedInUser, editableTrans.getPlateNumber()+",质检不合格", messageBody);
 		Set<Name> names = new HashSet<Name>();
 		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 		names.add(target);
@@ -568,4 +590,5 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     private Button btnCommit = new Button();
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
+	private Callback removeMessage;
 }

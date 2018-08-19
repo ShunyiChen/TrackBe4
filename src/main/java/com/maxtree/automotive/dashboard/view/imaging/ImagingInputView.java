@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
@@ -29,6 +31,7 @@ import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.FrameNumber;
+import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Site;
@@ -48,6 +51,8 @@ import com.maxtree.automotive.dashboard.view.front.BusinessTypePane;
 import com.maxtree.automotive.dashboard.view.front.CapturePane;
 import com.maxtree.automotive.dashboard.view.front.ThumbnailGrid;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
+import com.maxtree.trackbe4.messagingsystem.Name;
+import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.data.Binder;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
@@ -217,23 +222,37 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	vLayout.setSpacing(false);
         	vLayout.addStyleName("notification-item");
             Label timeLabel = new Label();
-            String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
-            Label titleLabel = new Label(m.get("subject")+readStr);
-            titleLabel.addStyleName("notification-title");
-            String json = m.get("messagebody").toString();
-            Map<String, String> map = jsonHelper.json2Map(json);
+            Label subjectLabel = new Label();
+            subjectLabel.addStyleName("notification-title");
+            int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
+            String subject = m.get("subject").toString();
+            subjectLabel.setValue(subject);
+            String body = m.get("messagebody").toString();
+            messageCreatorUniqueId = Integer.parseInt(m.get("creatoruniqueid").toString());
+            Map<String, String> map = jsonHelper.json2Map(body);
             Label plateNumber = new Label(map.get("4"));//PLATENUMBER
             String vin = map.get("5");
             String uuid = map.get("7");
             plateNumber.addStyleName("notification-content");
-            
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
             timeLabel.setValue(new TimeAgo().toDuration(duration));
             timeLabel.addStyleName("notification-time");
-            vLayout.addComponents(titleLabel, timeLabel, plateNumber);
+            vLayout.addComponents(subjectLabel, timeLabel, plateNumber);
             listLayout.addComponent(vLayout);
             vLayout.addStyleName("switchbutton");
+
+            removeMessage = new Callback() {
+				@Override
+				public void onSuccessful() {
+					ui.messagingService.deleteSendDetails(messageUniqueId,loggedInUser.getUserUniqueId());
+					ui.messagingService.deleteMessageRecipient(messageUniqueId,loggedInUser.getUserUniqueId());
+					ui.messagingService.deleteMessage(messageUniqueId);
+					
+					CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+				}
+            };
+            
             vLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
             	
@@ -390,8 +409,10 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         btnCommit.addClickListener(e -> {
         	if (editMode == 0) {
         		newTransaction();
+        		
         	} else if(editMode == 1){
         		updateTransaction();
+        	
         	}
         });
     }
@@ -468,6 +489,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
      * @param transVIN
      */
     private void openTransaction(String transUUID, String transVIN) {
+    	editMode = 1;
     	editableTrans = ui.transactionService.findByUUID(transUUID, transVIN);
     	editableSite = ui.siteService.findByCode(editableTrans.getSiteCode());
     	uuid = editableTrans.getUuid();
@@ -580,8 +602,10 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     		ui.transactionService.insert(editableTrans);
     		//操作记录
     		track(Actions.INPUT);
+    		
     		// 清空舞台
         	cleanStage();
+        	
         	Notifications.bottomWarning("操作成功。记录已提交,等待质检检验。");
     	}
     }
@@ -590,6 +614,11 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
      * 
      */
     private void updateTransaction() {
+    	if(editableTrans == null) {
+    		Notifications.warning("请确保完成当前任务，再执行下一操作。");
+    		return;
+    	}
+    	
     	if(!basicInfoPane.emptyChecks()) {
 			Notifications.warning("有效性验证失败。");
 			return;
@@ -601,42 +630,31 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	//新车注册流程
     	if (businessTypePane.getSelected().getName().equals("注册登记")) {
     		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
-        	editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
-        	editableTrans.setSiteCode(editableSite.getCode());
-        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
-        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
-        	editableTrans.setBatch(batch);
-        	editableTrans.setUuid(uuid);
-        	editableTrans.setCreator(loggedInUser.getUserName());
-        	editableTrans.setIndexNumber(1);
         	editableTrans.setStatus(BusinessState.B7.name);
     		ui.transactionService.update(editableTrans);
     		//操作记录
-    		track(Actions.INPUT);
-    		// 清空舞台
+    		String messageBody = track(Actions.RE_ENTRY);
+    		//删除消息提醒
+    		removeMessage.onSuccessful();
+    		//回复消息
+    		replyMessage(messageBody);
+    		
+    		//清空舞台
         	cleanStage();
         	Notifications.bottomWarning("操作成功。记录已提交,等待质检检验。");
     	}
     	else {
     		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
-    		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
-        	editableTrans.setSiteCode(editableSite.getCode());
-        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
-        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
-        	editableTrans.setUuid(uuid);
-        	editableTrans.setCreator(loggedInUser.getUserName());
-//        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
-//        	editableTrans.setIndexNumber(indexNumber);
         	editableTrans.setStatus(BusinessState.B7.name);
     		ui.transactionService.update(editableTrans);
     		//操作记录
-    		track(Actions.INPUT);
+    		String messageBody= track(Actions.RE_ENTRY);
+    		//删除消息提醒
+    		removeMessage.onSuccessful();
+    		//回复消息
+    		replyMessage(messageBody);
     		// 清空舞台
         	cleanStage();
         	Notifications.bottomWarning("操作成功。记录已提交,等待质检检验。");
@@ -645,9 +663,30 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     
     /**
      * 
+     * @param messageBody
+     */
+    private void replyMessage(String messageBody) {
+    	//发消息给影像化质检
+		User receiver = ui.userService.findById(messageCreatorUniqueId);
+		if (receiver.getUserUniqueId() == 0) {
+			Notifications.warning("没有找到消息接收者");
+			return;
+		}
+		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
+		Message newMessage = messageSystem.createNewMessage(loggedInUser, editableTrans.getPlateNumber()+",已修改完成", messageBody);
+		Set<Name> names = new HashSet<Name>();
+		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
+		names.add(target);
+		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_QUALITY.getViewName());
+		// 更新消息轮询的缓存
+		CacheManager.getInstance().getSendDetailsCache().refresh(receiver.getUserUniqueId());
+    }
+    
+    /**
+     * 
      * @param act
      */
-    private void track(Actions act) {
+    private String track(Actions act) {
     	Map<String, String> details = new HashMap<String, String>();
     	details.put("1", editableTrans.getStatus());//STATUS
 		details.put("2", basicInfoPane.getBarCode());//BARCODE
@@ -674,6 +713,8 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 		event.setDateUpdated(new Date());
 		event.setDetails(json);
 		ui.userEventService.insert(event, loggedInUser.getUserName());
+		
+		return json;
     }
     
 	@Override
@@ -760,6 +801,8 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 	}
 	
 	private int editMode;//0-新建 1:修改
+	private Callback removeMessage;
+	private int messageCreatorUniqueId;
 	private MessageBodyParser jsonHelper = new MessageBodyParser();
 	public static final String EDIT_ID = "dashboard-edit";
 	public static final String TITLE_ID = "dashboard-title";

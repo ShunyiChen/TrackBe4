@@ -171,13 +171,21 @@ public class Transaction {
 		this.indexNumber = indexNumber;
 	}
 
+	public String getBusinessName() {
+		return businessName;
+	}
+
+	public void setBusinessName(String businessName) {
+		this.businessName = businessName;
+	}
+
 	@Override
 	public String toString() {
 		 return String.format(
 		 "Transaction[transactionUniqueId=%d, barcode='%s', plateType='%s',plateNumber='%s',vin='%s', "
 		 + "dateCreated='%s', dateModified='%s', dateFinished='%s', status='%s',siteCode='%s',"
 		 + "businessCode='%s', communityUniqueID='%d',companyUniqueId='%d',locationCode='%s',"
-		 + "batch='%s', uuid='%s',code='%s',creator='%s',indexNumber='%d']",
+		 + "batch='%s', uuid='%s',code='%s',creator='%s',indexNumber='%d',businessName='%s']",
 		 transactionUniqueId,
 		 barcode,
 		 plateType,
@@ -196,7 +204,8 @@ public class Transaction {
 		 uuid,
 		 code,
 		 creator,
-		 indexNumber
+		 indexNumber,
+		 businessName
 		);
 	}
 
@@ -220,4 +229,5 @@ public class Transaction {
 	private Site site;						// 文件站点
 	private String creator;					// 录入人用户名
 	private Integer indexNumber = 0; 		// 业务顺序号
+	private String businessName;			// 业务名称（非数据库字段）
 }

@@ -1,8 +1,5 @@
 package com.maxtree.automotive.dashboard.domain;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-
 public class Document {
 
 	public Integer getDocumentUniqueId() {

@@ -11,13 +11,13 @@ public class MessageWrapper {
 	 * @param senderPicture
 	 * @param subject
 	 * @param message
-	 * @param transactionUniqueId
+	 * @param uuid
 	 * @param read
 	 * @param dateCreated
 	 * @param type
 	 */
 	public MessageWrapper(int messageUniqueId, String senderUserName, String senderPicture, String subject,
-			String message, int transactionUniqueId, String read, Date dateCreated, String type, String status) {
+			String message, String uuid, String read, Date dateCreated, String type, String status) {
 		this.messageUniqueId = messageUniqueId;
 		this.senderUserName = senderUserName;
 		this.senderPicture = senderPicture;
@@ -27,7 +27,7 @@ public class MessageWrapper {
 		this.dateCreated = dateCreated;
 		
 		// transaction information
-		this.transactionUniqueId = transactionUniqueId;
+		this.uuid = uuid;
 		this.type = type;
 		this.status = status;
 	}
@@ -72,12 +72,13 @@ public class MessageWrapper {
 		this.message = message;
 	}
 
-	public int getTransactionUniqueId() {
-		return transactionUniqueId;
+
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setTransactionUniqueId(int transactionUniqueId) {
-		this.transactionUniqueId = transactionUniqueId;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getRead() {
@@ -113,7 +114,7 @@ public class MessageWrapper {
 	}
 
 	private int messageUniqueId;
-	private int transactionUniqueId;
+	private String uuid;
 	private String senderUserName;
 	private String senderPicture;
 	private String subject;

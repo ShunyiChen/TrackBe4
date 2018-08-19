@@ -3,6 +3,7 @@ package com.maxtree.automotive.dashboard;
 public enum Actions {
 
 	INPUT("前台录入"),
+	RE_ENTRY("重新录入"),
 	REJECTED("退回前台"),
 	APPROVED("质检合格"),
 	SUBMIT("提交审档"),

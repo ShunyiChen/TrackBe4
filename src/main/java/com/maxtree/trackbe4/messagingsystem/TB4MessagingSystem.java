@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.Timer;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.MessageRecipient;
 import com.maxtree.automotive.dashboard.domain.SendDetails;

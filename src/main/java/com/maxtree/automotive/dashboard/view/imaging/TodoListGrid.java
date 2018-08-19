@@ -1,13 +1,17 @@
 package com.maxtree.automotive.dashboard.view.imaging;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.cache.CacheManager;
+import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.Menu.Command;
+import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.contextmenu.MenuItem;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.UI;
@@ -73,9 +77,11 @@ public class TodoListGrid extends VerticalLayout {
 	 */
 	public void updateStatus(String newStatus) {
 		ui.imagingService.updateImaging(selectedItem.getImagingUniqueId(), newStatus);
+		
 		selectedItem.setStatus(newStatus);
 		grid.getSelectionModel().deselectAll();
 		grid.select(selectedItem);
+		
 	}
 	
 	/**
@@ -86,8 +92,25 @@ public class TodoListGrid extends VerticalLayout {
     	grid.setItems(perPageData);
     }
 	
+	/**
+	 * 
+	 * @param imagingUniqueId
+	 */
+	public void select(int imagingUniqueId) {
+		ListDataProvider<Imaging> listDataProvider = (ListDataProvider<Imaging>) grid.getDataProvider();
+		for (Imaging img : listDataProvider.getItems()) {
+			if (img.getImagingUniqueId() == imagingUniqueId) {
+				grid.select(img);
+				break;
+			}
+		}
+		
+	}
+	
+
 	private Imaging selectedItem;
 	private Grid<Imaging> grid = new Grid<>();
+	public String keyword ="";
 	public ControlsLayout controls = new ControlsLayout(this);
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 }

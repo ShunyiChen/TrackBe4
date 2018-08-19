@@ -5,13 +5,13 @@ import java.io.InputStream;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 
+import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
-import com.vaadin.event.ShortcutListener;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Alignment;
@@ -20,9 +20,13 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
+import com.vaadin.ui.JavaScript;
+import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+
+import elemental.json.JsonArray;
 
 public class ImageStage extends VerticalLayout implements ClickListener{
 
@@ -78,26 +82,6 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 		right.setDescription("下一张");
 		right.addClickListener(this);
 		
-		ShortcutListener leftListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_LEFT, null) {
-			/**/
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void handleAction(Object sender, Object target) {
-				splitPanel.previous();
-			}
-		};
-		ShortcutListener rightListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_RIGHT, null) {
-			/**/
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void handleAction(Object sender, Object target) {
-				splitPanel.next();
-			}
-		};
-		left.addShortcutListener(leftListener);
-		right.addShortcutListener(rightListener);
 		
 		HorizontalLayout header = new HorizontalLayout();
 		header.setSpacing(false);
@@ -122,7 +106,7 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 		subfooter.setSpacing(false);
 		subfooter.setMargin(false);
 		subfooter.setWidthUndefined();
-		subfooter.addComponents(left,Box.createHorizontalBox(5),right);
+		subfooter.addComponents(left,Box.createHorizontalBox(10),right);
 		footer.addComponents(subfooter);
 		footer.setComponentAlignment(subfooter, Alignment.TOP_CENTER);
 		
@@ -139,6 +123,11 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 		this.addComponents(header,scroll,footer);
 		this.setExpandRatio(scroll,1);
 		
+		
+//		 UI.getCurrent().addClickListener(e->{
+//			 System.out.println(e.getClientX()+","+e.getClientY()+","+e.getRelativeX()+","+e.getRelativeY());
+//		 });
+//		 
 	}
 	
 	/**
@@ -167,13 +156,50 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 	 * 调整为实际大小
 	 */
 	private void actualSize() {
-		picture.setSizeUndefined();
-		pictureFrame.setWidthUndefined();
-		pictureFrame.setHeight("100%");
-		pictureFrame.removeAllComponents();
-		pictureFrame.addComponent(picture);
-		pictureFrame.setComponentAlignment(picture, Alignment.MIDDLE_CENTER);
-		scroll.setContent(pictureFrame);
+		
+		Callback2 callback2 = new Callback2() {
+			@Override
+			public void onSuccessful(Object... objects) {
+				double fw = Double.parseDouble(objects[0].toString()) - 42;
+				double fh = Double.parseDouble(objects[1].toString());
+				
+				picture.setSizeUndefined();
+				
+				if(pictureWidth >= fw) {
+					pictureFrame.setWidthUndefined();
+				}
+				else {
+					pictureFrame.setWidth("100%");
+				}
+				
+				if(pictureHeight >= fh) {
+					pictureFrame.setHeightUndefined();
+				}
+				else {
+					pictureFrame.setHeight("100%");
+				}
+				
+				pictureFrame.removeAllComponents();
+				pictureFrame.addComponent(picture);
+				pictureFrame.setComponentAlignment(picture, Alignment.MIDDLE_CENTER);
+				scroll.setContent(pictureFrame);
+			}
+		};
+		
+		scroll.setId("MyPanel");
+		JavaScript.getCurrent().addFunction("myGetPanelSize", new JavaScriptFunction() {
+			@Override
+			public void call(JsonArray arguments) {
+				double w = arguments.getNumber(0);
+				double h = arguments.getNumber(1);
+				System.out.println("w="+w+",h="+h);
+				callback2.onSuccessful(w,h);
+			}
+		});
+		JavaScript.getCurrent().execute("myGetPanelSize(document.getElementById('" + scroll.getId() + "').clientWidth,document.getElementById('" + scroll.getId() + "').clientHeight);");
+
+		
+		
 	}
 	
 	
@@ -199,6 +225,30 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 			StreamResource streamResource = new StreamResource(streamSource, fileObj.getName().getBaseName());
 			streamResource.setCacheTime(0);
 			picture = new Image(null, streamResource);
+			
+			// Create and attach extension
+//            DragSourceExtension<Image> dragSource = new DragSourceExtension<>(picture);
+//            dragSource.addDragStartListener( event -> {
+//            	
+//            	
+//            	System.out.println(event.getComponent().getHeight());
+//            });
+            
+            
+            
+			picture.setId("mypicture");
+			JavaScript.getCurrent().addFunction("myGetPictureSize", new JavaScriptFunction() {
+
+				@Override
+				public void call(JsonArray arguments) {
+					pictureWidth = arguments.getNumber(0);
+					pictureHeight = arguments.getNumber(1);
+					System.out.println("width="+pictureWidth+",height="+pictureHeight);
+					
+				}
+			});
+			JavaScript.getCurrent().execute("myGetPictureSize(document.getElementById('" + picture.getId() + "').clientWidth,document.getElementById('" + picture.getId() + "').clientHeight);");
+			
 		} catch (FileException e) {
 			Notifications.warning(e.getMessage());
 		}
@@ -229,4 +279,6 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 	private Button left = new Button();
 	private Button right = new Button();
 	private SplitPanel splitPanel;
+	private double pictureWidth = 0;
+	private double pictureHeight = 1;
 }

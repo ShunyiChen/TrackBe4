@@ -6,8 +6,6 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.DoubleField;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Imaging;
-import com.maxtree.automotive.dashboard.domain.Transaction;
-import com.maxtree.automotive.dashboard.view.imaging.TodoListGrid;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.ui.Alignment;
@@ -52,43 +50,46 @@ public class ControlsLayout extends HorizontalLayout {
 			last();
 		});
 		numField.addShortcutListener(createFocusableShortcutListener(numField, KeyCode.ENTER));
-		pageCount = ui.imagingService.findPagingCount(20);
+		pageCount = ui.imagingService.findPagingCount(20,grid.keyword);
 		pageSizeLabel.setValue("总共"+pageCount+"页");
 		
 		setCurrentPageIndex(0);
 		setSizePerPage(20);
 	}
 	
+	/**
+	 * 重新计算页数
+	 */
+	public void recount() {
+		pageCount = ui.imagingService.findPagingCount(20,grid.keyword);
+		pageSizeLabel.setValue("总共"+pageCount+"页");	
+	}
+	
 	public void first() {
 		if (grid != null) {
-//			int pages = ui.imagingService.findPagingCount(20);
-			List<Imaging> items = ui.imagingService.findAll(sizePerPage, 0); 
+			List<Imaging> items = ui.imagingService.findAll(sizePerPage, 0, grid.keyword); 
 			grid.setPerPageData(items);
 			
 			// Update inputs
-			numField.setValue((1)+"");
-			currentPageIndexLabel.setValue("第"+(1)+"页 ，");
+			currentPageIndex = 1;
+			numField.setValue(currentPageIndex+"");
+			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
 		}
 	}
 	
 	private void previous() {
 		if (grid != null) {
-			currentPageIndex -= 2;
-			if (currentPageIndex < 0) {
-				currentPageIndex = 0;
+			currentPageIndex -= 1;
+			if (currentPageIndex < 1) {
+				currentPageIndex = 1;
 			}
-			int fromIndex = currentPageIndex * sizePerPage;
-			List<Imaging> items = ui.imagingService.findAll(sizePerPage, fromIndex); 
+			int offset = (currentPageIndex - 1) * sizePerPage;
+			List<Imaging> items = ui.imagingService.findAll(sizePerPage,offset,grid.keyword); 
 			grid.setPerPageData(items);
 			
 			// Update inputs
-			numField.setValue((currentPageIndex+1)+"");
-			currentPageIndexLabel.setValue("第"+(currentPageIndex+1)+"页 ，");
-			
-			// For next 
-			if (currentPageIndex == 0) {
-				currentPageIndex = 1;
-			}
+			numField.setValue(currentPageIndex+"");
+			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
 		}
 	}
 	
@@ -99,8 +100,8 @@ public class ControlsLayout extends HorizontalLayout {
 				currentPageIndex = pageCount;
 			}
 			
-			int fromIndex = (currentPageIndex -1) * sizePerPage;
-			List<Imaging> items = ui.imagingService.findAll(sizePerPage, fromIndex); 
+			int offset = (currentPageIndex -1) * sizePerPage;
+			List<Imaging> items = ui.imagingService.findAll(sizePerPage,offset,grid.keyword); 
 			grid.setPerPageData(items);
 			// Update inputs
 			numField.setValue(currentPageIndex+"");
@@ -110,17 +111,10 @@ public class ControlsLayout extends HorizontalLayout {
 	
 	private void last() {
 		if (grid != null) {
-//			if (grid.getAllData().size() > sizePerPage) {
-//				
-//				int pageIndex = grid.getAllData().size() / sizePerPage;
-//				int remainder = grid.getAllData().size() % sizePerPage;
-//				int fromIndex = pageIndex * sizePerPage;
-// 
-//				List<Imaging> items = ui.imagingService.findAll(sizePerPage, fromIndex); 
-//				grid.setItems(items);
-//			} else {
-//				grid.setItems(grid.getAllData());
-//			}
+			currentPageIndex = pageCount;
+			int offset = (currentPageIndex -1) * sizePerPage;
+			List<Imaging> items = ui.imagingService.findAll(sizePerPage, offset, grid.keyword); 
+			grid.setPerPageData(items);
 			
 			// Update inputs
 			numField.setValue((pageCount)+"");
@@ -151,7 +145,7 @@ public class ControlsLayout extends HorizontalLayout {
 			Notifications.warning("当前页数范围应该在1-"+pageCount+"");
 		} else {
 			int fromIndex = num * sizePerPage;
-			List<Imaging> data = ui.imagingService.findAll(sizePerPage, fromIndex);
+			List<Imaging> data = ui.imagingService.findAll(sizePerPage, fromIndex,grid.keyword);
 			grid.setPerPageData(data);
 		}
 	}
@@ -159,8 +153,6 @@ public class ControlsLayout extends HorizontalLayout {
 	public int getPageCount() {
 		return pageCount;
 	}
-
- 
 
 	public int getSizePerPage() {
 		return sizePerPage;

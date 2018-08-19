@@ -10,7 +10,8 @@
         var str=captrue.vSetResolution(7);
 		    	
        var str = captrue.bStartPlay();
-	   var str = captrue.bSetMode(3); 
+	   var str = captrue.bSetMode(0); 
+	   
   }
   function Start2_onclick()
   {
@@ -28,8 +29,7 @@
 		var ms = myDate.getMilliseconds();
 		var userUniqueId = "";
         var str=captrue.bSaveJPG("C:\\temp\\",userUniqueId+"_JPG"+ms);
- 	    var str2=captrue.bUpLoadImage("C:\\temp\\"+userUniqueId+"_JPG"+ms+".JPG", "localhost", 8080, "/hello");
-        
+ 	    var str2=captrue.bUpLoadImageEx("C:\\temp\\"+userUniqueId+"_JPG"+ms+".JPG", "localhost", 8080, "/hello",false,false);
 	}
 	
 	function UpLoadJPG_onclick()
@@ -168,7 +168,20 @@
   <input type="button" value="启动主" name="StartBtn" onClick="Start1_onclick()">
   <input type="button" value="启动副" name="StopBtn" onClick="Start2_onclick()">
   <input type="button" value="停止" name="StopBtn" onClick="Stop_onclick()">
-  <input type="button" value="JPG" name="SaveJPGBtn" onClick="SaveJPG_onclick()">
+  <input type="button" value="拍照" name="SaveJPGBtn" onClick="SaveJPG_onclick()">
+ 
+    <select style="height:25px;width:160px;">
+        <option onclick="vSetResolution(0)" selected>默认值</option>
+		<option onclick="vSetResolution(1)" >320*240</option>
+		<option onclick="vSetResolution(2)" >640*480</option>
+		<option onclick="vSetResolution(3)" >800*600</option>
+		<option onclick="vSetResolution(4)" >1024*768</option>
+		<option onclick="vSetResolution(5)" >1600*1200</option>
+		<option onclick="vSetResolution(6)" >2048*1536</option>
+		<option onclick="vSetResolution(7)" >2592*1944</option>
+	</select>
+  
+  
   <!--  
   <input type="button" value="Gray" name="SaveJPGBtn" onClick="SaveGray_onclick()">
   <input type="button" value="TIF" name="SaveTIFBtn" onClick="SaveMulTIF_onclick()">
@@ -209,11 +222,12 @@
   <input type="button" value="主旋" onClick="rotateMain()">
   
   <input type="button" value="硬件ID" onClick="getDeviceId()">
-    
+    -->
   <input type="radio" value="3" name="mode" id="autoMode" onClick="selectAutoMode(this)"/><label for="autoMode">自动</label>
   <input type="radio" value="0" name="mode" id="defaultMode" onClick="selectDefaultMode(this)"/><label for="autoMode">默认</label>
   <input type="radio" value="4" name="mode" id="sfzMode" onClick="selectSfzMode(this)"/><label for="autoMode">证件</label>
   <input type="radio" value="1" name="mode" id="customMode" onClick="selectSfzMode(this)"/><label for="autoMode">自定义</label>
+  <!-- 
 <p>
 -->
 </form>
