@@ -71,6 +71,11 @@ public class ImageWindow extends Window {
 		
 		ShortcutListener upListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_UP,
 				null) {
+			/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
 			@Override
 			public void handleAction(Object sender, Object target) {
 				if (getPositionY() > 0)
@@ -79,6 +84,11 @@ public class ImageWindow extends Window {
 		};
 		ShortcutListener downListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_DOWN,
 				null) {
+			/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
 			@Override
 			public void handleAction(Object sender, Object target) {
 				setPositionY(getPositionY() + 1);
@@ -86,6 +96,11 @@ public class ImageWindow extends Window {
 		};
 		ShortcutListener leftListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_LEFT,
 				null) {
+			/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
 			@Override
 			public void handleAction(Object sender, Object target) {
 				if (getPositionX() > 0)
@@ -94,6 +109,11 @@ public class ImageWindow extends Window {
 		};
 		ShortcutListener rightListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_RIGHT,
 				null) {
+			/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
 			@Override
 			public void handleAction(Object sender, Object target) {
 				setPositionX(getPositionX() + 1);

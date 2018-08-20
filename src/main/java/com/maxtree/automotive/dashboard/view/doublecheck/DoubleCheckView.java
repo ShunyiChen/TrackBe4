@@ -39,7 +39,7 @@ import com.maxtree.automotive.dashboard.exception.DataException;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
-import com.maxtree.automotive.dashboard.view.check.ImageComparator;
+import com.maxtree.automotive.dashboard.view.check.TabbedPane;
 import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.automotive.dashboard.view.quality.ConfirmInformationGrid;
 import com.maxtree.automotive.dashboard.view.quality.RouterWindow;
@@ -413,17 +413,11 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
     	dynamicallyVLayout.setSpacing(false);
     	dynamicallyVLayout.setMargin(false);
     	dynamicallyVLayout.removeAllComponents();
-    	dynamicallyVLayout.setHeightUndefined();
     	confirmInformationGrid = new ConfirmInformationGrid(editableTrans);
-    	
-    	if (imageComparator != null) {
-    		imageComparator.getToolbar().close();
-    	}
-    	imageComparator = new ImageComparator(editableTrans);
-    	imageComparator.getToolbar().center2(true);
-    	
     	Hr hr = new Hr();
-	    dynamicallyVLayout.addComponents(confirmInformationGrid, hr, imageComparator);
+    	tabbedPane = new TabbedPane(editableTrans);
+	    dynamicallyVLayout.addComponents(confirmInformationGrid, hr, tabbedPane);
+	    dynamicallyVLayout.setExpandRatio(tabbedPane, 1);
     }
     
     /**
@@ -731,8 +725,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 		dynamicallyVLayout.setHeight("100%");
 		dynamicallyVLayout.addComponents(blankLabel);
 		dynamicallyVLayout.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
-		if (imageComparator != null)
-		imageComparator.getToolbar().close();
+		editableTrans = null;
 	}
 
 	 /**
@@ -756,7 +749,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
     private VerticalLayout dynamicallyVLayout = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private ConfirmInformationGrid confirmInformationGrid;
-    private ImageComparator imageComparator;
+    private TabbedPane tabbedPane;
     private FetchButton btnFetch = new FetchButton();
     private Button btnFeedback = new Button();
     private NotificationsButton notificationsButton;

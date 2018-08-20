@@ -11,6 +11,7 @@ import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.exception.FileException;
+import com.maxtree.automotive.dashboard.view.ImageViewIF;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.StreamResource;
@@ -22,6 +23,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.JavaScriptFunction;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -37,10 +39,10 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 
 	/**
 	 * 
-	 * @param splitPanel
+	 * @param imgView
 	 */
-	public ImageStage(SplitPanel splitPanel) {
-		this.splitPanel = splitPanel;
+	public ImageStage(ImageViewIF imgView) {
+		this.imgView = imgView;
 		initComponents();
 	}
 	
@@ -82,7 +84,6 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 		right.setDescription("下一张");
 		right.addClickListener(this);
 		
-		
 		HorizontalLayout header = new HorizontalLayout();
 		header.setSpacing(false);
 		header.setMargin(false);
@@ -123,11 +124,9 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 		this.addComponents(header,scroll,footer);
 		this.setExpandRatio(scroll,1);
 		
-		
 //		 UI.getCurrent().addClickListener(e->{
 //			 System.out.println(e.getClientX()+","+e.getClientY()+","+e.getRelativeX()+","+e.getRelativeY());
 //		 });
-//		 
 	}
 	
 	/**
@@ -138,6 +137,10 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 	public void display(Site site, Document doc) {
 		document2Image(site, doc);
 		fittedSize();
+	}
+	
+	public void clean() {
+		scroll.setContent(new Label(""));
 	}
 	
 	/**
@@ -192,14 +195,10 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 			public void call(JsonArray arguments) {
 				double w = arguments.getNumber(0);
 				double h = arguments.getNumber(1);
-				System.out.println("w="+w+",h="+h);
 				callback2.onSuccessful(w,h);
 			}
 		});
 		JavaScript.getCurrent().execute("myGetPanelSize(document.getElementById('" + scroll.getId() + "').clientWidth,document.getElementById('" + scroll.getId() + "').clientHeight);");
-
-		
-		
 	}
 	
 	
@@ -229,13 +228,8 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 			// Create and attach extension
 //            DragSourceExtension<Image> dragSource = new DragSourceExtension<>(picture);
 //            dragSource.addDragStartListener( event -> {
-//            	
-//            	
-//            	System.out.println(event.getComponent().getHeight());
+//            		System.out.println(event.getComponent().getHeight());
 //            });
-            
-            
-            
 			picture.setId("mypicture");
 			JavaScript.getCurrent().addFunction("myGetPictureSize", new JavaScriptFunction() {
 
@@ -243,8 +237,6 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 				public void call(JsonArray arguments) {
 					pictureWidth = arguments.getNumber(0);
 					pictureHeight = arguments.getNumber(1);
-					System.out.println("width="+pictureWidth+",height="+pictureHeight);
-					
 				}
 			});
 			JavaScript.getCurrent().execute("myGetPictureSize(document.getElementById('" + picture.getId() + "').clientWidth,document.getElementById('" + picture.getId() + "').clientHeight);");
@@ -263,13 +255,14 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 			fittedSize();
 			
 		} else if(event.getButton().getId().equals("left")) {
-			splitPanel.previous();
+			imgView.previous();
 			
 		} else if(event.getButton().getId().equals("right")) {
-			splitPanel.next();
+			imgView.next();
 			
 		}
 	}
+	
 	
 	private Panel scroll = new Panel();
 	private VerticalLayout pictureFrame = new VerticalLayout();
@@ -278,7 +271,7 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 	private Button actualSize = new Button();
 	private Button left = new Button();
 	private Button right = new Button();
-	private SplitPanel splitPanel;
+	private ImageViewIF imgView;
 	private double pictureWidth = 0;
 	private double pictureHeight = 1;
 }

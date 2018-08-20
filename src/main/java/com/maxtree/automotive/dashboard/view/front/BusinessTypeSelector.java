@@ -200,9 +200,15 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 			//2.发信给影像化管理员
 			Map<String, String> details = new HashMap<String, String>();
 			details.put("0", "popup");// 消息自动弹出
+			details.put("1", BusinessState.B8.name);//STATUS
+			details.put("2", view.basicInfoPane().getBarCode());//BARCODE
 			details.put("3", view.basicInfoPane().getPlateType());//PLATETYPE
 			details.put("4", view.basicInfoPane().getPlateNumber());//PLATENUMBER
 			details.put("5", view.basicInfoPane().getVIN());//VIN
+			details.put("6", "");//BUSINESSTYPE
+			details.put("7", view.uuid());//UUID
+			details.put("8", "请补充历史影像化记录");//comments
+			
 			String messageBody = jsonHelper.map2Json(details);
 			User receiver = ui.userService.findImagingAdmin(view.loggedInUser().getCommunityUniqueId());
 			if (receiver.getUserUniqueId() == 0) {

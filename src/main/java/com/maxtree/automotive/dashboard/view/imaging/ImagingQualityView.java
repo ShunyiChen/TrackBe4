@@ -471,7 +471,8 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		String messageBody = track(Actions.APPROVED, comments);
 		
 		//删除当前消息
-		removeMessage.onSuccessful();
+		if(removeMessage != null)
+			removeMessage.onSuccessful();
 		
 		//5.给影像化管理员发信
 		TB4MessagingSystem messageSystem = new TB4MessagingSystem();

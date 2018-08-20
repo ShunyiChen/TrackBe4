@@ -6,6 +6,7 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.Transaction;
+import com.maxtree.automotive.dashboard.view.ImageViewIF;
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.event.ShortcutListener;
@@ -21,7 +22,7 @@ import com.vaadin.ui.UI;
  * @author chens
  *
  */
-public class SplitPanel extends Panel {
+public class SplitPanel extends Panel implements ImageViewIF {
 	
 	/**
 	 * 
@@ -130,6 +131,7 @@ public class SplitPanel extends Panel {
 		this.setSizeFull();
 	}
 	
+	@Override
 	public void previous() {
 		List<Document> children = treeData.getChildren(root);
 		for(int i=0; i < children.size(); i++) {
@@ -147,6 +149,7 @@ public class SplitPanel extends Panel {
 		}
 	}
 	
+	@Override
 	public void next() {
 		List<Document> children = treeData.getChildren(root);
 		for(int i=0; i < children.size(); i++) {

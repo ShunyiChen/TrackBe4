@@ -155,7 +155,7 @@ public class TransactionService {
 	public String findTransactionCode(String vin) {
 		try {
 			int index = getTableIndex(vin);
-			String sql = "SELECT CODE FROM TRANSACTION_"+index+" WHERE VIN=? LIMIT ?";
+			String sql = "SELECT CODE FROM TRANSACTION_"+index+" WHERE VIN=? AND CODE IS NOT NULL LIMIT ?";
 			String code = jdbcTemplate.queryForObject( sql, new Object[] {vin,1}, String.class);
 			return code;
 		} catch (IncorrectResultSizeDataAccessException e){

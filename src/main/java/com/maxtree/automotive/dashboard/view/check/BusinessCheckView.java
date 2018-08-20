@@ -161,6 +161,11 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
 		ui.setPollInterval(sc.getInterval());
 		ui.addPollListener(new UIEvents.PollListener() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void poll(UIEvents.PollEvent event) {
 				updateUnreadCount();
@@ -186,9 +191,9 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
         titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         header.addComponent(titleLabel);
         buildFetchButton();
-        buildFeedbackButton();
+        buildCommitButton();
         buildNotificationsButton();
-        HorizontalLayout tools = new HorizontalLayout(btnFetch,btnFeedback,btnCommit,notificationsButton);
+        HorizontalLayout tools = new HorizontalLayout(btnFetch,btnCommit,notificationsButton);
         tools.addStyleName("toolbar");
         header.addComponent(tools);
         return header;
@@ -343,8 +348,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 
         @Subscribe
         public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-//        	log.info("===============QCView Polling");
-//        	DashboardMenu.getInstance().qcCount(event.getCount());
+        	DashboardMenu.getInstance().checkerCount(event.getCount());
         	setUnreadCount(event.getCount());
         }
 
@@ -383,17 +387,11 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     	dynamicallyVLayout.setSpacing(false);
     	dynamicallyVLayout.setMargin(false);
     	dynamicallyVLayout.removeAllComponents();
-    	dynamicallyVLayout.setHeightUndefined();
     	confirmInformationGrid = new ConfirmInformationGrid(editableTrans);
-    	
-    	if (imageComparator != null) {
-    		imageComparator.getToolbar().close();
-    	}
-    	imageComparator = new ImageComparator(editableTrans);
-    	imageComparator.getToolbar().center2(true);
-    	
     	Hr hr = new Hr();
-	    dynamicallyVLayout.addComponents(confirmInformationGrid, hr, imageComparator);
+    	tabbedPane = new TabbedPane(editableTrans);
+	    dynamicallyVLayout.addComponents(confirmInformationGrid, hr, tabbedPane);
+	    dynamicallyVLayout.setExpandRatio(tabbedPane, 1);
     }
     
     /**
@@ -418,21 +416,24 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
         });
     }
     
-    /**
-     * 反馈按钮
+	/**
+     * 提交按钮 
      * 
      * @return
      */
-	private void buildFeedbackButton() {
-		btnFeedback.setId(EDIT_ID);
-		btnFeedback.setIcon(VaadinIcons.ARROW_BACKWARD);
-		btnFeedback.addStyleName("icon-edit");
-		btnFeedback.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-		btnFeedback.setDescription("发送反馈给前台");
-		btnFeedback.addClickListener(e -> {
-			
-		});
-	}
+    private void buildCommitButton() {
+    	btnCommit.setId(EDIT_ID);
+        btnCommit.setIcon(VaadinIcons.CLOUD_UPLOAD);
+        btnCommit.addStyleName("icon-edit");
+        btnCommit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        btnCommit.addClickListener(e -> {
+        	if (editableTrans == null) {
+        		Notifications.warning("暂无可提交的信息。");
+        	} else {
+        		commitTransaction();
+        	}
+        });
+    }
     
 	public void commitTransaction() {
 		Callback2 accept = new Callback2() {
@@ -508,27 +509,6 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     
     /**
      * 
-     * @param transactionUniqueId
-     * @param messageDateCreated
-     */
-    public void openTransaction(int transactionUniqueId, Date messageDateCreated) {
-//    	transaction = ui.transactionService.findById(transactionUniqueId);
-//		if (transaction != null) {
-//			long time1 = transaction.getDateModified().getTime();
-//			long time2 = messageDateCreated.getTime();
-//			if (time1 > time2) {
-//				Notifications.warning("该行记录已过时。");
-//				transaction = null;
-//				return;
-//			}
-//			if (transaction.getStatus().equals(Status.S2.name)) {
-//				this.resetComponents();
-//			}
-//		}
-    }
-    
-    /**
-     * 
      * @param suggestions
      */
     private void accept(String suggestions) {
@@ -552,13 +532,13 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     		//4.发信给前台
     		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
     		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-    		Message newMessage = messageSystem.createNewMessage(receiver, "审档通过", messageBody);
+    		Message newMessage = messageSystem.createNewMessage(loggedInUser, editableTrans.getPlateNumber()+",已通过一级审档", messageBody);
     		Set<Name> names = new HashSet<Name>();
     		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
     		names.add(target);
     		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.INPUT.getViewName());
     		// 更新消息轮询的缓存
-    		CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+    		CacheManager.getInstance().getSendDetailsCache().refresh(receiver.getUserUniqueId());
     		// 5.清空
     		cleanStage();
     		// 6.提示信息
@@ -626,19 +606,17 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		//4.发信给前台
 		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
 		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-		Message newMessage = messageSystem.createNewMessage(receiver, "收到反馈", messageBody);
+		Message newMessage = messageSystem.createNewMessage(loggedInUser, "收到反馈", messageBody);
 		Set<Name> names = new HashSet<Name>();
 		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 		names.add(target);
 		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.QUALITY.getViewName());
 		// 更新消息轮询的缓存
-		CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+		CacheManager.getInstance().getSendDetailsCache().refresh(receiver.getUserUniqueId());
 		// 5.清空
 		cleanStage();
 		// 6.提示信息
 		Notifications.bottomWarning("操作成功。已退回到前台。");
-		
-		editableTrans = null;
     }
     
     /**
@@ -702,8 +680,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		dynamicallyVLayout.setHeight("100%");
 		dynamicallyVLayout.addComponents(blankLabel);
 		dynamicallyVLayout.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
-		if (imageComparator != null)
-		imageComparator.getToolbar().close();
+		editableTrans = null;
 	}
 
 	 /**
@@ -727,9 +704,9 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     private VerticalLayout dynamicallyVLayout = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private ConfirmInformationGrid confirmInformationGrid;
-    private ImageComparator imageComparator;
+    private TabbedPane tabbedPane;
     private FetchButton btnFetch = new FetchButton();
-    private Button btnFeedback = new Button();
+//    private Button btnFeedback = new Button();
     private Button btnCommit = new Button();//提交给确认审档
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);

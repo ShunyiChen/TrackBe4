@@ -20,6 +20,7 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextArea;
@@ -45,31 +46,17 @@ public class MessageInboxWindow extends Window {
 		this.setResizable(true);
 		this.setClosable(true);
 		this.setModal(true);
-		
+		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		for(Map<String, Object> m : allMessages) {
 			int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
 			String senderUserName = m.get("username").toString();
 			String senderPicture = "VAADIN/themes/dashboard/"+ m.get("picture").toString();
 			String subject = m.get("subject").toString();
 			String json = m.get("messagebody").toString();
-			
-			System.out.println("json="+json);
-			
 			Map<String, String> map = new MessageBodyParser().json2Map(json);
 			String status = map.get("1").toString();
 			String plateType = map.get("3").toString();
 			String uuid = map.get("7").toString();
-//			String message = map.get("message");
-	/*		
-			details.put("1", editableTrans.getStatus());//STATUS
-			details.put("2", basicInfoPane.getBarCode());//BARCODE
-			details.put("3", basicInfoPane.getPlateType());//PLATETYPE
-			details.put("4", basicInfoPane.getPlateNumber());//PLATENUMBER
-			details.put("5", basicInfoPane.getVIN());//VIN
-			details.put("6", businessTypePane.getSelected().getName());//BUSINESSTYPE
-			details.put("7", editableTrans.getUuid());//UUID
-			*/
-			
 			StringBuilder content = new StringBuilder();
 			content.append("状态："+map.get("1")+"\n");
 			content.append("条形码："+map.get("2")+"\n");
@@ -77,12 +64,11 @@ public class MessageInboxWindow extends Window {
 			content.append("车牌号："+map.get("4")+"\n");
 			content.append("车辆识别代码："+map.get("5")+"\n");
 			content.append("业务类型："+map.get("6")+"\n");
+			content.append("备注："+map.get("8")+"\n");
 			String read = m.get("markedasread").toString().equals("1")?"已读":"未读";
 			Date dateCreated = (Date) m.get("datecreated");
 			MessageWrapper wrapper = new MessageWrapper(messageUniqueId, senderPicture+" "+senderUserName, senderPicture, subject, content.toString(), uuid, read, dateCreated, plateType, status);
-			
 			messageWrapperList.add(wrapper);
-			
 		}
 		initComponents();
 	}
@@ -104,6 +90,7 @@ public class MessageInboxWindow extends Window {
     	grid.addColumn(MessageWrapper::getMessage).setCaption("内容");
     	grid.addColumn(MessageWrapper::getDateCreated).setCaption("创建时间");
     	grid.addColumn(MessageWrapper::getRead).setCaption("是否阅读");
+    	
     	grid.addSelectionListener(event -> {
     		
     		Set<MessageWrapper> selected = event.getAllSelectedItems();
@@ -177,24 +164,17 @@ public class MessageInboxWindow extends Window {
 			Iterator<MessageWrapper> iter = selected.iterator();
 			while (iter.hasNext()) {
 				MessageWrapper messageWrapper = iter.next();
-				
 				int messageUniqueId = messageWrapper.getMessageUniqueId();
-				User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+				ui.messagingService.deleteSendDetails(messageUniqueId,loggedInUser.getUserUniqueId());
+				ui.messagingService.deleteMessageRecipient(messageUniqueId,loggedInUser.getUserUniqueId());
+				ui.messagingService.deleteMessage(messageUniqueId);
 				
-				// 如果是自己发的，删除Message记录
-				if (messageWrapper.getSenderUserName().equals(loginUser.getUserName())) {
-					ui.messagingService.deleteMessage(messageUniqueId);
-				}
-				// 如果是别人发的，只删除MessageRecipient记录
-				else {
-					ui.messagingService.deleteMessageRecipient(messageUniqueId, loginUser.getUserUniqueId());
-				}
+				CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
 				
 				messageWrapperList.remove(messageWrapper);
 				grid.setItems(messageWrapperList);
 				textarea.setValue("");
 			}
-			
 		});
 		btnQuit.addClickListener(e->{
 			close();
@@ -218,6 +198,7 @@ public class MessageInboxWindow extends Window {
         w.center();
     }
 	
+	private User loggedInUser;
 	private Callback2 updateUnreadEvent;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private Grid<MessageWrapper> grid = new Grid<>(MessageWrapper.class);

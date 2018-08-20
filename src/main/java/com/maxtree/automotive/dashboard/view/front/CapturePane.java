@@ -70,7 +70,7 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 			int height = UI.getCurrent().getPage().getBrowserWindowHeight() - 173;
 			this.setHeight(height+"px");
 		});
-		
+		loggedinUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		int height = UI.getCurrent().getPage().getBrowserWindowHeight() - 173;
 		this.setWidth("100%");
 		this.setHeight(height+"px");
@@ -83,7 +83,6 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 //		upload.setImmediateMode(true);
 //		upload.addSucceededListener(this);
 //		this.setContent(upload);
-		loggedinUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 	}
 	
 	/**

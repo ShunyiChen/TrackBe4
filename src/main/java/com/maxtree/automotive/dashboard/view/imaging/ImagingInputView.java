@@ -584,7 +584,12 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	Notifications.bottomWarning("操作成功。记录已提交,等待质检检验。");
     	}
     	else {
-    		
+    		// 取新车注册上架号
+    		String code = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
+    		if(StringUtils.isEmpty(code)) {
+    			Notifications.warning("上架号不存在，请先录入注册登记业务。");
+    			return;
+    		}
     		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -594,6 +599,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
         	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
         	editableTrans.setUuid(uuid);
+        	editableTrans.setCode(code);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
         	editableTrans.setIndexNumber(indexNumber + 1);
