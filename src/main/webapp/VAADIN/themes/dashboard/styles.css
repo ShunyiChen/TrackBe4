@@ -14941,6 +14941,10 @@ div.v-layout.v-horizontal.v-widget {
 	border-bottom: 1px;
 }
 
+.dashboard .Manual-toolbar {
+	background-color: lightgrey;
+}
+
 .dashboard .v-window-foo .v-window-outerheader {
 	background: white;
 }

@@ -39,7 +39,7 @@ import com.maxtree.automotive.dashboard.exception.DataException;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
-import com.maxtree.automotive.dashboard.view.check.TabbedPane;
+import com.maxtree.automotive.dashboard.view.check.Manual;
 import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.automotive.dashboard.view.quality.ConfirmInformationGrid;
 import com.maxtree.automotive.dashboard.view.quality.RouterWindow;
@@ -162,6 +162,11 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
 		ui.setPollInterval(sc.getInterval());
 		ui.addPollListener(new UIEvents.PollListener() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void poll(UIEvents.PollEvent event) {
 				updateUnreadCount();
@@ -181,7 +186,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
         HorizontalLayout header = new HorizontalLayout();
         header.addStyleName("viewheader");
 
-        titleLabel = new Label("业务审核");
+        titleLabel = new Label("确认审档");
         titleLabel.setId(TITLE_ID);
         titleLabel.setSizeUndefined();
         titleLabel.addStyleName(ValoTheme.LABEL_H1);
@@ -373,8 +378,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 
         @Subscribe
         public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-//        	log.info("===============QCView Polling");
-//        	DashboardMenu.getInstance().qcCount(event.getCount());
+        	DashboardMenu.getInstance().doubleCheckCount(event.getCount());
         	setUnreadCount(event.getCount());
         }
 
@@ -415,9 +419,9 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
     	dynamicallyVLayout.removeAllComponents();
     	confirmInformationGrid = new ConfirmInformationGrid(editableTrans);
     	Hr hr = new Hr();
-    	tabbedPane = new TabbedPane(editableTrans);
-	    dynamicallyVLayout.addComponents(confirmInformationGrid, hr, tabbedPane);
-	    dynamicallyVLayout.setExpandRatio(tabbedPane, 1);
+    	manualPane = new Manual(editableTrans);
+	    dynamicallyVLayout.addComponents(confirmInformationGrid, hr, manualPane);
+	    dynamicallyVLayout.setExpandRatio(manualPane, 1);
     }
     
     /**
@@ -559,7 +563,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
     	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
     	if (business.getCheckLevel().equals("一级审档")) {
     		//1.删除锁定队列
-    		int serial = 2; //1:质检 2:审档 3:确认审档
+    		int serial = 3; //1:质检 2:审档 3:确认审档
     		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());
         	try {
     			ui.queueService.delete(queue.getQueueUniqueId(), serial);
@@ -704,7 +708,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
     
     @Override
 	public void updateUnreadCount() {
-    	List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loggedInUser.getUserUniqueId());
+    	List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().get(loggedInUser.getUserUniqueId());
     	int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {
 			if (sd.getViewName().equals(DashboardViewType.QUALITY.getViewName())
@@ -732,7 +736,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
      * 查看可用的队列记录数
      */
     private void updateQueueSize() {
-    	List<Queue> listQue = ui.queueService.findAvaliable(2);
+    	List<Queue> listQue = ui.queueService.findAvaliable(3);
     	NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
    		event.setCount(listQue.size());
    		btnFetch.updateNotificationsCount(event);
@@ -749,7 +753,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
     private VerticalLayout dynamicallyVLayout = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private ConfirmInformationGrid confirmInformationGrid;
-    private TabbedPane tabbedPane;
+    private Manual manualPane;
     private FetchButton btnFetch = new FetchButton();
     private Button btnFeedback = new Button();
     private NotificationsButton notificationsButton;

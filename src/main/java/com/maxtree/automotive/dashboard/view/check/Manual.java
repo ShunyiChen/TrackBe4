@@ -20,14 +20,14 @@ import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Tree;
-import com.vaadin.ui.Tree.TreeContextClickEvent;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-public class Manual extends Panel implements ImageViewIF {
+public class Manual extends VerticalLayout implements ImageViewIF {
 
 	/**
 	 * 
@@ -44,6 +44,15 @@ public class Manual extends Panel implements ImageViewIF {
 	}
 	
 	private void initComponents() {
+		HorizontalLayout toolbar = new HorizontalLayout();
+		toolbar.setSpacing(false);
+		toolbar.setMargin(false);
+		toolbar.setHeightUndefined();
+		toolbar.setWidth("100%");
+		toolbar.addStyleName("Manual-toolbar");
+	
+		Panel scrollPane = new Panel();
+		scrollPane.setSizeFull();
 		// 右侧组件
 		HorizontalSplitPanel rightSplit = new HorizontalSplitPanel();
 		rightSplit.setSizeFull();
@@ -100,7 +109,11 @@ public class Manual extends Panel implements ImageViewIF {
         // 展开树节点
         leftTree.expand(leftRoot);
         leftTree.setItemIconGenerator(item -> {
-            return VaadinIcons.FILE_PICTURE;
+        	if(item.getDictionarycode() == null) {
+        		return VaadinIcons.FOLDER;
+        	} else {
+        		return VaadinIcons.FILE_PICTURE;
+        	}
         });
 //        leftTree.addContextClickListener(event -> {
 //        	TreeContextClickEvent<Document> e = (TreeContextClickEvent<Document>) event;
@@ -111,16 +124,27 @@ public class Manual extends Panel implements ImageViewIF {
         leftTree.addItemClickListener(e -> {
 			// 排除根节点
         	//TODO
-			if (e.getItem().getAlias().startsWith("机动车")) {
+        	if(e.getItem().getDictionarycode() == null) {
+        		imgStage.clean();
+				// Set the position of the splitter as percentage
+		        rightSplit.setSplitPosition(100, Unit.PERCENTAGE);
+        	}
+        	else if (e.getItem().getAlias().startsWith("《机动车")) {
 				selectedNode = e.getItem();
 				imgStage.display(site, selectedNode);
 				// Set the position of the splitter as percentage
 		        rightSplit.setSplitPosition(75, Unit.PERCENTAGE);
-			} else {
-				imgStage.clean();
+//		        System.out.println(tool.isVisible()+"=========");
+		        if(!tool.isVisible()) {
+		        	tool.center2(true);
+		        }
+		        
+        	} else {
+        		selectedNode = e.getItem();
+				imgStage.display(site, selectedNode);
 				// Set the position of the splitter as percentage
 		        rightSplit.setSplitPosition(100, Unit.PERCENTAGE);
-			}
+        	}
         });
         com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(leftTree, true);
         menu.addItem("加入对比", new com.vaadin.contextmenu.Menu.Command() {
@@ -143,8 +167,12 @@ public class Manual extends Panel implements ImageViewIF {
 		main.setSplitPosition(25, Unit.PERCENTAGE);
 		main.setFirstComponent(leftTree);
 		main.setSecondComponent(rightSplit);
+		scrollPane.setContent(main);
+		this.setSpacing(false);
+		this.setMargin(false);
 		this.setSizeFull();
-		this.setContent(main);
+		this.addComponents(toolbar,scrollPane);
+		this.setExpandRatio(scrollPane,1);
 	}
 	
 	/**
@@ -156,7 +184,7 @@ public class Manual extends Panel implements ImageViewIF {
 		if (doc.getFileFullPath() != null) {
 			try {
 				FileObject fobj = new TB4FileSystem().resolveFile(site, doc.getFileFullPath());
-				ImageWindow imageWindow = new ImageWindow(doc.getAlias()+"-历史", fobj, 1.0f);
+//				ImageWindow imageWindow = new ImageWindow(doc.getAlias()+"-历史", fobj, 1.0f);
 //				toolbar.setEditingWindow(imageWindow);
 //				imageWindow.addFocusListener(e -> {
 //					toolbar.setEditingWindow(imageWindow);
@@ -218,4 +246,5 @@ public class Manual extends Panel implements ImageViewIF {
 	private Transaction transaction;
 	private Site site;
 	private Document selectedNode;
+	private Tool tool = new Tool();
 }

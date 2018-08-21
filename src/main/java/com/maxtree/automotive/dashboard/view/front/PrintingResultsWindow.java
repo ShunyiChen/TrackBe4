@@ -4,7 +4,9 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
@@ -12,10 +14,12 @@ import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Transaction;
+import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.exception.ReportException;
 import com.maxtree.tb4beans.PrintableBean;
+import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.reports.TB4Reports;
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.FileResource;
@@ -53,7 +57,10 @@ public class PrintingResultsWindow extends Window {
 		this.setModal(true);
 		this.setClosable(true);
 		this.setResizable(false);
-		 
+		this.addCloseListener(e->{
+			closableEvent.onSuccessful();
+		});
+		
 		List<String> options = Arrays.asList("打印审核结果单");
 		radios = new RadioButtonGroup<>(null, options);
 		radios.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
@@ -86,45 +93,7 @@ public class PrintingResultsWindow extends Window {
     		close();
     	});
     	radios.addValueChangeListener(e->{
-    		Transaction selectedTransaction = ui.transactionService.findById(trans.getTransactionUniqueId(), trans.getVin());
-    		
-    		List<PrintableBean> beans = new ArrayList<PrintableBean>();
-			PrintableBean bean = new PrintableBean();
-			SystemConfiguration sc = Yaml.readSystemConfiguration();
-			SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
-			bean.setDateCreated(format.format(selectedTransaction.getDateCreated()));
-			bean.setPlateType(selectedTransaction.getPlateType());
-			bean.setPlateNumber(selectedTransaction.getPlateNumber());
-			bean.setVin(selectedTransaction.getVin());
-			
-			StringBuilder info = new StringBuilder();
-			info.append("号码种类:"+selectedTransaction.getPlateType()+"\n");
-			info.append("号码号牌:"+selectedTransaction.getPlateNumber()+"\n");
-			info.append("车辆识别代码:"+selectedTransaction.getVin()+"\n");
-			bean.setBasicInformation(info.toString());// 基本信息
-			
-//			Audit audit = ui.auditService.findLastAuditByTransID(selectedTransaction.getTransactionUniqueId());
-//			bean.setObjection(audit.getAuditResults());
-//			bean.setChecker(audit.getAuditorLastName()+""+audit.getAuditorFirstName());
-//			bean.setDateChecked(format.format(audit.getAuditDate()));
-//			beans.add(bean);
-			
-			Callback callback = new Callback() {
-				@Override
-				public void onSuccessful() {
-					opener = new BrowserWindowOpener(PrintUI.class);
-					opener.setFeatures("height=595,width=842,resizable");
-					opener.extend(btnOk);
-					opener.setParameter("htmlFilePath", "reports/generates/"+trans.getTransactionUniqueId()+"/report.html");
-					btnOk.setEnabled(true);
-				}
-			};
-			try {
-				new TB4Reports().jasperToHtml(beans, trans.getTransactionUniqueId(), "report1.jasper", callback);
-				
-			} catch (ReportException e1) {
-				e1.printStackTrace();
-			}
+    		generateReport();
     	});
     	
     	this.addCloseListener(e -> {
@@ -132,6 +101,52 @@ public class PrintingResultsWindow extends Window {
     	});
     	
     	radios.setSelectedItem(options.get(0));
+	}
+	
+	private void generateReport() {
+//		Transaction selectedTransaction = ui.transactionService.findById(trans.getTransactionUniqueId(), trans.getVin());
+		List<PrintableBean> beans = new ArrayList<PrintableBean>();
+		PrintableBean bean = new PrintableBean();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
+		bean.setDateCreated(format.format(trans.getDateCreated()));
+		bean.setPlateType(trans.getPlateType());
+		bean.setPlateNumber(trans.getPlateNumber());
+		bean.setVin(trans.getVin());
+		
+		StringBuilder info = new StringBuilder();
+		info.append("号码种类:"+trans.getPlateType()+"\n");
+		info.append("号码号牌:"+trans.getPlateNumber()+"\n");
+		info.append("车辆识别代码:"+trans.getVin()+"\n");
+		bean.setBasicInformation(info.toString());// 基本信息
+		
+		Transition transition = ui.transitionService.findByUUID(trans.getUuid(), trans.getVin());
+		Map<String, String> map = jsonHelper.json2Map(transition.getDetails());
+//		Iterator<String> iter = map.keySet().iterator();
+		StringBuilder details = new StringBuilder();
+		details.append(map.get("8").toString());
+		
+		bean.setObjection(details.toString());
+		bean.setChecker(transition.getUserName());
+		bean.setDateChecked(format.format(transition.getDateUpdated()));
+		
+		beans.add(bean);
+		
+		Callback callback = new Callback() {
+			@Override
+			public void onSuccessful() {
+				opener = new BrowserWindowOpener(PrintUI.class);
+				opener.setFeatures("height=595,width=842,resizable");
+				opener.extend(btnOk);
+				opener.setParameter("htmlFilePath", "reports/generates/"+trans.getTransactionUniqueId()+"/report.html");
+				btnOk.setEnabled(true);
+			}
+		};
+		try {
+			new TB4Reports().jasperToHtml(beans, trans.getTransactionUniqueId(), "report1.jasper", callback);
+			
+		} catch (ReportException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	/**
@@ -146,9 +161,10 @@ public class PrintingResultsWindow extends Window {
 	 * @param caption
 	 * @param trans
 	 */
-	public static void open(String caption, Transaction trans) {
+	public static void open(String caption, Transaction trans, Callback closableEvent) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         PrintingResultsWindow w = new PrintingResultsWindow(caption, trans);
+        w.closableEvent = closableEvent;
         UI.getCurrent().addWindow(w);
         w.center();
     }
@@ -161,5 +177,6 @@ public class PrintingResultsWindow extends Window {
 	private BrowserWindowOpener opener;
 	private HorizontalLayout buttonLayout = new HorizontalLayout();
 	private Transaction trans;
-
+	private Callback closableEvent;
+	private MessageBodyParser jsonHelper = new MessageBodyParser();
 }

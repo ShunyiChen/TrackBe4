@@ -2,6 +2,8 @@ package com.maxtree.automotive.dashboard.domain;
 
 import java.util.Date;
 
+import com.maxtree.automotive.dashboard.BusinessCode;
+
 /**
  * 
  * 事务
@@ -172,7 +174,7 @@ public class Transaction {
 	}
 
 	public String getBusinessName() {
-		return businessName;
+		return BusinessCode.get(businessCode);
 	}
 
 	public void setBusinessName(String businessName) {

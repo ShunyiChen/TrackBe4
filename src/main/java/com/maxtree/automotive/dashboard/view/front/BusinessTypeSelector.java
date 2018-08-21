@@ -111,7 +111,8 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 			if (imagingCheck()) {
 				Optional<Business> opt = e.getSelectedItem();
 				if (opt.isPresent() && existCheck(view.vin(), opt.get().getCode())) {
-					Notifications.warning("此业务已经办理过。");
+					view.thumbnailGrid().removeAllRows();
+					Notifications.warning("此业务已经办理过了。");
 					return;
 				}
 				

@@ -22,8 +22,8 @@ public class TransitionService {
 	
 	public Transition findByUUID(String uuid, String vin) {
 		int index = getTableIndex(vin);
-		String sql = "SELECT * FROM TRANSITION_"+index+" WHERE TRANSACTIONUUID=?";
-		List<Transition> result = jdbcTemplate.query(sql, new Object[] {uuid}, new BeanPropertyRowMapper<Transition>(Transition.class));
+		String sql = "SELECT * FROM TRANSITION_"+index+" WHERE TRANSACTIONUUID=? ORDER BY TRANSITIONUNIQUEID DESC LIMIT ?";
+		List<Transition> result = jdbcTemplate.query(sql, new Object[] {uuid,1}, new BeanPropertyRowMapper<Transition>(Transition.class));
 		Transition tran = null;
 		if (result.size() > 0) {
 			tran = result.get(0);

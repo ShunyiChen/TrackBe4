@@ -60,6 +60,10 @@ public class ConfirmInformationGrid extends HorizontalLayout {
 		setValues(transaction);
 	}
 	
+	/**
+	 * 
+	 * @param transaction
+	 */
 	private void setValues(Transaction transaction) {
 		barCodeField.setValue(transaction.getBarcode());
 		plateTypeField.setValue(transaction.getPlateType());
@@ -69,6 +73,11 @@ public class ConfirmInformationGrid extends HorizontalLayout {
 		businessTypeField.setValue(business.toString());
 	}
 	
+	/**
+	 * 
+	 * @param text
+	 * @return
+	 */
 	private String htmlText(String text) {
 		return "<span style='cursor:pointer;font-size:14px;font-weight: bold;color: #000000;'>"+text+"</span>";
 	}

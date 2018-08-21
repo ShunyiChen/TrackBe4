@@ -191,6 +191,11 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 		
 		scroll.setId("MyPanel");
 		JavaScript.getCurrent().addFunction("myGetPanelSize", new JavaScriptFunction() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void call(JsonArray arguments) {
 				double w = arguments.getNumber(0);
@@ -211,6 +216,11 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 		try {
 			FileObject fileObj = new TB4FileSystem().resolveFile(site, document.getFileFullPath());
 			com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
 				@Override
 				public InputStream getStream() {
 					try {
@@ -232,6 +242,11 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 //            });
 			picture.setId("mypicture");
 			JavaScript.getCurrent().addFunction("myGetPictureSize", new JavaScriptFunction() {
+
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
 
 				@Override
 				public void call(JsonArray arguments) {

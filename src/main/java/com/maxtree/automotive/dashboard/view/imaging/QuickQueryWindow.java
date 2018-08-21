@@ -130,11 +130,6 @@ public class QuickQueryWindow extends Window {
 	 * @param perPageData
 	 */
 	private void setPerPageData(List<Transaction> perPageData) {
-		
-		for(Transaction trans : perPageData) {
-			trans.setBusinessName(BusinessCode.get(trans.getBusinessCode()));
-		}
-		
     	grid.setItems(perPageData);
     }
 	

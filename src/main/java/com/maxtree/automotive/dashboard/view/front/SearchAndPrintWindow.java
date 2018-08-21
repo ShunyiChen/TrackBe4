@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.maxtree.automotive.dashboard.BusinessState;
+import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
@@ -67,6 +68,11 @@ public class SearchAndPrintWindow extends Window {
         });
         ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER,
 				null) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void handleAction(Object sender, Object target) {
 				List<Transaction> items = ui.transactionService.findAll(-1, 0,barCodeField.getValue());
@@ -74,7 +80,6 @@ public class SearchAndPrintWindow extends Window {
 			}
 		};
         barCodeField.addShortcutListener(enterListener);
-       
         HorizontalLayout inputsHLayout = new HorizontalLayout();
         inputsHLayout.setSpacing(false);
         inputsHLayout.setMargin(false);
@@ -90,12 +95,12 @@ public class SearchAndPrintWindow extends Window {
   		grid.setSelectionMode(SelectionMode.SINGLE);
   		grid.setItems(new ArrayList<Transaction>());
       	grid.setHeightByRows(7);
-//      	grid.addColumn(MessageWrapper::getSenderUserName).setCaption("收自").setRenderer(new ImageNameRenderer());
       	grid.addColumn(Transaction::getBarcode).setCaption("条形码");
       	grid.addColumn(Transaction::getPlateType).setCaption("号牌种类");
       	grid.addColumn(Transaction::getPlateNumber).setCaption("号码号牌");
       	grid.addColumn(Transaction::getVin).setCaption("VIN");
       	grid.addColumn(Transaction::getStatus).setCaption("状态");
+      	grid.addColumn(Transaction::getBusinessName).setCaption("业务名称");
       	grid.addColumn(Transaction::getDateCreated).setCaption("创建时间");
       	grid.addColumn(Transaction::getDateModified).setCaption("最近更改时间");
         
@@ -116,9 +121,7 @@ public class SearchAndPrintWindow extends Window {
 		vlayout.addComponents(inputsHLayout, grid, buttonPane);
 		vlayout.setComponentAlignment(inputsHLayout, Alignment.TOP_LEFT);
 		vlayout.setComponentAlignment(buttonPane, Alignment.BOTTOM_CENTER);
-        
         this.setContent(vlayout);
-        
         btnQuit.addClickListener(e->{
         	close();
         });
@@ -136,14 +139,17 @@ public class SearchAndPrintWindow extends Window {
       	    	} else if (selectedTransaction.getStatus().equals(BusinessState.B1.name) 
       	    			|| selectedTransaction.getStatus().equals(BusinessState.B14.name)) {
       	    		// 打印审核结果单
-      	    		PrintingResultsWindow.open("打印确认", selectedTransaction); 
+      	    		Callback callback = new Callback() {
+						@Override
+						public void onSuccessful() {
+						}
+					};
+      	    		PrintingResultsWindow.open("打印确认", selectedTransaction,callback); 
       	    	}
       	    	else {
       	    		
       	    		Notifications.warning("不存在打印。");
       	    	}
-      	    	
-      	    	
       	    } else {
       	    	Notifications.warning("请选择一条记录。");
       	    }

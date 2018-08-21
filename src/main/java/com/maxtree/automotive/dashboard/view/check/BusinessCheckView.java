@@ -218,6 +218,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
         	vLayout.setSpacing(false);
         	vLayout.addStyleName("notification-item");
             Label timeLabel = new Label();
+            int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
             String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
             Label titleLabel = new Label(m.get("subject")+readStr);
             titleLabel.addStyleName("notification-title");
@@ -225,7 +226,8 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
             Map<String, String> map = jsonHelper.json2Map(json);
             Label plateNumber = new Label(map.get("4"));//PLATENUMBER
             plateNumber.addStyleName("notification-content");
-            
+            String vin = map.get("5").toString();
+            String uuid = map.get("7").toString();
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
             timeLabel.setValue(new TimeAgo().toDuration(duration));
@@ -235,12 +237,21 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
             vLayout.addStyleName("switchbutton");
             vLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
-            	
-            	if(editableTrans == null) {
-        			 
-            	}else {
-        			Notifications.warning("请确保完成当前任务，再执行下一操作。");
-        		}
+            	editableTrans = ui.transactionService.findByUUID(uuid, vin);
+            	removeMessage = new Callback() {
+					@Override
+					public void onSuccessful() {
+						new TB4MessagingSystem().deleteMessage(messageUniqueId,loggedInUser.getUserUniqueId());
+					}
+            	};
+            	if(editableTrans.getStatus().equals(BusinessState.B2.name)) {
+            		Notifications.warning("该记录已经质检通过。");
+            		removeMessage.onSuccessful();
+            		return;
+            	}
+            	else {
+            		resetComponents();
+            	}
             });
             
         }
@@ -389,9 +400,9 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     	dynamicallyVLayout.removeAllComponents();
     	confirmInformationGrid = new ConfirmInformationGrid(editableTrans);
     	Hr hr = new Hr();
-    	tabbedPane = new TabbedPane(editableTrans);
-	    dynamicallyVLayout.addComponents(confirmInformationGrid, hr, tabbedPane);
-	    dynamicallyVLayout.setExpandRatio(tabbedPane, 1);
+    	manualPane = new Manual(editableTrans);
+	    dynamicallyVLayout.addComponents(confirmInformationGrid, hr, manualPane);
+	    dynamicallyVLayout.setExpandRatio(manualPane, 1);
     }
     
     /**
@@ -489,6 +500,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     			availableQueue.setLockedByUser(loggedInUser.getUserUniqueId());
     			ui.queueService.lock(availableQueue, serial);// 锁定记录
     			editableTrans = ui.transactionService.findByUUID(availableQueue.getUuid(),availableQueue.getVin());
+    			
     			resetComponents();
     			
     			Transition tran = ui.transitionService.findByUUID(availableQueue.getUuid(), availableQueue.getVin());
@@ -511,7 +523,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
      * 
      * @param suggestions
      */
-    private void accept(String suggestions) {
+    private void accept(String comments) {
     	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
     	if (business.getCheckLevel().equals("一级审档")) {
     		//1.删除锁定队列
@@ -527,8 +539,9 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
         	editableTrans.setDateModified(new Date());
     		ui.transactionService.update(editableTrans);
     		//3.记录跟踪
-    		String messageBody = track(Actions.VERIFIED, suggestions);
-    		
+    		String messageBody = track(Actions.VERIFIED,comments,"print");//print意思是弹出打印对话框
+    		if(removeMessage != null)
+    			removeMessage.onSuccessful();
     		//4.发信给前台
     		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
     		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
@@ -543,8 +556,6 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     		cleanStage();
     		// 6.提示信息
     		Notifications.bottomWarning("操作成功。审档通过。");
-    		
-    		editableTrans = null;
     	}
     	else if (business.getCheckLevel().equals("二级")) {
     		//1.删除锁定队列
@@ -559,10 +570,10 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
         	editableTrans.setStatus(BusinessState.B5.name);
         	editableTrans.setDateModified(new Date());
     		ui.transactionService.update(editableTrans);
-    		
     		//3.记录跟踪
-    		track(Actions.SUBMIT2, suggestions);
-    		
+    		String messageBody = track(Actions.SUBMIT2,comments,"form");//form意思是打开并编辑
+    		if(removeMessage != null)
+    			removeMessage.onSuccessful();
     		//4.提交确认审档队列
     		Queue newQueue = new Queue();
     		newQueue.setUuid(editableTrans.getUuid());
@@ -576,8 +587,6 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
         	cleanStage();
         	// 6.提示信息
         	Notifications.bottomWarning("操作成功。本次业务已添加到确认审档队列中，等待复审。");
-        	
-        	editableTrans = null;
     	}
     }
     
@@ -585,7 +594,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
      * 
      * @param suggestions
      */
-    private void reject(String suggestions) {
+    private void reject(String comments) {
     	// 1.删除锁定队列
     	User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		int serial = 2; //1:质检 2:审档 3:确认审档
@@ -595,37 +604,38 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		} catch (DataException e) {
 			e.printStackTrace();
 		}
-    	
     	// 2.更改状态
     	editableTrans.setStatus(BusinessState.B1.name);
 		editableTrans.setDateModified(new Date());
 		ui.transactionService.update(editableTrans);
-		
 		//3.记录跟踪
-		String messageBody = track(Actions.REJECTED,suggestions);
+		String messageBody = track(Actions.REJECTED,comments,"form");
+		if(removeMessage != null)
+			removeMessage.onSuccessful();
 		//4.发信给前台
 		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
 		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-		Message newMessage = messageSystem.createNewMessage(loggedInUser, "收到反馈", messageBody);
+		Message newMessage = messageSystem.createNewMessage(loggedInUser,editableTrans.getPlateNumber() +"，审档不合格", messageBody);
 		Set<Name> names = new HashSet<Name>();
 		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 		names.add(target);
-		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.QUALITY.getViewName());
+		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.INPUT.getViewName());
 		// 更新消息轮询的缓存
 		CacheManager.getInstance().getSendDetailsCache().refresh(receiver.getUserUniqueId());
 		// 5.清空
 		cleanStage();
 		// 6.提示信息
-		Notifications.bottomWarning("操作成功。已退回到前台。");
+		Notifications.bottomWarning("操作成功。");
     }
     
     /**
      * 
      * @param act
-     * @param suggestions
+     * @param comments
+     * @param openWith
      * @return
      */
-    private String track(Actions act, String suggestions) {
+    private String track(Actions act, String comments, String openWith) {
     	Map<String, String> details = new HashMap<String, String>();
     	details.put("1", editableTrans.getStatus());//STATUS
 		details.put("2", editableTrans.getBarcode());//BARCODE
@@ -634,7 +644,8 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		details.put("5", editableTrans.getVin());//VIN
 		details.put("6", editableTrans.getCode());//BUSINESSTYPE
 		details.put("7", editableTrans.getUuid());//UUID
-		details.put("8", suggestions);//SUGGESTIONS
+		details.put("8", comments);//SUGGESTIONS
+		details.put("9", openWith);//OPEN WITH(form/print)
 		String json = jsonHelper.map2Json(details);
     	
     	// 插入移行表
@@ -693,6 +704,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
    		btnFetch.updateNotificationsCount(event);
     }
     
+    private Manual manualPane;
     private MessageBodyParser jsonHelper = new MessageBodyParser();
    	private Transaction editableTrans = null; 	//可编辑的编辑transaction
    	public User loggedInUser;	//登录用户
@@ -704,11 +716,9 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     private VerticalLayout dynamicallyVLayout = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private ConfirmInformationGrid confirmInformationGrid;
-    private TabbedPane tabbedPane;
     private FetchButton btnFetch = new FetchButton();
-//    private Button btnFeedback = new Button();
     private Button btnCommit = new Button();//提交给确认审档
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
-
+    private Callback removeMessage;
 }

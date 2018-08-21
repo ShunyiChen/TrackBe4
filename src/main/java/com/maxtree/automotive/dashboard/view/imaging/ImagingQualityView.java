@@ -231,11 +231,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
             	removeMessage = new Callback() {
 					@Override
 					public void onSuccessful() {
-						ui.messagingService.deleteSendDetails(messageUniqueId,loggedInUser.getUserUniqueId());
-						ui.messagingService.deleteMessageRecipient(messageUniqueId,loggedInUser.getUserUniqueId());
-						ui.messagingService.deleteMessage(messageUniqueId);
-						
-						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+						new TB4MessagingSystem().deleteMessage(messageUniqueId,loggedInUser.getUserUniqueId());
 					}
             	};
             	

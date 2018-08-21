@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.Timer;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.MessageRecipient;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
@@ -154,6 +155,20 @@ public class TB4MessagingSystem {
 				ui.messagingService.insertSendDetails(list);
     		}
 		}
+	}
+	
+	/**
+	 * 即删除接收者又删除消息。
+	 * 
+	 * @param messageUniqueId
+	 * @param recipientUniqueId
+	 */
+	public void deleteMessage(int messageUniqueId, int recipientUniqueId) {
+		ui.messagingService.deleteSendDetails(messageUniqueId,recipientUniqueId);
+		ui.messagingService.deleteMessageRecipient(messageUniqueId,recipientUniqueId);
+		ui.messagingService.deleteMessage(messageUniqueId);
+		
+		CacheManager.getInstance().getSendDetailsCache().refresh(recipientUniqueId);
 	}
 	
 	/**
