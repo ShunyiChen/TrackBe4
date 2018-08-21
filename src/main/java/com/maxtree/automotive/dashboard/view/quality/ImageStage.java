@@ -30,19 +30,30 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import elemental.json.JsonArray;
 
-public class ImageStage extends VerticalLayout implements ClickListener{
+public class ImageStage extends VerticalLayout implements ClickListener {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
+
 	/**
 	 * 
 	 * @param imgView
 	 */
 	public ImageStage(ImageViewIF imgView) {
+		this(imgView,false);
+	}
+	
+	/**
+	 * 
+	 * @param imgView
+	 * @param isHeaderHidden
+	 */
+	public ImageStage(ImageViewIF imgView, boolean isHeaderHidden) {
 		this.imgView = imgView;
+		this.isHeaderHidden = isHeaderHidden;
 		initComponents();
 	}
 	
@@ -121,7 +132,12 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 		this.setSizeFull();
 		this.setSpacing(false);
 		this.setMargin(false);
-		this.addComponents(header,scroll,footer);
+		if(isHeaderHidden) {
+			this.addComponents(scroll,footer);
+		}
+		else {
+			this.addComponents(header,scroll,footer);
+		}
 		this.setExpandRatio(scroll,1);
 		
 //		 UI.getCurrent().addClickListener(e->{
@@ -146,7 +162,7 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 	/**
 	 * 调整为适应窗体大小
 	 */
-	private void fittedSize() {
+	public void fittedSize() {
 		picture.setWidth("100%");
 		pictureFrame.setSizeFull();
 		pictureFrame.removeAllComponents();
@@ -158,7 +174,7 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 	/**
 	 * 调整为实际大小
 	 */
-	private void actualSize() {
+	public void actualSize() {
 		
 		Callback2 callback2 = new Callback2() {
 			@Override
@@ -278,7 +294,7 @@ public class ImageStage extends VerticalLayout implements ClickListener{
 		}
 	}
 	
-	
+	private boolean isHeaderHidden;
 	private Panel scroll = new Panel();
 	private VerticalLayout pictureFrame = new VerticalLayout();
 	private Image picture = new Image();

@@ -1,5 +1,7 @@
 package com.maxtree.automotive.dashboard.view.check;
 
+import java.util.function.Consumer;
+
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.vaadin.icons.VaadinIcons;
@@ -19,8 +21,12 @@ public class Tool extends Window{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	
-	public Tool() {
+	/**
+	 * 
+	 * @param manual
+	 */
+	public Tool(Manual manual) {
+		this.manual = manual;
 		initComponents();
 	}
 	
@@ -29,7 +35,8 @@ public class Tool extends Window{
 		this.setResizable(false);
 		this.setCaption("工具");
 		this.setWidth("80px");
-		this.setHeight("400px");
+		this.setHeight("340px");
+		this.addStyleName("Tool-background");
 		
 		VerticalLayout main = new VerticalLayout();
 		main.setSpacing(false);
@@ -54,22 +61,22 @@ public class Tool extends Window{
 		Button brightness = new Button();//亮度
 		Button contrast = new Button();//对比度
 		
-		undo.setIcon(new ThemeResource("img/imgcomparator/reply-all.png"));
+		undo.setIcon(VaadinIcons.ARROW_BACKWARD);
 		undo.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		undo.setDescription("撤销");
-		redo.setIcon(new ThemeResource("img/imgcomparator/reply.png"));
+		redo.setIcon(VaadinIcons.ARROW_FORWARD);
 		redo.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		redo.setDescription("重做");
-		original.setIcon(VaadinIcons.BULLSEYE);
+		original.setIcon(VaadinIcons.DOT_CIRCLE);
 		original.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		original.setDescription("原始大小");
-		fixed.setIcon(VaadinIcons.BULLSEYE);
+		fixed.setIcon(VaadinIcons.EXPAND_FULL);
 		fixed.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		fixed.setDescription("相对大小");
-		sharpen.setIcon(new ThemeResource("img/imgcomparator/sharpen.png"));
+		sharpen.setIcon(VaadinIcons.EYE);
 		sharpen.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		sharpen.setDescription("锐化");
-		edge.setIcon(new ThemeResource("img/imgcomparator/magic.png"));
+		edge.setIcon(VaadinIcons.STAR_HALF_RIGHT_O);
 		edge.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		edge.setDescription("查找边缘");
 		shadowUp.setIcon(VaadinIcons.PADDING_TOP);
@@ -84,19 +91,19 @@ public class Tool extends Window{
 		shadowRight.setIcon(VaadinIcons.PADDING_RIGHT);
 		shadowRight.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		shadowRight.setDescription("右阴影");
-		scale.setIcon(VaadinIcons.PADDING_RIGHT);
+		scale.setIcon(VaadinIcons.EXPAND_SQUARE);
 		scale.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		scale.setDescription("伸缩");
-		rotate.setIcon(VaadinIcons.PADDING_RIGHT);
+		rotate.setIcon(VaadinIcons.ROTATE_LEFT);
 		rotate.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		rotate.setDescription("旋转");
-		transparency.setIcon(VaadinIcons.PADDING_RIGHT);
+		transparency.setIcon(VaadinIcons.COINS);
 		transparency.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		transparency.setDescription("透明度");
-		brightness.setIcon(VaadinIcons.PADDING_RIGHT);
+		brightness.setIcon(VaadinIcons.MORNING);
 		brightness.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		brightness.setDescription("亮度");
-		contrast.setIcon(VaadinIcons.PADDING_RIGHT);
+		contrast.setIcon(VaadinIcons.ADJUST);
 		contrast.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		contrast.setDescription("对比度");
 		
@@ -132,6 +139,7 @@ public class Tool extends Window{
 		row8.setSpacing(false);
 		row8.setMargin(false);
 		row8.addComponents(contrast);
+		
 		main.addComponents(row1,row2,row3,row4,row5,row6,row7,row8);
 		
 		
@@ -269,6 +277,7 @@ public class Tool extends Window{
 				editWindow.original();
 			}
 		});
+		
 	}
 	
 	public void setEditingWindow(ImageWindow editWindow) {
@@ -302,17 +311,34 @@ public class Tool extends Window{
 		return hlayout;
 	} 
 	
-	public void center2(boolean centered) {
-		UI.getCurrent().addWindow(this);
-		if (centered) {
-			this.center();
+	/**
+	 * 
+	 */
+	public void show() {
+		UI.getCurrent().getWindows().forEach(new Consumer<Window>() {
+			@Override
+			public void accept(Window t) {
+				if(t == Tool.this) {
+					flag = true;
+				}
+			}
+		});
+		if(!flag) {
+			UI.getCurrent().addWindow(this);
+		}
+		if (tx ==-1 && ty==-1) {
+			tx = 40;
+			ty = 40;
+			this.setPosition(tx, ty);
 		} else {
 			this.setPosition(tx, ty);
 		}
 	}
 	
-	private int tx = 0;
-	private int ty = 0;
+	private Manual manual;
+	private boolean flag = false;
+	private int tx = -1;
+	private int ty = -1;
 	private ImageWindow editWindow;
 	private SliderWithTextField scaleSlider;
 	private SliderWithTextField rotateSlider;

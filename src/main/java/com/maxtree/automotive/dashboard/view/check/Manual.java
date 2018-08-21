@@ -8,6 +8,8 @@ import org.apache.commons.vfs2.FileObject;
 
 import com.maxtree.automotive.dashboard.BusinessCode;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.component.Box;
+import com.maxtree.automotive.dashboard.component.DoubleField;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
@@ -20,14 +22,22 @@ import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
+import com.vaadin.ui.Image;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.Slider;
 import com.vaadin.ui.Tree;
+import com.vaadin.ui.Tree.TreeContextClickEvent;
+import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 
-public class Manual extends VerticalLayout implements ImageViewIF {
+public class Manual extends VerticalLayout implements ImageViewIF,ClickListener {
 
 	/**
 	 * 
@@ -44,12 +54,44 @@ public class Manual extends VerticalLayout implements ImageViewIF {
 	}
 	
 	private void initComponents() {
+		Label lineLabel_1 = new Label();
+		lineLabel_1.setIcon(VaadinIcons.LINE_V);
+		Label lineLabel_2 = new Label();
+		lineLabel_2.setIcon(VaadinIcons.LINE_V);
+		functionImg.setIcon(VaadinIcons.CURSOR);
+		
+		Button fittedSize = new Button();
+		Button actualSize = new Button();
+		fittedSize.setIcon(VaadinIcons.EXPAND_FULL);
+		fittedSize.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		fittedSize.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		fittedSize.setWidth("18px");
+		fittedSize.setHeight("18px");
+		fittedSize.setId("fittedSize");
+		fittedSize.setDescription("适应窗口大小");
+		fittedSize.addClickListener(this);
+		actualSize.setIcon(VaadinIcons.BULLSEYE);
+		actualSize.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		actualSize.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		actualSize.setWidth("18px");
+		actualSize.setHeight("18px");
+		actualSize.setId("actualSize");
+		actualSize.setDescription("原图");
+		actualSize.addClickListener(this);
+		
+		subtoolbar.setSpacing(false);
+		subtoolbar.setMargin(false);
+		subtoolbar.setSizeUndefined();
+		subtoolbar.addComponents(fittedSize,Box.createHorizontalBox(5),actualSize,Box.createHorizontalBox(25),lineLabel_1,functionImg,lineLabel_2,functionDesc);
+		
 		HorizontalLayout toolbar = new HorizontalLayout();
 		toolbar.setSpacing(false);
 		toolbar.setMargin(false);
-		toolbar.setHeightUndefined();
+		toolbar.setHeight("22px");
 		toolbar.setWidth("100%");
-		toolbar.addStyleName("Manual-toolbar");
+		toolbar.setStyleName("Manual-toolbar");
+		toolbar.addComponents(subtoolbar);
+		
 	
 		Panel scrollPane = new Panel();
 		scrollPane.setSizeFull();
@@ -77,7 +119,7 @@ public class Manual extends VerticalLayout implements ImageViewIF {
 		rightTree.setDataProvider(new TreeDataProvider<>(rightTreeData));
 		rightTree.expand(rightRoot);
         rightTree.setItemIconGenerator(item -> {
-        	if(item.getDictionarycode() == null) {
+        	if(item.getThumbnail() == null) {
         		return VaadinIcons.FOLDER;
         	} else {
         		return VaadinIcons.FILE_PICTURE;
@@ -85,6 +127,11 @@ public class Manual extends VerticalLayout implements ImageViewIF {
         });
         rightTree.setItemDescriptionGenerator(item -> {
         	return item.getAlias();
+        });
+        rightTree.addContextClickListener(event -> {
+        	TreeContextClickEvent<Document> e = (TreeContextClickEvent<Document>) event;
+        	Document item = e.getItem();
+//        	tree.select(item);
         });
         rightSplit.setFirstComponent(imgStage);
         rightSplit.setSecondComponent(rightTree);
@@ -109,35 +156,33 @@ public class Manual extends VerticalLayout implements ImageViewIF {
         // 展开树节点
         leftTree.expand(leftRoot);
         leftTree.setItemIconGenerator(item -> {
-        	if(item.getDictionarycode() == null) {
+        	if(item.getThumbnail() == null) {
         		return VaadinIcons.FOLDER;
         	} else {
         		return VaadinIcons.FILE_PICTURE;
         	}
         });
-//        leftTree.addContextClickListener(event -> {
-//        	TreeContextClickEvent<Document> e = (TreeContextClickEvent<Document>) event;
-//        	Document item = e.getItem();
+        leftTree.addContextClickListener(event -> {
+        	TreeContextClickEvent<Document> e = (TreeContextClickEvent<Document>) event;
+        	Document item = e.getItem();
 //        	tree.select(item);
-//        });
+        });
         leftTree.setSelectionMode(SelectionMode.SINGLE);
         leftTree.addItemClickListener(e -> {
 			// 排除根节点
         	//TODO
-        	if(e.getItem().getDictionarycode() == null) {
+        	if(e.getItem().getThumbnail() == null) {
         		imgStage.clean();
 				// Set the position of the splitter as percentage
 		        rightSplit.setSplitPosition(100, Unit.PERCENTAGE);
         	}
-        	else if (e.getItem().getAlias().startsWith("《机动车")) {
+        	else if (e.getItem().getAlias().startsWith("机动车")) {
 				selectedNode = e.getItem();
 				imgStage.display(site, selectedNode);
 				// Set the position of the splitter as percentage
 		        rightSplit.setSplitPosition(75, Unit.PERCENTAGE);
 //		        System.out.println(tool.isVisible()+"=========");
-		        if(!tool.isVisible()) {
-		        	tool.center2(true);
-		        }
+		        tool.show();
 		        
         	} else {
         		selectedNode = e.getItem();
@@ -235,16 +280,68 @@ public class Manual extends VerticalLayout implements ImageViewIF {
 		}
 	}
 	
+	@Override
+	public void buttonClick(ClickEvent event) {
+		if(event.getButton().getId().equals("actualSize")) {
+			imgStage.actualSize();
+			
+		} else if(event.getButton().getId().equals("fittedSize")) {
+			imgStage.fittedSize();
+		}
+	}
+	
+	public void updateToolbar(String function, double value) {
+		if(function.equals("撤销")) {
+			functionImg.setIcon(VaadinIcons.ARROW_BACKWARD);
+		} else if(function.equals("重做")) {
+			functionImg.setIcon(VaadinIcons.ARROW_FORWARD);
+		} else if(function.equals("原图")) {
+			
+		} else if(function.equals("适应窗体")) {
+			
+		} else if(function.equals("锐化")) {
+			
+		} else if(function.equals("边缘")) {
+			
+		} else if(function.equals("上阴影")) {
+			
+		} else if(function.equals("下阴影")) {
+			
+		} else if(function.equals("左阴影")) {
+			
+		} else if(function.equals("右阴影")) {
+			
+		} else if(function.equals("伸缩")) {
+			
+		} else if(function.equals("旋转")) {
+			
+		} else if(function.equals("透明度")) {
+			
+		} else if(function.equals("亮度")) {
+			
+		} else if(function.equals("对比度")) {
+			
+		}
+	}
+	
+	
+	public Label functionDesc = new Label("此工具无其他选项");
+	public Label functionImg = new Label();
+	public DoubleField numField = new DoubleField();
+	public Slider slider = new Slider();
+	
+	
 	private Document leftRoot = new Document();
 	private Tree<Document> leftTree = new Tree<>();
 	private TreeData<Document> leftTreeData = new TreeData<Document>();
 	private Document rightRoot = new Document();
 	private Tree<Document> rightTree = new Tree<>();
 	private TreeData<Document> rightTreeData = new TreeData<Document>();
-	private ImageStage imgStage = new ImageStage(this);
+	private ImageStage imgStage = new ImageStage(this,true);
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private Transaction transaction;
 	private Site site;
 	private Document selectedNode;
-	private Tool tool = new Tool();
+	private Tool tool = new Tool(this);
+	private HorizontalLayout subtoolbar = new HorizontalLayout();
 }

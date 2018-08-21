@@ -14942,7 +14942,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .Manual-toolbar {
-	background-color: lightgrey;
+	background-color: gainsboro;
+}
+
+.dashboard .Tool-background {
+	background-color: gainsboro;
 }
 
 .dashboard .v-window-foo .v-window-outerheader {

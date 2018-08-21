@@ -520,7 +520,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		details.put("3", editableTrans.getPlateType());//PLATETYPE
 		details.put("4", editableTrans.getPlateNumber());//PLATENUMBER
 		details.put("5", editableTrans.getVin());//VIN
-		details.put("6", editableTrans.getCode());//BUSINESSTYPE
+		details.put("6", editableTrans.getBusinessName());//BUSINESSTYPE
 		details.put("7", editableTrans.getUuid());//UUID
 		details.put("8", comments);//comments
 		String json = jsonHelper.map2Json(details);
