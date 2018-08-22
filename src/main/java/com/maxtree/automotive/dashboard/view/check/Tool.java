@@ -35,7 +35,7 @@ public class Tool extends Window{
 		this.setResizable(false);
 		this.setCaption("工具");
 		this.setWidth("80px");
-		this.setHeight("340px");
+		this.setHeight("360px");
 		this.addStyleName("Tool-background");
 		
 		VerticalLayout main = new VerticalLayout();
@@ -110,36 +110,36 @@ public class Tool extends Window{
 		HorizontalLayout row1 = new HorizontalLayout();
 		row1.setSpacing(false);
 		row1.setMargin(false);
-		row1.addComponents(undo,redo);
+		row1.addComponents(Box.createHorizontalBox(10),undo,redo);
 		HorizontalLayout row2 = new HorizontalLayout();
 		row2.setSpacing(false);
 		row2.setMargin(false);
-		row2.addComponents(original,fixed);
+		row2.addComponents(Box.createHorizontalBox(10),original,fixed);
 		HorizontalLayout row3 = new HorizontalLayout();
 		row3.setSpacing(false);
 		row3.setMargin(false);
-		row3.addComponents(sharpen,edge);
+		row3.addComponents(Box.createHorizontalBox(10),sharpen,edge);
 		HorizontalLayout row4 = new HorizontalLayout();
 		row4.setSpacing(false);
 		row4.setMargin(false);
-		row4.addComponents(shadowUp,shadowDown);
+		row4.addComponents(Box.createHorizontalBox(10),shadowUp,shadowDown);
 		HorizontalLayout row5 = new HorizontalLayout();
 		row5.setSpacing(false);
 		row5.setMargin(false);
-		row5.addComponents(shadowLeft,shadowRight);
+		row5.addComponents(Box.createHorizontalBox(10),shadowLeft,shadowRight);
 		HorizontalLayout row6 = new HorizontalLayout();
 		row6.setSpacing(false);
 		row6.setMargin(false);
-		row6.addComponents(scale,rotate);
+		row6.addComponents(Box.createHorizontalBox(10),scale,rotate);
 		HorizontalLayout row7 = new HorizontalLayout();
 		row7.setSpacing(false);
 		row7.setMargin(false);
-		row7.addComponents(transparency,brightness);
+		row7.addComponents(Box.createHorizontalBox(10),transparency,brightness);
 		HorizontalLayout row8 = new HorizontalLayout();
 		row8.setSpacing(false);
 		row8.setMargin(false);
-		row8.addComponents(contrast);
-		main.addComponents(row1,row2,row3,row4,row5,row6,row7,row8);
+		row8.addComponents(Box.createHorizontalBox(10),contrast);
+		main.addComponents(Box.createVerticalBox(10),row1,row2,row3,row4,row5,row6,row7,row8);
 		
 		scaleSlider = new SliderWithTextField("缩小放大:", 0d, 200d, 100d);
 		scaleSlider.setValueChangedCallback(new Callback2() {

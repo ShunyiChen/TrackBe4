@@ -96,13 +96,12 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
         Responsive.makeResponsive(root);
         root.addComponent(buildHeader());
         root.addComponent(buildSparklines());
-        dynamicallyVLayout.addStyleName("dynamicallyVLayout-check");
-        dynamicallyVLayout.setWidth("100%");
-        dynamicallyVLayout.setHeight("100%");
-        dynamicallyVLayout.addComponents(blankLabel);
-        dynamicallyVLayout.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
-        root.addComponents(dynamicallyVLayout);
-        root.setExpandRatio(dynamicallyVLayout, 7.0f);
+        main.setSizeFull();
+        main.addStyleName("v-verticallayout-my-layout");
+        main.addComponents(blankLabel);
+        main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
+        root.addComponents(main);
+        root.setExpandRatio(main, 7.0f);
         loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
@@ -395,14 +394,13 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
      * 
      */
     private void resetComponents() {
-    	dynamicallyVLayout.setSpacing(false);
-    	dynamicallyVLayout.setMargin(false);
-    	dynamicallyVLayout.removeAllComponents();
+    	main.setSpacing(false);
+    	main.setMargin(false);
+    	main.removeAllComponents();
     	confirmInformationGrid = new ConfirmInformationGrid(editableTrans);
-    	Hr hr = new Hr();
     	manualPane = new Manual(editableTrans);
-	    dynamicallyVLayout.addComponents(confirmInformationGrid, hr, manualPane);
-	    dynamicallyVLayout.setExpandRatio(manualPane, 1);
+	    main.addComponents(confirmInformationGrid, manualPane);
+	    main.setExpandRatio(manualPane, 1);
     }
     
     /**
@@ -687,10 +685,10 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 
 	@Override
 	public void cleanStage() {
-		dynamicallyVLayout.removeAllComponents();
-		dynamicallyVLayout.setHeight("100%");
-		dynamicallyVLayout.addComponents(blankLabel);
-		dynamicallyVLayout.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
+		main.removeAllComponents();
+		main.setHeight("100%");
+		main.addComponents(blankLabel);
+		main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
 		editableTrans = null;
 	}
 
@@ -713,7 +711,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     public static final String EDIT_ID = "dashboard-edit";
     public static final String TITLE_ID = "dashboard-title";
     private VerticalLayout root;
-    private VerticalLayout dynamicallyVLayout = new VerticalLayout();
+    private VerticalLayout main = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private ConfirmInformationGrid confirmInformationGrid;
     private FetchButton btnFetch = new FetchButton();

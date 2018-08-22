@@ -55,6 +55,7 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 	}
 	
 	private void initComponents() {
+		this.addStyleName("Manual");
 		numField.setWidth("80px");
 		numField.setHeight("25px");
 		ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER, null) {

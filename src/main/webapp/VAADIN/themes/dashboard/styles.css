@@ -14925,6 +14925,10 @@ div.v-layout.v-horizontal.v-widget {
 	padding-bottom: 0px;
 }
 
+.dashboard .Manual {
+	margin-top: 5px;
+}
+
 .dashboard .upload-button {
 	font-family: Microsoft YaHei;
 	font-size: 13px;

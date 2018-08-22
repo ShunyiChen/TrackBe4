@@ -344,14 +344,18 @@
         padding-right: 0px;
         padding-bottom: 0px;
     }
-    
-    
+     
     /// 质检界面
-  .dynamicallyVLayout-check {
+    .dynamicallyVLayout-check {
         padding-left: 0px;
         padding-top: 0px;
         padding-right: 0px;
         padding-bottom: 0px;
+    }
+    //审档界面
+    .Manual {
+        margin-top: 5px;
+       
     }
     
     .upload-button {
@@ -370,6 +374,7 @@
     .Manual-toolbar {
         background-color:gainsboro;
     }
+    
     .Tool-background{
         background-color:gainsboro;
      
@@ -379,7 +384,6 @@
 //        top: 2px;
 //        border-top: 2px;
         margin-top: -5px;
-       
     }
     
     // 业务审核
