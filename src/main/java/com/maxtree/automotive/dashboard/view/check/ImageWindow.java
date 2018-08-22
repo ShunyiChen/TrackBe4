@@ -45,12 +45,11 @@ public class ImageWindow extends Window {
 		this.file = file;
 		this.addStyleName("v-window-translucent-" + this.hashCode());
 		this.addStyleName("foo");
+		this.setResizable(true);
+		this.setWidth("800px");
+		this.setHeight("600px");
 		adjustTransparency(opacity);
 		image = new Image(null, getStreamByFileObject(file));
-		setResizable(true);
-
-		this.setWidthUndefined();
-		this.setHeightUndefined();
 		vl.addStyleName("v-content-translucent-" + this.hashCode());
 		vl.setSpacing(false);
 		vl.setMargin(false);
@@ -59,7 +58,7 @@ public class ImageWindow extends Window {
 		vl.addComponents(image);
 		vl.setComponentAlignment(image, Alignment.TOP_CENTER);
 
-		setContent(vl);
+		this.setContent(vl);
 
 		UI.getCurrent().addWindow(this);
 
@@ -119,10 +118,8 @@ public class ImageWindow extends Window {
 				setPositionX(getPositionX() + 1);
 			}
 		};
-
 		this.addShortcutListener(upListener);
 		this.addShortcutListener(downListener);
-
 		this.addShortcutListener(rightListener);
 		this.addShortcutListener(leftListener);
 	}
@@ -134,6 +131,23 @@ public class ImageWindow extends Window {
  				
  				lstCommands.clear();
  				removedCommands.clear();
+				try {
+					return file.getContent().getInputStream();
+				} catch (FileSystemException e) {
+					e.printStackTrace();
+				}
+				return null;
+ 			}
+ 		}; 
+ 		StreamResource streamResource = new StreamResource(streamSource, file.getName().getBaseName());
+ 		streamResource.setCacheTime(0);
+ 		reloadImage(streamResource);
+	}
+	
+	public void fit() {
+		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
+ 			@Override
+ 			public InputStream getStream() {
 				try {
 					return file.getContent().getInputStream();
 				} catch (FileSystemException e) {

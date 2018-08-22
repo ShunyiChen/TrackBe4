@@ -20,12 +20,13 @@ import com.maxtree.automotive.dashboard.view.quality.ImageStage;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
+import com.vaadin.event.ShortcutListener;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Slider;
@@ -54,14 +55,34 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 	}
 	
 	private void initComponents() {
-		Label lineLabel_1 = new Label();
+		numField.setWidth("80px");
+		numField.setHeight("25px");
+		ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER, null) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void handleAction(Object sender, Object target) {
+				System.out.println("======"+sender+","+target);
+				
+			}
+		};
+		numField.addShortcutListener(enterListener);
+		
+		slider.setMin(0.0);
+		slider.setMax(100.0);
+		slider.setValue(50.0);
+		slider.setWidth("150px");
+		slider.addStyleName("v-slider");
+		slider.addValueChangeListener(e->{
+			numField.setValue(e.getValue()+"");
+		});
 		lineLabel_1.setIcon(VaadinIcons.LINE_V);
-		Label lineLabel_2 = new Label();
 		lineLabel_2.setIcon(VaadinIcons.LINE_V);
 		functionImg.setIcon(VaadinIcons.CURSOR);
 		
-		Button fittedSize = new Button();
-		Button actualSize = new Button();
 		fittedSize.setIcon(VaadinIcons.EXPAND_FULL);
 		fittedSize.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 		fittedSize.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
@@ -81,18 +102,23 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 		
 		subtoolbar.setSpacing(false);
 		subtoolbar.setMargin(false);
-		subtoolbar.setSizeUndefined();
+		subtoolbar.setWidthUndefined();
+		subtoolbar.setHeight("25px");
 		subtoolbar.addComponents(fittedSize,Box.createHorizontalBox(5),actualSize,Box.createHorizontalBox(25),lineLabel_1,functionImg,lineLabel_2,functionDesc);
+//		subtoolbar.setComponentAlignment(fittedSize, Alignment.TOP_LEFT);
+//		subtoolbar.setComponentAlignment(actualSize, Alignment.TOP_LEFT);
+		subtoolbar.setComponentAlignment(lineLabel_1, Alignment.MIDDLE_CENTER);
+		subtoolbar.setComponentAlignment(functionImg, Alignment.MIDDLE_CENTER);
+		subtoolbar.setComponentAlignment(lineLabel_2, Alignment.MIDDLE_CENTER);
 		
 		HorizontalLayout toolbar = new HorizontalLayout();
 		toolbar.setSpacing(false);
 		toolbar.setMargin(false);
-		toolbar.setHeight("22px");
+		toolbar.setHeight("26px");
 		toolbar.setWidth("100%");
 		toolbar.setStyleName("Manual-toolbar");
 		toolbar.addComponents(subtoolbar);
 		
-	
 		Panel scrollPane = new Panel();
 		scrollPane.setSizeFull();
 		// 右侧组件
@@ -229,14 +255,12 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 		if (doc.getFileFullPath() != null) {
 			try {
 				FileObject fobj = new TB4FileSystem().resolveFile(site, doc.getFileFullPath());
-//				ImageWindow imageWindow = new ImageWindow(doc.getAlias()+"-历史", fobj, 1.0f);
-//				toolbar.setEditingWindow(imageWindow);
-//				imageWindow.addFocusListener(e -> {
-//					toolbar.setEditingWindow(imageWindow);
-//		        });
-//				imageWindow.center();
-				
-				
+				ImageWindow imageWindow = new ImageWindow(doc.getAlias(), fobj, 1.0f);
+				tool.setEditingWindow(imageWindow);
+				imageWindow.addFocusListener(e -> {
+					tool.setEditingWindow(imageWindow);
+		        });
+				imageWindow.center();
 			} catch (FileException e) {
 				e.printStackTrace();
 				Notifications.warning("读取文件异常。"+e.getMessage());
@@ -291,46 +315,87 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 	}
 	
 	public void updateToolbar(String function, double value) {
+		subtoolbar.removeAllComponents();
+		numField.setValue(value+"");
+		slider.setValue(value);
+		
 		if(function.equals("撤销")) {
 			functionImg.setIcon(VaadinIcons.ARROW_BACKWARD);
+			createToolbar();
 		} else if(function.equals("重做")) {
 			functionImg.setIcon(VaadinIcons.ARROW_FORWARD);
+			createToolbar();
 		} else if(function.equals("原图")) {
-			
+			functionImg.setIcon(VaadinIcons.DOT_CIRCLE);
+			createToolbar();
 		} else if(function.equals("适应窗体")) {
-			
+			functionImg.setIcon(VaadinIcons.EXPAND_FULL);
+			createToolbar();
 		} else if(function.equals("锐化")) {
-			
+			functionImg.setIcon(VaadinIcons.EYE);
+			createToolbar();
 		} else if(function.equals("边缘")) {
-			
+			functionImg.setIcon(VaadinIcons.STAR_HALF_RIGHT_O);
+			createToolbar();
 		} else if(function.equals("上阴影")) {
-			
+			functionImg.setIcon(VaadinIcons.PADDING_TOP);
+			createToolbar();
 		} else if(function.equals("下阴影")) {
-			
+			functionImg.setIcon(VaadinIcons.PADDING_BOTTOM);
+			createToolbar();
 		} else if(function.equals("左阴影")) {
-			
+			functionImg.setIcon(VaadinIcons.PADDING_LEFT);
+			createToolbar();
 		} else if(function.equals("右阴影")) {
-			
+			functionImg.setIcon(VaadinIcons.PADDING_RIGHT);
+			createToolbar2();
 		} else if(function.equals("伸缩")) {
-			
+			functionImg.setIcon(VaadinIcons.EXPAND_SQUARE);
+			createToolbar2();
 		} else if(function.equals("旋转")) {
-			
+			functionImg.setIcon(VaadinIcons.ROTATE_LEFT);
+			createToolbar2();
 		} else if(function.equals("透明度")) {
-			
+			functionImg.setIcon(VaadinIcons.COINS);
+			createToolbar2();
 		} else if(function.equals("亮度")) {
-			
+			functionImg.setIcon(VaadinIcons.MORNING);
+			createToolbar2();
 		} else if(function.equals("对比度")) {
-			
+			functionImg.setIcon(VaadinIcons.ADJUST);
+			createToolbar2();
 		}
 	}
 	
+	private void createToolbar() {
+		subtoolbar.addComponents(fittedSize,Box.createHorizontalBox(5),actualSize,Box.createHorizontalBox(25),lineLabel_1,functionImg,lineLabel_2,functionDesc);
+//		subtoolbar.setComponentAlignment(fittedSize, Alignment.MIDDLE_LEFT);
+//		subtoolbar.setComponentAlignment(actualSize, Alignment.MIDDLE_LEFT);
+		subtoolbar.setComponentAlignment(lineLabel_1, Alignment.MIDDLE_CENTER);
+		subtoolbar.setComponentAlignment(functionImg, Alignment.MIDDLE_CENTER);
+		subtoolbar.setComponentAlignment(lineLabel_2, Alignment.MIDDLE_CENTER);
+//		subtoolbar.setComponentAlignment(functionDesc, Alignment.MIDDLE_CENTER);
+	}
 	
+	private void createToolbar2() {
+		subtoolbar.addComponents(fittedSize,Box.createHorizontalBox(5),actualSize,Box.createHorizontalBox(25),lineLabel_1,functionImg,lineLabel_2,slider,numField);
+//		subtoolbar.setComponentAlignment(fittedSize, Alignment.MIDDLE_LEFT);
+//		subtoolbar.setComponentAlignment(actualSize, Alignment.MIDDLE_LEFT);
+		subtoolbar.setComponentAlignment(lineLabel_1, Alignment.MIDDLE_CENTER);
+		subtoolbar.setComponentAlignment(functionImg, Alignment.MIDDLE_CENTER);
+		subtoolbar.setComponentAlignment(lineLabel_2, Alignment.MIDDLE_CENTER);
+//		subtoolbar.setComponentAlignment(slider, Alignment.MIDDLE_LEFT);
+//		subtoolbar.setComponentAlignment(numField, Alignment.MIDDLE_LEFT);
+	}
+	
+	private Label lineLabel_1 = new Label();
+	private Label lineLabel_2 = new Label();
+	private Button fittedSize = new Button();
+	private Button actualSize = new Button();
 	public Label functionDesc = new Label("此工具无其他选项");
 	public Label functionImg = new Label();
 	public DoubleField numField = new DoubleField();
 	public Slider slider = new Slider();
-	
-	
 	private Document leftRoot = new Document();
 	private Tree<Document> leftTree = new Tree<>();
 	private TreeData<Document> leftTreeData = new TreeData<Document>();

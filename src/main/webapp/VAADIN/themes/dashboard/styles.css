@@ -14949,6 +14949,10 @@ div.v-layout.v-horizontal.v-widget {
 	background-color: gainsboro;
 }
 
+.dashboard .v-slider {
+	margin-top: -5px;
+}
+
 .dashboard .v-window-foo .v-window-outerheader {
 	background: white;
 }

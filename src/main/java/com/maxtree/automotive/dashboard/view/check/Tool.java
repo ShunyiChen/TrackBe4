@@ -72,7 +72,7 @@ public class Tool extends Window{
 		original.setDescription("原始大小");
 		fixed.setIcon(VaadinIcons.EXPAND_FULL);
 		fixed.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-		fixed.setDescription("相对大小");
+		fixed.setDescription("适应窗体大小");
 		sharpen.setIcon(VaadinIcons.EYE);
 		sharpen.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		sharpen.setDescription("锐化");
@@ -139,10 +139,7 @@ public class Tool extends Window{
 		row8.setSpacing(false);
 		row8.setMargin(false);
 		row8.addComponents(contrast);
-		
 		main.addComponents(row1,row2,row3,row4,row5,row6,row7,row8);
-		
-		
 		
 		scaleSlider = new SliderWithTextField("缩小放大:", 0d, 200d, 100d);
 		scaleSlider.setValueChangedCallback(new Callback2() {
@@ -229,69 +226,113 @@ public class Tool extends Window{
 		// Undo
 		undo.addClickListener(e -> {
 			if (editWindow != null) {
+				manual.updateToolbar("撤销", 0);
 				editWindow.undo();
 			}
 		});
 		// redo
 		redo.addClickListener(e -> {
 			if (editWindow != null) {
+				manual.updateToolbar("重做", 0);
 				editWindow.redo();
+			}
+		});
+		original.addClickListener(e ->{
+			if (editWindow != null) {
+				manual.updateToolbar("原图", 0);
+				editWindow.getParameters().reset();
+				setEditingWindow(editWindow);
+				editWindow.original();
+			}
+		});
+		fixed.addClickListener(e -> {
+			if (editWindow != null) {
+				manual.updateToolbar("适应窗体", 0);
+				editWindow.fit();
 			}
 		});
 		// 锐化
 		sharpen.addClickListener(e -> {
 			if (editWindow != null) {
+				manual.updateToolbar("锐化", 0);
 				editWindow.sharpen();
 			}
 		});
 		// 寻找边缘
 		edge.addClickListener(e -> {
+			manual.updateToolbar("边缘", 0);
 			if (editWindow != null) {
 				editWindow.findEdges();
 			}
 		});
 		shadowUp.addClickListener(e ->{
 			if (editWindow != null) {
+				manual.updateToolbar("上阴影", 0);
 				editWindow.shadows("north");
 			}
 		});
 		shadowDown.addClickListener(e ->{
 			if (editWindow != null) {
+				manual.updateToolbar("下阴影", 0);
 				editWindow.shadows("south");
 			}
 		});
 		shadowLeft.addClickListener(e ->{
 			if (editWindow != null) {
+				manual.updateToolbar("左阴影", 0);
 				editWindow.shadows("west");
 			}
 		});
 		shadowRight.addClickListener(e ->{
 			if (editWindow != null) {
+				manual.updateToolbar("右阴影", 0);
 				editWindow.shadows("east");
 			}
 		});
-		original.addClickListener(e ->{
+		scale.addClickListener(e ->{
 			if (editWindow != null) {
-				editWindow.getParameters().reset();
-				setEditingWindow(editWindow);
-				editWindow.original();
+				manual.updateToolbar("伸缩", 0);
+//				editWindow.shadows("east");
 			}
 		});
-		
+		rotate.addClickListener(e ->{
+			if (editWindow != null) {
+				manual.updateToolbar("旋转", 0);
+//				editWindow.shadows("east");
+			}
+		});
+		transparency.addClickListener(e ->{
+			if (editWindow != null) {
+				manual.updateToolbar("透明度", 0);
+//				editWindow.shadows("east");
+			}
+		});
+		brightness.addClickListener(e ->{
+			if (editWindow != null) {
+				manual.updateToolbar("亮度", 0);
+//				editWindow.shadows("east");
+			}
+		});
+		contrast.addClickListener(e ->{
+			manual.updateToolbar("对比度", 0);
+			if (editWindow != null) {
+//				editWindow.shadows("east");
+			}
+		});
 	}
 	
+	/**
+	 * 
+	 * @param editWindow
+	 */
 	public void setEditingWindow(ImageWindow editWindow) {
 		this.editWindow = editWindow;
-		
 		scaleSlider.update(editWindow.getParameters().getScale());
 		rotateSlider.update(editWindow.getParameters().getRotate());
 		transparencySlider.update(editWindow.getParameters().getTransparency());
 		brightnessSlider.update(editWindow.getParameters().getBrightness());
 		contrastSlider.update(editWindow.getParameters().getContrast());
-	
 	}
-	
-	
 	
 	/**
 	 * 
@@ -309,7 +350,7 @@ public class Tool extends Window{
 			hlayout.setComponentAlignment(btns[i], Alignment.MIDDLE_CENTER);
 		}
 		return hlayout;
-	} 
+	}
 	
 	/**
 	 * 

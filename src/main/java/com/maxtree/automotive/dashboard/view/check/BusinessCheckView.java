@@ -503,15 +503,15 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     			
     			resetComponents();
     			
-    			Transition tran = ui.transitionService.findByUUID(availableQueue.getUuid(), availableQueue.getVin());
-    			TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-    			Message newMessage = messageSystem.createNewMessage(loggedInUser, "获取一笔新业务", tran.getDetails());
-    			Set<Name> names = new HashSet<Name>();
-    			Name target = new Name(loggedInUser.getUserUniqueId(), Name.USER, loggedInUser.getProfile().getLastName()+loggedInUser.getProfile().getFirstName(), loggedInUser.getProfile().getPicture());
-    			names.add(target);
-    			messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.CHECK.getViewName());
-    			
-    			CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+//    			Transition tran = ui.transitionService.findByUUID(availableQueue.getUuid(), availableQueue.getVin());
+//    			TB4MessagingSystem messageSystem = new TB4MessagingSystem();
+//    			Message newMessage = messageSystem.createNewMessage(loggedInUser, "获取一笔新业务", tran.getDetails());
+//    			Set<Name> names = new HashSet<Name>();
+//    			Name target = new Name(loggedInUser.getUserUniqueId(), Name.USER, loggedInUser.getProfile().getLastName()+loggedInUser.getProfile().getFirstName(), loggedInUser.getProfile().getPicture());
+//    			names.add(target);
+//    			messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.CHECK.getViewName());
+//    			
+//    			CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
     		}
     		else {
     			Notifications.warning("没有可办的业务了。");

@@ -14,10 +14,8 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.yaml.snakeyaml.reader.UnicodeReader;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
@@ -28,7 +26,6 @@ import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
 import com.maxtree.automotive.dashboard.servlet.UploadInDTO;
 import com.maxtree.automotive.dashboard.servlet.UploadOutDTO;
-import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
@@ -74,15 +71,15 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 		int height = UI.getCurrent().getPage().getBrowserWindowHeight() - 173;
 		this.setWidth("100%");
 		this.setHeight(height+"px");
-		browser.setSizeFull();
-		this.setContent(browser);
+//		browser.setSizeFull();
+//		this.setContent(browser);
 		
-//		Upload upload = new Upload(null, this);
-//		upload.setButtonCaption("选择文件");
-//		upload.setButtonStyleName("upload-button");
-//		upload.setImmediateMode(true);
-//		upload.addSucceededListener(this);
-//		this.setContent(upload);
+		Upload upload = new Upload(null, this);
+		upload.setButtonCaption("选择文件");
+		upload.setButtonStyleName("upload-button");
+		upload.setImmediateMode(true);
+		upload.addSucceededListener(this);
+		this.setContent(upload);
 	}
 	
 	/**
