@@ -18,9 +18,13 @@ import com.vaadin.server.Page.Styles;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Image;
+import com.vaadin.ui.JavaScript;
+import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+
+import elemental.json.JsonArray;
 
 /**
  * 
@@ -44,36 +48,33 @@ public class ImageWindow extends Window {
 		super(alias);
 		this.file = file;
 		this.addStyleName("v-window-translucent-" + this.hashCode());
-		this.addStyleName("foo");
+		this.addStyleName("foo");//标题栏不透明
 		this.setResizable(true);
-		this.setWidth("800px");
-		this.setHeight("600px");
-		adjustTransparency(opacity);
+		this.setWidth("700px");//窗体初始宽度
+		this.setHeight("135px");//窗体初始高度
+
 		image = new Image(null, getStreamByFileObject(file));
-		vl.addStyleName("v-content-translucent-" + this.hashCode());
-		vl.setSpacing(false);
-		vl.setMargin(false);
-		vl.setWidthUndefined();
-		vl.setHeightUndefined();
-		vl.addComponents(image);
-		vl.setComponentAlignment(image, Alignment.TOP_CENTER);
-
-		this.setContent(vl);
-
+		image.setWidth("100%");
+		image.setHeightUndefined();
+		frame.addStyleName("v-content-translucent-" + this.hashCode());
+		frame.setSpacing(false);
+		frame.setMargin(false);
+		frame.setSizeFull();
+		frame.addComponents(image);
+		frame.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
+		this.setContent(frame);
+//		adjustTransparency(opacity);
 		UI.getCurrent().addWindow(this);
-
 		this.focus();
-
 		this.addFocusListener(e -> {
 			this.bringToFront();
 		});
 		
-		ShortcutListener upListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_UP,
-				null) {
+		ShortcutListener upListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_UP, null) {
 			/**
-					 * 
-					 */
-					private static final long serialVersionUID = 1L;
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void handleAction(Object sender, Object target) {
@@ -84,9 +85,9 @@ public class ImageWindow extends Window {
 		ShortcutListener downListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_DOWN,
 				null) {
 			/**
-					 * 
-					 */
-					private static final long serialVersionUID = 1L;
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void handleAction(Object sender, Object target) {
@@ -96,9 +97,9 @@ public class ImageWindow extends Window {
 		ShortcutListener leftListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_LEFT,
 				null) {
 			/**
-					 * 
-					 */
-					private static final long serialVersionUID = 1L;
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void handleAction(Object sender, Object target) {
@@ -109,9 +110,9 @@ public class ImageWindow extends Window {
 		ShortcutListener rightListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_RIGHT,
 				null) {
 			/**
-					 * 
-					 */
-					private static final long serialVersionUID = 1L;
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void handleAction(Object sender, Object target) {
@@ -124,11 +125,18 @@ public class ImageWindow extends Window {
 		this.addShortcutListener(leftListener);
 	}
 	
+	/**
+	 * 
+	 */
 	public void original() {
 		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
- 			@Override
+ 			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
  			public InputStream getStream() {
- 				
  				lstCommands.clear();
  				removedCommands.clear();
 				try {
@@ -141,12 +149,26 @@ public class ImageWindow extends Window {
  		}; 
  		StreamResource streamResource = new StreamResource(streamSource, file.getName().getBaseName());
  		streamResource.setCacheTime(0);
- 		reloadImage(streamResource);
+ 		frame.removeComponent(image);
+ 		frame.setSizeUndefined();
+ 		image = new Image(null, streamResource);
+ 		image.setWidthUndefined();
+		image.setHeightUndefined();
+ 		frame.addComponent(image);
+ 		frame.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
 	}
 	
+	/**
+	 * 
+	 */
 	public void fit() {
 		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
- 			@Override
+ 			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
  			public InputStream getStream() {
 				try {
 					return file.getContent().getInputStream();
@@ -158,7 +180,14 @@ public class ImageWindow extends Window {
  		}; 
  		StreamResource streamResource = new StreamResource(streamSource, file.getName().getBaseName());
  		streamResource.setCacheTime(0);
- 		reloadImage(streamResource);
+// 		reloadImage(streamResource);
+ 		frame.removeComponent(image);
+ 		frame.setSizeFull();
+ 		image = new Image(null, streamResource);
+ 		image.setWidth("100%");
+		image.setHeightUndefined();
+ 		frame.addComponent(image);
+ 		frame.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
 	}
 	
 	/**
@@ -169,7 +198,12 @@ public class ImageWindow extends Window {
 	 */
 	public void scale(double xscale, double yscale) {
 		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
- 			@Override
+ 			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
  			public InputStream getStream() {
  				removeCommand("scale");
  				Command command = new Command("scale", xscale, yscale);
@@ -188,7 +222,14 @@ public class ImageWindow extends Window {
  		}; 
  		StreamResource streamResource = new StreamResource(streamSource, file.getName().getBaseName());
  		streamResource.setCacheTime(0);
- 		reloadImage(streamResource);
+// 		reloadImage(streamResource);
+ 		frame.removeComponent(image);
+ 		frame.setSizeUndefined();
+ 		image = new Image(null, streamResource);
+ 		image.setWidthUndefined();
+		image.setHeightUndefined();
+ 		frame.addComponent(image);
+ 		frame.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
 	}
 	
 	/**
@@ -198,7 +239,12 @@ public class ImageWindow extends Window {
 	 */
 	public void rotate(double radians) {
 		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
- 			@Override
+ 			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
  			public InputStream getStream() {
  				removeCommand("rotate");
  				Command command = new Command("rotate", radians);
@@ -217,7 +263,14 @@ public class ImageWindow extends Window {
  		}; 
  		StreamResource streamResource = new StreamResource(streamSource, file.getName().getBaseName());
  		streamResource.setCacheTime(0);
- 		reloadImage(streamResource);
+// 		reloadImage(streamResource);
+ 		frame.removeComponent(image);
+ 		frame.setSizeUndefined();
+ 		image = new Image(null, streamResource);
+ 		image.setWidthUndefined();
+		image.setHeightUndefined();
+ 		frame.addComponent(image);
+ 		frame.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
 	}
 	
 	/**
@@ -225,7 +278,12 @@ public class ImageWindow extends Window {
 	 */
 	public void sharpen() {
 		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
- 			@Override
+ 			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
  			public InputStream getStream() {
  				Command command = new Command("sharpen");
  				lstCommands.add(command);
@@ -251,7 +309,12 @@ public class ImageWindow extends Window {
 	 */
 	public void findEdges() {
 		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
- 			@Override
+ 			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
  			public InputStream getStream() {
  				Command command = new Command("findEdges");
  				lstCommands.add(command);
@@ -280,7 +343,8 @@ public class ImageWindow extends Window {
 	public void adjustTransparency(double d) {
 		Styles styles = Page.getCurrent().getStyles();
     	String css1 = ".v-content-translucent-"+this.hashCode()+" { opacity:" + (d) + " !important; }";
-		String css2 = ".v-window-translucent-"+this.hashCode()+" { background-color:rgba(255,255,255,0.0) !important; }";
+//		String css2 = ".v-window-translucent-"+this.hashCode()+" { background-color:rgba(255,255,255,"+d+") !important; }";
+    	String css2 = ".v-window-translucent-"+this.hashCode()+" { background-color:rgba(255,255,255,0.0) !important; }";
 		
 		styles.add(css1);
 		styles.add(css2);
@@ -453,10 +517,12 @@ public class ImageWindow extends Window {
 	 * @param streamResource
 	 */
 	private void reloadImage(StreamResource streamResource) {
-		vl.removeComponent(image);
+		frame.removeComponent(image);
  		image = new Image(null, streamResource);
- 		vl.addComponent(image);
- 		vl.setComponentAlignment(image, Alignment.TOP_CENTER);
+ 		image.setWidth("100%");
+		image.setHeightUndefined();
+ 		frame.addComponent(image);
+ 		frame.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
 	}
 	
 	/**
@@ -477,7 +543,7 @@ public class ImageWindow extends Window {
 		return parameters;
 	}
 
-	private VerticalLayout vl = new VerticalLayout();
+	private VerticalLayout frame = new VerticalLayout();
 	private FileObject file;
 	private Image image;
 	private ImageProcessorAPI api = new ImageProcessorAPI();

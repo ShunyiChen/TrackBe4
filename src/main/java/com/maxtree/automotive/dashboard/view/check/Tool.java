@@ -141,70 +141,70 @@ public class Tool extends Window{
 		row8.addComponents(Box.createHorizontalBox(10),contrast);
 		main.addComponents(Box.createVerticalBox(10),row1,row2,row3,row4,row5,row6,row7,row8);
 		
-		scaleSlider = new SliderWithTextField("缩小放大:", 0d, 200d, 100d);
-		scaleSlider.setValueChangedCallback(new Callback2() {
-
-			@Override
-			public void onSuccessful(Object... objects) {
-				if (editWindow != null) {
-					double val = (double) objects[0];
-					editWindow.scale((val * 0.01), (val * 0.01));
-					editWindow.getParameters().setScale(val);
-				}
-			}
-		});
-		
-		rotateSlider = new SliderWithTextField("旋转:", -180d, 180d, 0d);
-		rotateSlider.setValueChangedCallback(new Callback2() {
-
-			@Override
-			public void onSuccessful(Object... objects) {
-				if (editWindow != null) {
-					double val = (double) objects[0];
-					editWindow.rotate(Math.toRadians(val));
-					editWindow.getParameters().setRotate(val);
-				}
-			}
-		});
-		
-		transparencySlider = new SliderWithTextField("透明度:", 10d, 100d, 100d);
-		transparencySlider.setValueChangedCallback(new Callback2() {
-
-			@Override
-			public void onSuccessful(Object... objects) {
-				if (editWindow != null) {
-					editWindow.adjustTransparency((double)objects[0]/ 100d);
-					editWindow.getParameters().setTransparency((double) objects[0]);
-				}
-			}
-		});
-		
-		
-		brightnessSlider = new SliderWithTextField("亮度:", 0d, 255d, 130d);
-		brightnessSlider.setValueChangedCallback(new Callback2() {
-
-			@Override
-			public void onSuccessful(Object... objects) {
-				if (editWindow != null) {
-					double val = (double) objects[0];
-					editWindow.adjustBrightness(val);
-					editWindow.getParameters().setBrightness(val);
-				}
-			}
-		});
-		
-		contrastSlider = new SliderWithTextField("对比度:", 0d, 255d, 130d);
-		contrastSlider.setValueChangedCallback(new Callback2() {
-
-			@Override
-			public void onSuccessful(Object... objects) {
-				if (editWindow != null) {
-					double val = (double) objects[0];
-					editWindow.adjustContrast(val);
-					editWindow.getParameters().setContrast(val);
-				}
-			}
-		});
+//		scaleSlider = new SliderWithTextField("缩小放大:", 0d, 200d, 100d);
+//		scaleSlider.setValueChangedCallback(new Callback2() {
+//
+//			@Override
+//			public void onSuccessful(Object... objects) {
+//				if (editWindow != null) {
+//					double val = (double) objects[0];
+//					editWindow.scale((val * 0.01), (val * 0.01));
+//					editWindow.getParameters().setScale(val);
+//				}
+//			}
+//		});
+//		
+//		rotateSlider = new SliderWithTextField("旋转:", -180d, 180d, 0d);
+//		rotateSlider.setValueChangedCallback(new Callback2() {
+//
+//			@Override
+//			public void onSuccessful(Object... objects) {
+//				if (editWindow != null) {
+//					double val = (double) objects[0];
+//					editWindow.rotate(Math.toRadians(val));
+//					editWindow.getParameters().setRotate(val);
+//				}
+//			}
+//		});
+//		
+//		transparencySlider = new SliderWithTextField("透明度:", 10d, 100d, 100d);
+//		transparencySlider.setValueChangedCallback(new Callback2() {
+//
+//			@Override
+//			public void onSuccessful(Object... objects) {
+//				if (editWindow != null) {
+//					editWindow.adjustTransparency((double)objects[0]/ 100d);
+//					editWindow.getParameters().setTransparency((double) objects[0]);
+//				}
+//			}
+//		});
+//		
+//		
+//		brightnessSlider = new SliderWithTextField("亮度:", 0d, 255d, 130d);
+//		brightnessSlider.setValueChangedCallback(new Callback2() {
+//
+//			@Override
+//			public void onSuccessful(Object... objects) {
+//				if (editWindow != null) {
+//					double val = (double) objects[0];
+//					editWindow.adjustBrightness(val);
+//					editWindow.getParameters().setBrightness(val);
+//				}
+//			}
+//		});
+//		
+//		contrastSlider = new SliderWithTextField("对比度:", 0d, 255d, 130d);
+//		contrastSlider.setValueChangedCallback(new Callback2() {
+//
+//			@Override
+//			public void onSuccessful(Object... objects) {
+//				if (editWindow != null) {
+//					double val = (double) objects[0];
+//					editWindow.adjustContrast(val);
+//					editWindow.getParameters().setContrast(val);
+//				}
+//			}
+//		});
 		
 //		HorizontalLayout row1 = createRow(original, undo, redo, sharpen, magic);
 //		HorizontalLayout row2 = createRow(shadowUp, shadowDown, shadowLeft, shadowRight);
@@ -260,8 +260,8 @@ public class Tool extends Window{
 		});
 		// 寻找边缘
 		edge.addClickListener(e -> {
-			manual.updateToolbar("边缘", 0);
 			if (editWindow != null) {
+				manual.updateToolbar("边缘", 0);
 				editWindow.findEdges();
 			}
 		});
@@ -291,34 +291,64 @@ public class Tool extends Window{
 		});
 		scale.addClickListener(e ->{
 			if (editWindow != null) {
-				manual.updateToolbar("伸缩", 0);
-//				editWindow.shadows("east");
+				manual.updateToolbar("伸缩", editWindow.getParameters().getScale());
 			}
 		});
 		rotate.addClickListener(e ->{
 			if (editWindow != null) {
-				manual.updateToolbar("旋转", 0);
-//				editWindow.shadows("east");
+				manual.updateToolbar("旋转", editWindow.getParameters().getRotate());
 			}
 		});
 		transparency.addClickListener(e ->{
 			if (editWindow != null) {
-				manual.updateToolbar("透明度", 0);
-//				editWindow.shadows("east");
+				manual.updateToolbar("透明度", editWindow.getParameters().getTransparency());
 			}
 		});
 		brightness.addClickListener(e ->{
 			if (editWindow != null) {
-				manual.updateToolbar("亮度", 0);
-//				editWindow.shadows("east");
+				manual.updateToolbar("亮度", editWindow.getParameters().getBrightness());
 			}
 		});
 		contrast.addClickListener(e ->{
-			manual.updateToolbar("对比度", 0);
 			if (editWindow != null) {
-//				editWindow.shadows("east");
+				manual.updateToolbar("对比度", editWindow.getParameters().getContrast());
 			}
 		});
+	}
+	
+	public void scale(double val) {
+		if (editWindow != null) {
+			editWindow.scale((val * 0.01), (val * 0.01));
+			editWindow.getParameters().setScale(val);
+		}
+	}
+	
+	public void rotate(double val) {
+		if (editWindow != null) {
+			editWindow.rotate(Math.toRadians(val));
+			editWindow.getParameters().setRotate(val);
+		}
+	}
+	
+	public void transparency(double val) {
+		if (editWindow != null) {
+			editWindow.adjustTransparency((double)val/ 100d);
+			editWindow.getParameters().setTransparency(val);
+		}
+	}
+	
+	public void brightness(double val) {
+		if (editWindow != null) {
+			editWindow.adjustBrightness(val);
+			editWindow.getParameters().setBrightness(val);
+		}
+	}
+	
+	public void contrast(double val) {
+		if (editWindow != null) {
+			editWindow.adjustContrast(val);
+			editWindow.getParameters().setContrast(val);
+		}
 	}
 	
 	/**
@@ -327,11 +357,11 @@ public class Tool extends Window{
 	 */
 	public void setEditingWindow(ImageWindow editWindow) {
 		this.editWindow = editWindow;
-		scaleSlider.update(editWindow.getParameters().getScale());
-		rotateSlider.update(editWindow.getParameters().getRotate());
-		transparencySlider.update(editWindow.getParameters().getTransparency());
-		brightnessSlider.update(editWindow.getParameters().getBrightness());
-		contrastSlider.update(editWindow.getParameters().getContrast());
+//		scaleSlider.update(editWindow.getParameters().getScale());
+//		rotateSlider.update(editWindow.getParameters().getRotate());
+//		transparencySlider.update(editWindow.getParameters().getTransparency());
+//		brightnessSlider.update(editWindow.getParameters().getBrightness());
+//		contrastSlider.update(editWindow.getParameters().getContrast());
 	}
 	
 	/**
@@ -381,9 +411,9 @@ public class Tool extends Window{
 	private int tx = -1;
 	private int ty = -1;
 	private ImageWindow editWindow;
-	private SliderWithTextField scaleSlider;
-	private SliderWithTextField rotateSlider;
-	private SliderWithTextField transparencySlider;
-	private SliderWithTextField brightnessSlider;
-	private SliderWithTextField contrastSlider;
+//	private SliderWithTextField scaleSlider;
+//	private SliderWithTextField rotateSlider;
+//	private SliderWithTextField transparencySlider;
+//	private SliderWithTextField brightnessSlider;
+//	private SliderWithTextField contrastSlider;
 }

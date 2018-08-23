@@ -54,6 +54,9 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 		initComponents();
 	}
 	
+	/**
+	 * 
+	 */
 	private void initComponents() {
 		this.addStyleName("Manual");
 		numField.setWidth("80px");
@@ -66,15 +69,27 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 			
 			@Override
 			public void handleAction(Object sender, Object target) {
-				System.out.println("======"+sender+","+target);
-				
+				System.out.println("handleAction======"+sender+","+target);
 			}
 		};
 		numField.addShortcutListener(enterListener);
+		numField.addValueChangeListener(e->{
+			System.out.println("ValueChange======"+e.getValue()+","+e.getOldValue()+"   "+function);
+			
+			if(function.equals("伸缩")) {
+				tool.scale(Double.parseDouble(e.getValue()));
+			} else if(function.equals("旋转")) {
+				tool.rotate(Double.parseDouble(e.getValue()));
+			} else if(function.equals("透明度")) {
+				tool.transparency(Double.parseDouble(e.getValue()));
+			} else if(function.equals("亮度")) {
+				tool.brightness(Double.parseDouble(e.getValue()));
+			} else if(function.equals("对比度")) {
+				tool.contrast(Double.parseDouble(e.getValue()));
+			}
+		});
 		
-		slider.setMin(0.0);
-		slider.setMax(100.0);
-		slider.setValue(50.0);
+		
 		slider.setWidth("150px");
 		slider.addStyleName("v-slider");
 		slider.addValueChangeListener(e->{
@@ -158,7 +173,7 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
         rightTree.addContextClickListener(event -> {
         	TreeContextClickEvent<Document> e = (TreeContextClickEvent<Document>) event;
         	Document item = e.getItem();
-//        	tree.select(item);
+        	rightTree.select(item);
         });
         rightSplit.setFirstComponent(imgStage);
         rightSplit.setSecondComponent(rightTree);
@@ -192,7 +207,7 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
         leftTree.addContextClickListener(event -> {
         	TreeContextClickEvent<Document> e = (TreeContextClickEvent<Document>) event;
         	Document item = e.getItem();
-//        	tree.select(item);
+        	leftTree.select(item);
         });
         leftTree.setSelectionMode(SelectionMode.SINGLE);
         leftTree.addItemClickListener(e -> {
@@ -208,9 +223,6 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 				imgStage.display(site, selectedNode);
 				// Set the position of the splitter as percentage
 		        rightSplit.setSplitPosition(75, Unit.PERCENTAGE);
-//		        System.out.println(tool.isVisible()+"=========");
-		        tool.show();
-		        
         	} else {
         		selectedNode = e.getItem();
 				imgStage.display(site, selectedNode);
@@ -230,7 +242,9 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 				Set<Document> set = leftTree.getSelectedItems();
 				List<Document> list = new ArrayList<Document>(set);
 				Document selectedDocument = list.get(0);
-				addForComparing(site, selectedDocument);
+				addPictureForComparison(site, selectedDocument);
+				
+				tool.show();
 			}
         });
 		HorizontalSplitPanel main = new HorizontalSplitPanel();
@@ -252,7 +266,7 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 	 * @param site
 	 * @param doc
 	 */
-	private void addForComparing(Site site, Document doc) {
+	private void addPictureForComparison(Site site, Document doc) {
 		if (doc.getFileFullPath() != null) {
 			try {
 				FileObject fobj = new TB4FileSystem().resolveFile(site, doc.getFileFullPath());
@@ -315,80 +329,97 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 		}
 	}
 	
+	/**
+	 * 
+	 * @param function
+	 * @param value
+	 */
 	public void updateToolbar(String function, double value) {
+		this.function = function;
 		subtoolbar.removeAllComponents();
-		numField.setValue(value+"");
-		slider.setValue(value);
-		
 		if(function.equals("撤销")) {
 			functionImg.setIcon(VaadinIcons.ARROW_BACKWARD);
-			createToolbar();
+			updateToolbarButtons(false);
 		} else if(function.equals("重做")) {
 			functionImg.setIcon(VaadinIcons.ARROW_FORWARD);
-			createToolbar();
+			updateToolbarButtons(false);
 		} else if(function.equals("原图")) {
 			functionImg.setIcon(VaadinIcons.DOT_CIRCLE);
-			createToolbar();
+			updateToolbarButtons(false);
 		} else if(function.equals("适应窗体")) {
 			functionImg.setIcon(VaadinIcons.EXPAND_FULL);
-			createToolbar();
+			updateToolbarButtons(false);
 		} else if(function.equals("锐化")) {
 			functionImg.setIcon(VaadinIcons.EYE);
-			createToolbar();
+			updateToolbarButtons(false);
 		} else if(function.equals("边缘")) {
 			functionImg.setIcon(VaadinIcons.STAR_HALF_RIGHT_O);
-			createToolbar();
+			updateToolbarButtons(false);
 		} else if(function.equals("上阴影")) {
 			functionImg.setIcon(VaadinIcons.PADDING_TOP);
-			createToolbar();
+			updateToolbarButtons(false);
 		} else if(function.equals("下阴影")) {
 			functionImg.setIcon(VaadinIcons.PADDING_BOTTOM);
-			createToolbar();
+			updateToolbarButtons(false);
 		} else if(function.equals("左阴影")) {
 			functionImg.setIcon(VaadinIcons.PADDING_LEFT);
-			createToolbar();
+			updateToolbarButtons(false);
 		} else if(function.equals("右阴影")) {
 			functionImg.setIcon(VaadinIcons.PADDING_RIGHT);
-			createToolbar2();
+			updateToolbarButtons(false);
 		} else if(function.equals("伸缩")) {
 			functionImg.setIcon(VaadinIcons.EXPAND_SQUARE);
-			createToolbar2();
+			updateToolbarButtons(true);
+			slider.setMin(1.0);
+			slider.setMax(200.0);
+			slider.setValue(value);
 		} else if(function.equals("旋转")) {
 			functionImg.setIcon(VaadinIcons.ROTATE_LEFT);
-			createToolbar2();
+			updateToolbarButtons(true);
+			slider.setMin(-180.0);
+			slider.setMax(180.0);
+			slider.setValue(value);
 		} else if(function.equals("透明度")) {
 			functionImg.setIcon(VaadinIcons.COINS);
-			createToolbar2();
+			updateToolbarButtons(true);
+			slider.setMin(10.0);
+			slider.setMax(100.0);
+			slider.setValue(value);
 		} else if(function.equals("亮度")) {
 			functionImg.setIcon(VaadinIcons.MORNING);
-			createToolbar2();
+			updateToolbarButtons(true);
+			slider.setMin(0.0);
+			slider.setMax(255.0);
+			slider.setValue(value);
 		} else if(function.equals("对比度")) {
 			functionImg.setIcon(VaadinIcons.ADJUST);
-			createToolbar2();
+			updateToolbarButtons(true);
+			slider.setMin(0.0);
+			slider.setMax(255.0);
+			slider.setValue(value);
 		}
 	}
 	
-	private void createToolbar() {
-		subtoolbar.addComponents(fittedSize,Box.createHorizontalBox(5),actualSize,Box.createHorizontalBox(25),lineLabel_1,functionImg,lineLabel_2,functionDesc);
-//		subtoolbar.setComponentAlignment(fittedSize, Alignment.MIDDLE_LEFT);
-//		subtoolbar.setComponentAlignment(actualSize, Alignment.MIDDLE_LEFT);
-		subtoolbar.setComponentAlignment(lineLabel_1, Alignment.MIDDLE_CENTER);
-		subtoolbar.setComponentAlignment(functionImg, Alignment.MIDDLE_CENTER);
-		subtoolbar.setComponentAlignment(lineLabel_2, Alignment.MIDDLE_CENTER);
-//		subtoolbar.setComponentAlignment(functionDesc, Alignment.MIDDLE_CENTER);
+	/**
+	 * 
+	 * @param hasSlider
+	 */
+	private void updateToolbarButtons(boolean hasSlider) {
+		if(!hasSlider) {
+			subtoolbar.addComponents(fittedSize,Box.createHorizontalBox(5),actualSize,Box.createHorizontalBox(25),lineLabel_1,functionImg,lineLabel_2,functionDesc);
+			subtoolbar.setComponentAlignment(lineLabel_1, Alignment.MIDDLE_CENTER);
+			subtoolbar.setComponentAlignment(functionImg, Alignment.MIDDLE_CENTER);
+			subtoolbar.setComponentAlignment(lineLabel_2, Alignment.MIDDLE_CENTER);
+		}
+		else {
+			subtoolbar.addComponents(fittedSize,Box.createHorizontalBox(5),actualSize,Box.createHorizontalBox(25),lineLabel_1,functionImg,lineLabel_2,slider,numField);
+			subtoolbar.setComponentAlignment(lineLabel_1, Alignment.MIDDLE_CENTER);
+			subtoolbar.setComponentAlignment(functionImg, Alignment.MIDDLE_CENTER);
+			subtoolbar.setComponentAlignment(lineLabel_2, Alignment.MIDDLE_CENTER);
+		}
 	}
 	
-	private void createToolbar2() {
-		subtoolbar.addComponents(fittedSize,Box.createHorizontalBox(5),actualSize,Box.createHorizontalBox(25),lineLabel_1,functionImg,lineLabel_2,slider,numField);
-//		subtoolbar.setComponentAlignment(fittedSize, Alignment.MIDDLE_LEFT);
-//		subtoolbar.setComponentAlignment(actualSize, Alignment.MIDDLE_LEFT);
-		subtoolbar.setComponentAlignment(lineLabel_1, Alignment.MIDDLE_CENTER);
-		subtoolbar.setComponentAlignment(functionImg, Alignment.MIDDLE_CENTER);
-		subtoolbar.setComponentAlignment(lineLabel_2, Alignment.MIDDLE_CENTER);
-//		subtoolbar.setComponentAlignment(slider, Alignment.MIDDLE_LEFT);
-//		subtoolbar.setComponentAlignment(numField, Alignment.MIDDLE_LEFT);
-	}
-	
+	private String function;
 	private Label lineLabel_1 = new Label();
 	private Label lineLabel_2 = new Label();
 	private Button fittedSize = new Button();
