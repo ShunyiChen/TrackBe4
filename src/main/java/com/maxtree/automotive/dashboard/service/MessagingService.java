@@ -39,7 +39,7 @@ public class MessagingService {
 	 */
 	public int insertMessage(Message message) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		String sql = "INSERT INTO MESSAGES(SUBJECT,MESSAGEBODY,CREATORUNIQUEID,DATECREATED,SENTTIMES,REMINDERFREQUENCYID,DELETED) VALUES(?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO MESSAGES(SUBJECT,CONTENT,MATEDATA,CREATORUNIQUEID,DATECREATED,SENTTIMES,REMINDERFREQUENCYID,DELETED) VALUES(?,?,?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -47,23 +47,14 @@ public class MessagingService {
 				PreparedStatement ps = con.prepareStatement(
 						sql, new String[] {"messageuniqueid"});
 				ps.setString(1, message.getSubject());
-				ps.setString(2, message.getMessageBody());
-				ps.setInt(3, message.getCreatorUniqueId());
+				ps.setString(2, message.getContent());
+				ps.setString(3, message.getMatedata());
+				ps.setInt(4, message.getCreatorUniqueId());
 				long millis = System.currentTimeMillis();
-				ps.setTimestamp(4, new Timestamp(millis));
-				ps.setInt(5, message.getSentTimes());
-				ps.setInt(6, message.getReminderFrequencyId());
-				ps.setInt(7, message.getDeleted());
-//				long millis = System.currentTimeMillis();
-//				ps.setTimestamp(4, new Timestamp(millis));
-//				ps.setInt(5, message.getParentMessageUniqueId());
-//				long millis2 = message.getExpiryDate().getTime();
-//				ps.setTimestamp(6, new Timestamp(millis2));
-//				ps.setInt(7, message.getReminder());
-//				long millis3 = message.getNextRemindDate().getTime();
-//				ps.setTimestamp(8, new Timestamp(millis3));
-//				ps.setInt(9, message.getReminderFrequencyId());
-//				ps.setString(10, message.getRecipientName());
+				ps.setTimestamp(5, new Timestamp(millis));
+				ps.setInt(6, message.getSentTimes());
+				ps.setInt(7, message.getReminderFrequencyId());
+				ps.setInt(8, message.getDeleted());
 				return ps;
 			}
 			
@@ -271,10 +262,10 @@ public class MessagingService {
 	 * @param message
 	 */
 	public void updateMessage(Message message) {
-		String sql = "UPDATE MESSAGES SET SUBJECT=?,MESSAGEBODY=?,DATECREATED=?,SENTTIMES=?,REMINDERFREQUENCYID=? WHERE MESSAGEUNIQUEID=?";
+		String sql = "UPDATE MESSAGES SET SUBJECT=?,CONTENT=?,DATECREATED=?,SENTTIMES=?,REMINDERFREQUENCYID=? WHERE MESSAGEUNIQUEID=?";
 		jdbcTemplate.update(sql, new Object[] {
 				message.getSubject(),
-				message.getMessageBody(),
+				message.getContent(),
 				message.getDateCreated(),
 				message.getSentTimes(),
 				message.getReminderFrequencyId(),
@@ -307,4 +298,6 @@ public class MessagingService {
 		List<MessageRecipient> results = jdbcTemplate.query(sql, new Object[] {messageUniqueId},new BeanPropertyRowMapper<MessageRecipient>(MessageRecipient.class));
 		return results;
 	}
+	
+	
 }

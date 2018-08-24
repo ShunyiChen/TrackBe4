@@ -2,6 +2,7 @@ package com.maxtree.automotive.dashboard.view.admin;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -11,15 +12,19 @@ import java.util.stream.Collectors;
 import org.springframework.util.StringUtils;
 import org.vaadin.addons.autocomplete.AutocompleteExtension;
 
+import com.maxtree.automotive.dashboard.Actions;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.MessageRecipient;
+import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.domain.UserEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
@@ -208,7 +213,7 @@ public class EditBroadCastWindow extends Window {
 		// Bind nameField to the Person.name property
 		// by specifying its getter and setter
 		binder.bind(subjectField, Message::getSubject, Message::setSubject);
-		binder.bind(descArea, Message::getMessageBody, Message::setMessageBody);
+		binder.bind(descArea, Message::getContent, Message::setContent);
 	}
 	
 	/**
@@ -223,7 +228,7 @@ public class EditBroadCastWindow extends Window {
 		// Validating Field Values
 		binder.forField(descArea).withValidator(new StringLengthValidator(
 	        "消息体长度范围在1~200个字符",
-	        1, 200)) .bind(Message::getMessageBody, Message::setMessageBody);
+	        1, 200)) .bind(Message::getContent, Message::setContent);
 	}
 	
 	/**
@@ -296,9 +301,8 @@ public class EditBroadCastWindow extends Window {
         		User creator = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
         		TB4MessagingSystem messagingSystem = new TB4MessagingSystem();
         		String subject = w.message.getSubject();
-        		String messageBody = "{\"type\":\"text\", \"message\":\""+w.descArea.getValue()+"\"}";
-        		
-        		Message newMessage = messagingSystem.createNewMessage(creator, subject, messageBody);
+        		String matedata = "{\"openwith\":\""+Openwith.MESSAGE+"\"}";
+        		Message newMessage = messagingSystem.createNewMessage(creator, subject, w.message.getContent(), matedata);
         		
         		String viewName = "";// 如果viewName等于空，则表示消息将发送到对方的首个view上
         		new TB4MessagingSystem().sendMessageTo(newMessage.getMessageUniqueId(), w.nameSets, viewName);
@@ -310,6 +314,7 @@ public class EditBroadCastWindow extends Window {
         UI.getCurrent().addWindow(w);
         w.center();
     }
+	
 	
 	/**
 	 * 
@@ -333,7 +338,7 @@ public class EditBroadCastWindow extends Window {
         }
         w.toField.setValue(stb.toString());
         MessageBodyParser parser = new MessageBodyParser();
-        Map<String, String> map = parser.json2Map(msg.getMessageBody());
+        Map<String, String> map = parser.json2Map(msg.getContent());
         String content = map.get("message");
         w.descArea.setValue(content);
         w.btnAdd.addClickListener(e -> {
@@ -341,9 +346,10 @@ public class EditBroadCastWindow extends Window {
         		String viewName = "";// 如果viewName等于空，则表示消息将发送到对方的首个view上
         		
         		String subject = w.message.getSubject();
-        		String messageBody = "{\"type\":\"text\", \"message\":\""+w.descArea.getValue()+"\"}";
+        		String matedata = "{\"openwith\":\""+Openwith.MESSAGE+"\"}";//9代表打开方式
         		msg.setSubject(subject);
-        		msg.setMessageBody(messageBody);
+        		msg.setContent(w.descArea.getValue());
+        		msg.setMatedata(matedata);
         		msg.setSentTimes(msg.getSentTimes()+1);
         		msg.setDateCreated(new Date());
         		int newMessageUniqueId = ui.messagingService.insertMessage(msg);

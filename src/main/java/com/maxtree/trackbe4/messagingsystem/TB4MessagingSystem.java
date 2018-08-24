@@ -26,14 +26,16 @@ public class TB4MessagingSystem {
 	 * 
 	 * @param creator
 	 * @param subject
-	 * @param messageBody
+	 * @param content
+	 * @param matedata
 	 * @return
 	 */
-	public Message createNewMessage(User creator, String subject, String messageBody) {
+	public Message createNewMessage(User creator, String subject, String content, String matedata) {
 		Message newMessage = new Message();
 		newMessage.setCreatorUniqueId(creator.getUserUniqueId());
 		newMessage.setSubject(subject);
-		newMessage.setMessageBody(messageBody);
+		newMessage.setContent(content);
+		newMessage.setMatedata(matedata);
 		newMessage.setSentTimes(1);
 		newMessage.setReminderFrequencyId(0);
 		

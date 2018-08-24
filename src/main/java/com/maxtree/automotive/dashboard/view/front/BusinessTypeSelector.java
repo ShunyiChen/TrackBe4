@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -196,28 +197,17 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 		imaging.setPlateType(view.basicInfoPane().getPlateType());
 		imaging.setVin(view.basicInfoPane().getVIN());
 		imaging.setStatus(BusinessState.B8.name);
-		int rs = ui.imagingService.insert(imaging);
-		if (rs != 0) {
+		int imaginguniqueid = ui.imagingService.insert(imaging);
+		if (imaginguniqueid != 0) {
 			//2.发信给影像化管理员
-			Map<String, String> details = new HashMap<String, String>();
-			details.put("0", "popup");// 消息自动弹出
-			details.put("1", BusinessState.B8.name);//STATUS
-			details.put("2", view.basicInfoPane().getBarCode());//BARCODE
-			details.put("3", view.basicInfoPane().getPlateType());//PLATETYPE
-			details.put("4", view.basicInfoPane().getPlateNumber());//PLATENUMBER
-			details.put("5", view.basicInfoPane().getVIN());//VIN
-			details.put("6", "");//BUSINESSTYPE
-			details.put("7", view.uuid());//UUID
-			details.put("8", "请补充历史影像化记录");//comments
-			
-			String messageBody = jsonHelper.map2Json(details);
 			User receiver = ui.userService.findImagingAdmin(view.loggedInUser().getCommunityUniqueId());
 			if (receiver.getUserUniqueId() == 0) {
 				Notifications.warning("无法找到影像化管理员，请联系系统管理员进行设置。");
 				return;
 			}
+			String matedata = "{\"openwith\":\""+Openwith.MESSAGE+"\",\"imaginguniqueid\":\""+imaginguniqueid+"\"}";
 			TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-			Message newMessage = messageSystem.createNewMessage(loggedinUser, view.basicInfoPane().getPlateNumber()+",收到新的影像化检测记录", messageBody);
+			Message newMessage = messageSystem.createNewMessage(loggedinUser, view.basicInfoPane().getPlateNumber()+",收到新的影像化检测记录", "请补充历史影像化记录。", matedata);
 			Set<Name> names = new HashSet<Name>();
 			Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 			names.add(target);

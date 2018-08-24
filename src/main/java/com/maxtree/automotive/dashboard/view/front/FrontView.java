@@ -44,6 +44,7 @@ import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.InputViewIF;
+import com.maxtree.automotive.dashboard.view.MessageView;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.data.Binder;
@@ -277,8 +278,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
             		}
             	}
             	else if(openWith.equals(Openwith.MESSAGE)) {
-            		///TODO
             		// 显示消息
+            		MessageView.open(m);
             	}
             });
         }
