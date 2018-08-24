@@ -298,16 +298,16 @@ public class SiteService {
 	 * @return 最大批次号（父文件夹数）
 	 */
 	public int updateFolders(Site site) {
-				
+		//插入一行新批次
 		String sql = "INSERT INTO SITEFOLDER(SITEUNIQUEID,BATCHCOUNT,BUSINESSCOUNT) SELECT ?,BATCHCOUNT+?,? FROM SITEFOLDER WHERE SITEUNIQUEID=? AND BUSINESSCOUNT>=? AND BATCHCOUNT=(SELECT MAX(BATCHCOUNT) FROM SITEFOLDER WHERE SITEUNIQUEID=?) AND BATCHCOUNT<?";
 		int affected2 = jdbcTemplate.update(sql,site.getSiteUniqueId(),1,0,site.getSiteUniqueId(),site.getSiteCapacity().getMaxBusiness(),site.getSiteUniqueId(),site.getSiteCapacity().getMaxBatch());
-		
+		//更改当前批次的业务数
 		sql = "UPDATE SITEFOLDER SET BUSINESSCOUNT=BUSINESSCOUNT+? WHERE SITEUNIQUEID=? AND BATCHCOUNT=(SELECT MAX(BATCHCOUNT) FROM SITEFOLDER WHERE SITEUNIQUEID=?) AND BUSINESSCOUNT<?";
 		int affected1 = jdbcTemplate.update(sql,1,site.getSiteUniqueId(),site.getSiteUniqueId(),site.getSiteCapacity().getMaxBusiness());
-		
 		if (affected1 == 0 && affected2 == 0) {
 			return 0;
 		}
+		// 获取最大批次号
 		sql = "SELECT MAX(BATCHCOUNT) FROM SITEFOLDER WHERE SITEUNIQUEID=?";
 		int batch = jdbcTemplate.queryForObject(sql, new Object[] {site.getSiteUniqueId()}, Integer.class);
 		return batch;

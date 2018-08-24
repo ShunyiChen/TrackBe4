@@ -522,7 +522,6 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		details.put("5", editableTrans.getVin());//VIN
 		details.put("6", editableTrans.getBusinessName());//BUSINESSTYPE
 		details.put("7", editableTrans.getUuid());//UUID
-		details.put("8", comments);//comments
 		String json = jsonHelper.map2Json(details);
     	
     	// 插入移行表
@@ -530,16 +529,16 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		transition.setTransactionUUID(editableTrans.getUuid());
 		transition.setAction(act.name);
 		transition.setDetails(json);
+		transition.setComments(comments);
 		transition.setUserName(loggedInUser.getUserName());
 		transition.setDateUpdated(new Date());
-		ui.transitionService.insert(transition, editableTrans.getVin());
+		int transitionUniqueId = ui.transitionService.insert(transition, editableTrans.getVin());
 		
 		// 插入用户事件
 		UserEvent event = new UserEvent();
-		event.setAction(act.name);
+		event.setTransitionUniqueId(transitionUniqueId);
 		event.setUserName(loggedInUser.getUserName());
 		event.setDateUpdated(new Date());
-		event.setDetails(json);
 		ui.userEventService.insert(event, loggedInUser.getUserName());
 		
 		return json;

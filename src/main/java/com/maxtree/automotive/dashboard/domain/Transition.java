@@ -2,6 +2,11 @@ package com.maxtree.automotive.dashboard.domain;
 
 import java.util.Date;
 
+/**
+ * 跟踪业务记录
+ * @author chens
+ *
+ */
 public class Transition {
 
 	public Integer getTransitionUniqueId() {
@@ -35,6 +40,14 @@ public class Transition {
 	public void setDetails(String details) {
 		this.details = details;
 	}
+	
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
 
 	public String getUserName() {
 		return userName;
@@ -55,7 +68,8 @@ public class Transition {
 	private Integer transitionUniqueId = 0;// 自增ID
 	private String transactionUUID;// 记录ID
 	private String action;// 事件动作
-	private String details;// 详细信息json
+	private String details;//详细信息json
+	private String comments;//评论
 	private String userName;//操作者用户名
 	private Date dateUpdated;// 更新日期
 }

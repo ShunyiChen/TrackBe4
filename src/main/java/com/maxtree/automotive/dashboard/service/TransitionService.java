@@ -1,5 +1,8 @@
 package com.maxtree.automotive.dashboard.service;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -7,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import com.maxtree.automotive.dashboard.domain.Transition;
@@ -35,17 +41,32 @@ public class TransitionService {
 	 * 
 	 * @param transition
 	 * @param vin
+	 * @return
 	 */
-	public void insert(Transition transition, String vin) {
+	public int insert(Transition transition, String vin) {
+		KeyHolder keyHolder = new GeneratedKeyHolder();
 		int index = getTableIndex(vin);
-		String UPDATE_TRANS_SQL = "INSERT INTO TRANSITION_"+index+"(TRANSACTIONUUID,ACTION,DETAILS,USERNAME,DATEUPDATED) VALUES(?,?,?,?,?)";
-		int opt = jdbcTemplate.update(UPDATE_TRANS_SQL, new Object[] {
-				transition.getTransactionUUID(), 
-				transition.getAction(),
-				transition.getDetails(),
-				transition.getUserName(),
-				transition.getDateUpdated()});
-		log.info("Affected id:"+opt);
+		String UPDATE_TRANS_SQL = "INSERT INTO TRANSITION_"+index+"(TRANSACTIONUUID,ACTION,DETAILS,COMMENTS,USERNAME,DATEUPDATED) VALUES(?,?,?,?,?,?)";
+		jdbcTemplate.update(new PreparedStatementCreator() {
+
+			@Override
+			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+				PreparedStatement ps = con.prepareStatement(
+						UPDATE_TRANS_SQL, new String[] {"transitionuniqueid"});
+				ps.setString(1, transition.getTransactionUUID());
+				ps.setString(2, transition.getAction());
+				ps.setString(3, transition.getDetails());
+				ps.setString(4, transition.getComments());
+				ps.setString(5, transition.getUserName());
+				long millis=transition.getDateUpdated().getTime();
+				java.sql.Date date = new java.sql.Date(millis);
+				ps.setDate(6,date);
+				return ps;
+			}
+			
+		}, keyHolder);
+		int transitionuniqueid = keyHolder.getKey().intValue(); 
+		return transitionuniqueid;
 	}
 	
 	/**

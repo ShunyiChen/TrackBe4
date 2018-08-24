@@ -168,18 +168,19 @@ public class RouterWindow extends Window {
 	public static void open(Callback2 accept, Callback2 reject) {
         RouterWindow w = new RouterWindow();
         w.btnApproved.addClickListener(e -> {
-        	
-        	if (w.content.getValue().length() > 160) {
-        		Notifications.warning("字数不得超出160。");
+        	if (w.content.getValue().length() > 200) {
+        		Notifications.warning("字数不得超出200。");
         		return;
         	}
-        	
         	w.close();
         	accept.onSuccessful(w.content.getValue());
 		});
         
         w.btnReject.addClickListener(e -> {
-        	
+        	if (w.content.getValue().length() > 200) {
+        		Notifications.warning("字数不得超出200。");
+        		return;
+        	}
         	w.close();
         	reject.onSuccessful(w.content.getValue());
 		});

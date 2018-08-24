@@ -16,6 +16,7 @@ import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -231,6 +232,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
             plateNumber.addStyleName("notification-content");
             String vin = map.get("5").toString();
             String uuid = map.get("7").toString();
+            String openWith = map.get("9");//open with mode
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
             timeLabel.setValue(new TimeAgo().toDuration(duration));
@@ -240,21 +242,25 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
             vLayout.addStyleName("switchbutton");
             vLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
-            	editableTrans = ui.transactionService.findByUUID(uuid, vin);
-            	removeMessage = new Callback() {
-					@Override
-					public void onSuccessful() {
-						new TB4MessagingSystem().deleteMessage(messageUniqueId,loggedInUser.getUserUniqueId());
-					}
-            	};
-            	if(editableTrans.getStatus().equals(BusinessState.B2.name)) {
-            		Notifications.warning("该记录已经质检通过。");
-            		removeMessage.onSuccessful();
-            		return;
+            	if(openWith.equals(Openwith.MESSAGE)) {
+            		///TODO
+            		// 显示消息
             	}
-            	else {
-            		resetComponents();
-            	}
+//            	editableTrans = ui.transactionService.findByUUID(uuid, vin);
+//            	removeMessage = new Callback() {
+//					@Override
+//					public void onSuccessful() {
+//						new TB4MessagingSystem().deleteMessage(messageUniqueId,loggedInUser.getUserUniqueId());
+//					}
+//            	};
+//            	if(editableTrans.getStatus().equals(BusinessState.B2.name)) {
+//            		Notifications.warning("该记录已经质检通过。");
+//            		removeMessage.onSuccessful();
+//            		return;
+//            	}
+//            	else {
+//            		resetComponents();
+//            	}
             });
             
         }
@@ -541,13 +547,11 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
         	editableTrans.setDateModified(new Date());
     		ui.transactionService.update(editableTrans);
     		//3.记录跟踪
-    		String messageBody = track(Actions.VERIFIED,comments,"print");//print意思是弹出打印对话框
-    		if(removeMessage != null)
-    			removeMessage.onSuccessful();
+    		String json = track(Actions.VERIFIED,comments,Openwith.PRINT);//print意思是弹出打印对话框
     		//4.发信给前台
     		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
     		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-    		Message newMessage = messageSystem.createNewMessage(loggedInUser, editableTrans.getPlateNumber()+",已通过一级审档", messageBody);
+    		Message newMessage = messageSystem.createNewMessage(loggedInUser, editableTrans.getPlateNumber()+",已通过一级审档", json);
     		Set<Name> names = new HashSet<Name>();
     		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
     		names.add(target);
@@ -559,7 +563,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     		// 6.提示信息
     		Notifications.bottomWarning("操作成功。审档通过。");
     	}
-    	else if (business.getCheckLevel().equals("二级")) {
+    	else if (business.getCheckLevel().equals("二级审档")) {
     		//1.删除锁定队列
     		int serial = 1; //1:质检 2:审档 3:确认审档
     		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());
@@ -573,9 +577,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
         	editableTrans.setDateModified(new Date());
     		ui.transactionService.update(editableTrans);
     		//3.记录跟踪
-    		String messageBody = track(Actions.SUBMIT2,comments,"form");//form意思是打开并编辑
-    		if(removeMessage != null)
-    			removeMessage.onSuccessful();
+    		track(Actions.SUBMIT2,comments,Openwith.FORM);//form意思是打开并编辑
     		//4.提交确认审档队列
     		Queue newQueue = new Queue();
     		newQueue.setUuid(editableTrans.getUuid());
@@ -611,9 +613,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		editableTrans.setDateModified(new Date());
 		ui.transactionService.update(editableTrans);
 		//3.记录跟踪
-		String messageBody = track(Actions.REJECTED,comments,"form");
-		if(removeMessage != null)
-			removeMessage.onSuccessful();
+		String messageBody = track(Actions.REJECTED,comments,Openwith.FORM);
 		//4.发信给前台
 		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
 		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
@@ -646,7 +646,6 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		details.put("5", editableTrans.getVin());//VIN
 		details.put("6", editableTrans.getCode());//BUSINESSTYPE
 		details.put("7", editableTrans.getUuid());//UUID
-		details.put("8", comments);//SUGGESTIONS
 		details.put("9", openWith);//OPEN WITH(form/print)
 		String json = jsonHelper.map2Json(details);
     	
@@ -655,16 +654,16 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		transition.setTransactionUUID(editableTrans.getUuid());
 		transition.setAction(act.name);
 		transition.setDetails(json);
+		transition.setComments(comments);
 		transition.setUserName(loggedInUser.getUserName());
 		transition.setDateUpdated(new Date());
-		ui.transitionService.insert(transition, editableTrans.getVin());
+		int transitionUniqueId = ui.transitionService.insert(transition, editableTrans.getVin());
 		
 		// 插入用户事件
 		UserEvent event = new UserEvent();
-		event.setAction(act.name);
+		event.setTransitionUniqueId(transitionUniqueId);
 		event.setUserName(loggedInUser.getUserName());
 		event.setDateUpdated(new Date());
-		event.setDetails(json);
 		ui.userEventService.insert(event, loggedInUser.getUserName());
 		
 		return json;
@@ -723,5 +722,4 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     private Button btnCommit = new Button();//提交给确认审档
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
-    private Callback removeMessage;
 }

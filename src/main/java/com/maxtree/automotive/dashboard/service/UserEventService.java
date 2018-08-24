@@ -11,7 +11,7 @@ import com.maxtree.automotive.dashboard.domain.UserEvent;
 @Component
 public class UserEventService {
 
-	private static final Logger log = LoggerFactory.getLogger(TransitionService.class);
+	private static final Logger log = LoggerFactory.getLogger(UserEventService.class);
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
@@ -22,11 +22,10 @@ public class UserEventService {
 	 */
 	public void insert(UserEvent event, String userName) {
 		int index = getTableIndex(userName);
-		String UPDATE_TRANS_SQL = "INSERT INTO USEREVENT_"+index+"(USERNAME,ACTION,DETAILS,DATEUPDATED) VALUES(?,?,?,?)";
+		String UPDATE_TRANS_SQL = "INSERT INTO USEREVENT_"+index+"(TRANSITIONUNIQUEID,USERNAME,DATEUPDATED) VALUES(?,?,?)";
 		int opt = jdbcTemplate.update(UPDATE_TRANS_SQL, new Object[] {
+				event.getTransitionUniqueId(),
 				event.getUserName(),
-				event.getAction(),
-				event.getDetails(),
 				event.getDateUpdated()});
 		log.info("Affected id:"+opt);
 	}

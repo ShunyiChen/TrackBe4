@@ -17,6 +17,7 @@ import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.Hr;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
@@ -218,8 +219,8 @@ public class QCView extends Panel implements View, FrontendViewIF{
             String json = m.get("messagebody").toString();
             Map<String, String> map = jsonHelper.json2Map(json);
             Label plateNumber = new Label(map.get("4"));//PLATENUMBER
+            String openWith = map.get("9");
             plateNumber.addStyleName("notification-content");
-            
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
             timeLabel.setValue(new TimeAgo().toDuration(duration));
@@ -229,13 +230,16 @@ public class QCView extends Panel implements View, FrontendViewIF{
             vLayout.addStyleName("switchbutton");
             vLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
-            	
-            	if(editableTrans == null) {
-        			fetchTransaction();
-        		}
-        		else {
-        			Notifications.warning("请先完成当前任务，再取下一条。");
-        		}
+            	if(openWith.equals(Openwith.MESSAGE)) {
+            		///TODO
+            		// 显示消息
+            	}
+//            	if(editableTrans == null) {
+//        			fetchTransaction();
+//        		}
+//        		else {
+//        			Notifications.warning("请先完成当前任务，再取下一条。");
+//        		}
             });
             
 
@@ -644,10 +648,10 @@ public class QCView extends Panel implements View, FrontendViewIF{
     /**
      * 
      * @param act
-     * @param suggestions
+     * @param comments
      * @return
      */
-    private String track(Actions act, String suggestions) {
+    private String track(Actions act, String comments) {
     	Map<String, String> details = new HashMap<String, String>();
     	details.put("1", editableTrans.getStatus());//STATUS
 		details.put("2", editableTrans.getBarcode());//BARCODE
@@ -656,7 +660,6 @@ public class QCView extends Panel implements View, FrontendViewIF{
 		details.put("5", editableTrans.getVin());//VIN
 		details.put("6", editableTrans.getBusinessName());//BUSINESSTYPE
 		details.put("7", editableTrans.getUuid());//UUID
-		details.put("8", suggestions);//SUGGEST
 		String json = jsonHelper.map2Json(details);
     	
     	// 插入移行表
@@ -664,16 +667,16 @@ public class QCView extends Panel implements View, FrontendViewIF{
 		transition.setTransactionUUID(editableTrans.getUuid());
 		transition.setAction(act.name);
 		transition.setDetails(json);
+		transition.setComments(comments);
 		transition.setUserName(loggedInUser.getUserName());
 		transition.setDateUpdated(new Date());
-		ui.transitionService.insert(transition, editableTrans.getVin());
+		int transitionUniqueId = ui.transitionService.insert(transition, editableTrans.getVin());
 		
 		// 插入用户事件
 		UserEvent event = new UserEvent();
-		event.setAction(act.name);
+		event.setTransitionUniqueId(transitionUniqueId);
 		event.setUserName(loggedInUser.getUserName());
 		event.setDateUpdated(new Date());
-		event.setDetails(json);
 		ui.userEventService.insert(event, loggedInUser.getUserName());
 		
 		return json;

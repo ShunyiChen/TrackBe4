@@ -2,6 +2,11 @@ package com.maxtree.automotive.dashboard.domain;
 
 import java.util.Date;
 
+/**
+ * 跟踪用户记录
+ * @author chens
+ *
+ */
 public class UserEvent {
 
 	public Integer getUserEventUniqueId() {
@@ -12,28 +17,20 @@ public class UserEvent {
 		this.userEventUniqueId = userEventUniqueId;
 	}
 
+	public Integer getTransitionUniqueId() {
+		return transitionUniqueId;
+	}
+
+	public void setTransitionUniqueId(Integer transitionUniqueId) {
+		this.transitionUniqueId = transitionUniqueId;
+	}
+
 	public String getUserName() {
 		return userName;
 	}
 
 	public void setUserName(String userName) {
 		this.userName = userName;
-	}
-
-	public String getAction() {
-		return action;
-	}
-
-	public void setAction(String action) {
-		this.action = action;
-	}
-
-	public String getDetails() {
-		return details;
-	}
-
-	public void setDetails(String details) {
-		this.details = details;
 	}
 
 	public Date getDateUpdated() {
@@ -44,9 +41,13 @@ public class UserEvent {
 		this.dateUpdated = dateUpdated;
 	}
 
-	private Integer userEventUniqueId = 0;//自增ID
+	public String toString() {
+		return String.format("UserEvent[userEventUniqueId=%d, transitionUniqueId=%d, userName='%s',dateUpdated='%s']",
+				userEventUniqueId, transitionUniqueId, userName, dateUpdated.toString());
+	}
+
+	private Integer userEventUniqueId = 0;// 自增ID
+	private Integer transitionUniqueId = 0;// 迁移ID
 	private String userName; // 操作者用户名
-	private String action;// 事件动作
-	private String details;// 详细信息json
 	private Date dateUpdated;// 更新日期
 }

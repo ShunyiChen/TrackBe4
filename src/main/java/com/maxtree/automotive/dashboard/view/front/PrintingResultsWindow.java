@@ -123,7 +123,7 @@ public class PrintingResultsWindow extends Window {
 		Map<String, String> map = jsonHelper.json2Map(transition.getDetails());
 //		Iterator<String> iter = map.keySet().iterator();
 		StringBuilder details = new StringBuilder();
-		details.append(map.get("8").toString());
+		details.append(transition.getComments());
 		
 		bean.setObjection(details.toString());
 		bean.setChecker(transition.getUserName());

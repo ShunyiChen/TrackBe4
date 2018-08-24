@@ -21,6 +21,7 @@ import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -127,7 +128,6 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
             @Override
             public void run() {
             	
-            	
             	Callback2 verifyEvent = new Callback2() {
 					@Override
 					public void onSuccessful(Object... objects) {
@@ -233,6 +233,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
             Label plateNumber = new Label(map.get("4"));//PLATENUMBER
             String vin = map.get("5");
             String uuid = map.get("7");
+            String openWith = map.get("9");
             plateNumber.addStyleName("notification-content");
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
@@ -252,13 +253,23 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
             vLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
             	
-            	if(editableTrans == null) {
-        			editMode = 1;//进入更新模式
-        			openTransaction(uuid, vin);
-        		}
-        		else {
-        			Notifications.warning("请确保完成当前任务，再执行下一操作。");
-        		}
+            	if(openWith.equals(Openwith.FORM)) {
+            		if(editableTrans == null) {
+            			editMode = 1;//进入更新模式
+            			openTransaction(uuid, vin);
+            		}
+            		else {
+            			Notifications.warning("请确保完成当前任务，再执行下一操作。");
+            		}
+            	}
+            	else if(openWith.equals(Openwith.PRINT)) {
+            		
+            	}
+            	else if(openWith.equals(Openwith.MESSAGE)) {
+            		///TODO
+            		// 显示消息
+            	}
+            	
             });
         }
         
@@ -704,16 +715,16 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 		transition.setTransactionUUID(uuid);
 		transition.setAction(act.name);
 		transition.setDetails(json);
+		transition.setComments("");
 		transition.setUserName(loggedInUser.getUserName());
 		transition.setDateUpdated(new Date());
-		ui.transitionService.insert(transition,basicInfoPane.getVIN());
+		int transitionUniqueId = ui.transitionService.insert(transition,basicInfoPane.getVIN());
 		
 		// 插入用户事件
 		UserEvent event = new UserEvent();
-		event.setAction(Actions.INPUT.name);
+		event.setTransitionUniqueId(transitionUniqueId);
 		event.setUserName(loggedInUser.getUserName());
 		event.setDateUpdated(new Date());
-		event.setDetails(json);
 		ui.userEventService.insert(event, loggedInUser.getUserName());
 		
 		return json;

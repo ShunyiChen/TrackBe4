@@ -14,6 +14,7 @@ import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.MessageBox;
@@ -337,16 +338,16 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
 		transition.setTransactionUUID(trans.getUuid());
 		transition.setAction(act.name);
 		transition.setDetails(json);
+		transition.setComments("");
 		transition.setUserName(loggedInUser.getUserName());
 		transition.setDateUpdated(new Date());
-		ui.transitionService.insert(transition, trans.getVin());
+		int transitionUniqueId = ui.transitionService.insert(transition, trans.getVin());
 		
 		// 插入用户事件
 		UserEvent event = new UserEvent();
-		event.setAction(act.name);
+		event.setTransitionUniqueId(transitionUniqueId);
 		event.setUserName(loggedInUser.getUserName());
 		event.setDateUpdated(new Date());
-		event.setDetails(json);
 		ui.userEventService.insert(event, loggedInUser.getUserName());
     }
 
@@ -365,41 +366,37 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
         VerticalLayout listLayout = new VerticalLayout();
         List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.SHELF.getViewName());
         for (Map<String, Object> m : allMessages) {
-        	VerticalLayout notificationLayout = new VerticalLayout();
-            notificationLayout.setMargin(false);
-            notificationLayout.setSpacing(false);
-            notificationLayout.addStyleName("notification-item");
+        	VerticalLayout vLayout = new VerticalLayout();
+        	vLayout.setMargin(false);
+        	vLayout.setSpacing(false);
+        	vLayout.addStyleName("notification-item");
+            Label timeLabel = new Label();
+            int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
             String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
             Label titleLabel = new Label(m.get("subject")+readStr);
             titleLabel.addStyleName("notification-title");
+            String json = m.get("messagebody").toString();
+           
+            Map<String, String> map = jsonHelper.json2Map(json);
+            Label plateNumberLabel = new Label();//PLATENUMBER
+            String plateNumber = map.get("4");
+            String vin = map.get("5");
+            String uuid = map.get("7");
+            String openWith = map.get("9");
+            plateNumberLabel.addStyleName("notification-content");
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
-            Label timeLabel = new Label();
             timeLabel.setValue(new TimeAgo().toDuration(duration));
             timeLabel.addStyleName("notification-time");
-            String json = m.get("messagebody").toString();
-            Map<String, String> map = new MessageBodyParser().json2Map(json);
-            String type = map.get("type").toString();
-            String messageContent = map.get("message");
-            Label contentLabel = new Label(messageContent);
-            contentLabel.addStyleName("notification-content");
-
-            notificationLayout.addComponents(titleLabel, timeLabel, contentLabel);
-            listLayout.addComponent(notificationLayout);
-            notificationLayout.addStyleName("switchbutton");
-            notificationLayout.addLayoutClickListener(e -> {
+            vLayout.addComponents(titleLabel, timeLabel, plateNumberLabel);
+            listLayout.addComponent(vLayout);
+            vLayout.addStyleName("switchbutton");
+            vLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
-//            	int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-//            	if ("text".equals(type)) {
-//            		showAll(allMessages, messageUniqueId);
-//    			} else if ("transaction".equals(type)) {
-//    				int transactionUniqueId = Integer.parseInt(map.get("transactionUniqueId").toString());
-//    				// 标记已读
-//    				ui.messagingService.markAsRead(messageUniqueId, currentUser.getUserUniqueId());
-//    				updateUnreadCount();
-//    				// 打开业务
-//    				
-//    			}
+            	if(openWith.equals(Openwith.MESSAGE)) {
+            		///TODO
+            		// 显示消息
+            	}
             });
             
         }

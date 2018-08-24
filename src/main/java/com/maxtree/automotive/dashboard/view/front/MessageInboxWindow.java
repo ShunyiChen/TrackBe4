@@ -53,6 +53,7 @@ public class MessageInboxWindow extends Window {
 			String senderPicture = "VAADIN/themes/dashboard/"+ m.get("picture").toString();
 			String subject = m.get("subject").toString();
 			String json = m.get("messagebody").toString();
+			String comments = m.get("comments").toString();
 			Map<String, String> map = new MessageBodyParser().json2Map(json);
 			String status = map.get("1").toString();
 			String plateType = map.get("3").toString();
@@ -64,7 +65,7 @@ public class MessageInboxWindow extends Window {
 			content.append("车牌号："+map.get("4")+"\n");
 			content.append("车辆识别代码："+map.get("5")+"\n");
 			content.append("业务类型："+map.get("6")+"\n");
-			content.append("备注："+map.get("8")+"\n");
+			content.append("备注："+comments+"\n");
 			String read = m.get("markedasread").toString().equals("1")?"已读":"未读";
 			Date dateCreated = (Date) m.get("datecreated");
 			MessageWrapper wrapper = new MessageWrapper(messageUniqueId, senderPicture+" "+senderUserName, senderPicture, subject, content.toString(), uuid, read, dateCreated, plateType, status);

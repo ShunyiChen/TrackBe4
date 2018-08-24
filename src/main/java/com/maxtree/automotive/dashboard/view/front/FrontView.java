@@ -19,6 +19,7 @@ import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -180,14 +181,12 @@ public final class FrontView extends Panel implements View,InputViewIF {
     private Component buildHeader() {
         HorizontalLayout header = new HorizontalLayout();
         header.addStyleName("viewheader");
-
         titleLabel = new Label("扫描录入");
         titleLabel.setId(TITLE_ID);
         titleLabel.setSizeUndefined();
         titleLabel.addStyleName(ValoTheme.LABEL_H1);
         titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         header.addComponent(titleLabel);
-
         buildPrintButton();
         buildNotificationsButton();
         buildAddButton();
@@ -233,7 +232,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
             String vin = map.get("5");
             String uuid = map.get("7");
             String openWith = map.get("9");
-            System.out.println("openWith="+openWith);
             plateNumberLabel.addStyleName("notification-content");
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
@@ -252,7 +250,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
             	};
             	
             	// 如果是用form打开，则进入打开并编辑界面
-            	if(openWith.equals("form")) {
+            	if(openWith.equals(Openwith.FORM)) {
             		if(editableTrans == null) {
             			editMode = 1;//进入更新模式
             			openTransaction(uuid,vin);
@@ -262,7 +260,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
             		}
             	}
             	// 如何是用print打开，则进入打印界面
-            	else if(openWith.equals("print")) {
+            	else if(openWith.equals(Openwith.PRINT)) {
             		if(editableTrans == null) {
             			editableTrans = ui.transactionService.findByUUID(uuid, vin);
             			Callback closableEvent = new Callback() {
@@ -277,6 +275,10 @@ public final class FrontView extends Panel implements View,InputViewIF {
             		else {
             			Notifications.warning("请确保完成当前任务，再执行下一操作。");
             		}
+            	}
+            	else if(openWith.equals(Openwith.MESSAGE)) {
+            		///TODO
+            		// 显示消息
             	}
             });
         }
@@ -1019,16 +1021,16 @@ public final class FrontView extends Panel implements View,InputViewIF {
 		transition.setTransactionUUID(uuid);
 		transition.setAction(act.name);
 		transition.setDetails(json);
+		transition.setComments("");
 		transition.setUserName(loggedInUser.getUserName());
 		transition.setDateUpdated(new Date());
-		ui.transitionService.insert(transition,basicInfoPane.getVIN());
+		int transitionUniqueId = ui.transitionService.insert(transition,basicInfoPane.getVIN());
 		
 		// 插入用户事件
 		UserEvent event = new UserEvent();
-		event.setAction(Actions.INPUT.name);
+		event.setTransitionUniqueId(transitionUniqueId);
 		event.setUserName(loggedInUser.getUserName());
 		event.setDateUpdated(new Date());
-		event.setDetails(json);
 		ui.userEventService.insert(event, loggedInUser.getUserName());
     }
     
