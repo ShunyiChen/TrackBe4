@@ -15,7 +15,6 @@ public class DoubleField extends TextField implements ValueChangeListener<String
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public String lastValue;
 
 	/**
 	 * 
@@ -45,4 +44,6 @@ public class DoubleField extends TextField implements ValueChangeListener<String
 //	        setValue(lastValue);
 	    }
 	}
+	
+	public String lastValue;
 }

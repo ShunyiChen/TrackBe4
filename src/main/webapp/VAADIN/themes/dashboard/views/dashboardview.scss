@@ -354,8 +354,7 @@
     }
     //审档界面
     .Manual {
-        margin-top: 5px;
-       
+        margin-top: 6px;
     }
     
     .upload-button {
@@ -379,12 +378,29 @@
         background-color:gainsboro;
      
     }
+    .Tool-main{
+        margin-top: 8px;
+    }
+    
     .v-slider{
-//        padding-top: 1px;
-//        top: 2px;
-//        border-top: 2px;
         margin-top: -5px;
     }
+    .ImageWindow-selected {
+        border-radius: 5px;
+        border-style: solid;
+        border-color:deepskyblue;
+        border-width: 1px;
+        padding: 0px;
+        box-shadow:0 0 18px rgba(0,191,255,0.8);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     
     // 业务审核
     

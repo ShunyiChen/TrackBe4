@@ -64,12 +64,13 @@ public class TransactionService {
 	/**
 	 * 
 	 * @param vin
+	 * @param exceptUniqueId (ID Which is not included)
 	 * @return
 	 */
-	public List<Transaction> findForList(String vin) {
+	public List<Transaction> findForList(String vin, int exceptUniqueId) {
 		int index = getTableIndex(vin);
-		String sql = "SELECT * FROM TRANSACTION_"+index+" WHERE VIN=? ORDER BY TRANSACTIONUNIQUEID";
-		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {vin}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
+		String sql = "SELECT * FROM TRANSACTION_"+index+" WHERE VIN=? AND TRANSACTIONUNIQUEID<>? ORDER BY TRANSACTIONUNIQUEID";
+		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {vin,exceptUniqueId}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
 		return result;
 	}
 	

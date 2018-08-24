@@ -3,6 +3,7 @@ package com.maxtree.automotive.dashboard.view.check;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.vfs2.FileObject;
 
@@ -38,6 +39,11 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class Manual extends VerticalLayout implements ImageViewIF,ClickListener {
 
 	/**
@@ -59,42 +65,71 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 	 */
 	private void initComponents() {
 		this.addStyleName("Manual");
-		numField.setWidth("80px");
-		numField.setHeight("25px");
-		ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER, null) {
-			/**
+		// 减一
+		ShortcutListener upListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_DOWN, null) {
+	        /**
 			 * 
 			 */
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
-			public void handleAction(Object sender, Object target) {
-				System.out.println("handleAction======"+sender+","+target);
-			}
-		};
-		numField.addShortcutListener(enterListener);
+	        public void handleAction(Object sender, Object target) {
+	        	double val = Double.parseDouble(numField.getValue());
+	        	numField.setValue((val-1) + "");
+	        }
+	    };
+	    // 加一
+	    ShortcutListener downListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_UP, null) {
+	        /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1452330668715171164L;
+
+			@Override
+	        public void handleAction(Object sender, Object target) {
+	        	double val = Double.parseDouble(numField.getValue());
+	        	numField.setValue((val+1) + "");
+	        }
+	    };
+	    numField.addShortcutListener(upListener);
+	    numField.addShortcutListener(downListener);
+		numField.setWidth("80px");
+		numField.setHeight("25px");
 		numField.addValueChangeListener(e->{
-			System.out.println("ValueChange======"+e.getValue()+","+e.getOldValue()+"   "+function);
-			
-			if(function.equals("伸缩")) {
-				tool.scale(Double.parseDouble(e.getValue()));
-			} else if(function.equals("旋转")) {
-				tool.rotate(Double.parseDouble(e.getValue()));
-			} else if(function.equals("透明度")) {
-				tool.transparency(Double.parseDouble(e.getValue()));
-			} else if(function.equals("亮度")) {
-				tool.brightness(Double.parseDouble(e.getValue()));
-			} else if(function.equals("对比度")) {
-				tool.contrast(Double.parseDouble(e.getValue()));
+			String pattern = "^(-?\\d+)(\\.\\d+)?$";//判断是否是浮点数
+			boolean isMatch = Pattern.matches(pattern, e.getValue());
+			if(isMatch) {
+				double val = Double.parseDouble( e.getValue());
+				if(function.equals("伸缩")) {
+					if(val >= 1 && val <= 200) {
+						tool.scale(val);
+					}
+					
+				} else if(function.equals("旋转")) {
+					if(val >= -180 && val <= 180) {
+						tool.rotate(val);
+					}
+					
+				} else if(function.equals("透明度")) {
+					if(val >= 10 && val <= 100) {
+						tool.transparency(val);
+					}
+					
+				} else if(function.equals("亮度")) {
+					if(val >= 0 && val <= 255) {
+						tool.brightness(val);
+					}
+					
+				} else if(function.equals("对比度")) {
+					if(val >= 0 && val <= 255) {
+						tool.contrast(val);
+					}
+					
+				}
 			}
+			
 		});
 		
-		
-		slider.setWidth("150px");
-		slider.addStyleName("v-slider");
-		slider.addValueChangeListener(e->{
-			numField.setValue(e.getValue()+"");
-		});
 		lineLabel_1.setIcon(VaadinIcons.LINE_V);
 		lineLabel_2.setIcon(VaadinIcons.LINE_V);
 		functionImg.setIcon(VaadinIcons.CURSOR);
@@ -142,9 +177,10 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 		rightSplit.setSizeFull();
 		rightRoot.setAlias("历史记录");
 		rightTree.setSelectionMode(SelectionMode.SINGLE);
+		
 		rightTree.setSizeFull();
 		rightTreeData.addItem(null, rightRoot);
-		List<Transaction> list = ui.transactionService.findForList(transaction.getVin());
+		List<Transaction> list = ui.transactionService.findForList(transaction.getVin(),transaction.getTransactionUniqueId());
 		for(Transaction trans : list) {
 			Document businessDoc = new Document();
 			businessDoc.setAlias(""+BusinessCode.get(trans.getBusinessCode()));
@@ -174,6 +210,23 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
         	TreeContextClickEvent<Document> e = (TreeContextClickEvent<Document>) event;
         	Document item = e.getItem();
         	rightTree.select(item);
+        });
+        com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(rightTree, true);
+        menu.addItem("加入对比", new com.vaadin.contextmenu.Menu.Command() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+				Set<Document> set = rightTree.getSelectedItems();
+				List<Document> list = new ArrayList<Document>(set);
+				Document selectedDocument = list.get(0);
+				addPictureForComparison(site, selectedDocument,true);
+				
+				tool.show();
+			}
         });
         rightSplit.setFirstComponent(imgStage);
         rightSplit.setSecondComponent(rightTree);
@@ -209,29 +262,27 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
         	Document item = e.getItem();
         	leftTree.select(item);
         });
-        leftTree.setSelectionMode(SelectionMode.SINGLE);
-        leftTree.addItemClickListener(e -> {
-			// 排除根节点
-        	//TODO
-        	if(e.getItem().getThumbnail() == null) {
+        leftTree.addSelectionListener(e->{
+        	if(e.getFirstSelectedItem().get().getThumbnail() == null) {
         		imgStage.clean();
 				// Set the position of the splitter as percentage
 		        rightSplit.setSplitPosition(100, Unit.PERCENTAGE);
         	}
-        	else if (e.getItem().getAlias().startsWith("机动车")) {
-				selectedNode = e.getItem();
+        	else if (e.getFirstSelectedItem().get().getAlias().startsWith("机动车")) {
+				selectedNode = e.getFirstSelectedItem().get();
 				imgStage.display(site, selectedNode);
 				// Set the position of the splitter as percentage
 		        rightSplit.setSplitPosition(75, Unit.PERCENTAGE);
         	} else {
-        		selectedNode = e.getItem();
+        		selectedNode = e.getFirstSelectedItem().get();
 				imgStage.display(site, selectedNode);
 				// Set the position of the splitter as percentage
 		        rightSplit.setSplitPosition(100, Unit.PERCENTAGE);
         	}
         });
-        com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(leftTree, true);
-        menu.addItem("加入对比", new com.vaadin.contextmenu.Menu.Command() {
+        
+        com.vaadin.contextmenu.ContextMenu menu2 = new com.vaadin.contextmenu.ContextMenu(leftTree, true);
+        menu2.addItem("加入对比", new com.vaadin.contextmenu.Menu.Command() {
 			/**
 			 * 
 			 */
@@ -242,7 +293,7 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 				Set<Document> set = leftTree.getSelectedItems();
 				List<Document> list = new ArrayList<Document>(set);
 				Document selectedDocument = list.get(0);
-				addPictureForComparison(site, selectedDocument);
+				addPictureForComparison(site, selectedDocument,false);
 				
 				tool.show();
 			}
@@ -265,12 +316,13 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 	 * 
 	 * @param site
 	 * @param doc
+	 * @param isHistory
 	 */
-	private void addPictureForComparison(Site site, Document doc) {
+	private void addPictureForComparison(Site site, Document doc, boolean isHistory) {
 		if (doc.getFileFullPath() != null) {
 			try {
 				FileObject fobj = new TB4FileSystem().resolveFile(site, doc.getFileFullPath());
-				ImageWindow imageWindow = new ImageWindow(doc.getAlias(), fobj, 1.0f);
+				ImageWindow imageWindow = new ImageWindow(isHistory?"历史记录-"+doc.getAlias():doc.getAlias(), fobj, 1.0f);
 				tool.setEditingWindow(imageWindow);
 				imageWindow.addFocusListener(e -> {
 					tool.setEditingWindow(imageWindow);
@@ -368,35 +420,34 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 			functionImg.setIcon(VaadinIcons.PADDING_RIGHT);
 			updateToolbarButtons(false);
 		} else if(function.equals("伸缩")) {
+			
+			initSlider(1,200,value);
 			functionImg.setIcon(VaadinIcons.EXPAND_SQUARE);
 			updateToolbarButtons(true);
-			slider.setMin(1.0);
-			slider.setMax(200.0);
-			slider.setValue(value);
+		
 		} else if(function.equals("旋转")) {
+			
+			initSlider(-180,180,value);
 			functionImg.setIcon(VaadinIcons.ROTATE_LEFT);
 			updateToolbarButtons(true);
-			slider.setMin(-180.0);
-			slider.setMax(180.0);
-			slider.setValue(value);
+			
 		} else if(function.equals("透明度")) {
+			
+			initSlider(10,100,value);
 			functionImg.setIcon(VaadinIcons.COINS);
 			updateToolbarButtons(true);
-			slider.setMin(10.0);
-			slider.setMax(100.0);
-			slider.setValue(value);
+			
 		} else if(function.equals("亮度")) {
+			
+			initSlider(0,255,value);
 			functionImg.setIcon(VaadinIcons.MORNING);
 			updateToolbarButtons(true);
-			slider.setMin(0.0);
-			slider.setMax(255.0);
-			slider.setValue(value);
+			
 		} else if(function.equals("对比度")) {
+			
+			initSlider(0,255,value);
 			functionImg.setIcon(VaadinIcons.ADJUST);
 			updateToolbarButtons(true);
-			slider.setMin(0.0);
-			slider.setMax(255.0);
-			slider.setValue(value);
 		}
 	}
 	
@@ -417,6 +468,25 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 			subtoolbar.setComponentAlignment(functionImg, Alignment.MIDDLE_CENTER);
 			subtoolbar.setComponentAlignment(lineLabel_2, Alignment.MIDDLE_CENTER);
 		}
+	}
+	
+	/**
+	 * 
+	 * @param defaultValue
+	 */
+	private void initSlider(int min, int value, double defaultValue) {
+		slider = new Slider(min,value);
+		slider.setWidth("150px");
+		slider.addStyleName("v-slider");
+		slider.addValueChangeListener(e->{
+			numField.setValue(e.getValue()+"");
+		});
+		slider.setValue(defaultValue);
+//		System.out.println(slider.getMin()+","+slider.getMax()+" "+defaultValue+"   "+function);
+	}
+	
+	public void closeToolWindow() {
+		tool.close();
 	}
 	
 	private String function;

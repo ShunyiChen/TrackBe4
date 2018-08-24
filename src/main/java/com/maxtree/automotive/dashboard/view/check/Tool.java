@@ -2,11 +2,8 @@ package com.maxtree.automotive.dashboard.view.check;
 
 import java.util.function.Consumer;
 
-import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;
@@ -14,6 +11,11 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class Tool extends Window{
 
 	/**
@@ -43,6 +45,7 @@ public class Tool extends Window{
 		main.setMargin(false);
 		main.setWidth("100%");
 		main.setHeightUndefined();
+		main.addStyleName("Tool-main");
 		this.setContent(main);
 		
 		Button undo = new Button();//撤销
@@ -110,113 +113,36 @@ public class Tool extends Window{
 		HorizontalLayout row1 = new HorizontalLayout();
 		row1.setSpacing(false);
 		row1.setMargin(false);
-		row1.addComponents(Box.createHorizontalBox(10),undo,redo);
+		row1.addComponents(Box.createHorizontalBox(8),undo,redo);
 		HorizontalLayout row2 = new HorizontalLayout();
 		row2.setSpacing(false);
 		row2.setMargin(false);
-		row2.addComponents(Box.createHorizontalBox(10),original,fixed);
+		row2.addComponents(Box.createHorizontalBox(8),original,fixed);
 		HorizontalLayout row3 = new HorizontalLayout();
 		row3.setSpacing(false);
 		row3.setMargin(false);
-		row3.addComponents(Box.createHorizontalBox(10),sharpen,edge);
+		row3.addComponents(Box.createHorizontalBox(8),sharpen,edge);
 		HorizontalLayout row4 = new HorizontalLayout();
 		row4.setSpacing(false);
 		row4.setMargin(false);
-		row4.addComponents(Box.createHorizontalBox(10),shadowUp,shadowDown);
+		row4.addComponents(Box.createHorizontalBox(8),shadowUp,shadowDown);
 		HorizontalLayout row5 = new HorizontalLayout();
 		row5.setSpacing(false);
 		row5.setMargin(false);
-		row5.addComponents(Box.createHorizontalBox(10),shadowLeft,shadowRight);
+		row5.addComponents(Box.createHorizontalBox(8),shadowLeft,shadowRight);
 		HorizontalLayout row6 = new HorizontalLayout();
 		row6.setSpacing(false);
 		row6.setMargin(false);
-		row6.addComponents(Box.createHorizontalBox(10),scale,rotate);
+		row6.addComponents(Box.createHorizontalBox(8),scale,rotate);
 		HorizontalLayout row7 = new HorizontalLayout();
 		row7.setSpacing(false);
 		row7.setMargin(false);
-		row7.addComponents(Box.createHorizontalBox(10),transparency,brightness);
+		row7.addComponents(Box.createHorizontalBox(8),transparency,brightness);
 		HorizontalLayout row8 = new HorizontalLayout();
 		row8.setSpacing(false);
 		row8.setMargin(false);
-		row8.addComponents(Box.createHorizontalBox(10),contrast);
-		main.addComponents(Box.createVerticalBox(10),row1,row2,row3,row4,row5,row6,row7,row8);
-		
-//		scaleSlider = new SliderWithTextField("缩小放大:", 0d, 200d, 100d);
-//		scaleSlider.setValueChangedCallback(new Callback2() {
-//
-//			@Override
-//			public void onSuccessful(Object... objects) {
-//				if (editWindow != null) {
-//					double val = (double) objects[0];
-//					editWindow.scale((val * 0.01), (val * 0.01));
-//					editWindow.getParameters().setScale(val);
-//				}
-//			}
-//		});
-//		
-//		rotateSlider = new SliderWithTextField("旋转:", -180d, 180d, 0d);
-//		rotateSlider.setValueChangedCallback(new Callback2() {
-//
-//			@Override
-//			public void onSuccessful(Object... objects) {
-//				if (editWindow != null) {
-//					double val = (double) objects[0];
-//					editWindow.rotate(Math.toRadians(val));
-//					editWindow.getParameters().setRotate(val);
-//				}
-//			}
-//		});
-//		
-//		transparencySlider = new SliderWithTextField("透明度:", 10d, 100d, 100d);
-//		transparencySlider.setValueChangedCallback(new Callback2() {
-//
-//			@Override
-//			public void onSuccessful(Object... objects) {
-//				if (editWindow != null) {
-//					editWindow.adjustTransparency((double)objects[0]/ 100d);
-//					editWindow.getParameters().setTransparency((double) objects[0]);
-//				}
-//			}
-//		});
-//		
-//		
-//		brightnessSlider = new SliderWithTextField("亮度:", 0d, 255d, 130d);
-//		brightnessSlider.setValueChangedCallback(new Callback2() {
-//
-//			@Override
-//			public void onSuccessful(Object... objects) {
-//				if (editWindow != null) {
-//					double val = (double) objects[0];
-//					editWindow.adjustBrightness(val);
-//					editWindow.getParameters().setBrightness(val);
-//				}
-//			}
-//		});
-//		
-//		contrastSlider = new SliderWithTextField("对比度:", 0d, 255d, 130d);
-//		contrastSlider.setValueChangedCallback(new Callback2() {
-//
-//			@Override
-//			public void onSuccessful(Object... objects) {
-//				if (editWindow != null) {
-//					double val = (double) objects[0];
-//					editWindow.adjustContrast(val);
-//					editWindow.getParameters().setContrast(val);
-//				}
-//			}
-//		});
-		
-//		HorizontalLayout row1 = createRow(original, undo, redo, sharpen, magic);
-//		HorizontalLayout row2 = createRow(shadowUp, shadowDown, shadowLeft, shadowRight);
-//		vl.addComponents(row1, row2, scaleSlider, rotateSlider, transparencySlider, brightnessSlider, contrastSlider);
-//		vl.setComponentAlignment(row1, Alignment.MIDDLE_LEFT);
-//		vl.setComponentAlignment(row2, Alignment.MIDDLE_LEFT);
-//		vl.setComponentAlignment(scaleSlider, Alignment.MIDDLE_CENTER);
-//		vl.setComponentAlignment(rotateSlider, Alignment.MIDDLE_CENTER);
-//		vl.setComponentAlignment(transparencySlider, Alignment.MIDDLE_CENTER);
-//		vl.setComponentAlignment(brightnessSlider, Alignment.MIDDLE_CENTER);
-//		vl.setComponentAlignment(contrastSlider, Alignment.MIDDLE_CENTER);
-		
+		row8.addComponents(Box.createHorizontalBox(8),contrast);
+		main.addComponents(row1,row2,row3,row4,row5,row6,row7,row8);
 		
 		addCloseListener(e -> {
 			tx = getPositionX();
@@ -357,29 +283,6 @@ public class Tool extends Window{
 	 */
 	public void setEditingWindow(ImageWindow editWindow) {
 		this.editWindow = editWindow;
-//		scaleSlider.update(editWindow.getParameters().getScale());
-//		rotateSlider.update(editWindow.getParameters().getRotate());
-//		transparencySlider.update(editWindow.getParameters().getTransparency());
-//		brightnessSlider.update(editWindow.getParameters().getBrightness());
-//		contrastSlider.update(editWindow.getParameters().getContrast());
-	}
-	
-	/**
-	 * 
-	 * @param btns
-	 * @return
-	 */
-	private HorizontalLayout createRow(Button... btns) {
-		HorizontalLayout hlayout = new HorizontalLayout();
-		hlayout.setSpacing(false);
-		hlayout.setMargin(false);
-		hlayout.setWidthUndefined();
-		hlayout.setHeight("40px");
-		for (int i = 0; i < btns.length; i++) {
-			hlayout.addComponents(Box.createHorizontalBox(5), btns[i]);
-			hlayout.setComponentAlignment(btns[i], Alignment.MIDDLE_CENTER);
-		}
-		return hlayout;
 	}
 	
 	/**
@@ -411,9 +314,4 @@ public class Tool extends Window{
 	private int tx = -1;
 	private int ty = -1;
 	private ImageWindow editWindow;
-//	private SliderWithTextField scaleSlider;
-//	private SliderWithTextField rotateSlider;
-//	private SliderWithTextField transparencySlider;
-//	private SliderWithTextField brightnessSlider;
-//	private SliderWithTextField contrastSlider;
 }

@@ -257,7 +257,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
     		return true;
     	}
     	else {
-    		List<Transaction> result = ui.transactionService.findForList(view.vin());
+    		List<Transaction> result = ui.transactionService.findForList(view.vin(),0);
     		return (result.size() != 0);
     	}
     }

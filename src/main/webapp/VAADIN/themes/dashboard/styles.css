@@ -14926,7 +14926,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .Manual {
-	margin-top: 5px;
+	margin-top: 6px;
 }
 
 .dashboard .upload-button {
@@ -14953,8 +14953,21 @@ div.v-layout.v-horizontal.v-widget {
 	background-color: gainsboro;
 }
 
+.dashboard .Tool-main {
+	margin-top: 8px;
+}
+
 .dashboard .v-slider {
 	margin-top: -5px;
+}
+
+.dashboard .ImageWindow-selected {
+	border-radius: 5px;
+	border-style: solid;
+	border-color: deepskyblue;
+	border-width: 1px;
+	padding: 0px;
+	box-shadow: 0 0 18px rgba(0, 191, 255, 0.8);
 }
 
 .dashboard .v-window-foo .v-window-outerheader {

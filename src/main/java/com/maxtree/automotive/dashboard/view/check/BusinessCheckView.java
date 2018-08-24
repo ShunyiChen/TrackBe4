@@ -17,7 +17,6 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
-import com.maxtree.automotive.dashboard.component.Hr;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.Test;
@@ -74,6 +73,11 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import de.schlichtherle.license.LicenseContent;
 
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 
 	private static final Logger log = LoggerFactory.getLogger(BusinessCheckView.class);
@@ -689,6 +693,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		main.setHeight("100%");
 		main.addComponents(blankLabel);
 		main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
+		manualPane.closeToolWindow();
 		editableTrans = null;
 	}
 

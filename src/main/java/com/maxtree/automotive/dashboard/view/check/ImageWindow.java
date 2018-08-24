@@ -18,13 +18,9 @@ import com.vaadin.server.Page.Styles;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Image;
-import com.vaadin.ui.JavaScript;
-import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-
-import elemental.json.JsonArray;
 
 /**
  * 
@@ -68,6 +64,10 @@ public class ImageWindow extends Window {
 		this.focus();
 		this.addFocusListener(e -> {
 			this.bringToFront();
+			this.addStyleName("ImageWindow-selected");
+		});
+		this.addBlurListener(e->{
+			this.removeStyleName("ImageWindow-selected");
 		});
 		
 		ShortcutListener upListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_UP, null) {
@@ -180,7 +180,6 @@ public class ImageWindow extends Window {
  		}; 
  		StreamResource streamResource = new StreamResource(streamSource, file.getName().getBaseName());
  		streamResource.setCacheTime(0);
-// 		reloadImage(streamResource);
  		frame.removeComponent(image);
  		frame.setSizeFull();
  		image = new Image(null, streamResource);
@@ -222,7 +221,6 @@ public class ImageWindow extends Window {
  		}; 
  		StreamResource streamResource = new StreamResource(streamSource, file.getName().getBaseName());
  		streamResource.setCacheTime(0);
-// 		reloadImage(streamResource);
  		frame.removeComponent(image);
  		frame.setSizeUndefined();
  		image = new Image(null, streamResource);
@@ -263,7 +261,6 @@ public class ImageWindow extends Window {
  		}; 
  		StreamResource streamResource = new StreamResource(streamSource, file.getName().getBaseName());
  		streamResource.setCacheTime(0);
-// 		reloadImage(streamResource);
  		frame.removeComponent(image);
  		frame.setSizeUndefined();
  		image = new Image(null, streamResource);

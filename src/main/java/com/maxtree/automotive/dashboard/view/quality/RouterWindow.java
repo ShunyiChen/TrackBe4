@@ -1,6 +1,11 @@
 package com.maxtree.automotive.dashboard.view.quality;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.component.Box;
@@ -63,6 +68,27 @@ public class RouterWindow extends Window {
 			}
 		};
 		combobox.addShortcutListener(keyListener);
+		combobox.setNewItemHandler(inputString -> {
+			
+			
+			System.out.println("inputString="+inputString.toString());
+			
+			List<String> list = new ArrayList<String>();
+			for(String str : obj.getComments()) {
+				list.add(str);
+			}
+			list.add(inputString.toString());
+//
+//		    Planet newPlanet = new Planet(planets.size(), inputString);
+//		    planets.add(newPlanet);
+//
+//		    // Update combobox content
+			combobox.setItems(list);
+			
+			combobox.setSelectedItem(inputString);
+			
+//		    return Optional.of(inputString);
+		});
 		
 		
 		Button btnAdd = new Button("添加");
@@ -106,15 +132,27 @@ public class RouterWindow extends Window {
 	}
 	
 	private void add() {
+		
+		
+		
 		String item = combobox.getValue();
-		StringBuilder stb = new StringBuilder(content.getValue());
-		stb.append(rowCount);
-		stb.append(".");
-		stb.append(item.substring(2));
-		stb.append("\n");
-		content.setValue(stb.toString());
-		rowCount++;
-		combobox.setSelectedItem("");
+		if(!StringUtils.isEmpty(item)) {
+			StringBuilder stb = new StringBuilder(content.getValue());
+			stb.append(rowCount);
+			stb.append(".");
+			if(item.contains("_")) {
+				stb.append(item.substring(item.indexOf("_")+1));
+			}
+			else {
+				stb.append(item);
+			}
+			
+			stb.append("\n");
+			content.setValue(stb.toString());
+			rowCount++;
+			combobox.setSelectedItem("");
+		}
+		
 	}
 	
 	private void clear() {
