@@ -12,6 +12,7 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardNavigator;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.Hr;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
@@ -34,6 +35,7 @@ import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
+import com.maxtree.automotive.dashboard.view.MessageView;
 import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.automotive.dashboard.view.front.MessageWrapper;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
@@ -221,41 +223,48 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         Panel scrollPane = new Panel();
     	scrollPane.addStyleName("reminder-scrollpane");
     	scrollPane.setHeight("250px");
-//        VerticalLayout notificationsLayout = new VerticalLayout();
     	VerticalLayout listLayout = new VerticalLayout();
-    	
-    	User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-    	
-    	List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(currentUser, DashboardViewType.SEARCH.getViewName());
+    	List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.SEARCH.getViewName());
         for (Map<String, Object> m : allMessages) {
-//         	int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-//         	VerticalLayout notificationLayout = new VerticalLayout();
-//             notificationLayout.setMargin(false);
-//             notificationLayout.setSpacing(false);
-//             notificationLayout.addStyleName("notification-item");
-//             String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"(已读)";
-//             Label titleLabel = new Label(m.get("subject")+readStr);
-//             titleLabel.addStyleName("notification-title");
-//             
-//             Date dateCreated = (Date) m.get("datecreated");
-//             long duration = new Date().getTime() - dateCreated.getTime();
-//             Label timeLabel = new Label();
-//             timeLabel.setValue(new TimeAgo().toDuration(duration));
-//             timeLabel.addStyleName("notification-time");
-//             String json = m.get("messagebody").toString();
-//             Map<String, String> map = new MessageBodyParser().json2Map(json);
-//             String type = map.get("type").toString();
-//             String messageContent = map.get("message");
-//             Label contentLabel = new Label(messageContent);
-//             contentLabel.addStyleName("notification-content");
-//
-//             notificationLayout.addComponents(titleLabel, timeLabel, contentLabel);
-//             listLayout.addComponent(notificationLayout);
-//             notificationLayout.addStyleName("switchbutton");
-//             notificationLayout.addLayoutClickListener(e -> {
-//             	notificationsWindow.close();
-//             });
-         }
+        	VerticalLayout vLayout = new VerticalLayout();
+        	vLayout.setMargin(false);
+        	vLayout.setSpacing(false);
+        	vLayout.addStyleName("notification-item");
+            Label timeLabel = new Label();
+            Label subjectLabel = new Label();
+            subjectLabel.addStyleName("notification-title");
+            int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
+            String subject = m.get("subject").toString();
+            subjectLabel.setValue(subject);
+            String content = m.get("content").toString();
+            Label contentLabel = new Label(content);
+            String matedata = m.get("matedata").toString();
+            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
+            contentLabel.addStyleName("notification-content");
+            Date dateCreated = (Date) m.get("datecreated");
+            long duration = new Date().getTime() - dateCreated.getTime();
+            timeLabel.setValue(new TimeAgo().toDuration(duration));
+            timeLabel.addStyleName("notification-time");
+            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
+            listLayout.addComponent(vLayout);
+            vLayout.addStyleName("switchbutton");
+            vLayout.addLayoutClickListener(e -> {
+            	notificationsWindow.close();
+            	String openWith = matedataMap.get("openwith");
+            	Callback callback = new Callback() {
+
+					@Override
+					public void onSuccessful() {
+						//更改已读状态
+						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
+						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+					}
+        		};
+            	if(openWith.equals(Openwith.MESSAGE)) {
+            		MessageView.open(m, callback);
+            	}
+            });
+        }
         scrollPane.setContent(listLayout);
         mainVLayout.addComponent(scrollPane);
         mainVLayout.setExpandRatio(scrollPane, 0.9f);
@@ -422,10 +431,10 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     
     @Override
 	public void updateUnreadCount() {
-    	List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loggedInUser.getUserUniqueId());
+    	List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().get(loggedInUser.getUserUniqueId());
 		int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {
-			if (sd.getViewName().equals(DashboardViewType.INPUT.getViewName())
+			if (sd.getViewName().equals(DashboardViewType.SEARCH.getViewName())
 					|| sd.getViewName().equals("")) {
 				unreadCount++;
 			}
@@ -443,6 +452,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     	return transaction;
     }
     
+    private MessageBodyParser jsonHelper = new MessageBodyParser();
     private User loggedInUser;	//登录用户
     private Label titleLabel;
     private Window notificationsWindow;

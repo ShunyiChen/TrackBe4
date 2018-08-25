@@ -152,7 +152,7 @@ public class CacheManager {
 	}
 	
 	private List<SendDetails> createSendDetails(Integer userUniqueId) {
-		System.out.println("createSendDetails by "+userUniqueId);
+//		System.out.println("createSendDetails by "+userUniqueId);
 		List<SendDetails> listSendDetails = ui.messagingService.findUnreadSendDetails(userUniqueId);
 		return listSendDetails;
 	}

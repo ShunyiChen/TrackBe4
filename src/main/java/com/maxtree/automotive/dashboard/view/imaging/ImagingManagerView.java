@@ -11,6 +11,8 @@ import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.Openwith;
+import com.maxtree.automotive.dashboard.Popup;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Test;
@@ -18,8 +20,8 @@ import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Imaging;
+import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
-import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
@@ -27,6 +29,7 @@ import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
+import com.maxtree.automotive.dashboard.view.MessageView;
 import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
@@ -96,7 +99,7 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
         root.addLayoutClickListener(new LayoutClickListener() {
             @Override
             public void layoutClick(final LayoutClickEvent event) {
-                DashboardEventBus.post(new DashboardEvent.CloseOpenWindowsEvent());
+//                DashboardEventBus.post(new DashboardEvent.CloseOpenWindowsEvent());
             }
         });
         
@@ -148,6 +151,11 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
 		ui.setPollInterval(sc.getInterval());
 		ui.addPollListener(new UIEvents.PollListener() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void poll(UIEvents.PollEvent event) {
 				updateUnreadCount();
@@ -209,34 +217,43 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
     	 List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.IMAGING_MANAGER.getViewName());
          for (Map<String, Object> m : allMessages) {
         	 VerticalLayout vLayout = new VerticalLayout();
-         	 vLayout.setMargin(false);
-         	 vLayout.setSpacing(false);
-         	 vLayout.addStyleName("notification-item");
+         	vLayout.setMargin(false);
+         	vLayout.setSpacing(false);
+         	vLayout.addStyleName("notification-item");
              Label timeLabel = new Label();
-             String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
-             Label titleLabel = new Label(m.get("subject")+readStr);
-             titleLabel.addStyleName("notification-title");
-             String json = m.get("messagebody").toString();
-             Map<String, String> map = jsonHelper.json2Map(json);
-
-             String licensePlateNumber = map.get("4").toString();
-             Label plateNumber = new Label(licensePlateNumber);//PLATENUMBER
-             String vin = map.get("5");
-             String uuid = map.get("7");
-             plateNumber.addStyleName("notification-content");
-             
+             Label subjectLabel = new Label();
+             subjectLabel.addStyleName("notification-title");
+             int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
+             String subject = m.get("subject").toString();
+             subjectLabel.setValue(subject);
+             String content = m.get("content").toString();
+             Label contentLabel = new Label(content);
+             String matedata = m.get("matedata").toString();
+             Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
+             contentLabel.addStyleName("notification-content");
              Date dateCreated = (Date) m.get("datecreated");
              long duration = new Date().getTime() - dateCreated.getTime();
              timeLabel.setValue(new TimeAgo().toDuration(duration));
              timeLabel.addStyleName("notification-time");
-             vLayout.addComponents(titleLabel, timeLabel, plateNumber);
+             vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
              listLayout.addComponent(vLayout);
              vLayout.addStyleName("switchbutton");
              vLayout.addLayoutClickListener(e -> {
              	notificationsWindow.close();
-             	
-             	editableImaging = ui.imagingService.findByPlateNumber(licensePlateNumber);
-             	grid.select(editableImaging.getImagingUniqueId()); 
+             	String openWith = matedataMap.get("openwith");
+            	Callback callback = new Callback() {
+
+					@Override
+					public void onSuccessful() {
+						//更改已读状态
+						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
+						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+					}
+        		};
+//            	if(openWith.equals(Openwith.MESSAGE)) {
+//            		MessageView.open(m, callback);
+//            	}
+             	ConfirmDialog.showDialog("提示",content,callback);
              });
          }
         scrollPane.setContent(listLayout);
@@ -249,7 +266,6 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
         footer.setSpacing(false);
         Button showAll = new Button("查看全部事件");
         showAll.addClickListener(e->{
-        	
         	notificationsWindow.close();
         	showAll(allMessages, 0);
         });
@@ -380,29 +396,37 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
     
     @Override
 	public void updateUnreadCount() {
+    	// 显示未读消息数
 		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().get(loggedInUser.getUserUniqueId());
-    	int unreadCount = 0;
+		int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {
-			if (sd.getViewName().equals(DashboardViewType.IMAGING_MANAGER.getViewName())
-					|| sd.getViewName().equals("")) {
+			if ((sd.getViewName().equals(DashboardViewType.IMAGING_MANAGER.getViewName())
+					|| sd.getViewName().equals("")) && sd.getMarkedAsRead()==0) {
 				unreadCount++;
 			}
 		}
 		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
 		event.setCount(unreadCount);
 		notificationsButton.updateNotificationsCount(event);
-		
-		if (oldUnreadCount != unreadCount && unreadCount != 0) {
-			Callback callback = new Callback() {
+		// 自动弹出未读消息
+		if(sendDetailsList.size() > 0) {
+			SendDetails sd = sendDetailsList.get(sendDetailsList.size() -1);
+			Message message = ui.messagingService.findById(sd.getMessageUniqueId());
+			Map<String, String> matedataMap = new MessageBodyParser().json2Map(message.getMatedata());
+			String popup = matedataMap.get("popup");
+			if(popup.equals(Popup.YES)) {
+				Callback callback = new Callback() {
 
-				@Override
-				public void onSuccessful() {
-					grid.controls.first();
-				}
-				
-			};
-			ConfirmDialog.showDialog("提示", "您已收到 "+unreadCount+" 辆车的申请记录，请及时安排录入人员完成影像的补充。", callback);
-			oldUnreadCount = unreadCount;
+					@Override
+					public void onSuccessful() {
+						ui.messagingService.markAsRead(sd.getMessageUniqueId(), loggedInUser.getUserUniqueId());
+						
+						//更新消息轮询的缓存
+						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+					}
+				};
+				ConfirmDialog.showDialog("提示",message.getContent(),callback);
+			}
 		}
 	}
     
@@ -412,7 +436,6 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 	
 	
 	private Imaging editableImaging;
-	private int oldUnreadCount = 0;
 	private MessageBodyParser jsonHelper = new MessageBodyParser();
     private TodoListGrid grid = new TodoListGrid();
     private Label titleLabel;

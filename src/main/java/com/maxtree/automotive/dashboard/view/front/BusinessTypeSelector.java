@@ -16,6 +16,7 @@ import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.Openwith;
+import com.maxtree.automotive.dashboard.Popup;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -100,8 +101,6 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 	
 	@Override
 	public void selectionChange(SingleSelectionEvent<Business> e) {
-		System.out.println("-----------addSelectionListener");
-		
 		if (view.vin() == null) {
 			Notifications.warning("车辆识别代码不能空。");
 			return;
@@ -205,9 +204,9 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 				Notifications.warning("无法找到影像化管理员，请联系系统管理员进行设置。");
 				return;
 			}
-			String matedata = "{\"openwith\":\""+Openwith.MESSAGE+"\",\"imaginguniqueid\":\""+imaginguniqueid+"\"}";
+			String matedata = "{\"openwith\":\""+Openwith.MESSAGE+"\",\"imaginguniqueid\":\""+imaginguniqueid+"\",\"popup\":\""+Popup.YES+"\"}";
 			TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-			Message newMessage = messageSystem.createNewMessage(loggedinUser, view.basicInfoPane().getPlateNumber()+",收到新的影像化检测记录", "请补充历史影像化记录。", matedata);
+			Message newMessage = messageSystem.createNewMessage(loggedinUser, view.basicInfoPane().getPlateNumber()+"影像化补充", "请补充车牌号"+imaging.getPlateNumber()+"的全部历史影像化记录。", matedata);
 			Set<Name> names = new HashSet<Name>();
 			Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 			names.add(target);
@@ -270,7 +269,6 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 	 * @param businessCode
 	 */
 	private void loadMaterials(String businessCode) {
-		System.out.println("--------------loadMaterials");
 		// 加载文件上传表格
 		view.thumbnailGrid().removeAllRows();
 		List<DataDictionary> list = ui.businessService.getDataDictionaries(businessCode,3);
@@ -352,7 +350,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 									row.removeThumbnail(thumbnail);
 								}
 							});
-							
+							System.out.println("view="+ufq.getDictionaryCode()+"    thumbnail="+thumbnail);
 							view.thumbnailGrid().mapRows.get(ufq.getDictionaryCode()).addThumbnail(thumbnail);
 							ufq.setRemovable(1);
 						}
@@ -402,6 +400,9 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 		loadMaterials(businessCode);
 		/// 为每个Row添加缩略图
 		List<Document> documentList1 = ui.documentService.findAllDocument1(view.vin(), view.uuid());
+		
+		System.out.println("shunyi--"+view.vin() +"," +view.uuid()+"  "+documentList1.size());
+		
 		int i = 1;
 		for (Document doc : documentList1) {
 			

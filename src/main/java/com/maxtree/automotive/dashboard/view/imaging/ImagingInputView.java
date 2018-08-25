@@ -47,9 +47,11 @@ import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.InputViewIF;
+import com.maxtree.automotive.dashboard.view.MessageView;
 import com.maxtree.automotive.dashboard.view.front.BasicInfoPane;
 import com.maxtree.automotive.dashboard.view.front.BusinessTypePane;
 import com.maxtree.automotive.dashboard.view.front.CapturePane;
+import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.automotive.dashboard.view.front.ThumbnailGrid;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.messagingsystem.Name;
@@ -225,21 +227,19 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
             Label subjectLabel = new Label();
             subjectLabel.addStyleName("notification-title");
             int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
+            creatoruniqueid = Integer.parseInt(m.get("creatoruniqueid").toString());
             String subject = m.get("subject").toString();
             subjectLabel.setValue(subject);
-            String body = m.get("messagebody").toString();
-            messageCreatorUniqueId = Integer.parseInt(m.get("creatoruniqueid").toString());
-            Map<String, String> map = jsonHelper.json2Map(body);
-            Label plateNumber = new Label(map.get("4"));//PLATENUMBER
-            String vin = map.get("5");
-            String uuid = map.get("7");
-            String openWith = map.get("9");
-            plateNumber.addStyleName("notification-content");
+            String content = m.get("content").toString();
+            Label contentLabel = new Label(content);
+            String matedata = m.get("matedata").toString();
+            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
+            contentLabel.addStyleName("notification-content");
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
             timeLabel.setValue(new TimeAgo().toDuration(duration));
             timeLabel.addStyleName("notification-time");
-            vLayout.addComponents(subjectLabel, timeLabel, plateNumber);
+            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
             listLayout.addComponent(vLayout);
             vLayout.addStyleName("switchbutton");
 
@@ -252,11 +252,22 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
             
             vLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
-            	
-            	if(openWith.equals(Openwith.FORM)) {
+            	Callback callback = new Callback() {
+
+					@Override
+					public void onSuccessful() {
+						//更改已读状态
+						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
+						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+					}
+        		};
+            	String openWith = matedataMap.get("openwith");
+            	if(openWith.equals(Openwith.TRANSACTION)) {
+            		String uuid = matedataMap.get("uuid");
+            		String vin = matedataMap.get("vin");
             		if(editableTrans == null) {
             			editMode = 1;//进入更新模式
-            			openTransaction(uuid, vin);
+            			openTransaction(uuid,vin,callback);
             		}
             		else {
             			Notifications.warning("请确保完成当前任务，再执行下一操作。");
@@ -266,8 +277,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
             		
             	}
             	else if(openWith.equals(Openwith.MESSAGE)) {
-            		///TODO
-            		// 显示消息
+            		MessageView.open(m, callback);
             	}
             	
             });
@@ -283,7 +293,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         Button showAll = new Button("查看全部事件");
         showAll.addClickListener(e->{
         	notificationsWindow.close();
-//        	showAll(allMessages, 0);
+        	showAll(allMessages, 0);
         });
         
         showAll.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
@@ -355,16 +365,10 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     private void resetComponents() {
     	main.removeAllComponents();
     	main.setHeightUndefined();
+ 
+    	fileGrid.removeAllRows();
+    	businessTypePane.setSelectorEnabled(false);
     	
-//    	VerticalLayout leftChild = new VerticalLayout();
-//    	leftChild.setSizeFull();
-//    	leftChild.setSpacing(true);
-//    	leftChild.setMargin(false);
-//    	leftChild.addComponents(topGrid, bottomGrid);
-//    	Panel captureStage = new Panel("拍照");
-//    	captureStage.setSizeFull();
-//    	captureStage.setHeight("612px");
-//    	captureStage.addStyleName("picture-pane");
     	spliterSouth.setSizeFull();
     	spliterSouth.addComponents(fileGrid, capturePane);
     	
@@ -441,6 +445,21 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     
     /**
      * 
+     * @param allMessages
+     * @param selectedMessageUniqueId
+     */
+    private void showAll(List<Map<String, Object>> allMessages, int selectedMessageUniqueId) {
+    	Callback2 event = new Callback2() {
+			@Override
+			public void onSuccessful(Object... objects) {
+//				updateUnreadCount();
+			}
+    	};
+    	MessageInboxWindow.open(allMessages, event, selectedMessageUniqueId);
+    }
+    
+    /**
+     * 
      */
     private void startTransaction() {
 		int companyUniqueId = loggedInUser.getCompanyUniqueId();
@@ -494,9 +513,9 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
      * 
      * @param transUUID
      * @param transVIN
+     * @param callback 更改消息为已读
      */
-    private void openTransaction(String transUUID, String transVIN) {
-    	editMode = 1;
+    private void openTransaction(String transUUID, String transVIN, Callback callback) {
     	editableTrans = ui.transactionService.findByUUID(transUUID, transVIN);
     	editableSite = ui.siteService.findByCode(editableTrans.getSiteCode());
     	uuid = editableTrans.getUuid();
@@ -535,6 +554,8 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	
     	basicInfoPane.transaction2Fields(editableTrans);
     	businessTypePane.populate(editableTrans.getBusinessCode());
+    	
+    	callback.onSuccessful();
     }
     
     /**
@@ -647,12 +668,11 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	editableTrans.setStatus(BusinessState.B7.name);
     		ui.transactionService.update(editableTrans);
     		//操作记录
-    		String messageBody = track(Actions.RE_ENTRY);
+    		int transitionUniqueId = track(Actions.RE_ENTRY);
     		//删除消息提醒
     		removeMessage.onSuccessful();
     		//回复消息
-    		replyMessage(messageBody);
-    		
+    		replyMessage(transitionUniqueId);
     		//清空舞台
         	cleanStage();
         	Notifications.bottomWarning("操作成功。记录已提交,等待质检检验。");
@@ -663,11 +683,11 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	editableTrans.setStatus(BusinessState.B7.name);
     		ui.transactionService.update(editableTrans);
     		//操作记录
-    		String messageBody= track(Actions.RE_ENTRY);
+    		int transitionUniqueId= track(Actions.RE_ENTRY);
     		//删除消息提醒
     		removeMessage.onSuccessful();
     		//回复消息
-    		replyMessage(messageBody);
+    		replyMessage(transitionUniqueId);
     		// 清空舞台
         	cleanStage();
         	Notifications.bottomWarning("操作成功。记录已提交,等待质检检验。");
@@ -676,17 +696,18 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     
     /**
      * 
-     * @param messageBody
+     * @param transitionUniqueId
      */
-    private void replyMessage(String messageBody) {
+    private void replyMessage(int transitionUniqueId) {
     	//发消息给影像化质检
-		User receiver = ui.userService.findById(messageCreatorUniqueId);
+		User receiver = ui.userService.findById(creatoruniqueid);
 		if (receiver.getUserUniqueId() == 0) {
 			Notifications.warning("没有找到消息接收者");
 			return;
 		}
+		String matedata = "{\"openwith\":\""+Openwith.TRANSACTION+"\",\"uuid\":\""+editableTrans.getUuid()+"\",\"vin\":\""+editableTrans.getVin()+"\"}";
 		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-		Message newMessage = messageSystem.createNewMessage(loggedInUser, editableTrans.getPlateNumber()+",已修改完成", messageBody);
+		Message newMessage = messageSystem.createNewMessage(loggedInUser,editableTrans.getPlateNumber()+",已修改完成","修改完成",matedata);
 		Set<Name> names = new HashSet<Name>();
 		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 		names.add(target);
@@ -698,8 +719,9 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     /**
      * 
      * @param act
+     * @return
      */
-    private String track(Actions act) {
+    private int track(Actions act) {
     	Map<String, String> details = new HashMap<String, String>();
     	details.put("1", editableTrans.getStatus());//STATUS
 		details.put("2", basicInfoPane.getBarCode());//BARCODE
@@ -727,7 +749,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 		event.setDateUpdated(new Date());
 		ui.userEventService.insert(event, loggedInUser.getUserName());
 		
-		return json;
+		return transitionUniqueId;
     }
     
 	@Override
@@ -815,7 +837,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 	
 	private int editMode;//0-新建 1:修改
 	private Callback removeMessage;
-	private int messageCreatorUniqueId;
+	private int creatoruniqueid;
 	private MessageBodyParser jsonHelper = new MessageBodyParser();
 	public static final String EDIT_ID = "dashboard-edit";
 	public static final String TITLE_ID = "dashboard-title";

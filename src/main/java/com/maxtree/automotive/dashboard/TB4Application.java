@@ -41,5 +41,5 @@ public class TB4Application extends SpringBootServletInitializer implements Comm
     public static final String PERMISSION_DENIED_MESSAGE = "没有权限。";
     public static final String NAME = "TrackBe4";
 	public static final String VERSION = "1.0 for beta";
-	public static final String BUILD_ID = "20180419 8:39AM";
+	public static final String BUILD_ID = "20180826 7:12AM";
 }

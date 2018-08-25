@@ -39,6 +39,7 @@ import com.maxtree.automotive.dashboard.exception.DataException;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
+import com.maxtree.automotive.dashboard.view.MessageView;
 import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.automotive.dashboard.view.quality.ConfirmInformationGrid;
 import com.maxtree.automotive.dashboard.view.quality.RouterWindow;
@@ -222,45 +223,39 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
         	vLayout.setSpacing(false);
         	vLayout.addStyleName("notification-item");
             Label timeLabel = new Label();
+            Label subjectLabel = new Label();
+            subjectLabel.addStyleName("notification-title");
             int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-            String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
-            Label titleLabel = new Label(m.get("subject")+readStr);
-            titleLabel.addStyleName("notification-title");
-            String json = m.get("messagebody").toString();
-            Map<String, String> map = jsonHelper.json2Map(json);
-            Label plateNumber = new Label(map.get("4"));//PLATENUMBER
-            plateNumber.addStyleName("notification-content");
-            String vin = map.get("5").toString();
-            String uuid = map.get("7").toString();
-            String openWith = map.get("9");//open with mode
+            String subject = m.get("subject").toString();
+            subjectLabel.setValue(subject);
+            String content = m.get("content").toString();
+            Label contentLabel = new Label(content);
+            String matedata = m.get("matedata").toString();
+            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
+            contentLabel.addStyleName("notification-content");
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
             timeLabel.setValue(new TimeAgo().toDuration(duration));
             timeLabel.addStyleName("notification-time");
-            vLayout.addComponents(titleLabel, timeLabel, plateNumber);
+            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
             listLayout.addComponent(vLayout);
             vLayout.addStyleName("switchbutton");
             vLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
+            	String openWith = matedataMap.get("openwith");
+            	Callback callback = new Callback() {
+
+					@Override
+					public void onSuccessful() {
+						//更改已读状态
+						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
+						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+					}
+        		};
             	if(openWith.equals(Openwith.MESSAGE)) {
-            		///TODO
             		// 显示消息
+            		MessageView.open(m, callback);
             	}
-//            	editableTrans = ui.transactionService.findByUUID(uuid, vin);
-//            	removeMessage = new Callback() {
-//					@Override
-//					public void onSuccessful() {
-//						new TB4MessagingSystem().deleteMessage(messageUniqueId,loggedInUser.getUserUniqueId());
-//					}
-//            	};
-//            	if(editableTrans.getStatus().equals(BusinessState.B2.name)) {
-//            		Notifications.warning("该记录已经质检通过。");
-//            		removeMessage.onSuccessful();
-//            		return;
-//            	}
-//            	else {
-//            		resetComponents();
-//            	}
             });
             
         }
@@ -547,11 +542,12 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
         	editableTrans.setDateModified(new Date());
     		ui.transactionService.update(editableTrans);
     		//3.记录跟踪
-    		String json = track(Actions.VERIFIED,comments,Openwith.PRINT);//print意思是弹出打印对话框
+    		int transitionUniqueId = track(Actions.VERIFIED,comments,Openwith.PRINT);//print意思是弹出打印对话框
     		//4.发信给前台
+    		String matedata = "{\"openwith\":\""+Openwith.PRINT+"\",\"uuid\":\""+editableTrans.getUuid()+"\",\"vin\":\""+editableTrans.getVin()+"\"}";
     		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
     		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-    		Message newMessage = messageSystem.createNewMessage(loggedInUser, editableTrans.getPlateNumber()+",已通过一级审档", json);
+    		Message newMessage = messageSystem.createNewMessage(loggedInUser, editableTrans.getPlateNumber()+",已通过一级审档",comments,matedata);
     		Set<Name> names = new HashSet<Name>();
     		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
     		names.add(target);
@@ -565,7 +561,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     	}
     	else if (business.getCheckLevel().equals("二级审档")) {
     		//1.删除锁定队列
-    		int serial = 1; //1:质检 2:审档 3:确认审档
+    		int serial = 2; //1:质检 2:审档 3:确认审档
     		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());
         	try {
     			ui.queueService.delete(queue.getQueueUniqueId(), serial);
@@ -577,7 +573,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
         	editableTrans.setDateModified(new Date());
     		ui.transactionService.update(editableTrans);
     		//3.记录跟踪
-    		track(Actions.SUBMIT2,comments,Openwith.FORM);//form意思是打开并编辑
+    		track(Actions.SUBMIT2,comments,Openwith.TRANSACTION);//form意思是打开并编辑
     		//4.提交确认审档队列
     		Queue newQueue = new Queue();
     		newQueue.setUuid(editableTrans.getUuid());
@@ -613,11 +609,12 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		editableTrans.setDateModified(new Date());
 		ui.transactionService.update(editableTrans);
 		//3.记录跟踪
-		String messageBody = track(Actions.REJECTED,comments,Openwith.FORM);
+		int transitionUniqueId = track(Actions.REJECTED,comments, Openwith.TRANSACTION);
 		//4.发信给前台
+		String matedata = "{\"openwith\":\""+Openwith.TRANSACTION+"\",\"uuid\":\""+editableTrans.getUuid()+"\",\"vin\":\""+editableTrans.getVin()+"\"}";
 		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
 		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-		Message newMessage = messageSystem.createNewMessage(loggedInUser,editableTrans.getPlateNumber() +"，审档不合格", messageBody);
+		Message newMessage = messageSystem.createNewMessage(loggedInUser,editableTrans.getPlateNumber() +"，审档不合格",comments,matedata);
 		Set<Name> names = new HashSet<Name>();
 		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 		names.add(target);
@@ -637,7 +634,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
      * @param openWith
      * @return
      */
-    private String track(Actions act, String comments, String openWith) {
+    private int track(Actions act, String comments, String openWith) {
     	Map<String, String> details = new HashMap<String, String>();
     	details.put("1", editableTrans.getStatus());//STATUS
 		details.put("2", editableTrans.getBarcode());//BARCODE
@@ -646,7 +643,6 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		details.put("5", editableTrans.getVin());//VIN
 		details.put("6", editableTrans.getCode());//BUSINESSTYPE
 		details.put("7", editableTrans.getUuid());//UUID
-		details.put("9", openWith);//OPEN WITH(form/print)
 		String json = jsonHelper.map2Json(details);
     	
     	// 插入移行表
@@ -666,7 +662,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		event.setDateUpdated(new Date());
 		ui.userEventService.insert(event, loggedInUser.getUserName());
 		
-		return json;
+		return transitionUniqueId;
     }
     
     @Override

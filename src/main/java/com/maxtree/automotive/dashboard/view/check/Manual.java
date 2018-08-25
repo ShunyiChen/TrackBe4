@@ -268,7 +268,7 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 				// Set the position of the splitter as percentage
 		        rightSplit.setSplitPosition(100, Unit.PERCENTAGE);
         	}
-        	else if (e.getFirstSelectedItem().get().getAlias().startsWith("机动车")) {
+        	else if (e.getFirstSelectedItem().get().getAlias().equals("拓印膜")) {
 				selectedNode = e.getFirstSelectedItem().get();
 				imgStage.display(site, selectedNode);
 				// Set the position of the splitter as percentage

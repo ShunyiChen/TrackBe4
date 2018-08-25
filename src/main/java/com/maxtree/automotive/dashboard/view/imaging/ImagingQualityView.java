@@ -17,6 +17,8 @@ import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.Openwith;
+import com.maxtree.automotive.dashboard.Popup;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.Hr;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
@@ -26,6 +28,7 @@ import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
+import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
@@ -39,7 +42,9 @@ import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
+import com.maxtree.automotive.dashboard.view.MessageView;
 import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
+import com.maxtree.automotive.dashboard.view.front.SearchAndPrintWindow;
 import com.maxtree.automotive.dashboard.view.quality.ConfirmInformationGrid;
 import com.maxtree.automotive.dashboard.view.quality.SplitPanel;
 import com.maxtree.automotive.dashboard.view.quality.RouterWindow;
@@ -179,10 +184,11 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
         titleLabel.addStyleName(ValoTheme.LABEL_H1);
         titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         header.addComponent(titleLabel);
+        buildPrintButton();
         buildNotificationsButton();
         buildQueryButton();
         buildCommitButton();
-        HorizontalLayout tools = new HorizontalLayout(btnQuery, btnCommit, notificationsButton);
+        HorizontalLayout tools = new HorizontalLayout(btnPrint,btnQuery, btnCommit, notificationsButton);
         tools.addStyleName("toolbar");
         header.addComponent(tools);
         return header;
@@ -207,46 +213,58 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
         	vLayout.setSpacing(false);
         	vLayout.addStyleName("notification-item");
             Label timeLabel = new Label();
+            Label subjectLabel = new Label();
+            subjectLabel.addStyleName("notification-title");
             int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-//            messageCreatorUniqueId = Integer.parseInt(m.get("creatoruniqueid").toString());
-            String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
-            Label titleLabel = new Label(m.get("subject")+readStr);
-            titleLabel.addStyleName("notification-title");
-            String json = m.get("messagebody").toString();
-            Map<String, String> map = jsonHelper.json2Map(json);
-            String plateNumber = map.get("4").toString();
-            Label plateNumberLabel = new Label(plateNumber);
-            String vin = map.get("5").toString();
-            String uuid = map.get("7").toString();
+            String subject = m.get("subject").toString();
+            subjectLabel.setValue(subject);
+            String content = m.get("content").toString();
+            Label contentLabel = new Label(content);
+            String matedata = m.get("matedata").toString();
+            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
+            contentLabel.addStyleName("notification-content");
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
             timeLabel.setValue(new TimeAgo().toDuration(duration));
             timeLabel.addStyleName("notification-time");
-            vLayout.addComponents(titleLabel, timeLabel, plateNumberLabel);
+            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
             listLayout.addComponent(vLayout);
             vLayout.addStyleName("switchbutton");
             vLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
-            	editableTrans = ui.transactionService.findByUUID(uuid, vin);
-            	removeMessage = new Callback() {
+            	String openWith = matedataMap.get("openwith");
+            	Callback callback = new Callback() {
+
 					@Override
 					public void onSuccessful() {
-						new TB4MessagingSystem().deleteMessage(messageUniqueId,loggedInUser.getUserUniqueId());
+						//更改已读状态
+						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
+						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
 					}
-            	};
-            	
-            	if(editableTrans.getStatus().equals(BusinessState.B2.name)
-            			|| editableTrans.getStatus().equals(BusinessState.B4.name)) {
-            		Notifications.warning("该记录已经质检通过。");
-            		removeMessage.onSuccessful();
-            		return;
+        		};
+            	if(openWith.equals(Openwith.MESSAGE)) {
+            		MessageView.open(m, callback);
             	}
-            	else {
-            		resetComponents();
+            	else if(openWith.equals(Openwith.TRANSACTION)) {
+            		String uuid = matedataMap.get("uuid");
+            		String vin = matedataMap.get("vin");
+            		if(editableTrans == null) {
+            			editableTrans = ui.transactionService.findByUUID(uuid, vin);
+    					resetComponents();
+    					///更改已读状态
+    					callback.onSuccessful();
+            		}
+            		else {
+            			Notifications.warning("请确保完成当前任务，再执行下一操作。");
+            		}
             	}
-				
             });
-            
+            removeMessage = new Callback() {
+				@Override
+				public void onSuccessful() {
+					new TB4MessagingSystem().deleteMessage(messageUniqueId,loggedInUser.getUserUniqueId());
+				}
+            };
         }
         scrollPane.setContent(listLayout);
         mainVLayout.addComponent(scrollPane);
@@ -356,8 +374,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     	main.removeAllComponents();
     	confirmInformationGrid = new ConfirmInformationGrid(editableTrans);
     	splitPanel = new SplitPanel(editableTrans);
-		Hr hr = new Hr();
-	    main.addComponents(confirmInformationGrid, hr, splitPanel);
+	    main.addComponents(confirmInformationGrid,splitPanel);
 	    main.setExpandRatio(splitPanel, 1);
     }
     
@@ -401,6 +418,28 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
         	}
         });
     }
+    
+    
+    /**
+     * 
+     */
+    private void buildPrintButton() {
+    	btnPrint.setEnabled(true);
+    	btnPrint.setId(EDIT_ID);
+    	btnPrint.setIcon(VaadinIcons.PRINT);
+    	btnPrint.addStyleName("icon-edit");
+    	btnPrint.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	btnPrint.setDescription("查询待补充的记录");
+    	btnPrint.addClickListener(e -> {
+    		Callback2 callback = new Callback2() {
+				@Override
+				public void onSuccessful(Object... objects) {
+				}
+    		};
+    		SearchAndPrintWindow.open("", callback);
+        });
+    }
+    
     
     /**
      * 提醒按钮
@@ -464,15 +503,15 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		ui.transactionService.update(editableTrans);
     	
 		//4.记录跟踪
-		String messageBody = track(Actions.APPROVED, comments);
-		
-		//删除当前消息
+		int transitionUniqueId = track(Actions.APPROVED, comments);
+		// 自动删除消息
 		if(removeMessage != null)
 			removeMessage.onSuccessful();
-		
 		//5.给影像化管理员发信
+		Imaging img = ui.imagingService.findByPlateNumber(editableTrans.getPlateNumber());
+		String matedata = "{\"openwith\":\""+Openwith.MESSAGE+"\",\"imaginguniqueid\":\""+img.getImagingUniqueId()+"\",\"popup\":\""+Popup.NO+"\"}";
 		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-		Message newMessage = messageSystem.createNewMessage(loggedInUser, editableTrans.getPlateNumber()+",质检合格", messageBody);
+		Message newMessage = messageSystem.createNewMessage(loggedInUser, editableTrans.getPlateNumber()+",质检合格", comments, matedata);
 		Set<Name> names = new HashSet<Name>();
 		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 		names.add(target);
@@ -496,11 +535,15 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     	editableTrans.setDateModified(new Date());
 		ui.transactionService.update(editableTrans);
 		//2.记录跟踪
-		String messageBody = track(Actions.REJECTED,comments);
+		int transitionUniqueId = track(Actions.REJECTED,comments);
+		// 自动删除消息
+		if(removeMessage != null)
+			removeMessage.onSuccessful();
 		//3.发信给前台
+		String matedata = "{\"openwith\":\""+Openwith.TRANSACTION+"\",\"uuid\":\""+editableTrans.getUuid()+"\",\"vin\":\""+editableTrans.getVin()+"\"}";
 		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
 		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-		Message newMessage = messageSystem.createNewMessage(loggedInUser, editableTrans.getPlateNumber()+",质检不合格", messageBody);
+		Message newMessage = messageSystem.createNewMessage(loggedInUser, editableTrans.getPlateNumber()+",质检不合格", comments, matedata);
 		Set<Name> names = new HashSet<Name>();
 		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 		names.add(target);
@@ -513,7 +556,13 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		Notifications.bottomWarning("操作成功。已退回到前台。");
     }
     
-    private String track(Actions act, String comments) {
+    /**
+     * 
+     * @param act
+     * @param comments
+     * @return
+     */
+    private int track(Actions act, String comments) {
     	Map<String, String> details = new HashMap<String, String>();
     	details.put("1", editableTrans.getStatus());//STATUS
 		details.put("2", editableTrans.getBarcode());//BARCODE
@@ -541,7 +590,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		event.setDateUpdated(new Date());
 		ui.userEventService.insert(event, loggedInUser.getUserName());
 		
-		return json;
+		return transitionUniqueId;
     }
     
     
@@ -572,6 +621,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     
    	public static final String EDIT_ID = "dashboard-edit";
     public static final String TITLE_ID = "dashboard-title";
+    private Callback removeMessage;
     private MessageBodyParser jsonHelper = new MessageBodyParser();
     private Transaction editableTrans = null; 	//可编辑的编辑transaction
    	private User loggedInUser;	//登录用户
@@ -582,9 +632,9 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private ConfirmInformationGrid confirmInformationGrid;
     private SplitPanel splitPanel;
+    private Button btnPrint = new Button();
     private Button btnQuery = new Button();
     private Button btnCommit = new Button();
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
-	private Callback removeMessage;
 }

@@ -221,40 +221,51 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	vLayout.setSpacing(false);
         	vLayout.addStyleName("notification-item");
             Label timeLabel = new Label();
+            Label subjectLabel = new Label();
+            subjectLabel.addStyleName("notification-title");
             int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-            String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
-            Label titleLabel = new Label(m.get("subject")+readStr);
-            titleLabel.addStyleName("notification-title");
-            String json = m.get("messagebody").toString();
-           
-            Map<String, String> map = jsonHelper.json2Map(json);
-            Label plateNumberLabel = new Label();//PLATENUMBER
-            String plateNumber = map.get("4");
-            String vin = map.get("5");
-            String uuid = map.get("7");
-            String openWith = map.get("9");
-            plateNumberLabel.addStyleName("notification-content");
+            String subject = m.get("subject").toString();
+            subjectLabel.setValue(subject);
+            String content = m.get("content").toString();
+            Label contentLabel = new Label(content);
+            String matedata = m.get("matedata").toString();
+            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
+            contentLabel.addStyleName("notification-content");
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
             timeLabel.setValue(new TimeAgo().toDuration(duration));
             timeLabel.addStyleName("notification-time");
-            vLayout.addComponents(titleLabel, timeLabel, plateNumberLabel);
+            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
             listLayout.addComponent(vLayout);
             vLayout.addStyleName("switchbutton");
+            
             vLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
+            	
+            	String openWith = matedataMap.get("openwith");
             	removeMessage = new Callback() {
 					@Override
 					public void onSuccessful() {
 						new TB4MessagingSystem().deleteMessage(messageUniqueId,loggedInUser.getUserUniqueId());
 					}
             	};
-            	
+            	Callback callback = new Callback() {
+
+					@Override
+					public void onSuccessful() {
+						//更改已读状态
+						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
+						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+					}
+        		};
+        		String uuid = matedataMap.get("uuid");
+        		String vin = matedataMap.get("vin");
             	// 如果是用form打开，则进入打开并编辑界面
-            	if(openWith.equals(Openwith.FORM)) {
+            	if(openWith.equals(Openwith.TRANSACTION)) {
+            		
             		if(editableTrans == null) {
             			editMode = 1;//进入更新模式
-            			openTransaction(uuid,vin);
+            			openTransaction(uuid,vin,callback);
             		}
             		else {
             			Notifications.warning("请确保完成当前任务，再执行下一操作。");
@@ -268,6 +279,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
 							@Override
 							public void onSuccessful() {
 								cleanStage();
+								//更改已读状态
+								callback.onSuccessful();
 							}
             			};
                 		// 打印审核结果单
@@ -279,7 +292,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
             	}
             	else if(openWith.equals(Openwith.MESSAGE)) {
             		// 显示消息
-            		MessageView.open(m);
+            		MessageView.open(m,callback);
             	}
             });
         }
@@ -385,16 +398,15 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	fileGrid.removeAllRows();
     	businessTypePane.setSelectorEnabled(false);
     	
-    	
     	spliterSouth.setSizeFull();
     	spliterSouth.addComponents(fileGrid, capturePane);
+    	
     	spliterNorth.setSizeFull();
     	spliterNorth.addComponents(basicInfoPane, businessTypePane);
     	spliterNorth.setExpandRatio(basicInfoPane, 3);
     	spliterNorth.setExpandRatio(businessTypePane, 1);
-    	
-    	
     	main.addComponents(spliterNorth, spliterSouth);
+    	
     	main.setExpandRatio(spliterNorth, 1);
     	main.setExpandRatio(spliterSouth, 9);
     }
@@ -546,11 +558,12 @@ public final class FrontView extends Panel implements View,InputViewIF {
     
     /**
      * 
-     * @param uuid
-     * @param vin
+     * @param transUUID
+     * @param transVIN
+     * @param callback 更改消息为已读
      */
-    private void openTransaction(String uuid, String vin) {
-    	editableTrans = ui.transactionService.findByUUID(uuid, vin);
+    private void openTransaction(String transUUID, String transVIN, Callback callback) {
+    	editableTrans = ui.transactionService.findByUUID(transUUID, transVIN);
     	editableSite = ui.siteService.findByCode(editableTrans.getSiteCode());
     	uuid = editableTrans.getUuid();
     	batch = editableTrans.getBatch();
@@ -588,6 +601,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	basicInfoPane.transaction2Fields(editableTrans);
     	businessTypePane.populate(editableTrans.getBusinessCode());
+    	
+    	callback.onSuccessful();
     }
     
     /**
@@ -884,6 +899,10 @@ public final class FrontView extends Panel implements View,InputViewIF {
      * 
      */
     private void updateTransaction() {
+    	if(editableTrans == null) {
+    		Notifications.warning("请确保完成当前任务，再执行下一操作。");
+    		return;
+    	}
     	if(!basicInfoPane.emptyChecks()) {
 			Notifications.warning("有效性验证失败。");
 			return;
@@ -893,6 +912,95 @@ public final class FrontView extends Panel implements View,InputViewIF {
 			return;
     	}
     	
+    	// 非审档流程
+    	if (businessTypePane.getSelected().getName().equals("注册登记")) {
+    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
+        	editableTrans.setDateModified(new Date());
+    		// 跳过质检
+    		if(editableCompany.getIgnoreChecker() == 1) {
+    			editableTrans.setStatus(BusinessState.B2.name);
+        		ui.transactionService.update(editableTrans);
+        		
+        		//操作记录
+        		track(Actions.INPUT);
+        		//自动删除消息
+        		if(removeMessage != null)
+        			removeMessage.onSuccessful();
+        		
+        		//清空舞台
+            	cleanStage();
+            	Notifications.bottomWarning("操作成功。已完成逻辑上架。");
+    			
+    		}
+    		else {
+    			editableTrans.setStatus(BusinessState.B7.name);
+        		ui.transactionService.update(editableTrans);
+        		
+        		// 添加到质检队列
+        		Queue newQueue = new Queue();
+        		newQueue.setUuid(editableTrans.getUuid());
+        		newQueue.setVin(editableTrans.getVin());
+        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
+        		ui.queueService.create(newQueue, serial);
+        		
+        		//操作记录
+        		track(Actions.INPUT);
+        		//自动删除消息
+        		if(removeMessage != null)
+        			removeMessage.onSuccessful();
+        		
+        		// 清空舞台
+            	cleanStage();
+            	Notifications.bottomWarning("操作成功。记录已提交到质检队列等待质检。");
+    		}
+    		
+    	}
+    	// 非审档流程
+    	else if (StringUtils.isEmpty(businessTypePane.getSelected().getCheckLevel())) {
+    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
+        	editableTrans.setDateModified(new Date());
+        	// 跳过质检
+    		if(editableCompany.getIgnoreChecker() == 1) {
+    			editableTrans.setStatus(BusinessState.B2.name);
+        		ui.transactionService.update(editableTrans);
+        		
+        		//操作记录
+        		track(Actions.INPUT);
+        		//自动删除消息
+        		if(removeMessage != null)
+        			removeMessage.onSuccessful();
+        		//清空舞台
+            	cleanStage();
+            	Notifications.bottomWarning("操作成功。已完成逻辑上架。");
+    		}
+    		else {
+    			editableTrans.setStatus(BusinessState.B7.name);
+        		ui.transactionService.update(editableTrans);
+        		
+        		// 添加到质检队列
+        		Queue newQueue = new Queue();
+        		newQueue.setUuid(editableTrans.getUuid());
+        		newQueue.setVin(editableTrans.getVin());
+        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
+        		ui.queueService.create(newQueue, serial);
+        		
+        		//操作记录
+        		track(Actions.INPUT);
+        		//自动删除消息
+        		if(removeMessage != null)
+        			removeMessage.onSuccessful();
+        		// 清空舞台
+            	cleanStage();
+            	Notifications.bottomWarning("操作成功。记录已提交到质检队列等待质检。");
+    		}
+    		
+    	}
     	// 两大流程
     	// 需要审档（一级）流程
     	else if (businessTypePane.getSelected().getCheckLevel().equals("一级审档")) {
@@ -916,8 +1024,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//操作记录
         		track(Actions.INPUT);
-        		//删除当前消息
-        		removeMessage.onSuccessful();
+        		//自动删除消息
+        		if(removeMessage != null)
+        			removeMessage.onSuccessful();
         		
         		//清空舞台
             	cleanStage();
@@ -940,8 +1049,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//操作记录
         		track(Actions.INPUT);
-        		//删除当前消息
-        		removeMessage.onSuccessful();
+        		//自动删除消息
+        		if(removeMessage != null)
+        			removeMessage.onSuccessful();
         		
         		// 清空舞台
             	cleanStage();
@@ -970,8 +1080,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//操作记录
         		track(Actions.INPUT);
-        		//删除当前消息
-        		removeMessage.onSuccessful();
+        		//自动删除消息
+        		if(removeMessage != null)
+        			removeMessage.onSuccessful();
         		//清空舞台
             	cleanStage();
             	Notifications.bottomWarning("操作成功。本次业务已添加到审档队列中，等待审档。");
@@ -993,8 +1104,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//操作记录
         		track(Actions.INPUT);
-        		//删除当前消息
-        		removeMessage.onSuccessful();
+        		//自动删除消息
+        		if(removeMessage != null)
+        			removeMessage.onSuccessful();
         		// 清空舞台
             	cleanStage();
             	Notifications.bottomWarning("操作成功。本次业务已添加到质检队列中，等待质检。");

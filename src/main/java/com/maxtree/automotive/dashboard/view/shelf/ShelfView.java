@@ -35,6 +35,7 @@ import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
+import com.maxtree.automotive.dashboard.view.MessageView;
 import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.automotive.dashboard.view.quality.QCView;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
@@ -371,31 +372,37 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
         	vLayout.setSpacing(false);
         	vLayout.addStyleName("notification-item");
             Label timeLabel = new Label();
+            Label subjectLabel = new Label();
+            subjectLabel.addStyleName("notification-title");
             int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-            String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
-            Label titleLabel = new Label(m.get("subject")+readStr);
-            titleLabel.addStyleName("notification-title");
-            String json = m.get("messagebody").toString();
-           
-            Map<String, String> map = jsonHelper.json2Map(json);
-            Label plateNumberLabel = new Label();//PLATENUMBER
-            String plateNumber = map.get("4");
-            String vin = map.get("5");
-            String uuid = map.get("7");
-            String openWith = map.get("9");
-            plateNumberLabel.addStyleName("notification-content");
+            String subject = m.get("subject").toString();
+            subjectLabel.setValue(subject);
+            String content = m.get("content").toString();
+            Label contentLabel = new Label(content);
+            String matedata = m.get("matedata").toString();
+            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
+            contentLabel.addStyleName("notification-content");
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
             timeLabel.setValue(new TimeAgo().toDuration(duration));
             timeLabel.addStyleName("notification-time");
-            vLayout.addComponents(titleLabel, timeLabel, plateNumberLabel);
+            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
             listLayout.addComponent(vLayout);
             vLayout.addStyleName("switchbutton");
             vLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
+            	String openWith = matedataMap.get("openwith");
+            	Callback callback = new Callback() {
+
+					@Override
+					public void onSuccessful() {
+						//更改已读状态
+						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
+						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+					}
+        		};
             	if(openWith.equals(Openwith.MESSAGE)) {
-            		///TODO
-            		// 显示消息
+            		MessageView.open(m, callback);
             	}
             });
             
@@ -517,7 +524,7 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     @Override
    	public void updateUnreadCount() {
    		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-   		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().asMap().get(loginUser.getUserUniqueId());
+   		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().get(loginUser.getUserUniqueId());
     	int unreadCount = 0;
 		for (SendDetails sd : sendDetailsList) {
 			if (sd.getViewName().equals(DashboardViewType.SHELF.getViewName())

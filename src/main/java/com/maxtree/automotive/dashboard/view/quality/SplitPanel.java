@@ -33,6 +33,7 @@ public class SplitPanel extends Panel implements ImageViewIF {
 	 * Constructor
 	 */
 	public SplitPanel(Transaction transaction) {
+		this.addStyleName("Tool-main");
 		tree.setSelectionMode(SelectionMode.SINGLE);
 		tree.setSizeFull();
     	// 获取site

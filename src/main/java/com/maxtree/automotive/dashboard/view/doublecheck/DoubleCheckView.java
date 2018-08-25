@@ -40,6 +40,7 @@ import com.maxtree.automotive.dashboard.exception.DataException;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
+import com.maxtree.automotive.dashboard.view.MessageView;
 import com.maxtree.automotive.dashboard.view.check.Manual;
 import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.automotive.dashboard.view.quality.ConfirmInformationGrid;
@@ -98,13 +99,13 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
         Responsive.makeResponsive(root);
         root.addComponent(buildHeader());
         root.addComponent(buildSparklines());
-        dynamicallyVLayout.addStyleName("dynamicallyVLayout-check");
-        dynamicallyVLayout.setWidth("100%");
-        dynamicallyVLayout.setHeight("100%");
-        dynamicallyVLayout.addComponents(blankLabel);
-        dynamicallyVLayout.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
-        root.addComponents(dynamicallyVLayout);
-        root.setExpandRatio(dynamicallyVLayout, 7.0f);
+        main.addStyleName("main-check");
+        main.setWidth("100%");
+        main.setHeight("100%");
+        main.addComponents(blankLabel);
+        main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
+        root.addComponents(main);
+        root.setExpandRatio(main, 7.0f);
         loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
@@ -222,29 +223,37 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
         	vLayout.setSpacing(false);
         	vLayout.addStyleName("notification-item");
             Label timeLabel = new Label();
+            Label subjectLabel = new Label();
+            subjectLabel.addStyleName("notification-title");
             int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-            String readStr = m.get("markedasread").toString().equals("0")?"(未读)":"";
-            Label titleLabel = new Label(m.get("subject")+readStr);
-            titleLabel.addStyleName("notification-title");
-            String json = m.get("messagebody").toString();
-            Map<String, String> map = jsonHelper.json2Map(json);
-            Label plateNumber = new Label(map.get("4"));//PLATENUMBER
-            plateNumber.addStyleName("notification-content");
-            String vin = map.get("5").toString();
-            String uuid = map.get("7").toString();
-            String openWith = map.get("9");//open with mode
+            String subject = m.get("subject").toString();
+            subjectLabel.setValue(subject);
+            String content = m.get("content").toString();
+            Label contentLabel = new Label(content);
+            String matedata = m.get("matedata").toString();
+            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
+            contentLabel.addStyleName("notification-content");
             Date dateCreated = (Date) m.get("datecreated");
             long duration = new Date().getTime() - dateCreated.getTime();
             timeLabel.setValue(new TimeAgo().toDuration(duration));
             timeLabel.addStyleName("notification-time");
-            vLayout.addComponents(titleLabel, timeLabel, plateNumber);
+            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
             listLayout.addComponent(vLayout);
             vLayout.addStyleName("switchbutton");
             vLayout.addLayoutClickListener(e -> {
             	notificationsWindow.close();
+            	String openWith = matedataMap.get("openwith");
+            	Callback callback = new Callback() {
+
+					@Override
+					public void onSuccessful() {
+						//更改已读状态
+						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
+						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+					}
+        		};
             	if(openWith.equals(Openwith.MESSAGE)) {
-            		///TODO
-            		// 显示消息
+            		MessageView.open(m, callback);
             	}
             });
             
@@ -386,14 +395,13 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
      * 
      */
     private void resetComponents() {
-    	dynamicallyVLayout.setSpacing(false);
-    	dynamicallyVLayout.setMargin(false);
-    	dynamicallyVLayout.removeAllComponents();
+    	main.setSpacing(false);
+    	main.setMargin(false);
+    	main.removeAllComponents();
     	confirmInformationGrid = new ConfirmInformationGrid(editableTrans);
-    	Hr hr = new Hr();
     	manualPane = new Manual(editableTrans);
-	    dynamicallyVLayout.addComponents(confirmInformationGrid, hr, manualPane);
-	    dynamicallyVLayout.setExpandRatio(manualPane, 1);
+	    main.addComponents(confirmInformationGrid,manualPane);
+	    main.setExpandRatio(manualPane, 1);
     }
     
     /**
@@ -531,13 +539,13 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
         	editableTrans.setStatus(BusinessState.B5.name);
         	editableTrans.setDateModified(new Date());
     		ui.transactionService.update(editableTrans);
-    		
     		//3.记录跟踪
-    		String json = track(Actions.SUBMIT2,comments,Openwith.PRINT);
+    		int transitionUniqueId = track(Actions.SUBMIT2,comments,Openwith.PRINT);
     		//4.发信给前台
+    		String matedata = "{\"openwith\":\""+Openwith.PRINT+"\",\"uuid\":\""+editableTrans.getUuid()+"\",\"vin\":\""+editableTrans.getVin()+"\"}";
     		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
     		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-    		Message newMessage = messageSystem.createNewMessage(loggedInUser, editableTrans.getPlateNumber()+",已通过确认审档", json);
+    		Message newMessage = messageSystem.createNewMessage(loggedInUser, editableTrans.getPlateNumber()+",已通过确认审档",comments, matedata);
     		Set<Name> names = new HashSet<Name>();
     		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
     		names.add(target);
@@ -571,11 +579,12 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 		ui.transactionService.update(editableTrans);
 		
 		//3.记录跟踪
-		String json = track(Actions.REJECTED,comments,Openwith.PRINT);
+		int transitionUniqueId = track(Actions.REJECTED,comments,Openwith.PRINT);
 		//4.发信给前台
+		String matedata = "{\"openwith\":\""+Openwith.TRANSACTION+"\",\"uuid\":\""+editableTrans.getUuid()+"\",\"vin\":\""+editableTrans.getVin()+"\"}";
 		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
 		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-		Message newMessage = messageSystem.createNewMessage(loggedInUser, editableTrans.getPlateNumber()+",确认审档不合格", json);
+		Message newMessage = messageSystem.createNewMessage(loggedInUser, editableTrans.getPlateNumber()+",确认审档不合格",comments,matedata);
 		Set<Name> names = new HashSet<Name>();
 		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 		names.add(target);
@@ -585,7 +594,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 		// 5.清空
 		cleanStage();
 		// 6.提示信息
-		Notifications.bottomWarning("操作成功。已退回到前台。");
+		Notifications.bottomWarning("操作成功。确认审档不合格,已退回到前台。");
     }
     
     /**
@@ -594,7 +603,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
      * @param comments
      * @return
      */
-    private String track(Actions act, String comments,String openWith) {
+    private int track(Actions act, String comments,String openWith) {
     	Map<String, String> details = new HashMap<String, String>();
     	details.put("1", editableTrans.getStatus());//STATUS
 		details.put("2", editableTrans.getBarcode());//BARCODE
@@ -602,7 +611,6 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 		details.put("4", editableTrans.getPlateNumber());//PLATENUMBER
 		details.put("5", editableTrans.getVin());//VIN
 		details.put("6", editableTrans.getCode());//BUSINESSTYPE
-		details.put("9", openWith);//OPEN WITH(form/print/message)
 		String json = jsonHelper.map2Json(details);
     	
     	// 插入移行表
@@ -622,7 +630,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 		event.setDateUpdated(new Date());
 		ui.userEventService.insert(event, loggedInUser.getUserName());
 		
-		return json;
+		return transitionUniqueId;
     }
     
     @Override
@@ -644,10 +652,10 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 
 	@Override
 	public void cleanStage() {
-		dynamicallyVLayout.removeAllComponents();
-		dynamicallyVLayout.setHeight("100%");
-		dynamicallyVLayout.addComponents(blankLabel);
-		dynamicallyVLayout.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
+		main.removeAllComponents();
+		main.setHeight("100%");
+		main.addComponents(blankLabel);
+		main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
 		manualPane.closeToolWindow();
 		editableTrans = null;
 	}
@@ -670,7 +678,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
     public static final String EDIT_ID = "dashboard-edit";
     public static final String TITLE_ID = "dashboard-title";
     private VerticalLayout root;
-    private VerticalLayout dynamicallyVLayout = new VerticalLayout();
+    private VerticalLayout main = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private ConfirmInformationGrid confirmInformationGrid;
     private Manual manualPane;

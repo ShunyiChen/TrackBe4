@@ -10,26 +10,21 @@ public class MessageWrapper {
 	 * @param senderUserName
 	 * @param senderPicture
 	 * @param subject
-	 * @param message
-	 * @param uuid
+	 * @param content
+	 * @param matedata
 	 * @param read
 	 * @param dateCreated
-	 * @param type
 	 */
 	public MessageWrapper(int messageUniqueId, String senderUserName, String senderPicture, String subject,
-			String message, String uuid, String read, Date dateCreated, String type, String status) {
+			String content,String matedata, String read, Date dateCreated) {
 		this.messageUniqueId = messageUniqueId;
 		this.senderUserName = senderUserName;
 		this.senderPicture = senderPicture;
 		this.subject = subject;
-		this.message = message;
+		this.content = content;
+		this.matedata = matedata;
 		this.read = read;
 		this.dateCreated = dateCreated;
-		
-		// transaction information
-		this.uuid = uuid;
-		this.type = type;
-		this.status = status;
 	}
 
 	public int getMessageUniqueId() {
@@ -64,21 +59,20 @@ public class MessageWrapper {
 		this.subject = subject;
 	}
 
-	public String getMessage() {
-		return message;
+	public String getContent() {
+		return content;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	public void setContent(String content) {
+		this.content = content;
 	}
 
-
-	public String getUuid() {
-		return uuid;
+	public String getMatedata() {
+		return matedata;
 	}
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	public void setMatedata(String matedata) {
+		this.matedata = matedata;
 	}
 
 	public String getRead() {
@@ -97,30 +91,13 @@ public class MessageWrapper {
 		this.dateCreated = dateCreated;
 	}
 	
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-	
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
 	private int messageUniqueId;
-	private String uuid;
 	private String senderUserName;
 	private String senderPicture;
 	private String subject;
-	private String message;
+	private String content;
+	private String matedata;
 	private String read;
 	private Date dateCreated;
-	private String type; // 消息类别
-	private String status;
+	
 }

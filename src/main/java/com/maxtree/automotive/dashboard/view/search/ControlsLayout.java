@@ -160,7 +160,7 @@ public class ControlsLayout extends HorizontalLayout {
 	}
 	
 	private int pageCount;
-	private int sizePerPage = 2;//每页显示行数
+	private int sizePerPage = 20;//每页显示行数
 	private int currentPageIndex = 1;
 	private Button first = new Button("<<");
 	private Button previous = new Button("<");

@@ -20,10 +20,10 @@ public enum DashboardViewType {
     CHECK("业务审核", BusinessCheckView.class, VaadinIcons.TABLE, true),
 	SEARCH("车辆查询", SearchView.class, VaadinIcons.SEARCH, true),
 	DOUBLECHECK("确认审档", DoubleCheckView.class, VaadinIcons.ADD_DOCK, true),
-	SHELF("上架下架", ShelfView.class, VaadinIcons.SPINNER, true),
-	IMAGING_MANAGER("影像管理", ImagingManagerView.class, VaadinIcons.SPINNER, true),
-	IMAGING_INPUT("影像录入", ImagingInputView.class, VaadinIcons.SPINNER, true),
-	IMAGING_QUALITY("影像质检", ImagingQualityView.class, VaadinIcons.SPINNER, true);
+	SHELF("上架下架", ShelfView.class, VaadinIcons.ROCKET, true),
+	IMAGING_MANAGER("影像管理", ImagingManagerView.class, VaadinIcons.STORAGE, true),
+	IMAGING_INPUT("影像录入", ImagingInputView.class, VaadinIcons.PENCIL, true),
+	IMAGING_QUALITY("影像质检", ImagingQualityView.class, VaadinIcons.CLIPBOARD_CHECK, true);
 	
     private final String viewName;
     private final Class<? extends View> viewClass;

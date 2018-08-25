@@ -12,13 +12,16 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
+import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
+import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
@@ -52,23 +55,12 @@ public class MessageInboxWindow extends Window {
 			String senderUserName = m.get("username").toString();
 			String senderPicture = "VAADIN/themes/dashboard/"+ m.get("picture").toString();
 			String subject = m.get("subject").toString();
-			String json = m.get("messagebody").toString();
-			String comments = m.get("comments").toString();
-			Map<String, String> map = new MessageBodyParser().json2Map(json);
-			String status = map.get("1").toString();
-			String plateType = map.get("3").toString();
-			String uuid = map.get("7").toString();
-			StringBuilder content = new StringBuilder();
-			content.append("状态："+map.get("1")+"\n");
-			content.append("条形码："+map.get("2")+"\n");
-			content.append("号牌种类："+map.get("3")+"\n");
-			content.append("车牌号："+map.get("4")+"\n");
-			content.append("车辆识别代码："+map.get("5")+"\n");
-			content.append("业务类型："+map.get("6")+"\n");
-			content.append("备注："+comments+"\n");
+			String content = m.get("content").toString();
+			String matedata = m.get("matedata").toString();
 			String read = m.get("markedasread").toString().equals("1")?"已读":"未读";
 			Date dateCreated = (Date) m.get("datecreated");
-			MessageWrapper wrapper = new MessageWrapper(messageUniqueId, senderPicture+" "+senderUserName, senderPicture, subject, content.toString(), uuid, read, dateCreated, plateType, status);
+//			Map<String, String> matedataMap = new MessageBodyParser().json2Map(matedata);
+			MessageWrapper wrapper = new MessageWrapper(messageUniqueId, senderPicture+" "+senderUserName, senderPicture, subject, content,matedata,read,dateCreated);
 			messageWrapperList.add(wrapper);
 		}
 		initComponents();
@@ -88,53 +80,72 @@ public class MessageInboxWindow extends Window {
     	grid.setHeightByRows(5);
     	grid.addColumn(MessageWrapper::getSenderUserName).setCaption("收自").setRenderer(new ImageNameRenderer());
     	grid.addColumn(MessageWrapper::getSubject).setCaption("标题");
-    	grid.addColumn(MessageWrapper::getMessage).setCaption("内容");
+    	grid.addColumn(MessageWrapper::getContent).setCaption("内容");
     	grid.addColumn(MessageWrapper::getDateCreated).setCaption("创建时间");
     	grid.addColumn(MessageWrapper::getRead).setCaption("是否阅读");
     	
     	grid.addSelectionListener(event -> {
-    		
+    		textarea.setValue("");
     		Set<MessageWrapper> selected = event.getAllSelectedItems();
     	    if (selected.size() > 0) {
-    	    	List<MessageWrapper> selectreminders = new ArrayList<>(selected);
-        	    textarea.setValue(selectreminders.get(0).getMessage()==null?"":selectreminders.get(0).getMessage());
-        	    // 标记选中记录为已读
-        	    User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-        	    ui.messagingService.markAsRead(selectreminders.get(0).getMessageUniqueId(), loginUser.getUserUniqueId());
-        	    selectreminders.get(0).setRead("已读");
-        	    // 刷新提示数量
-        	    updateUnreadEvent.onSuccessful();
-        	    
-        	    // 刷新缓存
-        	    CacheManager.getInstance().getSendDetailsCache().refresh(loginUser.getUserUniqueId());
-        	    
+    	    	List<MessageWrapper> list = new ArrayList<>(selected);
+    	    	MessageWrapper msg = list.get(0);
+    	    	
+    	    	Map<String, String> matedataMap = new MessageBodyParser().json2Map(msg.getMatedata());
+    	    	String openWith = matedataMap.get("openwith");
+    	    	String imaginguniqueid = matedataMap.get("imaginguniqueid");
+    	    	String uuid = matedataMap.get("uuid");
+    	    	String vin = matedataMap.get("vin");
+    	    	// 如果属性imaginguniqueid不为空
+    	    	if(imaginguniqueid != null) {
+    	    		Imaging img = ui.imagingService.findById(Integer.parseInt(imaginguniqueid));
+    	    		
+    	    		StringBuilder stb = new StringBuilder();
+    	    		stb.append("申请人:"+img.getCreator()+"\n");
+    	    		stb.append("申请时间:"+img.getDateCreated()+"\n");
+    	    		stb.append("车牌号:"+img.getPlateNumber()+"\n");
+    	    		stb.append("号牌种类:"+img.getPlateType()+"\n");
+    	    		stb.append("车辆识别代码:"+img.getVin()+"\n");
+    	    		stb.append("业务状态:"+img.getStatus());
+    	    		textarea.setValue(stb.toString());
+    	    		
+    	    		ui.messagingService.markAsRead(msg.getMessageUniqueId(), loggedInUser.getUserUniqueId());
+    	    		msg.setRead("已读");
+    	    		// 刷新提示数量
+            	    updateUnreadEvent.onSuccessful();
+    	    	}
+    	    	else if(uuid != null) {
+
+    	    		textarea.setValue(msg.getContent());
+    	    		
+    	    		ui.messagingService.markAsRead(msg.getMessageUniqueId(), loggedInUser.getUserUniqueId());
+    	    		msg.setRead("已读");
+    	    		// 刷新提示数量
+            	    updateUnreadEvent.onSuccessful();
+    	    	}
     	    } 
     	});
+    	FormLayout form = new FormLayout();
+    	form.setSpacing(false);
+    	form.setMargin(false);
+    	form.setSizeFull();
+    	form.addComponent(textarea);
+    	textarea.setSizeFull();
     	
-    	textarea.setWidth("98%");
-    	textarea.setHeight("200px");
+    	HorizontalLayout buttons = new HorizontalLayout();
+    	buttons.setWidth("100%");
+    	HorizontalLayout subbuttons = new HorizontalLayout();
+    	subbuttons.addComponents(btnDelete, btnQuit);
+    	buttons.addComponent(subbuttons);
+    	buttons.setComponentAlignment(subbuttons, Alignment.MIDDLE_RIGHT);
     	
-    	HorizontalLayout buttonLayout = new HorizontalLayout();
-//    	buttonLayout.addStyleName("MessageInboxWindow");
-    	buttonLayout.setSpacing(false);
-    	buttonLayout.setMargin(false);
-    	buttonLayout.setWidthUndefined();
-    	buttonLayout.setHeight("40px");
-    	buttonLayout.addComponents(btnDelete, Box.createHorizontalBox(5), btnQuit, Box.createHorizontalBox(5));
-    	buttonLayout.setComponentAlignment(btnDelete, Alignment.TOP_LEFT);
-    	buttonLayout.setComponentAlignment(btnQuit, Alignment.TOP_LEFT);
-    	
-    	VerticalLayout vlayout = new VerticalLayout();
-		vlayout.setSpacing(false);
-		vlayout.setMargin(false);
-		vlayout.setWidth("100%");
-		vlayout.setHeightUndefined();
-    	vlayout.addComponents(grid, Box.createVerticalBox(1), textarea, Box.createVerticalBox(1), buttonLayout);
-    	vlayout.setComponentAlignment(grid, Alignment.TOP_CENTER);
-    	vlayout.setComponentAlignment(textarea, Alignment.TOP_CENTER);
-    	vlayout.setComponentAlignment(buttonLayout, Alignment.TOP_RIGHT);
-        
-    	this.setContent(vlayout);
+    	VerticalLayout main = new VerticalLayout();
+    	main.setWidth("100%");
+    	main.setHeightUndefined();
+    	main.addComponents(grid,form,buttons);
+    	main.setExpandRatio(grid, 1);
+    	main.setExpandRatio(form, 1);
+    	this.setContent(main);
     	
     	initActions();
 	}
@@ -164,15 +175,10 @@ public class MessageInboxWindow extends Window {
 			}
 			Iterator<MessageWrapper> iter = selected.iterator();
 			while (iter.hasNext()) {
-				MessageWrapper messageWrapper = iter.next();
-				int messageUniqueId = messageWrapper.getMessageUniqueId();
-				ui.messagingService.deleteSendDetails(messageUniqueId,loggedInUser.getUserUniqueId());
-				ui.messagingService.deleteMessageRecipient(messageUniqueId,loggedInUser.getUserUniqueId());
-				ui.messagingService.deleteMessage(messageUniqueId);
+				MessageWrapper msg = iter.next();
+				new TB4MessagingSystem().deleteMessage(msg.getMessageUniqueId(), loggedInUser.getUserUniqueId());
 				
-				CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
-				
-				messageWrapperList.remove(messageWrapper);
+				messageWrapperList.remove(msg);
 				grid.setItems(messageWrapperList);
 				textarea.setValue("");
 			}
@@ -203,7 +209,7 @@ public class MessageInboxWindow extends Window {
 	private Callback2 updateUnreadEvent;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private Grid<MessageWrapper> grid = new Grid<>(MessageWrapper.class);
-	private TextArea textarea = new TextArea();
+	private TextArea textarea = new TextArea("详细信息:");
 	private List<MessageWrapper> messageWrapperList = new ArrayList<MessageWrapper>();
 	private Button btnDelete = new Button("删除");
 	private Button btnQuit = new Button("关闭");

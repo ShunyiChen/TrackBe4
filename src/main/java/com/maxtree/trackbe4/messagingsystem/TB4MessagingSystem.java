@@ -38,10 +38,8 @@ public class TB4MessagingSystem {
 		newMessage.setMatedata(matedata);
 		newMessage.setSentTimes(1);
 		newMessage.setReminderFrequencyId(0);
-		
 		int messageUniqueId = ui.messagingService.insertMessage(newMessage);
 		newMessage.setMessageUniqueId(messageUniqueId);
-		
 		return newMessage;
 	}
 	

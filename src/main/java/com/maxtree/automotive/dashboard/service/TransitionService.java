@@ -25,7 +25,12 @@ public class TransitionService {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	
+	/**
+	 * 
+	 * @param uuid
+	 * @param vin
+	 * @return
+	 */
 	public Transition findByUUID(String uuid, String vin) {
 		int index = getTableIndex(vin);
 		String sql = "SELECT * FROM TRANSITION_"+index+" WHERE TRANSACTIONUUID=? ORDER BY TRANSITIONUNIQUEID DESC LIMIT ?";

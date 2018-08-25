@@ -32,9 +32,14 @@ public class DownGrid extends VerticalLayout {
 		FormLayout form = new FormLayout();
 		form.setSpacing(false);
 		form.setMargin(false);
-		plateType.setReadOnly(false);
-		plateNumber.setReadOnly(false);
-		plateVIN.setReadOnly(false);
+		plateType.setReadOnly(true);
+		plateNumber.setReadOnly(true);
+		plateVIN.setReadOnly(true);
+		
+		plateType.setWidth("400px");
+		plateNumber.setWidth("400px");
+		plateVIN.setWidth("400px");
+		
 		form.addComponents(plateType, plateNumber, plateVIN);
 		
 		grid.setSizeFull();

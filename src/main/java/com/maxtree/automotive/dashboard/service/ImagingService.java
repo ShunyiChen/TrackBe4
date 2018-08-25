@@ -29,6 +29,20 @@ public class ImagingService {
 	
 	/**
 	 * 
+	 * @param imagingUniqueId
+	 * @return
+	 */
+	public Imaging findById(int imagingUniqueId) {
+		String sql = "SELECT * FROM IMAGING WHERE IMAGINGUNIQUEID=?";
+		List<Imaging> results = jdbcTemplate.query(sql, new Object[] {imagingUniqueId}, new BeanPropertyRowMapper<Imaging>(Imaging.class));
+		if(results.size() > 0) {
+			return results.get(0);
+		}
+		return new Imaging();
+	}
+	
+	/**
+	 * 
 	 * @param limit
 	 * @param offset
 	 * @param keyword
