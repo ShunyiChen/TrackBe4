@@ -71,15 +71,15 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 		int height = UI.getCurrent().getPage().getBrowserWindowHeight() - 173;
 		this.setWidth("100%");
 		this.setHeight(height+"px");
-		browser.setSizeFull();
-		this.setContent(browser);
+//		browser.setSizeFull();
+//		this.setContent(browser);
 		
-//		Upload upload = new Upload(null, this);
-//		upload.setButtonCaption("选择文件");
-//		upload.setButtonStyleName("upload-button");
-//		upload.setImmediateMode(true);
-//		upload.addSucceededListener(this);
-//		this.setContent(upload);
+		Upload upload = new Upload(null, this);
+		upload.setButtonCaption("选择文件");
+		upload.setButtonStyleName("upload-button");
+		upload.setImmediateMode(true);
+		upload.addSucceededListener(this);
+		this.setContent(upload);
 	}
 	
 	/**

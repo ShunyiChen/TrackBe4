@@ -3,7 +3,8 @@
   .loginview {
     @include radial-gradient(circle at 50% 50%, scale-color($v-app-background-color, $lightness: -2%), scale-color($v-app-background-color, $lightness: -2% - valo-gradient-opacity()), $fallback: $v-app-background-color);
     padding-top: 0 !important;
-      background: url(../img/img103.png) no-repeat center;
+//      background: url(../img/img103.png) no-repeat center;
+//      background-size: cover;
       
     @include animation(valo-animate-in-fade 300ms 10ms backwards);
 
