@@ -96,10 +96,10 @@
         <!-- Image processor -->
         <dependency>
 	         <groupId>com.maxtree</groupId>
-	         <artifactId>maxtree-imageprocessor</artifactId>
+	         <artifactId>tb4image</artifactId>
 	         <scope>system</scope>
 	         <version>0.0.1-SNAPSHOT</version>
-	         <systemPath>${project.basedir}/lib/maxtree-imageprocessor.jar</systemPath>
+	         <systemPath>${project.basedir}/lib/tb4image.jar</systemPath>
 	    </dependency>
         <!-- Jasper reports -->
         <dependency>
@@ -117,6 +117,19 @@
 	         <version>6.5.1</version>
 	         <systemPath>${project.basedir}/lib/jasperreports-6.5.1.jar</systemPath>
 	    </dependency>
+	    
+	    <!-- DB builder  -->
+	    <dependency>
+	         <groupId>com.maxtree</groupId>
+	         <artifactId>tb4builder</artifactId>
+	         <scope>system</scope>
+	         <version>0.0.1-SNAPSHOT</version>
+	         <systemPath>${project.basedir}/lib/tb4builder-0.0.1-SNAPSHOT.jar</systemPath>
+	    </dependency>
+	    
+	    
+	    
+	    
 	    <!-- barcode generator -->
 	    <!-- https://mvnrepository.com/artifact/net.sourceforge.barbecue/barbecue -->
 		<dependency>

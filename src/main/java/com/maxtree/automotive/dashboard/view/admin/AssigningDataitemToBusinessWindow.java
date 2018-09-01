@@ -1,7 +1,6 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -12,6 +11,8 @@ import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
+import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.SerializableComparator;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -69,6 +70,7 @@ public class AssigningDataitemToBusinessWindow extends Window {
 		select.setRows(14);
 		select.setLeftColumnCaption("未分配的材料");
 		select.setRightColumnCaption("已分配的材料");
+		
 		List<DataDictionary> selectedItems = new ArrayList<>();
 		for (DataDictionary item : allItems) {
 			for (DataDictionary assignItem : assignItems) {

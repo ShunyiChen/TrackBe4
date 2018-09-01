@@ -34,8 +34,18 @@ public class SystemConfiguration {
 		this.refreshAfterWrite = refreshAfterWrite;
 	}
 
+	public String getCreateDBTableOnStartup() {
+		return createDBTableOnStartup;
+	}
+
+	public void setCreateDBTableOnStartup(String createDBTableOnStartup) {
+		this.createDBTableOnStartup = createDBTableOnStartup;
+	}
+
 	private int interval; // UI事件轮询间隔（毫秒）
 	private int maximumSize;// Caffeine缓存最大行数
 	private int expireAfterWrite; // Caffeine缓存expireAfterWrite（分钟）
 	private int refreshAfterWrite;// Caffeine缓存refreshAfterWrite（分钟）
+	private String createDBTableOnStartup;//启动服务时新建数据表（可用参数yes/no）
+	
 }

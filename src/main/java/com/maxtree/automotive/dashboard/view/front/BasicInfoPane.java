@@ -91,7 +91,7 @@ public class BasicInfoPane extends Panel {
 		plateTypeField.setHeight(fieldHeight);
 		plateNumberField.setHeight(fieldHeight);
 		vinField.setHeight(fieldHeight);
-		vinField.setReadOnly(true);
+//		vinField.setReadOnly(true);
 		
 		barCodeField.addFocusListener(e->{
 			ui.setPollInterval(-1);
@@ -268,18 +268,6 @@ public class BasicInfoPane extends Panel {
 	public String getVIN() {
 		return vinField.getValue();
 	}
-	
-//	/**
-//	 * 
-//	 * @param enabled
-//	 */
-//	public void setEnabled2(boolean enabled) {
-//		barCodeField.setEnabled(enabled);
-//		plateNumberField.setEnabled(enabled);
-//		plateTypeField.setEnabled(enabled);
-//		vinField.setEnabled(enabled);
-//	}
-//	
 	
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private TextField barCodeField = new TextField("条形码:"); 			// 条形码文本框

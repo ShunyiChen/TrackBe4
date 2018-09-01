@@ -10,6 +10,10 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import com.maxtree.automotive.dashboard.data.SystemConfiguration;
+import com.maxtree.automotive.dashboard.data.Yaml;
+import com.maxtree.tb4builder.App;
+
 @ServletComponentScan
 @SpringBootApplication
 public class TB4Application extends SpringBootServletInitializer implements CommandLineRunner {
@@ -36,7 +40,13 @@ public class TB4Application extends SpringBootServletInitializer implements Comm
 
     @Override
     public void run(String... strings) throws Exception {
+    	SystemConfiguration sc = Yaml.readSystemConfiguration();
+    	if(sc.getCreateDBTableOnStartup().equalsIgnoreCase("yes")) {
+    		App dbbuilder = new App();
+        	dbbuilder.build(jdbcTemplate.getDataSource().getConnection());
+    	}
     }
+    
     
     public static final String PERMISSION_DENIED_MESSAGE = "没有权限。";
     public static final String NAME = "TrackBe4";
