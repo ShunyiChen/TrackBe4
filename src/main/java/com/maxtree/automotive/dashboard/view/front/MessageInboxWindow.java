@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -175,8 +176,17 @@ public class MessageInboxWindow extends Window {
 			}
 			Iterator<MessageWrapper> iter = selected.iterator();
 			while (iter.hasNext()) {
+				
 				MessageWrapper msg = iter.next();
-				new TB4MessagingSystem().deleteMessage(msg.getMessageUniqueId(), loggedInUser.getUserUniqueId());
+				Map<String, String> matedataMap = jsonHelper.json2Map(msg.getMatedata());
+				String openWith = matedataMap.get("openwith");
+				
+				// 如果发的是print和transaction打开方式，则有权彻底删除Messages表,因为一个消息只发一个人，即接收人可以永久删除message
+				int deleteType = TB4MessagingSystem.ONLYDELETERECIPIENT;
+				if(openWith.equals(Openwith.PRINT) || openWith.equals(Openwith.TRANSACTION)) {
+					deleteType = TB4MessagingSystem.PERMANENTLYDELETE;
+				}
+				new TB4MessagingSystem().deleteMessage(msg.getMessageUniqueId(), loggedInUser.getUserUniqueId(), deleteType);
 				
 				messageWrapperList.remove(msg);
 				grid.setItems(messageWrapperList);
@@ -205,6 +215,7 @@ public class MessageInboxWindow extends Window {
         w.center();
     }
 	
+	private MessageBodyParser jsonHelper = new MessageBodyParser();
 	private User loggedInUser;
 	private Callback2 updateUnreadEvent;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();

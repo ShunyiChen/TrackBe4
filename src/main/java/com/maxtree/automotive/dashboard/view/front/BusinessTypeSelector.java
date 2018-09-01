@@ -101,7 +101,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 	
 	@Override
 	public void selectionChange(SingleSelectionEvent<Business> e) {
-		if (view.vin() == null) {
+		if (StringUtils.isEmpty(view.vin())) {
 			Notifications.warning("车辆识别代码不能空。");
 			return;
 		}

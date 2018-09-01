@@ -337,10 +337,8 @@ public class EditBroadCastWindow extends Window {
         	w.nameSets.add(n);
         }
         w.toField.setValue(stb.toString());
-        MessageBodyParser parser = new MessageBodyParser();
-        Map<String, String> map = parser.json2Map(msg.getContent());
-        String content = map.get("message");
-        w.descArea.setValue(content);
+        Map<String, String> map = w.jsonHelper.json2Map(msg.getMatedata());
+        w.descArea.setValue(msg.getContent());
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
         		String viewName = "";// 如果viewName等于空，则表示消息将发送到对方的首个view上
@@ -365,6 +363,7 @@ public class EditBroadCastWindow extends Window {
         w.center();
     }
  
+	private MessageBodyParser jsonHelper = new MessageBodyParser();
 	private LinkedHashSet<Name> nameSets = new LinkedHashSet<Name>();
 	private List<Name> list = new ArrayList<Name>();
 	private TextField toField;

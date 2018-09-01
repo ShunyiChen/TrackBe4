@@ -205,7 +205,7 @@ public class ManageBroadCastGrid extends VerticalLayout {
 									timer.cancel();
 								}
 								
-								ui.messagingService.deleteMessage(message.getMessageUniqueId());
+								ui.messagingService.markAsDeleted(message.getMessageUniqueId());
 								refreshTable();
 							}
 						};

@@ -1,6 +1,11 @@
 package com.maxtree.automotive.dashboard.view.quality;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -163,12 +168,21 @@ public class ImageStage extends VerticalLayout implements ClickListener {
 	 * 调整为适应窗体大小
 	 */
 	public void fittedSize() {
-		picture.setWidth("100%");
+		if(pictureActualWidth > pictureActualHeight) {
+			picture.setWidth("100%");
+			picture.setHeightUndefined();
+		}
+		else {
+			picture.setWidthUndefined();
+			picture.setHeight("100%");
+		}
 		pictureFrame.setSizeFull();
 		pictureFrame.removeAllComponents();
 		pictureFrame.addComponent(picture);
 		pictureFrame.setComponentAlignment(picture, Alignment.MIDDLE_CENTER);
 		scroll.setContent(pictureFrame);
+		
+		
 	}
 	
 	/**
@@ -184,14 +198,14 @@ public class ImageStage extends VerticalLayout implements ClickListener {
 				
 				picture.setSizeUndefined();
 				
-				if(pictureWidth >= fw) {
+				if(pictureActualWidth >= fw) {
 					pictureFrame.setWidthUndefined();
 				}
 				else {
 					pictureFrame.setWidth("100%");
 				}
 				
-				if(pictureHeight >= fh) {
+				if(pictureActualHeight >= fh) {
 					pictureFrame.setHeightUndefined();
 				}
 				else {
@@ -251,29 +265,24 @@ public class ImageStage extends VerticalLayout implements ClickListener {
 			streamResource.setCacheTime(0);
 			picture = new Image(null, streamResource);
 			
-			// Create and attach extension
-//            DragSourceExtension<Image> dragSource = new DragSourceExtension<>(picture);
-//            dragSource.addDragStartListener( event -> {
-//            		System.out.println(event.getComponent().getHeight());
-//            });
-			picture.setId("mypicture");
-			JavaScript.getCurrent().addFunction("myGetPictureSize", new JavaScriptFunction() {
-
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void call(JsonArray arguments) {
-					pictureWidth = arguments.getNumber(0);
-					pictureHeight = arguments.getNumber(1);
-				}
-			});
-			JavaScript.getCurrent().execute("myGetPictureSize(document.getElementById('" + picture.getId() + "').clientWidth,document.getElementById('" + picture.getId() + "').clientHeight);");
+			if(pictureSizes.get(document.getDocumentUniqueId()) == null) {
+				// 获取图像实际大小
+				InputStream is = fileObj.getContent().getInputStream();
+			    java.awt.Image img = ImageIO.read(is);
+			    pictureSizes.put(document.getDocumentUniqueId(), new int[] {img.getWidth(null), img.getHeight(null)});
+			}
 			
+			int[] size = pictureSizes.get(document.getDocumentUniqueId());
+		    pictureActualWidth = size[0];
+		    pictureActualHeight = size[1];
+ 
 		} catch (FileException e) {
 			Notifications.warning(e.getMessage());
+		} catch (FileSystemException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -303,6 +312,7 @@ public class ImageStage extends VerticalLayout implements ClickListener {
 	private Button left = new Button();
 	private Button right = new Button();
 	private ImageViewIF imgView;
-	private double pictureWidth = 0;
-	private double pictureHeight = 1;
+	private double pictureActualWidth = 0;
+	private double pictureActualHeight = 1;
+	private Map<Integer, int[]> pictureSizes = new HashMap<Integer, int[]>();//key-documentId, value-picture width and height
 }

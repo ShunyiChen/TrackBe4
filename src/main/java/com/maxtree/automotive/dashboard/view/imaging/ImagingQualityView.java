@@ -262,7 +262,13 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
             removeMessage = new Callback() {
 				@Override
 				public void onSuccessful() {
-					new TB4MessagingSystem().deleteMessage(messageUniqueId,loggedInUser.getUserUniqueId());
+					String openWith = matedataMap.get("openwith");
+					// 如果发的是print和transaction打开方式，则有权彻底删除Messages表,因为一个消息只发一个人，即接收人可以永久删除message
+					int deleteType = TB4MessagingSystem.ONLYDELETERECIPIENT;
+					if(openWith.equals(Openwith.PRINT) || openWith.equals(Openwith.TRANSACTION)) {
+						deleteType = TB4MessagingSystem.PERMANENTLYDELETE;
+					}
+					new TB4MessagingSystem().deleteMessage(messageUniqueId, loggedInUser.getUserUniqueId(), deleteType);
 				}
             };
         }

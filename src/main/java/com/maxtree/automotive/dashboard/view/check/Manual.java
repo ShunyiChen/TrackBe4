@@ -263,22 +263,27 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
         	leftTree.select(item);
         });
         leftTree.addSelectionListener(e->{
-        	if(e.getFirstSelectedItem().get().getThumbnail() == null) {
-        		imgStage.clean();
-				// Set the position of the splitter as percentage
-		        rightSplit.setSplitPosition(100, Unit.PERCENTAGE);
+        	
+        	if(e.getFirstSelectedItem().isPresent()) {
+        		if(e.getFirstSelectedItem().get().getThumbnail() == null) {
+            		imgStage.clean();
+    				// Set the position of the splitter as percentage
+    		        rightSplit.setSplitPosition(100, Unit.PERCENTAGE);
+            	}
+            	else if (e.getFirstSelectedItem().get().getAlias().equals("拓印膜")) {
+    				selectedNode = e.getFirstSelectedItem().get();
+    				imgStage.display(site, selectedNode);
+    				// Set the position of the splitter as percentage
+    		        rightSplit.setSplitPosition(75, Unit.PERCENTAGE);
+            	} else {
+            		selectedNode = e.getFirstSelectedItem().get();
+    				imgStage.display(site, selectedNode);
+    				// Set the position of the splitter as percentage
+    		        rightSplit.setSplitPosition(100, Unit.PERCENTAGE);
+            	}
         	}
-        	else if (e.getFirstSelectedItem().get().getAlias().equals("拓印膜")) {
-				selectedNode = e.getFirstSelectedItem().get();
-				imgStage.display(site, selectedNode);
-				// Set the position of the splitter as percentage
-		        rightSplit.setSplitPosition(75, Unit.PERCENTAGE);
-        	} else {
-        		selectedNode = e.getFirstSelectedItem().get();
-				imgStage.display(site, selectedNode);
-				// Set the position of the splitter as percentage
-		        rightSplit.setSplitPosition(100, Unit.PERCENTAGE);
-        	}
+        	
+        	
         });
         
         com.vaadin.contextmenu.ContextMenu menu2 = new com.vaadin.contextmenu.ContextMenu(leftTree, true);
@@ -304,6 +309,12 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 		main.setSplitPosition(25, Unit.PERCENTAGE);
 		main.setFirstComponent(leftTree);
 		main.setSecondComponent(rightSplit);
+		main.addSplitPositionChangeListener(e->{
+			
+			
+		});
+		
+		
 		scrollPane.setContent(main);
 		this.setSpacing(false);
 		this.setMargin(false);

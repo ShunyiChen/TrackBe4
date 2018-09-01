@@ -246,7 +246,13 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
             removeMessage = new Callback() {
 				@Override
 				public void onSuccessful() {
-					new TB4MessagingSystem().deleteMessage(messageUniqueId,loggedInUser.getUserUniqueId());
+					String openWith = matedataMap.get("openwith");
+					// 如果发的是print和transaction打开方式，则有权彻底删除Messages表,因为一个消息只发一个人，即接收人可以永久删除message
+					int deleteType = TB4MessagingSystem.ONLYDELETERECIPIENT;
+					if(openWith.equals(Openwith.PRINT) || openWith.equals(Openwith.TRANSACTION)) {
+						deleteType = TB4MessagingSystem.PERMANENTLYDELETE;
+					}
+					new TB4MessagingSystem().deleteMessage(messageUniqueId, loggedInUser.getUserUniqueId(), deleteType);
 				}
             };
             
@@ -802,7 +808,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 
 	@Override
 	public String vin() {
-		return vin;
+		return basicInfoPane.getVIN();//vin;
 	}
 
 	@Override
@@ -847,7 +853,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 	private Site editableSite;	//业务站点
 	private String uuid;	//UUID业务与原文关联号
 	private int batch;	//业务批次号。默认最大1000个批次，每批次最多放5000文件夹。
-	private String vin = "LGB12YEA9DY001226";	//车辆识别代码。用于分表。
+	private String vin;// = "LGB12YEA9DY001226";	//车辆识别代码。用于分表。
 	private boolean stoppedAtAnException = false;// true：异常停止 false:继续正常录入。
     private Label titleLabel;
     private Window notificationsWindow;

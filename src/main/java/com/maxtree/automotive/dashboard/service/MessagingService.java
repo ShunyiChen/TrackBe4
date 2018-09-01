@@ -252,9 +252,18 @@ public class MessagingService {
 	 * 
 	 * @param messageUniqueId
 	 */
-	public void deleteMessage(int messageUniqueId) {
+	public void markAsDeleted(int messageUniqueId) {
 		String sql = "UPDATE MESSAGES SET DELETED=? WHERE MESSAGEUNIQUEID=?";
 		jdbcTemplate.update(sql, new Object[] {1, messageUniqueId});
+	}
+	
+	/**
+	 * 
+	 * @param messageUniqueId
+	 */
+	public void permanentlyDeleteMessage(int messageUniqueId) {
+		String sql = "DELETE FROM MESSAGES WHERE MESSAGEUNIQUEID=?";
+		jdbcTemplate.update(sql, new Object[] {messageUniqueId});
 	}
 	
 	/**

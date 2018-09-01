@@ -22,8 +22,16 @@
 8.添加异常信息到log里
 9.解决录入时业务累计问题
 10.影像化质检打印中，什么业务打印什么单----注册业务需要打车辆标签和业务标签，其它业务只打业务标签，审核业务必须打审核结果单
-11.使VIN可以录入
+11.使VIN可以录入	【OK】
 12.导数据的sql语句、
 13.Embedded ftpserver
 14.添加注释
+15.添加一个配置参数选择使用哪种高拍
+16.admin界面快速检索
 
+
+/* 打包 */
+1.更改高拍html，服务URL
+2.更改SystemConfiguration.xml,属性createDBTableOnStartup设置为no
+3.更改application.properties,数据库URL
+4.上传文件改回高拍

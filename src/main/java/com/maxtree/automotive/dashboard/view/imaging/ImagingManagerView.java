@@ -250,10 +250,9 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
 					}
         		};
-//            	if(openWith.equals(Openwith.MESSAGE)) {
-//            		MessageView.open(m, callback);
-//            	}
-             	ConfirmDialog.showDialog("提示",content,callback);
+        		// 显示消息
+        		MessageView.open(m,callback);
+             	 
              });
          }
         scrollPane.setContent(listLayout);
@@ -414,7 +413,7 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 			Message message = ui.messagingService.findById(sd.getMessageUniqueId());
 			Map<String, String> matedataMap = new MessageBodyParser().json2Map(message.getMatedata());
 			String popup = matedataMap.get("popup");
-			if(popup.equals(Popup.YES)) {
+			if(popup != null && popup.equals(Popup.YES)) {
 				Callback callback = new Callback() {
 
 					@Override
@@ -427,6 +426,7 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 				};
 				ConfirmDialog.showDialog("提示",message.getContent(),callback);
 			}
+			
 		}
 	}
     

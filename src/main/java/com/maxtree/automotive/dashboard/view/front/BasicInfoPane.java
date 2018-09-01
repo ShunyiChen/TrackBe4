@@ -138,12 +138,12 @@ public class BasicInfoPane extends Panel {
 		}
 //		view.vin = "LGB12YEA9DY001226"; /// 这句话可以删除
 		// 辽BD01848
-		vinField.setValue(view.vin());
+//		vinField.setValue(view.vin());
 		// 有效性验证
-		if(StringUtils.isEmpty(view.vin())) {
-			Notifications.warning("有效性验证失败，VIN不能为空。");
-			view.stoppedAtAnException(true);
-		}
+//		if(StringUtils.isEmpty(view.vin())) {
+//			Notifications.warning("有效性验证失败，VIN不能为空。");
+//			view.stoppedAtAnException(true);
+//		}
 		
 		view.businessTypePane().setSelectorEnabled(true);
 	}

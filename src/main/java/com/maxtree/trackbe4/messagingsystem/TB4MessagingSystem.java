@@ -158,16 +158,21 @@ public class TB4MessagingSystem {
 	}
 	
 	/**
-	 * 即删除接收者又删除消息。
+	 * 删除消息
 	 * 
 	 * @param messageUniqueId
 	 * @param recipientUniqueId
+	 * @param deleteType （MARKASDELETED：删除接收者并标识Message为删除状态，PERMANENTLYDELETE:删除接收者并永久删除Message,ONLYDELETERECIPIENT:只删除接收者）
 	 */
-	public void deleteMessage(int messageUniqueId, int recipientUniqueId) {
+	public void deleteMessage(int messageUniqueId, int recipientUniqueId, int deleteType) {
 		ui.messagingService.deleteSendDetails(messageUniqueId,recipientUniqueId);
 		ui.messagingService.deleteMessageRecipient(messageUniqueId,recipientUniqueId);
-		ui.messagingService.deleteMessage(messageUniqueId);
-		
+		if (deleteType == MARKASDELETED) {
+			ui.messagingService.markAsDeleted(messageUniqueId);
+		}
+		else if(deleteType == PERMANENTLYDELETE) {
+			ui.messagingService.permanentlyDeleteMessage(messageUniqueId);
+		}
 		CacheManager.getInstance().getSendDetailsCache().refresh(recipientUniqueId);
 	}
 	
@@ -205,5 +210,8 @@ public class TB4MessagingSystem {
 	
 	// 定时发送消息
     public static Map<Integer, Timer> SCHEDULED = new HashMap<Integer, Timer>();
-	private DashboardUI ui = (DashboardUI) UI.getCurrent();
+	public static final int MARKASDELETED = 1;
+	public static final int PERMANENTLYDELETE = 2;
+	public static final int ONLYDELETERECIPIENT = 3;
+    private DashboardUI ui = (DashboardUI) UI.getCurrent();
 }
