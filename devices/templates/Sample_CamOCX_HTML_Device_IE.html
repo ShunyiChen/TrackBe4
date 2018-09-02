@@ -336,7 +336,7 @@ function Capture()
 	var files = CamSDKOCX.CaptureImage(newFile);
  	//alert(newFile);
  	
- 	
+ 	//http://10.80.29.27:8080/xxxxx/hello
  	var ret = CamSDKOCX.UpdataFileHttp(newFile,"http://localhost:8080/hello", userUniqueId);
 	//alert(ret);
 	var obj = JSON.parse(ret); 
