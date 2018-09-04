@@ -31,11 +31,14 @@
 			<td>
 				<input id="okButton" type = "button" value = "拍照" onClick="Capture()" style = "width:60; text-align:center">
 			</td>
-			 
+			 <td width="180">
+				<input type = "checkbox" name = "CurCrop" id = "CurCrop" onClick="SetCusCrop(CurCrop)"/>
+				手动裁切
+				</td>
 		 </tr>
 		  <tr height="40">
 			<td>
-				<input type="hidden" style="width:100%"  name="path" id="path" value="C:\temp" onchange="SetSaveFolder()" >
+				<input type="hidden" style="width:100%"  name="path" id="path" value="C:\\temp" onchange="SetSaveFolder()" >
 			</td>
 		</tr>
 		   
@@ -326,17 +329,22 @@ myDate.toLocaleString(); //获取日期与时间
 <!--拍照-->
 function Capture()
 {
-    var userUniqueId = "";
-	var fileext = ".jpg";//document.getElementById("filetype").value;
-	var strFolder = document.getElementById("path").value;
+	
 	var myDate = new Date();
-	var myName = userUniqueId+"_Image"+myDate.getFullYear()+(myDate.getMonth()+1)+myDate.getDate()+""+myDate.getHours()+myDate.getMinutes()+myDate.getSeconds()+myDate.getMilliseconds();
+	var ms = myDate.getMilliseconds();
+    var userUniqueId = "";
+	//var fileext = ".jpg";//document.getElementById("filetype").value;
+	//var strFolder = document.getElementById("path").value;
+	//var myDate = new Date();
+	//var myName = userUniqueId+"_Image"+myDate.getFullYear()+(myDate.getMonth()+1)+myDate.getDate()+""+myDate.getHours()+myDate.getMinutes()+myDate.getSeconds()+myDate.getMilliseconds();
 	//myDate.getTime()
-	var newFile = strFolder + "\\" + myName + fileext ;
+	//var newFile = strFolder + "\\" + myName + fileext ;
+	var newFile = "C:\\temp\\"+userUniqueId+"_JPG"+ms+".JPG";
 	var files = CamSDKOCX.CaptureImage(newFile);
  	//alert(newFile);
  	
  	//http://10.80.29.27:8080/xxxxx/hello
+ 	//var ret = CamSDKOCX.UpdataFileHttp(newFile,"http://localhost:8080/hello", userUniqueId);
  	var ret = CamSDKOCX.UpdataFileHttp(newFile,"http://localhost:8080/hello", userUniqueId);
 	//alert(ret);
 	var obj = JSON.parse(ret); 

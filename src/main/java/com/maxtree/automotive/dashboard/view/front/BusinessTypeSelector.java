@@ -350,7 +350,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 									row.removeThumbnail(thumbnail);
 								}
 							});
-							System.out.println("view="+ufq.getDictionaryCode()+"    thumbnail="+thumbnail);
+//							System.out.println("view="+ufq.getDictionaryCode()+"    thumbnail="+thumbnail);
 							view.thumbnailGrid().mapRows.get(ufq.getDictionaryCode()).addThumbnail(thumbnail);
 							ufq.setRemovable(1);
 						}

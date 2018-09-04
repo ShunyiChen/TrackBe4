@@ -22,6 +22,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
@@ -713,10 +714,40 @@ public class AdminMainView extends VerticalLayout {
         	}
         	
         });
+        
+        // 业务类型
+        HorizontalLayout row4 = new HorizontalLayout();
+        row4.setMargin(false);
+        row4.setSpacing(false);
+        row4.addStyleName("detail-hlayout");
+        row4.setWidth("100%");
+        row4.setHeight("48px");
+        Label capture = new Label("高拍仪");
+        capture.addStyleName("detail-setting-text");
+//        Image rightArrow4 = new Image(null, new ThemeResource("img/adminmenu/rightarrow.png"));
+        ComboBox<String> list = new ComboBox<String>();
+        list.setEmptySelectionAllowed(false);
+        list.setTextInputAllowed(false);
+        list.setWidth("193px");
+        list.setItems(new String[] {"无锡华通H6-1","维山VSA305FD"});
+        row4.addComponents(capture, list);
+        row4.setComponentAlignment(capture, Alignment.MIDDLE_LEFT);
+        row4.setComponentAlignment(list, Alignment.MIDDLE_RIGHT);
+//        row4.addLayoutClickListener(e -> {
+//        	
+//        	if (loginUser.isPermitted(PermissionCodes.N4)) {
+//        		showDetailPane(Commands.MANAGE_BUSINESS_TYPES);
+//            	hidePanes();
+//        	} else {
+//        		Notifications.warning("没有权限。");
+//        	}
+//        	
+//        });
          
-        vContent.addComponents(row0, row3);
+        vContent.addComponents(row0,row3,row4);
         vContent.setComponentAlignment(row0, Alignment.TOP_CENTER);
         vContent.setComponentAlignment(row3, Alignment.TOP_CENTER);
+        vContent.setComponentAlignment(row4, Alignment.TOP_CENTER);
         
         vlayoutWithTitle.addComponents(label, vContent);
         vlayoutWithTitle.setComponentAlignment(label, Alignment.TOP_LEFT);

@@ -76,9 +76,8 @@ public class ThumbnailGrid extends Panel{
 				row = (ThumbnailRow) vLayout.getComponent(index);
 				row.selected();
 				
-				int pixels = (int) (row.getHeight()*index);
+				int pixels = (int) (140*index);
 				ThumbnailGrid.this.setScrollTop(pixels);
-				
 				
 				UploadInDTO inDto = new UploadInDTO(view.loggedInUser().getUserUniqueId(), view.vin(), view.batch()+"", view.editableSite().getSiteUniqueId(),view.uuid(),row.getDataDictionary().getCode());
 				UploadFileServlet.IN_DTOs.put(view.loggedInUser().getUserUniqueId(), inDto);
@@ -103,10 +102,8 @@ public class ThumbnailGrid extends Panel{
 				}
 				row = (ThumbnailRow) vLayout.getComponent(index);
 				row.selected();
-				int pixels = (int) (row.getHeight()*index);
+				int pixels = (int) (140*index);
 				ThumbnailGrid.this.setScrollTop(pixels);
-				
-				
 				UploadInDTO inDto = new UploadInDTO(view.loggedInUser().getUserUniqueId(), view.vin(), view.batch()+"", view.editableSite().getSiteUniqueId(),view.uuid(),row.getDataDictionary().getCode());
 				UploadFileServlet.IN_DTOs.put(view.loggedInUser().getUserUniqueId(), inDto);
 //				System.out.println("down! current is "+index+"  pixels="+pixels+"  "+inDto.getDictionaryCode());
