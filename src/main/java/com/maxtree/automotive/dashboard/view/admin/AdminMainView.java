@@ -4,12 +4,14 @@ import java.util.Date;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
+import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.PermissionCodes;
 import com.maxtree.automotive.dashboard.TB4Application;
 import com.maxtree.automotive.dashboard.component.AdminMenuWindow;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.Test;
+import com.maxtree.automotive.dashboard.domain.SystemSettings;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
@@ -726,24 +728,21 @@ public class AdminMainView extends VerticalLayout {
         capture.addStyleName("detail-setting-text");
 //        Image rightArrow4 = new Image(null, new ThemeResource("img/adminmenu/rightarrow.png"));
         ComboBox<String> list = new ComboBox<String>();
+        list.addStyleName("mycombobox");
         list.setEmptySelectionAllowed(false);
         list.setTextInputAllowed(false);
         list.setWidth("193px");
+        list.setHeight("26px");
         list.setItems(new String[] {"无锡华通H6-1","维山VSA305FD"});
+        SystemSettings settings = ui.settingsService.findByKey("高拍仪");
+        list.setSelectedItem(settings.getV());
+        list.addValueChangeListener(e->{
+        	settings.setV(e.getValue());
+        	ui.settingsService.update(settings);
+        });
         row4.addComponents(capture, list);
         row4.setComponentAlignment(capture, Alignment.MIDDLE_LEFT);
         row4.setComponentAlignment(list, Alignment.MIDDLE_RIGHT);
-//        row4.addLayoutClickListener(e -> {
-//        	
-//        	if (loginUser.isPermitted(PermissionCodes.N4)) {
-//        		showDetailPane(Commands.MANAGE_BUSINESS_TYPES);
-//            	hidePanes();
-//        	} else {
-//        		Notifications.warning("没有权限。");
-//        	}
-//        	
-//        });
-         
         vContent.addComponents(row0,row3,row4);
         vContent.setComponentAlignment(row0, Alignment.TOP_CENTER);
         vContent.setComponentAlignment(row3, Alignment.TOP_CENTER);
@@ -1099,4 +1098,5 @@ public class AdminMainView extends VerticalLayout {
     private Image userAvatar = null;
     private HorizontalLayout subRow = null;
     private VerticalLayout content = new VerticalLayout();
+    private DashboardUI ui = (DashboardUI) UI.getCurrent();
 }

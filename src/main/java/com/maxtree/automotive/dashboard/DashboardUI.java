@@ -26,6 +26,7 @@ import com.maxtree.automotive.dashboard.service.PermissionCategoryService;
 import com.maxtree.automotive.dashboard.service.PermissionService;
 import com.maxtree.automotive.dashboard.service.QueueService;
 import com.maxtree.automotive.dashboard.service.RoleService;
+import com.maxtree.automotive.dashboard.service.SettingsService;
 import com.maxtree.automotive.dashboard.service.SiteService;
 import com.maxtree.automotive.dashboard.service.TenantService;
 import com.maxtree.automotive.dashboard.service.TransactionService;
@@ -101,6 +102,8 @@ public final class DashboardUI extends UI {
 	public UserEventService userEventService;
 	@Autowired
 	public ImagingService imagingService;
+	@Autowired
+	public SettingsService settingsService;
 	
 	/*
 	 * This field stores an access to the dummy backend layer. In real applications

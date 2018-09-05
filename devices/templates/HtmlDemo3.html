@@ -28,9 +28,9 @@
 		var myDate = new Date();
 		var ms = myDate.getMilliseconds();
 		var userUniqueId = "";
-        var str=captrue.bSaveJPG("C:\\temp\\",userUniqueId+"_JPG"+ms);
+        var str=captrue.bSaveJPG("C:\\temp\\",userUniqueId+"_JPG"+ms+".JPG");
  	    var str2=captrue.bUpLoadImageEx("C:\\temp\\"+userUniqueId+"_JPG"+ms+".JPG", "10.80.29.27", 8888, "/dlclms/hello",false,false);
- 	    //http://10.80.29.27:8080/xxxxx/hello
+ 	    var str3=captrue.bDeleteFileForever("C:\\temp\\"+userUniqueId+"_JPG"+ms+".JPG");
 	}
 	
 	function UpLoadJPG_onclick()

@@ -294,7 +294,11 @@
     
     .setting-layout-shadow{
         background-color: white;
-        @include box-shadow(0 2px 7px 1px rgba(0,0,0,.5));
+//        @include box-shadow(0 2px 7px 1px rgba(0,0,0,.5));
+-webkit-box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
+-moz-box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
+box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
+    
     }
     /// In ManageAdmin.java
     .image-cursor {
@@ -312,6 +316,19 @@
         border-spacing: 2px;
         padding: 3px;
         margin: 3px;
+    }
+    
+    .mycombobox {
+        outline: none;
+        webkit-box-shadow: none;
+        box-shadow: none;
+        font-size: 13px;
+        color: #666666;
+        border-radius: 0px;
+        border-color: transparent;
+        border-bottom-color : #666666;
+        padding: 0px;
+        margin-top: -3px;
     }
     
     
