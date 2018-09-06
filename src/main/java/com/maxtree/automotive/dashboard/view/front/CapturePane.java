@@ -21,6 +21,7 @@ import org.yaml.snakeyaml.reader.UnicodeReader;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
+import com.maxtree.automotive.dashboard.domain.SystemSettings;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
@@ -80,6 +81,8 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 //		upload.setImmediateMode(true);
 //		upload.addSucceededListener(this);
 //		this.setContent(upload);
+		
+		settings = ui.settingsService.findByKey("高拍仪");
 	}
 	
 	/**
@@ -126,9 +129,14 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 		// 读取原来的html模板
 		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		String everything = "";
-//		File template = new File("devices/templates/HtmlDemo3.html");
-		File template = new File("devices/templates/Sample_CamOCX_HTML_Device_IE.html");
-//		File template = new File("devices/templates/TempHtml.html");
+		File template;
+		if(settings.getV().equals("无锡华通H6-1")) {
+			template = new File("devices/templates/HtmlDemo3.html");//无锡华通H6-1
+		}
+		else {
+			template = new File("devices/templates/Sample_CamOCX_HTML_Device_IE.html");//维山VSA305FD
+		}
+//		File template = new File("devices/templates/TempHtml.html"); // 选择本地图片上传
 		FileInputStream in = new FileInputStream(template);
 		BufferedReader br = new BufferedReader(new UnicodeReader(in));
 		StringBuilder sb = new StringBuilder();
@@ -137,7 +145,6 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 			if (line.contains("var userUniqueId = \"\";")) {
 				line = line.replace("var userUniqueId = \"\";", "var userUniqueId = \""+user.getUserUniqueId()+"\";");
 			}
-			
 			// System.out.println(line);
 			sb.append(line);
 			sb.append(System.lineSeparator());
@@ -240,4 +247,5 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 	private Site site = null;
 	private String targetPath = null;
 	private UploadInDTO p = null;
+	private SystemSettings settings;
 }
