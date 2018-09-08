@@ -395,12 +395,12 @@ public class AdminMainView extends VerticalLayout {
         row3.setComponentAlignment(manageServers, Alignment.MIDDLE_LEFT);
         row3.setComponentAlignment(rightArrow3, Alignment.MIDDLE_RIGHT);
         row3.addLayoutClickListener(e -> {
-//        	if (loginUser.isPermitted(PermissionCodes.K4)) {
-//        		showDetailPane(Commands.MANAGE_SITES);
-//            	hidePanes();
-//        	} else {
-//        		Notifications.warning("没有权限。");
-//        	}
+        	if (loginUser.isPermitted(PermissionCodes.Q1)) {
+        		showDetailPane(Commands.MANAGE_SERVERS);
+            	hidePanes();
+        	} else {
+        		Notifications.warning("没有权限。");
+        	}
         });
         
         vContent.addComponents(row1, row2, row3);
@@ -770,7 +770,7 @@ public class AdminMainView extends VerticalLayout {
  
 		// 白色方块面板
         VerticalLayout vContent = new VerticalLayout();
-        vContent.setMargin(false);
+        vContent.setMargin(false); 
         vContent.setSpacing(false);
         vContent.setWidth("100%");
         vContent.setHeight("150px");
@@ -999,6 +999,11 @@ public class AdminMainView extends VerticalLayout {
 			content.addComponent(manageSites);
 			content.setComponentAlignment(manageSites, Alignment.TOP_CENTER);
 		}
+		else if (command == Commands.MANAGE_SERVERS) {
+			manageServers = new ManageServers(this);	// 管理服务器
+			content.addComponent(manageServers);
+			content.setComponentAlignment(manageServers, Alignment.TOP_CENTER);
+		}
 		else if (command == Commands.BROADCAST_MESSAGE) {
 			manageBroadCast = new ManageBroadCast(this);
 			content.addComponent(manageBroadCast);
@@ -1067,6 +1072,7 @@ public class AdminMainView extends VerticalLayout {
 	private ManageOtherUsers manageOtherUsers;// 管理其他用户
  	private ManageBusinessTypes manageBusinessType;//业务类型管理
 	private ManageSites manageSites;// 管理站点
+	private ManageServers manageServers;//管理服务器
 	private ManageRoles manageRoles;// 管理角色
 	private ManagePermissions managePermissions;// 管理权限
 	private ManageDataDictionary manageDataDictionary;

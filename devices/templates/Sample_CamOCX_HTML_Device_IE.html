@@ -343,8 +343,8 @@ function Capture()
 	var files = CamSDKOCX.CaptureImage(newFile);
  	//alert(newFile);
  	
- 	var ret = CamSDKOCX.UpdataFileHttp(newFile,"http://localhost:8080/hello", userUniqueId);
- 	//var ret = CamSDKOCX.UpdataFileHttp(newFile,"http://10.80.29.27:8888/dlclms/hello", userUniqueId);
+ 	//var ret = CamSDKOCX.UpdataFileHttp(newFile,"http://localhost:8080/hello", userUniqueId);
+ 	var ret = CamSDKOCX.UpdataFileHttp(newFile,"http://10.80.29.27:8888/dlclms/hello", userUniqueId);
 	//删除
 	var rs = CamSDKOCX.DeleteFile(newFile);
 	var obj = JSON.parse(ret); 

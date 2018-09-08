@@ -20,4 +20,5 @@ public class Commands {
 	public static int MANAGE_BUSINESS_TYPES = 18;// 管理业务类型
 	public static int ABOUT_TB4 = 19;// 关于TB4
 	public static int MANAGE_STOREHOUSES = 20;// 管理库房
+	public static int MANAGE_SERVERS = 14; // 管理服务器
 }
