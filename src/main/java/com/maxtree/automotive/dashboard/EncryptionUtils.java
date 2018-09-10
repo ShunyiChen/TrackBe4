@@ -16,8 +16,8 @@ public class EncryptionUtils {
 		char[] chs = normalStr.toCharArray();
 		StringBuilder encryptedStr = new StringBuilder();
 		for (char ch : chs) {
-//			encryptedStr.append(ch+=1);
-			encryptedStr.append(ch);
+			encryptedStr.append(ch+=12);
+//			encryptedStr.append(ch);
 		}
 		return encryptedStr.toString();
 	}
@@ -31,8 +31,8 @@ public class EncryptionUtils {
 		char[] chs = encryptedStr.toCharArray();
 		StringBuilder decryptedStr = new StringBuilder();
 		for (char ch : chs) {
-//			decryptedStr.append(ch-=1);
-			decryptedStr.append(ch);
+			decryptedStr.append(ch-=12);
+//			decryptedStr.append(ch);
 		}
 		return decryptedStr.toString();
 	}
