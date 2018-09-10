@@ -36,11 +36,10 @@ public class UserEventService {
 	 * @return
 	 */
 	private int getTableIndex(String userName) {
-		String encode = Base64.encodeBytes(userName.getBytes());
-    	int sum = 0;
-    	for(char c : encode.toCharArray()) {
-    		sum+=c;
-    	}
+		int sum = 0;
+		for (char c : userName.toCharArray()) {
+			sum += c;
+		}
     	return sum % 256;
 	}
 }

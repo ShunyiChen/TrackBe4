@@ -80,7 +80,10 @@ public class TransitionService {
 	 * @return
 	 */
 	private int getTableIndex(String vin) {
-		int num = Integer.parseInt(vin.substring(vin.length() - 4));
-		return num % 256;
+		int sum = 0;
+		for (char c : vin.toCharArray()) {
+			sum += c;
+		}
+		return sum % 256;
 	}
 }
