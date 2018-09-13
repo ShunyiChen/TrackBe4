@@ -62,7 +62,6 @@ public class LoginView extends VerticalLayout {
         fields.addStyleName("fields");
 
         final TextField username = new TextField("用户名");
-//        username.setIcon(FontAwesome.USER);
         username.setIcon(VaadinIcons.USER);
         username.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
         username.setValue("system");
@@ -85,8 +84,6 @@ public class LoginView extends VerticalLayout {
             public void buttonClick(final ClickEvent event) {
                 DashboardEventBus.post(new DashboardEvent.UserLoginRequestedEvent(username
                         .getValue(), password.getValue()));
-//            	  JavaScript.getCurrent().execute("alert('Hello world');");
-              
             }
         });
         return fields;

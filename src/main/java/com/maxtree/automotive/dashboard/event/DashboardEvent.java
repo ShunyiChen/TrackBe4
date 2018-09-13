@@ -1,7 +1,5 @@
 package com.maxtree.automotive.dashboard.event;
 
-import java.util.Collection;
-
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 
 

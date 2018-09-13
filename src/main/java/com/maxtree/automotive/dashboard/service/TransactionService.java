@@ -213,8 +213,8 @@ public class TransactionService {
 	 */
 	public int getCount(String vin, String businessCode) {
 		int index = getTableIndex(vin);
-		String sql = "SELECT COUNT(TRANSACTIONUNIQUEID) FROM TRANSACTION_"+index+" WHERE BUSINESSCODE=?";
-		int count = jdbcTemplate.queryForObject( sql, new Object[] {businessCode}, Integer.class);
+		String sql = "SELECT COUNT(TRANSACTIONUNIQUEID) FROM TRANSACTION_"+index+" WHERE BUSINESSCODE=? AND VIN=?";
+		int count = jdbcTemplate.queryForObject( sql, new Object[] {businessCode,vin}, Integer.class);
 		return count;
 	}
 }

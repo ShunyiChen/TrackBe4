@@ -7,6 +7,7 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.PermissionCodes;
 import com.maxtree.automotive.dashboard.TB4Application;
 import com.maxtree.automotive.dashboard.component.Box;
+import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.User;
@@ -234,12 +235,23 @@ public class ManageCommunityGrid extends VerticalLayout {
 						
 						User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 						if (loginUser.isPermitted(PermissionCodes.G3)) {
-							try {
-								ui.communityService.delete(community.getCommunityUniqueId());
-							} catch (DataException e) {
-								Notifications.warning("无法删除正在引用的社区。");
-							}
-							refreshTable();
+							
+							Callback event = new Callback() {
+
+								@Override
+								public void onSuccessful() {
+									try {
+										ui.communityService.delete(community.getCommunityUniqueId());
+									} catch (DataException e) {
+										e.printStackTrace();
+									}
+									refreshTable();
+								}
+							};
+							MessageBox.showMessage("提示", "请确定是否删除该社区。", MessageBox.WARNING, event, "删除");
+							
+						} else {
+							Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
 						}
 					}
 				});

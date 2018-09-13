@@ -180,6 +180,10 @@ public final class DashboardUI extends UI {
 
 	@Subscribe
 	public void userLoginRequested(final DashboardEvent.UserLoginRequestedEvent event) {
+		
+		WaitingPopupView d = new WaitingPopupView();
+		d.show();
+		
 		if (StringUtils.isEmpty(event.getUserName()) || StringUtils.isEmpty(event.getPassword())) {
 			log.info("Incorrect username or password.");
 			smoothNotification("用户名或密码不能为空", "请重新输入用户名和密码。");

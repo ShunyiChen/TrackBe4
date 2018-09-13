@@ -100,17 +100,22 @@ private static final Logger log = LoggerFactory.getLogger(CommunityService.class
 			jdbcTemplate.update(sql2, new Object[] {u.getCommunityUniqueId(), u.getUserUniqueId()});
 		}
 		// 更新机构
-		String sql3 = "SELECT * FROM COMPANIES WHERE COMMUNITYUNIQUEID=?";
-		List<Company> companies = jdbcTemplate.query(sql3, new Object[] {communityUniqueId}, new BeanPropertyRowMapper<Company>(Company.class));
+		String sql2 = "SELECT * FROM COMPANIES WHERE COMMUNITYUNIQUEID=?";
+		List<Company> companies = jdbcTemplate.query(sql2, new Object[] {communityUniqueId}, new BeanPropertyRowMapper<Company>(Company.class));
 		for (Company c : companies) {
 			c.setCommunityUniqueId(0);
-			String sql2 = "UPDATE COMPANIES SET COMMUNITYUNIQUEID=? WHERE COMPANYUNIQUEID=?";
+			sql2 = "UPDATE COMPANIES SET COMMUNITYUNIQUEID=? WHERE COMPANYUNIQUEID=?";
 			jdbcTemplate.update(sql2, new Object[] {c.getCommunityUniqueId(), c.getCompanyUniqueId()});
 		}
 		
-		String sql4 = "DELETE FROM COMMUNITIES WHERE COMMUNITYUNIQUEID = ?";
-	 	int opt = jdbcTemplate.update(sql4, new Object[] {communityUniqueId});
-	 	log.info("Deleted row "+opt);
+		String sql3 = "DELETE FROM COMMUNITYTENANTS WHERE COMMUNITYUNIQUEID=?";
+		jdbcTemplate.update(sql3, new Object[] {communityUniqueId});
+		
+		String sql4 = "DELETE FROM COMMUNITYSITES WHERE COMMUNITYUNIQUEID=?";
+		jdbcTemplate.update(sql4, new Object[] {communityUniqueId});
+		
+		String sql5 = "DELETE FROM COMMUNITIES WHERE COMMUNITYUNIQUEID=?";
+		jdbcTemplate.update(sql5, new Object[] {communityUniqueId});
 	}
 	
 	/**
