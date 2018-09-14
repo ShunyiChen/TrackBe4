@@ -54,8 +54,13 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.Position;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.server.SpringVaadinServlet;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.PopupView;
+import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
@@ -180,10 +185,6 @@ public final class DashboardUI extends UI {
 
 	@Subscribe
 	public void userLoginRequested(final DashboardEvent.UserLoginRequestedEvent event) {
-		
-		WaitingPopupView d = new WaitingPopupView();
-		d.show();
-		
 		if (StringUtils.isEmpty(event.getUserName()) || StringUtils.isEmpty(event.getPassword())) {
 			log.info("Incorrect username or password.");
 			smoothNotification("用户名或密码不能为空", "请重新输入用户名和密码。");
