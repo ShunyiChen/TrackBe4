@@ -4,7 +4,10 @@ import java.util.List;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Notifications;
+import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Transaction;
+import com.maxtree.automotive.dashboard.domain.User;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -22,6 +25,8 @@ public class UpGrid extends VerticalLayout {
 	}
 	
 	private void initComponents() {
+		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
 		this.setSpacing(false);
 		this.setMargin(false);
 		this.setSizeFull();
@@ -64,7 +69,7 @@ public class UpGrid extends VerticalLayout {
 	
 	public void execute() {
 		if (keyword.length() == 7 || keyword.length() == 8) {
-			 List<Transaction> rs = ui.transactionService.findAll(-1, 0, keyword);
+			 List<Transaction> rs = ui.transactionService.findAll(-1, 0, keyword, community.getCommunityName());
 			 grid.setItems(rs);
 		} else {
 			Notifications.warning("关键字长度应该在7~8位。");
@@ -75,6 +80,8 @@ public class UpGrid extends VerticalLayout {
 		grid.clearSortOrder();
 	}
 	
+	private Community community;
+	private User loggedInUser;
 	private String keyword;
 	private List<Transaction> allData;
 	private Grid<Transaction> grid = new Grid<>();

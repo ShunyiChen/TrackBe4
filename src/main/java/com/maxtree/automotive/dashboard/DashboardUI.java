@@ -28,7 +28,6 @@ import com.maxtree.automotive.dashboard.service.QueueService;
 import com.maxtree.automotive.dashboard.service.RoleService;
 import com.maxtree.automotive.dashboard.service.SettingsService;
 import com.maxtree.automotive.dashboard.service.SiteService;
-import com.maxtree.automotive.dashboard.service.TenantService;
 import com.maxtree.automotive.dashboard.service.TransactionService;
 import com.maxtree.automotive.dashboard.service.TransitionService;
 import com.maxtree.automotive.dashboard.service.UserEventService;
@@ -97,8 +96,6 @@ public final class DashboardUI extends UI {
 	public DataItemService dataItemService;
 	@Autowired
 	public MessagingService messagingService;
-	@Autowired
-	public TenantService tenantService;
 	@Autowired
 	public FrameNumberService frameService;
 	@Autowired

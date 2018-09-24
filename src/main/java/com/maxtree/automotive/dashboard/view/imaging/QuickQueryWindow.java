@@ -11,11 +11,14 @@ import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.Yaml;
+import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Transaction;
+import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -42,6 +45,8 @@ public class QuickQueryWindow extends Window {
 	 * 
 	 */
 	public QuickQueryWindow() {
+		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
 		this.setWidth("700px");
 		this.setHeight("450px");
 		this.setModal(true);
@@ -121,7 +126,7 @@ public class QuickQueryWindow extends Window {
 	}
 	
 	private void doSearch() {
-		List<Transaction> rs = ui.transactionService.findAll(20, 0, plateField.getValue());
+		List<Transaction> rs = ui.transactionService.findAll(20, 0, plateField.getValue(), community.getCommunityName());
 		setPerPageData(rs);
 	}
 	
@@ -155,6 +160,8 @@ public class QuickQueryWindow extends Window {
         w.center();
     }
 	
+	private Community community;
+	private User loggedInUser;
 	private ResultCallback callback;
 	private Grid<Transaction> grid = new Grid<>();
 	private TextField plateField = new TextField();

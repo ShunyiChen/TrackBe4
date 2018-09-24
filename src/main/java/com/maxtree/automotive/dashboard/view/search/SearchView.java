@@ -1,11 +1,13 @@
 package com.maxtree.automotive.dashboard.view.search;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Callback;
@@ -22,6 +24,7 @@ import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
+import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
@@ -56,6 +59,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -80,6 +84,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 	private static final Logger log = LoggerFactory.getLogger(SearchView.class);
 	
 	public SearchView() {
+		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
         addStyleName(ValoTheme.PANEL_BORDERLESS);
         setSizeFull();
         DashboardEventBus.register(this);
@@ -94,7 +99,6 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         root.addComponent(buildSparklines());
         root.addComponent(grid);
         root.setExpandRatio(grid, 1.0f);
-        loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
         
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
@@ -150,6 +154,11 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
 		ui.setPollInterval(sc.getInterval());
 		ui.addPollListener(new UIEvents.PollListener() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void poll(UIEvents.PollEvent event) {
 				updateUnreadCount();
@@ -173,18 +182,43 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         titleLabel.setSizeUndefined();
         titleLabel.addStyleName(ValoTheme.LABEL_H1);
         titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
-        
         HorizontalLayout searchbar = new HorizontalLayout();
         searchbar.setSpacing(false);
         searchbar.setMargin(false);
         searchbar.setWidthUndefined();
+        box.setEmptySelectionAllowed(false);
+        Community current = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
+        List<Community> list = ui.communityService.findAll();
+        List<Community> items = new ArrayList<Community>();
+        for(Community c : list) {
+        	if(current.getGroupId() == c.getGroupId()
+        			&& current.getLevel() <= c.getLevel()) {
+        		items.add(c);
+        	}
+        	if(current.getCommunityUniqueId() == c.getCommunityUniqueId()) {
+        		current = c;
+        	}
+        }
+        box.setItems(items);
+        box.setSelectedItem(current);
         TextField searchField = new TextField();
         searchField.setWidth("400px");
         searchField.setPlaceholder("请输入车牌号\\车架号\\业务流水号");
         ShortcutListener enter = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER,
 				null) {
+			/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
 			@Override
 			public void handleAction(Object sender, Object target) {
+				String communityName = box.getSelectedItem().get().getCommunityName();
+				if(StringUtils.isEmpty(communityName)) {
+					Notifications.warning("该用户不属于任何社区。");
+					return;
+				}
+				grid.setCommunityName(communityName);
 				grid.setKeyword(searchField.getValue());
 				grid.execute();
 			}
@@ -192,14 +226,18 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         searchField.addShortcutListener(enter);
         Button searchButton = new Button();
         searchButton.addClickListener(e->{
+        	String communityName = box.getSelectedItem().get().getCommunityName();
+			if(StringUtils.isEmpty(communityName)) {
+				Notifications.warning("该用户不属于任何社区。");
+				return;
+			}
+			grid.setCommunityName(communityName);
         	grid.setKeyword(searchField.getValue());
         	grid.execute();
         });
         searchButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         searchButton.setIcon(VaadinIcons.SEARCH);
-        searchbar.addComponents(searchField, searchButton);
-        
-        
+        searchbar.addComponents(box,searchField, searchButton);
         header.addComponents(titleLabel,searchbar);
         buildNotificationsButton();
         HorizontalLayout tools = new HorizontalLayout(notificationsButton);
@@ -452,6 +490,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     	return transaction;
     }
     
+    private ComboBox<Community> box = new ComboBox<Community>();// community box
     private MessageBodyParser jsonHelper = new MessageBodyParser();
     private User loggedInUser;	//登录用户
     private Label titleLabel;

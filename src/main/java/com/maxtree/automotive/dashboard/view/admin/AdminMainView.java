@@ -337,28 +337,6 @@ public class AdminMainView extends VerticalLayout {
         vContent.addStyleName("setting-layout-shadow");
         vContent.setWidth("100%");
         vContent.setHeightUndefined();
-        // 租户
-        HorizontalLayout row1 = new HorizontalLayout();
-        row1.setMargin(false);
-        row1.setSpacing(false);
-        row1.addStyleName("detail-hlayout");
-        row1.setWidth("100%");
-        row1.setHeight("48px");
-        Label broadcastMessage = new Label("管理租户");
-        broadcastMessage.addStyleName("detail-setting-text");
-        Image rightArrow = new Image(null, new ThemeResource("img/adminmenu/rightarrow.png"));
-        row1.addComponents(broadcastMessage, rightArrow);
-        row1.setComponentAlignment(broadcastMessage, Alignment.MIDDLE_LEFT);
-        row1.setComponentAlignment(rightArrow, Alignment.MIDDLE_RIGHT);
-        row1.addLayoutClickListener(e -> {
-        	if (loginUser.isPermitted(PermissionCodes.J4)) {
-        		showDetailPane(Commands.MANAGE_TENANTS);
-            	hidePanes();
-        	} else {
-        		Notifications.warning("没有权限。");
-        	}
-        	
-        });
         // 站点
         HorizontalLayout row2 = new HorizontalLayout();
         row2.setMargin(false);
@@ -403,8 +381,7 @@ public class AdminMainView extends VerticalLayout {
         	}
         });
         
-        vContent.addComponents(row1, row2, row3);
-        vContent.setComponentAlignment(row1, Alignment.TOP_CENTER);
+        vContent.addComponents(row2, row3);
         vContent.setComponentAlignment(row2, Alignment.TOP_CENTER);
         vContent.setComponentAlignment(row3, Alignment.TOP_CENTER);
         
@@ -989,11 +966,6 @@ public class AdminMainView extends VerticalLayout {
 			content.addComponent(manageCommunityInvitations);
 			content.setComponentAlignment(manageCommunityInvitations, Alignment.TOP_CENTER);
 		}
-		else if (command == Commands.MANAGE_TENANTS) {
-			manageTenants = new ManageTenants(this);
-			content.addComponent(manageTenants);
-			content.setComponentAlignment(manageTenants, Alignment.TOP_CENTER);
-		}
 		else if (command == Commands.MANAGE_SITES) {
 			manageSites = new ManageSites(this);	// 管理站点
 			content.addComponent(manageSites);
@@ -1081,7 +1053,6 @@ public class AdminMainView extends VerticalLayout {
 	private ManageApprovals manageApprovals;// 等待审批
 	private ManageUserInvitations manageUserInvitations;// 邀请用户
 	private ManageCommunityInvitations manageCommunityInvitations;//社区邀请
-	private ManageTenants manageTenants;
 	private ManageBroadCast manageBroadCast;
 	private AboutTB4 aboutTB4;
 	

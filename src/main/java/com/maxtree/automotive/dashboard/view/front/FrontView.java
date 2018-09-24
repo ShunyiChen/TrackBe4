@@ -521,9 +521,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	Address addr = Yaml.readAddress();
     	editableTrans = new Transaction();
-    	editableTrans.setBarcode("123");
+    	editableTrans.setBarcode("");
     	editableTrans.setPlateType("");
-    	editableTrans.setPlateNumber("辽BD01848");//(addr.getLicenseplate());
+    	editableTrans.setPlateNumber(addr.getLicenseplate());
     	editableTrans.setVin("");
     	basicInfoPane.transaction2Fields(editableTrans);
     	

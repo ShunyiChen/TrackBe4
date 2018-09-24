@@ -10,11 +10,14 @@ import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
+import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Transaction;
+import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
@@ -48,6 +51,8 @@ public class SearchAndPrintWindow extends Window {
 	}
 	
 	private void initComponents() {
+		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		final Community community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
 		VerticalLayout vlayout = new VerticalLayout();
         vlayout.setWidth("100%");
         vlayout.setHeightUndefined();
@@ -63,7 +68,8 @@ public class SearchAndPrintWindow extends Window {
         btnSearch.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         btnSearch.setDescription("按照条形码查找");
         btnSearch.addClickListener(e -> {
-        	List<Transaction> items = ui.transactionService.findAll(-1, 0, barCodeField.getValue());
+        	
+        	List<Transaction> items = ui.transactionService.findAll(-1, 0, barCodeField.getValue(), community.getCommunityName());
         	grid.setItems(items);
         });
         ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER,
@@ -75,7 +81,7 @@ public class SearchAndPrintWindow extends Window {
 
 			@Override
 			public void handleAction(Object sender, Object target) {
-				List<Transaction> items = ui.transactionService.findAll(-1, 0,barCodeField.getValue());
+				List<Transaction> items = ui.transactionService.findAll(-1, 0,barCodeField.getValue(), community.getCommunityName());
 	        	grid.setItems(items);
 			}
 		};
@@ -168,6 +174,7 @@ public class SearchAndPrintWindow extends Window {
         w.center();
     }
 	
+	private User loggedInUser;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private Grid<Transaction> grid = new Grid<>(Transaction.class);
 	private Button btnSearch = new Button();

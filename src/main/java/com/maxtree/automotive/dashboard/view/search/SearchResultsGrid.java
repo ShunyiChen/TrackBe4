@@ -62,6 +62,14 @@ public class SearchResultsGrid extends VerticalLayout {
     	grid.setItems(perPageData);
     }
 	
+	public String getCommunityName() {
+		return communityName;
+	}
+
+	public void setCommunityName(String communityName) {
+		this.communityName = communityName;
+	}
+
 	public String getKeyword() {
 		return keyword;
 	}
@@ -74,6 +82,7 @@ public class SearchResultsGrid extends VerticalLayout {
 		controls.execute();
 	}
 	
+	private String communityName;
 	private String keyword;
 	private List<Transaction> allData;
 	private Grid<Transaction> grid = new Grid<>();

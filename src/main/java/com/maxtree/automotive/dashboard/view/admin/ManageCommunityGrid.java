@@ -162,34 +162,12 @@ public class ManageCommunityGrid extends VerticalLayout {
 			});
 			menu.addSeparator();
 			
-			menu.addItem("分配租户", new Command() {
-				@Override
-				public void menuSelected(MenuItem selectedItem) {
-					
-					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-					if (loginUser.isPermitted(PermissionCodes.G6)) {
-						Callback callback = new Callback() {
-
-							@Override
-							public void onSuccessful() {
-								refreshTable();
-							}
-						};
-						AssigningTenantsToCommunityWindow.open(community, callback);
-					}
-					else {
-		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
-		        	}
-					
-				}
-			});
-			
 			menu.addItem("分配站点", new Command() {
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
 					
 					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-					if (loginUser.isPermitted(PermissionCodes.G7)) {
+					if (loginUser.isPermitted(PermissionCodes.G6)) {
 						Callback callback = new Callback() {
 
 							@Override

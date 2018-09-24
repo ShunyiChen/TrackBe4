@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.Site;
-import com.maxtree.automotive.dashboard.domain.Tenant;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.DataException;
 
@@ -175,25 +174,4 @@ private static final Logger log = LoggerFactory.getLogger(CommunityService.class
 		return results;
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
-	public List<Tenant> findAssignedTenants(int communityUniqueId) {
-		String sql = "SELECT B.* FROM COMMUNITYTENANTS AS A LEFT JOIN TENANTS AS B ON A.TENANTUNIQUEID=B.TENANTUNIQUEID WHERE A.COMMUNITYUNIQUEID=? ORDER BY A.TENANTUNIQUEID";
-		List<Tenant> results = jdbcTemplate.query(sql, new Object[] { communityUniqueId },
-				new BeanPropertyRowMapper<Tenant>(Tenant.class));
-		return results;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public List<Tenant> findUnassignedTenants(int communityUniqueId) {
-		String sql = "SELECT * FROM TENANTS WHERE TENANTUNIQUEID NOT IN (SELECT TENANTUNIQUEID FROM COMMUNITYTENANTS WHERE COMMUNITYUNIQUEID<>?)";
-		List<Tenant> results = jdbcTemplate.query(sql, new Object[] { communityUniqueId }, new BeanPropertyRowMapper<Tenant>(Tenant.class));
-		return results;
-	}
-
 }

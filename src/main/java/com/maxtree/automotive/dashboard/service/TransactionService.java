@@ -183,12 +183,15 @@ public class TransactionService {
 	 * @param limit
 	 * @param offset
 	 * @param keyword
+	 * @param communityName
 	 * @return
 	 */
-	public List<Transaction> findAll(int limit, int offset, String keyword) {
+	public List<Transaction> findAll(int limit, int offset, String keyword, String communityName) {
 		keyword = "%"+keyword+"%";
-		String sql = "SELECT * FROM CREATE_SEARCH(?,?,?)";
-		List<Transaction> results = jdbcTemplate.query(sql, new Object[] {limit, offset, keyword}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
+//		String sql = "SELECT * FROM \""+communityName+"\".CREATE_SEARCH(?,?,?)";
+		String sql = "SELECT * FROM CREATE_SEARCH(?,?,?,?)";
+//		System.out.println(sql+"  "+limit +"  "+ offset +"  "+ keyword +"  "+communityName);
+		List<Transaction> results = jdbcTemplate.query(sql, new Object[] {limit, offset, keyword, communityName}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
 		return results;
 	}
 	
@@ -196,12 +199,14 @@ public class TransactionService {
 	 * 
 	 * @param limit
 	 * @param keyword
+	 * @param communityName
 	 * @return
 	 */
-	public int findPagingCount(int limit, String keyword) {
+	public int findPagingCount(int limit, String keyword, String communityName) {
 		keyword = "%"+keyword+"%";
-		String sql = "SELECT * FROM CREATE_PAGINGCOUNT2(?,?)";
-		int count = jdbcTemplate.queryForObject( sql, new Object[] {limit, keyword}, Integer.class);
+//		String sql = "SELECT * FROM \""+communityName+"\".CREATE_PAGINGCOUNT2(?,?)";
+		String sql = "SELECT * FROM  CREATE_PAGINGCOUNT2(?,?,?)";
+		int count = jdbcTemplate.queryForObject( sql, new Object[] {limit, keyword, communityName}, Integer.class);
 		return count;
 	}
 	
