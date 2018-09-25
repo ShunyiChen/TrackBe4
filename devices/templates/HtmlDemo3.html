@@ -28,7 +28,8 @@
 		var myDate = new Date();
 		var ms = myDate.getMilliseconds();
 		var userUniqueId = "";
-        var str=captrue.bSaveJPG("C:\\temp\\",userUniqueId+"_JPG"+ms+".JPG");
+		var createDir=capture.bCreateDir("C:\\temp");
+        var str=captrue.bSaveJPG("C:\\temp\\",userUniqueId+"_JPG"+ms);
  	    var str2=captrue.bUpLoadImageEx("C:\\temp\\"+userUniqueId+"_JPG"+ms+".JPG", "10.80.29.27", 8888, "/dlclms/hello",false,false);
  	    var str3=captrue.bDeleteFileForever("C:\\temp\\"+userUniqueId+"_JPG"+ms+".JPG");
 	
