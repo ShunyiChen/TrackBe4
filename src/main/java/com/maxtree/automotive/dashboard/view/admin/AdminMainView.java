@@ -710,7 +710,7 @@ public class AdminMainView extends VerticalLayout {
         list.setTextInputAllowed(false);
         list.setWidth("193px");
         list.setHeight("26px");
-        list.setItems(new String[] {"无锡华通H6-1","维山VSA305FD"});
+        list.setItems(new String[] {"无锡华通H6-1","维山VSA305FD","选择上传"});
         SystemSettings settings = ui.settingsService.findByKey("高拍仪");
         list.setSelectedItem(settings.getV());
         list.addValueChangeListener(e->{

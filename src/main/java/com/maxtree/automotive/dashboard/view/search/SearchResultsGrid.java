@@ -1,10 +1,20 @@
 package com.maxtree.automotive.dashboard.view.search;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
+import com.maxtree.automotive.dashboard.Callback;
+import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.maxtree.automotive.dashboard.domain.Transaction;
+import com.vaadin.contextmenu.ContextMenu;
+import com.vaadin.contextmenu.MenuItem;
+import com.vaadin.contextmenu.Menu.Command;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.Grid.GridContextClickEvent;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.VerticalLayout;
 
@@ -37,6 +47,72 @@ public class SearchResultsGrid extends VerticalLayout {
         
 		// Set the selection mode
         grid.setSelectionMode(SelectionMode.MULTI);
+        grid.addContextClickListener(e->{
+        	
+        	
+        	GridContextClickEvent<Transaction> event = (GridContextClickEvent<Transaction>) e;
+        	Transaction selectedItem = event.getItem();
+        	grid.select(selectedItem);
+        });
+        ContextMenu menu = new ContextMenu(grid, true);
+		menu.addItem("查看原文", new Command() {
+			@Override
+			public void menuSelected(MenuItem selectedItem) {
+				Callback callback = new Callback() {
+					@Override
+					public void onSuccessful() {
+						
+					}
+        		};
+        		
+        		ViewFilesWindow.open(callback);
+			}
+		});
+		menu.addItem("删除记录", new Command() {
+			@Override
+			public void menuSelected(MenuItem selectedItem) {
+				
+				
+				
+				Callback onOK = new Callback() {
+					@Override
+					public void onSuccessful() {
+						Set<Transaction> set = grid.getSelectedItems();
+						Iterator<Transaction> iter = set.iterator();
+						while(iter.hasNext()) {
+							Transaction t = iter.next();
+							
+						}
+					}
+				};
+				MessageBox.showMessage("删除提示","请确认是否彻底删除该记录？",MessageBox.WARNING, onOK, "彻底删除");
+				
+			}
+		});
+		
+        grid.addItemClickListener(e->{
+        	if(e.getMouseEventDetails().isDoubleClick()) {
+        		
+        		System.out.println("dddddddddd");
+        		
+        		ui.access(new Runnable() {
+                    @Override
+                    public void run() {
+                    	Callback callback = new Callback() {
+        					@Override
+        					public void onSuccessful() {
+        						
+        					}
+                		};
+                		
+                		ViewFilesWindow.open(callback);
+                    }
+                 });
+        		
+        		
+        	}
+        });
+		 
         this.addComponents(grid, controls);
         this.setExpandRatio(grid, 1);
         this.setExpandRatio(controls, 0);
@@ -87,4 +163,5 @@ public class SearchResultsGrid extends VerticalLayout {
 	private List<Transaction> allData;
 	private Grid<Transaction> grid = new Grid<>();
 	private ControlsLayout controls = new ControlsLayout(this);
+	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 }
