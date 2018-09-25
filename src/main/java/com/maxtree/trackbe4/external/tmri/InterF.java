@@ -274,7 +274,7 @@ public class InterF {
 		try {
 			// client = new Client(new URL("http://" + Staticbl.InterIP +
 			// ":6000/trffweb.dll/wsdl/Itrffweb/"));
-			client = new Client(new URL("http://10.80.29.32:6000/trffweb.dll/wsdl/Itrffweb/"));
+			client = new Client(new URL("http://10.80.29.16:6001/trffweb.dll/wsdl/Itrffweb/"));
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
