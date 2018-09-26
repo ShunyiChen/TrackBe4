@@ -16,6 +16,7 @@ import com.maxtree.automotive.dashboard.DashboardNavigator;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
+import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Hr;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -186,6 +187,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         searchbar.setSpacing(false);
         searchbar.setMargin(false);
         searchbar.setWidthUndefined();
+        box.setWidth("100px");
         box.setEmptySelectionAllowed(false);
         Community current = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
         List<Community> list = ui.communityService.findAll();
@@ -237,7 +239,13 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         });
         searchButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         searchButton.setIcon(VaadinIcons.SEARCH);
-        searchbar.addComponents(box,searchField, searchButton);
+        Label textLabel = new Label("选择社区：");
+        searchbar.addComponents(textLabel,box,Box.createHorizontalBox(3),searchField, searchButton);
+        searchbar.setComponentAlignment(box, Alignment.MIDDLE_LEFT);
+        searchbar.setComponentAlignment(searchField, Alignment.MIDDLE_LEFT);
+        searchbar.setComponentAlignment(searchButton, Alignment.MIDDLE_LEFT);
+        searchbar.setComponentAlignment(textLabel, Alignment.MIDDLE_LEFT);
+        
         header.addComponents(titleLabel,searchbar);
         buildNotificationsButton();
         HorizontalLayout tools = new HorizontalLayout(notificationsButton);
@@ -413,59 +421,6 @@ public class SearchView extends Panel implements View, FrontendViewIF{
             }
         });
     }
-    
-//    /**
-//     * 
-//     * @param Transaction
-//     */
-//    private void advanceSearch() {
-//    	User currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-//    	ResultCallback callback = new ResultCallback() {
-//
-//			@Override
-//			public void onSuccessful(List<Transaction> results) {
-//				System.out.println("resulkt  ="+results.size()+"   perPageSize="+searchModel.getResultsPerPage());
-//				
-//				grid.setAllData(results);
-//				
-//				if (results.size() > searchModel.getResultsPerPage()) {
-//					List<Transaction> currentList = results.subList(0, searchModel.getResultsPerPage());
-//					grid.setItems(currentList);
-//				} else {
-//					grid.setItems(results);
-//				}
-//				
-//				int pageCount = results.size() / searchModel.getResultsPerPage() + 1;
-//				grid.getControlsLayout().setCurrentPageIndex(1);
-////				grid.getControlsLayout().setPageCount(pageCount);
-//				grid.getControlsLayout().setSizePerPage(searchModel.getResultsPerPage());
-//			}
-//    	};
-//    	AdvancedSearchWindow.open(callback, searchModel);
-//    }
-//    
-//    private void basicSearch() {
-//    	ResultCallback callback = new ResultCallback() {
-//
-//			@Override
-//			public void onSuccessful(List<Transaction> results) {
-//				grid.setAllData(results);
-//				
-//				if (results.size() > searchModel.getResultsPerPage()) {
-//					List<Transaction> currentList = results.subList(0, searchModel.getResultsPerPage());
-//					grid.setItems(currentList);
-//				} else {
-//					grid.setItems(results);
-//				}
-//				
-//				int pageCount = results.size() / searchModel.getResultsPerPage() + 1;
-//				grid.getControlsLayout().setCurrentPageIndex(1);
-////				grid.getControlsLayout().setPageCount(pageCount);
-//				grid.getControlsLayout().setSizePerPage(searchModel.getResultsPerPage());
-//			}
-//    	};
-//    	BasicSearchWindow.open(callback);
-//    }
     
     @Override
 	public void updateUnreadCount() {

@@ -93,8 +93,6 @@ public class SearchResultsGrid extends VerticalLayout {
         grid.addItemClickListener(e->{
         	if(e.getMouseEventDetails().isDoubleClick()) {
         		
-        		System.out.println("dddddddddd");
-        		
         		ui.access(new Runnable() {
                     @Override
                     public void run() {
