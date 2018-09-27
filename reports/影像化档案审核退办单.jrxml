@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="影像化档案审核退办单"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="535"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+
+	<field name="所有人" class="java.lang.String">
+		<fieldDescription><![CDATA[所有人]]></fieldDescription>
+	</field>
+	<field name="证件号码" class="java.lang.String">
+		<fieldDescription><![CDATA[证件号码]]></fieldDescription>
+	</field>
+	<field name="号牌种类" class="java.lang.String">
+		<fieldDescription><![CDATA[号牌种类]]></fieldDescription>
+	</field>
+	<field name="号牌号码" class="java.lang.String">
+		<fieldDescription><![CDATA[号牌号码]]></fieldDescription>
+	</field>
+	<field name="中文品牌" class="java.lang.String">
+		<fieldDescription><![CDATA[中文品牌]]></fieldDescription>
+	</field>
+	<field name="车辆型号" class="java.lang.String">
+		<fieldDescription><![CDATA[车辆型号]]></fieldDescription>
+	</field>
+	<field name="车身颜色" class="java.lang.String">
+		<fieldDescription><![CDATA[车身颜色]]></fieldDescription>
+	</field>
+	<field name="车辆识别代号" class="java.lang.String">
+		<fieldDescription><![CDATA[车辆识别代号]]></fieldDescription>
+	</field>
+	<field name="发动机号码" class="java.lang.String">
+		<fieldDescription><![CDATA[发动机号码]]></fieldDescription>
+	</field>
+	<field name="使用性质" class="java.lang.String">
+		<fieldDescription><![CDATA[使用性质]]></fieldDescription>
+	</field>
+	<field name="错误内容" class="java.lang.String">
+		<fieldDescription><![CDATA[错误内容]]></fieldDescription>
+	</field>
+	<field name="审核人" class="java.lang.String">
+		<fieldDescription><![CDATA[审核人]]></fieldDescription>
+	</field>
+	<field name="审核时间" class="java.lang.String">
+		<fieldDescription><![CDATA[审核时间]]></fieldDescription>
+	</field>
+	<field name="业务名称" class="java.lang.String">
+		<fieldDescription><![CDATA[业务名称]]></fieldDescription>
+	</field>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="88"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="59"
+						y="38"
+						width="396"
+						height="49"
+						key="staticText-1"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="宋体" pdfFontName="Helvetica-Bold" size="28" isBold="true"/>
+					</textElement>
+				<text><![CDATA[影像化档案审核退办单]]></text>
+				</staticText>
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="697"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="10"
+						y="22"
+						width="135"
+						height="35"
+						key="staticText-2"/>
+					<box leftPadding="10">					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="16"/>
+					</textElement>
+				<text><![CDATA[机动车所有人：]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="10"
+						y="57"
+						width="135"
+						height="35"
+						key="staticText-3"/>
+					<box leftPadding="10">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="16"/>
+					</textElement>
+				<text><![CDATA[号牌种类：]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="10"
+						y="92"
+						width="135"
+						height="35"
+						key="staticText-4"/>
+					<box leftPadding="10">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="16"/>
+					</textElement>
+				<text><![CDATA[中文品牌：]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="10"
+						y="127"
+						width="135"
+						height="35"
+						key="staticText-5"/>
+					<box leftPadding="10">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="16"/>
+					</textElement>
+				<text><![CDATA[车身颜色：]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="10"
+						y="162"
+						width="135"
+						height="35"
+						key="staticText-6"/>
+					<box leftPadding="10">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="16"/>
+					</textElement>
+				<text><![CDATA[车辆识别代号：]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="10"
+						y="197"
+						width="135"
+						height="35"
+						key="staticText-7"/>
+					<box leftPadding="10">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="16"/>
+					</textElement>
+				<text><![CDATA[发动机号码：]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="10"
+						y="232"
+						width="135"
+						height="35"
+						key="staticText-8"/>
+					<box leftPadding="10">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="16"/>
+					</textElement>
+				<text><![CDATA[使用性质：]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="248"
+						y="22"
+						width="93"
+						height="35"
+						key="staticText-9"/>
+					<box leftPadding="10">					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="16"/>
+					</textElement>
+				<text><![CDATA[证件号码：]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="248"
+						y="57"
+						width="93"
+						height="35"
+						key="staticText-10"/>
+					<box leftPadding="10">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="16"/>
+					</textElement>
+				<text><![CDATA[号牌号码：]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="248"
+						y="92"
+						width="93"
+						height="35"
+						key="staticText-11"/>
+					<box leftPadding="10">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="16"/>
+					</textElement>
+				<text><![CDATA[车辆型号：]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="145"
+						y="22"
+						width="103"
+						height="35"
+						key="textField-1"/>
+					<box leftPadding="5">					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="宋体" size="14"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{所有人}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="341"
+						y="22"
+						width="184"
+						height="35"
+						key="textField-2"/>
+					<box leftPadding="5">					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement verticalAlignment="Middle">
+						<font size="14"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{证件号码}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="145"
+						y="57"
+						width="103"
+						height="35"
+						key="textField-3"/>
+					<box leftPadding="5">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="宋体" size="14"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{号牌种类}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="341"
+						y="57"
+						width="184"
+						height="35"
+						key="textField-4"/>
+					<box leftPadding="5">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement verticalAlignment="Middle">
+						<font size="14"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{号牌号码}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="145"
+						y="92"
+						width="103"
+						height="35"
+						key="textField-5"/>
+					<box leftPadding="5">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="宋体" size="14"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{中文品牌}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="341"
+						y="92"
+						width="184"
+						height="35"
+						key="textField-6"/>
+					<box leftPadding="5">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement verticalAlignment="Middle">
+						<font size="14"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{车辆型号}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="145"
+						y="127"
+						width="380"
+						height="35"
+						key="textField-7"/>
+					<box leftPadding="5">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="宋体" size="14"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{车身颜色}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="145"
+						y="162"
+						width="380"
+						height="35"
+						key="textField-8"/>
+					<box leftPadding="5">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="宋体" size="14"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{车辆识别代号}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="145"
+						y="197"
+						width="380"
+						height="35"
+						key="textField-9"/>
+					<box leftPadding="5">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="宋体" size="14"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{发动机号码}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="145"
+						y="232"
+						width="380"
+						height="35"
+						key="textField-10"/>
+					<box leftPadding="5">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement verticalAlignment="Middle">
+						<font size="14"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{使用性质}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="10"
+						y="267"
+						width="515"
+						height="122"
+						key="textField-11"/>
+					<box leftPadding="10" rightPadding="10">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="宋体" size="24"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["    上述车辆办理  "
++$F{业务名称}
++"  登记，经与影像化档案核对有下述内容不符合规定："]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="10"
+						y="389"
+						width="515"
+						height="183"
+						key="textField"/>
+					<box leftPadding="20">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font fontName="宋体" size="18"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{错误内容}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="10"
+						y="662"
+						width="81"
+						height="35"
+						key="staticText-12"/>
+					<box leftPadding="10">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement verticalAlignment="Middle">
+						<font size="16"/>
+					</textElement>
+				<text><![CDATA[审核人：]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="260"
+						y="662"
+						width="92"
+						height="35"
+						key="staticText-13"/>
+					<box leftPadding="10">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement verticalAlignment="Middle">
+						<font size="16"/>
+					</textElement>
+				<text><![CDATA[审核时间：]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="91"
+						y="662"
+						width="169"
+						height="35"
+						key="textField-12"/>
+					<box leftPadding="5">					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="14"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{审核人}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="352"
+						y="662"
+						width="173"
+						height="35"
+						key="textField-13"/>
+					<box leftPadding="5">					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement verticalAlignment="Middle">
+						<font size="14"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{审核时间}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="10"
+						y="571"
+						width="515"
+						height="91"
+						key="staticText-14"/>
+					<box leftPadding="10" rightPadding="10">					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font fontName="宋体" size="24"/>
+					</textElement>
+				<text><![CDATA[   请您按规定补齐资料后，再到我所办理业务。]]></text>
+				</staticText>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>
