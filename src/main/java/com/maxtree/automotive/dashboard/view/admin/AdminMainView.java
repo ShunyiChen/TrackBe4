@@ -414,7 +414,6 @@ public class AdminMainView extends VerticalLayout {
         vContent.setWidth("100%");
         vContent.setHeight("150px");
         vContent.addStyleName("setting-layout-shadow");
-        
         vContent.setWidth("100%");
         vContent.setHeightUndefined();
         
@@ -545,7 +544,7 @@ public class AdminMainView extends VerticalLayout {
         row1.setComponentAlignment(manageCommunities, Alignment.MIDDLE_LEFT);
         row1.setComponentAlignment(rightArrow, Alignment.MIDDLE_RIGHT);
         row1.addLayoutClickListener(e -> {
-        	if (loginUser.isPermitted(PermissionCodes.J5)) {
+        	if (loginUser.isPermitted(PermissionCodes.F5)) {
         		showDetailPane(Commands.MANAGE_STOREHOUSES);
             	hidePanes();
         	} else {

@@ -168,21 +168,83 @@ public class ImageStage extends VerticalLayout implements ClickListener {
 	 * 调整为适应窗体大小
 	 */
 	public void fittedSize() {
-		if(pictureActualWidth > pictureActualHeight) {
-			picture.setWidth("100%");
-			picture.setHeightUndefined();
-		}
-		else {
-			picture.setWidthUndefined();
-			picture.setHeight("100%");
-		}
-		pictureFrame.setSizeFull();
-		pictureFrame.removeAllComponents();
-		pictureFrame.addComponent(picture);
-		pictureFrame.setComponentAlignment(picture, Alignment.MIDDLE_CENTER);
-		scroll.setContent(pictureFrame);
 		
+		Callback2 callback2 = new Callback2() {
+			@Override
+			public void onSuccessful(Object... objects) {
+				double conWidth = Double.parseDouble(objects[0].toString()) - 42;
+				double conHeight = Double.parseDouble(objects[1].toString());
+		        //默认的边框间距
+		        final double SMALL_SCALE = 0.95;
+		 
+		        double imgWidth = pictureActualWidth;
+		        double imgHeight = pictureActualHeight;
+		        //原图的宽长比
+		        double imgRatio = imgWidth/imgHeight;
+		        //最终输出宽和长
+		        double reImgWidth = 0;
+		        double reImgHeight = 0;
+		 
+		 
+		        //若原图的宽小于控件宽
+		        if(imgWidth < conWidth){
+		            if(imgHeight < conHeight){
+		                reImgWidth = conWidth*SMALL_SCALE;
+		                reImgHeight = reImgWidth/imgRatio;
+		            }
+		            else {
+		                reImgHeight = conHeight*SMALL_SCALE;
+		                reImgWidth = reImgHeight*imgRatio;
+		            }
+		        }
+		        //若原图的宽大于控件宽
+		        else {
+		            if(imgHeight < conHeight){
+		                reImgWidth = conWidth*SMALL_SCALE;
+		                reImgHeight = reImgWidth/imgRatio;
+		            }
+		            //若原图的长宽同时大于控件的长宽，最复杂的情况
+		            else {
+		                //控件的长比宽大
+		                double conRatio = conWidth/conHeight;
+		 
+		                if (imgRatio < conRatio){
+		                    reImgHeight = conHeight*SMALL_SCALE;
+		                    reImgWidth = reImgHeight*imgRatio;
+		                }
+		                else {
+		                    reImgWidth = conWidth*SMALL_SCALE;
+		                    reImgHeight = reImgWidth/imgRatio;
+		                }
+		            }
+		        }
+			 
+		        picture.setWidth((int)reImgWidth+"px");
+		        picture.setHeight((int)reImgHeight+"px");
+				pictureFrame.setSizeFull();
+				pictureFrame.removeAllComponents();
+				pictureFrame.addComponent(picture);
+				pictureFrame.setComponentAlignment(picture, Alignment.MIDDLE_CENTER);
+				scroll.setContent(pictureFrame);
+			}
+		};
 		
+		scroll.setId("MyPanel");
+		JavaScript.getCurrent().addFunction("myGetPanelSize", new JavaScriptFunction() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void call(JsonArray arguments) {
+				double w = arguments.getNumber(0);
+				double h = arguments.getNumber(1);
+				
+				callback2.onSuccessful(w,h);
+			}
+		});
+		JavaScript.getCurrent().execute("myGetPanelSize(document.getElementById('" + scroll.getId() + "').clientWidth,document.getElementById('" + scroll.getId() + "').clientHeight);");
 	}
 	
 	/**

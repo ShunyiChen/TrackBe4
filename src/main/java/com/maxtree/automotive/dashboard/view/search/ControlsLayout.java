@@ -2,6 +2,8 @@ package com.maxtree.automotive.dashboard.view.search;
 
 import java.util.List;
 
+import org.springframework.util.StringUtils;
+
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Community;
@@ -76,6 +78,10 @@ public class ControlsLayout extends HorizontalLayout {
 	 * 
 	 */
 	public void execute() {
+		if(StringUtils.isEmpty(grid.getKeyword().trim())) {
+			Notifications.warning("查询关键字不能为空。");
+			return;
+		}
 		pageCount = ui.transactionService.findPagingCount(sizePerPage, grid.getKeyword(), grid.getCommunityName());
 		pageSizeLabel.setValue("总共"+pageCount+"页");
 		first();

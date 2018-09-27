@@ -33,9 +33,7 @@ public class SearchResultsGrid extends VerticalLayout {
 		this.setSpacing(false);
 		this.setMargin(false);
 		this.setSizeFull();
-		
 		grid.setSizeFull();
-		
 		grid.addColumn(Transaction::getBarcode).setCaption("条形码");
 		grid.addColumn(Transaction::getPlateType).setCaption("号牌种类");
 		grid.addColumn(Transaction::getPlateNumber).setCaption("号码号牌");
@@ -48,11 +46,9 @@ public class SearchResultsGrid extends VerticalLayout {
 		// Set the selection mode
         grid.setSelectionMode(SelectionMode.MULTI);
         grid.addContextClickListener(e->{
-        	
-        	
         	GridContextClickEvent<Transaction> event = (GridContextClickEvent<Transaction>) e;
-        	Transaction selectedItem = event.getItem();
-        	grid.select(selectedItem);
+        	trans = event.getItem();
+//        	grid.select(trans);
         });
         ContextMenu menu = new ContextMenu(grid, true);
 		menu.addItem("查看原文", new Command() {
@@ -61,18 +57,15 @@ public class SearchResultsGrid extends VerticalLayout {
 				Callback callback = new Callback() {
 					@Override
 					public void onSuccessful() {
-						
 					}
         		};
         		
-        		ViewFilesWindow.open(callback);
+        		ViewFilesWindow.open(callback, trans);
 			}
 		});
 		menu.addItem("删除记录", new Command() {
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
-				
-				
 				
 				Callback onOK = new Callback() {
 					@Override
@@ -91,8 +84,9 @@ public class SearchResultsGrid extends VerticalLayout {
 		});
 		
         grid.addItemClickListener(e->{
+        	
         	if(e.getMouseEventDetails().isDoubleClick()) {
-        		
+        		trans = e.getItem();
         		ui.access(new Runnable() {
                     @Override
                     public void run() {
@@ -103,7 +97,7 @@ public class SearchResultsGrid extends VerticalLayout {
         					}
                 		};
                 		
-                		ViewFilesWindow.open(callback);
+                		ViewFilesWindow.open(callback, trans);
                     }
                  });
         		
@@ -156,6 +150,8 @@ public class SearchResultsGrid extends VerticalLayout {
 		controls.execute();
 	}
 	
+	
+	private Transaction trans;
 	private String communityName;
 	private String keyword;
 	private List<Transaction> allData;
