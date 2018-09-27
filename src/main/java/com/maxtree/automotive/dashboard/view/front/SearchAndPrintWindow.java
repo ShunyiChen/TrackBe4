@@ -140,7 +140,7 @@ public class SearchAndPrintWindow extends Window {
       	    	if (selectedTransaction.getStatus().equals(BusinessState.B2.name)) {
       	    		
       	    		// 打印文件标签和车辆标签
-      	    		PrintingConfirmationWindow.open("打印确认", selectedTransaction); 
+      	    		PrintingFiletagsWindow.open("打印确认", selectedTransaction); 
       	    		
       	    	} else if (selectedTransaction.getStatus().equals(BusinessState.B1.name) 
       	    			|| selectedTransaction.getStatus().equals(BusinessState.B14.name)) {

@@ -1,6 +1,6 @@
 package com.maxtree.automotive.dashboard;
 
-public enum Actions {
+public enum Activity {
 
 	INPUT("前台录入"),
 	RE_ENTRY("重新录入"),
@@ -13,7 +13,7 @@ public enum Actions {
 	PUTAWAY("上架"),
 	REMOVEOFF("下架");
 	
-	private Actions(String name) {
+	private Activity(String name) {
 		this.name = name;
 	}
 	

@@ -1,4 +1,4 @@
-package com.maxtree.trackbe4.external.tmri;
+package Tmri;
 
 import java.net.MalformedURLException;
 import java.util.Collection;
@@ -66,7 +66,7 @@ public class ItrffwebserviceClient {
     AnnotationServiceFactory asf = new AnnotationServiceFactory(new
       Jsr181WebAnnotations(), tm, new AegisBindingProvider(new JaxbTypeRegistry()));
     asf.setBindingCreationEnabled(false);
-    service0 = asf.create( ( com.maxtree.trackbe4.external.tmri.Itrffweb.class), props);
+    service0 = asf.create( ( Tmri.Itrffweb.class), props);
     {
       AbstractSoapBinding soapBinding = asf.createSoap11Binding(service0,
         new QName("http://tempuri.org/", "ItrffwebLocalBinding"),

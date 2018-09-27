@@ -8,12 +8,15 @@ import java.util.Optional;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback2;
+import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.data.Comment;
 import com.maxtree.automotive.dashboard.data.Yaml;
+import com.maxtree.automotive.dashboard.domain.CommonProblem;
+import com.maxtree.automotive.dashboard.domain.User;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
@@ -39,6 +42,7 @@ public class RouterWindow extends Window {
 	}
 	
 	private void initComponents() {
+		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		this.setModal(true);
 		this.setResizable(false);
 		this.setClosable(true);
@@ -48,13 +52,14 @@ public class RouterWindow extends Window {
 		VerticalLayout vlayout = new VerticalLayout();
 		vlayout.setWidth("100%");
 		vlayout.setHeightUndefined();
-		Comment obj = Yaml.readComments();
 		HorizontalLayout header = new HorizontalLayout();
 		header.setMargin(false);
 		header.setSpacing(false);
 		header.setWidthUndefined();
 		header.setHeightUndefined();
-		combobox.setItems(Arrays.asList(obj.getComments()));
+		
+		List<CommonProblem> list = ui.commonProblemService.findByUserName(loggedInUser.getUserName());
+		combobox.setItems(list);
 		combobox.setWidth("490px");
 		combobox.setTextInputAllowed(true);
 		combobox.setEmptySelectionAllowed(true);
@@ -68,27 +73,24 @@ public class RouterWindow extends Window {
 			}
 		};
 		combobox.addShortcutListener(keyListener);
-		combobox.setNewItemHandler(inputString -> {
-			
-			
-			System.out.println("inputString="+inputString.toString());
-			
-			List<String> list = new ArrayList<String>();
-			for(String str : obj.getComments()) {
-				list.add(str);
-			}
-			list.add(inputString.toString());
-//
-//		    Planet newPlanet = new Planet(planets.size(), inputString);
-//		    planets.add(newPlanet);
-//
-//		    // Update combobox content
-			combobox.setItems(list);
-			
-			combobox.setSelectedItem(inputString);
-			
-//		    return Optional.of(inputString);
-		});
+//		combobox.setNewItemHandler(inputString -> {
+//			
+//			List<String> list = new ArrayList<String>();
+//			for(String str : obj.getComments()) {
+//				list.add(str);
+//			}
+//			list.add(inputString.toString());
+////
+////		    Planet newPlanet = new Planet(planets.size(), inputString);
+////		    planets.add(newPlanet);
+////
+////		    // Update combobox content
+//			combobox.setItems(list);
+//			
+//			combobox.setSelectedItem(inputString);
+//			
+////		    return Optional.of(inputString);
+//		});
 		
 		
 		Button btnAdd = new Button("添加");
@@ -135,23 +137,23 @@ public class RouterWindow extends Window {
 		
 		
 		
-		String item = combobox.getValue();
-		if(!StringUtils.isEmpty(item)) {
-			StringBuilder stb = new StringBuilder(content.getValue());
-			stb.append(rowCount);
-			stb.append(".");
-			if(item.contains("_")) {
-				stb.append(item.substring(item.indexOf("_")+1));
-			}
-			else {
-				stb.append(item);
-			}
-			
-			stb.append("\n");
-			content.setValue(stb.toString());
-			rowCount++;
-			combobox.setSelectedItem("");
-		}
+//		CommonProblem item = combobox.getValue();
+//		if(!StringUtils.isEmpty(item)) {
+//			StringBuilder stb = new StringBuilder(content.getValue());
+//			stb.append(rowCount);
+//			stb.append(".");
+//			if(item.contains("_")) {
+//				stb.append(item.substring(item.indexOf("_")+1));
+//			}
+//			else {
+//				stb.append(item);
+//			}
+//			
+//			stb.append("\n");
+//			content.setValue(stb.toString());
+//			rowCount++;
+//			combobox.setSelectedItem("");
+//		}
 		
 	}
 	
@@ -187,11 +189,12 @@ public class RouterWindow extends Window {
         UI.getCurrent().addWindow(w);
         w.center();
     }
-	/**
-	 * 
-	 */
+
+	
+	public User loggedInUser;	//登录用户
+	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private static final long serialVersionUID = 1L;
-	private ComboBox<String> combobox = new ComboBox<String>();
+	private ComboBox<CommonProblem> combobox = new ComboBox<CommonProblem>();
 	private int rowCount = 1;
 	private TextArea content = new TextArea("审批建议:");
 	private Button btnCancel = new Button("取消");

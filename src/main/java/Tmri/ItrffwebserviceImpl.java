@@ -1,5 +1,5 @@
 
-package com.maxtree.trackbe4.external.tmri;
+package Tmri;
 
 import javax.jws.WebService;
 

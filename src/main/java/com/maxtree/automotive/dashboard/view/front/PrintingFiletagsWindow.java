@@ -13,6 +13,7 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Transaction;
+import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.exception.ReportException;
@@ -21,6 +22,7 @@ import com.maxtree.trackbe4.reports.TB4Reports;
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.StreamResource;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -39,7 +41,7 @@ import com.vaadin.ui.themes.ValoTheme;
  * @author chens
  *
  */
-public class PrintingConfirmationWindow extends Window {
+public class PrintingFiletagsWindow extends Window {
 
 	/**
 	 * 
@@ -51,7 +53,7 @@ public class PrintingConfirmationWindow extends Window {
 	 * @param caption
 	 * @param trans
 	 */
-	public PrintingConfirmationWindow(String caption, Transaction trans) {
+	public PrintingFiletagsWindow(String caption, Transaction trans) {
 		this.caption = caption;
 		this.trans = trans;
 		initComponents();
@@ -64,8 +66,8 @@ public class PrintingConfirmationWindow extends Window {
 		this.setModal(true);
 		this.setClosable(true);
 		this.setResizable(true);
-		
-		List<String> options = Arrays.asList("封皮标签", "文件标签");
+		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		List<String> options = Arrays.asList("车辆标签", "文件标签");
 		radios = new RadioButtonGroup<>(null, options);
 		radios.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
 		
@@ -110,15 +112,14 @@ public class PrintingConfirmationWindow extends Window {
     			buttonLayout.setComponentAlignment(btnOk, Alignment.MIDDLE_LEFT);
     		}
     		
-//    		Transaction trans2 = ui.transactionService.findById(trans.getTransactionUniqueId(), trans.getVin());
-    		if(e.getValue().equals("封皮标签")) {
-    			List<PrintableBean> beans = new ArrayList<PrintableBean>();
+    		if(e.getValue().equals("车辆标签")) {
+    			List<PrintableBean> list = new ArrayList<PrintableBean>();
     			PrintableBean bean = new PrintableBean();
     			bean.setPlateType(trans.getPlateType());
-    			bean.setPlateNumber(trans.getPlateNumber());
-    			bean.setVin(trans.getVin());
-    			bean.setPutawayCode(trans.getCode());
-    			beans.add(bean);
+    			bean.setPlateNum(trans.getPlateNumber());
+    			bean.setCLSBDH(trans.getVin());
+    			bean.setShelvesNum(trans.getCode());
+    			list.add(bean);
     			
     			Callback callback = new Callback() {
 					@Override
@@ -127,47 +128,65 @@ public class PrintingConfirmationWindow extends Window {
 						opener = new BrowserWindowOpener(PrintUI.class);
 						opener.setFeatures("height=595,width=842,resizable");
 						opener.extend(btnOk);
-						opener.setParameter("htmlFilePath", "reports/generates/"+trans.getTransactionUniqueId()+"/report.html");
+						opener.setParameter("htmlFilePath", "reports/generates/"+loggedInUser.getUserUniqueId()+"/report.html");
 					}
     			};
     			try {
-					new TB4Reports().jasperToHtml(beans, trans.getTransactionUniqueId(), "report3.jasper", callback);
+					new TB4Reports().jasperToHtml(list, trans.getTransactionUniqueId(), "上架标签-车.jasper", callback);
 					
 				} catch (ReportException e1) {
 					e1.printStackTrace();
 				}
     		} else {
-    			List<PrintableBean> beans = new ArrayList<PrintableBean>();
+    			List<PrintableBean> list = new ArrayList<PrintableBean>();
     			PrintableBean bean = new PrintableBean();
-    			bean.setPlateType(trans.getPlateType());
-    			bean.setPlateNumber(trans.getPlateNumber());
+    			bean.setPlateType(trans.getPlateType());//号码种类
+    			bean.setPlateNum(trans.getPlateNumber());//号牌号码
     			Business business = ui.businessService.findByCode(trans.getBusinessCode());
-    			bean.setBusinessType(business.getName());
-    			bean.setPutawayCode(trans.getCode()); // 上架号
-    			bean.setIndexNumber(trans.getIndexNumber()+""); // 索引号
-    			bean.setBarcode(trans.getBarcode()); // 流水号
-    			beans.add(bean);
+    			bean.setBusType(business.getName());//业务类型
+    			bean.setShelvesNum(trans.getCode()); // 上架号
+    			bean.setIndex(trans.getIndexNumber()); // 索引号
+    			bean.setCode(Integer.parseInt(trans.getBarcode())); // 流水号
+    			list.add(bean);
     			
     			Callback callback = new Callback() {
 					@Override
 					public void onSuccessful() {
-						
 						btnOk.setEnabled(true);
-						
-						// 打印PDF
-						FileResource resource = new FileResource(new File("reports/generates/"+trans.getTransactionUniqueId()+"/report.pdf"));
-						// Extend the print button with an opener
-			            // for the PDF resource
-			            opener = new BrowserWindowOpener(resource);
-			            opener.extend(btnOk);
+						opener = new BrowserWindowOpener(PrintUI.class);
+						opener.setFeatures("height=595,width=842,resizable");
+						opener.extend(btnOk);
+						opener.setParameter("htmlFilePath", "reports/generates/"+loggedInUser.getUserUniqueId()+"/report.html");
 					}
     			};
     			try {
-					new TB4Reports().jasperToPDF(beans, trans.getTransactionUniqueId(), "report2.jasper", callback);
+					new TB4Reports().jasperToHtml(list, trans.getTransactionUniqueId(), "上架标签.jasper", callback);
+					
 				} catch (ReportException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+    			
+//    			Callback callback = new Callback() {
+//					@Override
+//					public void onSuccessful() {
+//						
+//						btnOk.setEnabled(true);
+//						
+//						// 打印PDF
+//						FileResource resource = new FileResource(new File("reports/generates/"+trans.getTransactionUniqueId()+"/report.pdf"));
+//						// Extend the print button with an opener
+//			            // for the PDF resource
+//			            opener = new BrowserWindowOpener(resource);
+//			            opener.extend(btnOk);
+//					}
+//    			};
+//    			try {
+//					new TB4Reports().jasperToPDF(list, trans.getTransactionUniqueId(), "report2.jasper", callback);
+//				} catch (ReportException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
+    			
     		}
     		
     	});
@@ -196,11 +215,12 @@ public class PrintingConfirmationWindow extends Window {
 	 */
 	public static void open(String caption, Transaction trans) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        PrintingConfirmationWindow w = new PrintingConfirmationWindow(caption, trans);
+        PrintingFiletagsWindow w = new PrintingFiletagsWindow(caption, trans);
         UI.getCurrent().addWindow(w);
         w.center();
     }
 	
+	private User loggedInUser;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private Button btnCancel = new Button("取消");
 	private Button btnOk = new Button("确定");

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import com.google.common.eventbus.Subscribe;
-import com.maxtree.automotive.dashboard.Actions;
+import com.maxtree.automotive.dashboard.Activity;
 import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
@@ -35,7 +35,6 @@ import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
-import com.maxtree.automotive.dashboard.domain.UserEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
@@ -509,7 +508,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		ui.transactionService.update(editableTrans);
     	
 		//4.记录跟踪
-		int transitionUniqueId = track(Actions.APPROVED, comments);
+		int transitionUniqueId = track(Activity.APPROVED, comments);
 		// 自动删除消息
 		if(removeMessage != null)
 			removeMessage.onSuccessful();
@@ -541,7 +540,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     	editableTrans.setDateModified(new Date());
 		ui.transactionService.update(editableTrans);
 		//2.记录跟踪
-		int transitionUniqueId = track(Actions.REJECTED,comments);
+		int transitionUniqueId = track(Activity.REJECTED,comments);
 		// 自动删除消息
 		if(removeMessage != null)
 			removeMessage.onSuccessful();
@@ -568,33 +567,26 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
      * @param comments
      * @return
      */
-    private int track(Actions act, String comments) {
-    	Map<String, String> details = new HashMap<String, String>();
-    	details.put("1", editableTrans.getStatus());//STATUS
-		details.put("2", editableTrans.getBarcode());//BARCODE
-		details.put("3", editableTrans.getPlateType());//PLATETYPE
-		details.put("4", editableTrans.getPlateNumber());//PLATENUMBER
-		details.put("5", editableTrans.getVin());//VIN
-		details.put("6", editableTrans.getBusinessName());//BUSINESSTYPE
-		details.put("7", editableTrans.getUuid());//UUID
-		String json = jsonHelper.map2Json(details);
+    private int track(Activity act, String comments) {
+//    	Map<String, String> details = new HashMap<String, String>();
+//    	details.put("1", editableTrans.getStatus());//STATUS
+//		details.put("2", editableTrans.getBarcode());//BARCODE
+//		details.put("3", editableTrans.getPlateType());//PLATETYPE
+//		details.put("4", editableTrans.getPlateNumber());//PLATENUMBER
+//		details.put("5", editableTrans.getVin());//VIN
+//		details.put("6", editableTrans.getBusinessName());//BUSINESSTYPE
+//		details.put("7", editableTrans.getUuid());//UUID
+//		String json = jsonHelper.map2Json(details);
     	
     	// 插入移行表
 		Transition transition = new Transition();
 		transition.setTransactionUUID(editableTrans.getUuid());
-		transition.setAction(act.name);
-		transition.setDetails(json);
+		transition.setVin(editableTrans.getVin());
+		transition.setActivity(act.name);
 		transition.setComments(comments);
-		transition.setUserName(loggedInUser.getUserName());
-		transition.setDateUpdated(new Date());
-		int transitionUniqueId = ui.transitionService.insert(transition, editableTrans.getVin());
-		
-		// 插入用户事件
-		UserEvent event = new UserEvent();
-		event.setTransitionUniqueId(transitionUniqueId);
-		event.setUserName(loggedInUser.getUserName());
-		event.setDateUpdated(new Date());
-		ui.userEventService.insert(event, loggedInUser.getUserName());
+		transition.setOperator(loggedInUser.getUserName());
+		transition.setDateCreated(new Date());
+		int transitionUniqueId = ui.transitionService.insert(transition,editableTrans.getVin());
 		
 		return transitionUniqueId;
     }

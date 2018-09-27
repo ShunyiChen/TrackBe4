@@ -704,6 +704,10 @@ public class AdminMainView extends VerticalLayout {
         capture.addStyleName("detail-setting-text");
 //        Image rightArrow4 = new Image(null, new ThemeResource("img/adminmenu/rightarrow.png"));
         ComboBox<String> list = new ComboBox<String>();
+        list.setEnabled(false);
+        if(loginUser.isPermitted(PermissionCodes.H1)) {
+        	list.setEnabled(true);
+        }
         list.addStyleName("mycombobox");
         list.setEmptySelectionAllowed(false);
         list.setTextInputAllowed(false);

@@ -15,6 +15,7 @@ import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
+import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.exception.ReportException;
@@ -23,6 +24,7 @@ import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.reports.TB4Reports;
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.FileResource;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -51,6 +53,7 @@ public class PrintingResultsWindow extends Window {
 	}
 	
 	private void initComponents() {
+		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		this.setCaption(caption);
 		this.setWidthUndefined();
 		this.setHeight("150px");
@@ -104,49 +107,52 @@ public class PrintingResultsWindow extends Window {
 	}
 	
 	private void generateReport() {
-//		Transaction selectedTransaction = ui.transactionService.findById(trans.getTransactionUniqueId(), trans.getVin());
-		List<PrintableBean> beans = new ArrayList<PrintableBean>();
+		List<PrintableBean> list = new ArrayList<PrintableBean>();
 		PrintableBean bean = new PrintableBean();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
-		bean.setDateCreated(format.format(trans.getDateCreated()));
-		bean.setPlateType(trans.getPlateType());
-		bean.setPlateNumber(trans.getPlateNumber());
-		bean.setVin(trans.getVin());
-		
-		StringBuilder info = new StringBuilder();
-		info.append("号码种类:"+trans.getPlateType()+"\n");
-		info.append("号码号牌:"+trans.getPlateNumber()+"\n");
-		info.append("车辆识别代码:"+trans.getVin()+"\n");
-		bean.setBasicInformation(info.toString());// 基本信息
-		
-		Transition transition = ui.transitionService.findByUUID(trans.getUuid(), trans.getVin());
-		Map<String, String> map = jsonHelper.json2Map(transition.getDetails());
-//		Iterator<String> iter = map.keySet().iterator();
-		StringBuilder details = new StringBuilder();
-		details.append(transition.getComments());
-		
-		bean.setObjection(details.toString());
-		bean.setChecker(transition.getUserName());
-		bean.setDateChecked(format.format(transition.getDateUpdated()));
-		
-		beans.add(bean);
-		
-		Callback callback = new Callback() {
-			@Override
-			public void onSuccessful() {
-				opener = new BrowserWindowOpener(PrintUI.class);
-				opener.setFeatures("height=595,width=842,resizable");
-				opener.extend(btnOk);
-				opener.setParameter("htmlFilePath", "reports/generates/"+trans.getTransactionUniqueId()+"/report.html");
-				btnOk.setEnabled(true);
-			}
-		};
-		try {
-			new TB4Reports().jasperToHtml(beans, trans.getTransactionUniqueId(), "report1.jasper", callback);
-			
-		} catch (ReportException e1) {
-			e1.printStackTrace();
-		}
+//		if(transition.getComments()) {
+//			
+//		}
+//		
+//		
+//		bean.setDateCreated(format.format(trans.getDateCreated()));
+//		bean.setPlateType(trans.getPlateType());
+//		bean.setPlateNumber(trans.getPlateNumber());
+//		bean.setVin(trans.getVin());
+//		
+//		StringBuilder info = new StringBuilder();
+//		info.append("号码种类:"+trans.getPlateType()+"\n");
+//		info.append("号码号牌:"+trans.getPlateNumber()+"\n");
+//		info.append("车辆识别代码:"+trans.getVin()+"\n");
+//		bean.setBasicInformation(info.toString());// 基本信息
+//		
+//		Transition transition = ui.transitionService.findByUUID(trans.getUuid(), trans.getVin());
+//		Map<String, String> map = jsonHelper.json2Map(transition.getDetails());
+////		Iterator<String> iter = map.keySet().iterator();
+//		StringBuilder details = new StringBuilder();
+//		details.append(transition.getComments());
+//		
+//		bean.setObjection(details.toString());
+//		bean.setChecker(transition.getUserName());
+//		bean.setDateChecked(format.format(transition.getDateUpdated()));
+//		
+//		list.add(bean);
+//		
+//		Callback callback = new Callback() {
+//			@Override
+//			public void onSuccessful() {
+//				opener = new BrowserWindowOpener(PrintUI.class);
+//				opener.setFeatures("height=595,width=842,resizable");
+//				opener.extend(btnOk);
+//				opener.setParameter("htmlFilePath", "reports/generates/"+trans.getTransactionUniqueId()+"/report.html");
+//				btnOk.setEnabled(true);
+//			}
+//		};
+//		try {
+//			new TB4Reports().jasperToHtml(list, trans.getTransactionUniqueId(), "report1.jasper", callback);
+//			
+//		} catch (ReportException e1) {
+//			e1.printStackTrace();
+//		}
 	}
 	
 	/**
@@ -169,6 +175,8 @@ public class PrintingResultsWindow extends Window {
         w.center();
     }
 	
+	private User loggedInUser;
+	private SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private Button btnCancel = new Button("取消");
 	private Button btnOk = new Button("确定");

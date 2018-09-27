@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.Subscribe;
-import com.maxtree.automotive.dashboard.Actions;
+import com.maxtree.automotive.dashboard.Activity;
 import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
@@ -28,7 +28,6 @@ import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
-import com.maxtree.automotive.dashboard.domain.UserEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
@@ -286,7 +285,7 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     		upgrid.editableTrans.setStatus(BusinessState.B3.name);
     		upgrid.editableTrans.setDateModified(new Date());
     		ui.transactionService.update(upgrid.editableTrans);
-    		track(Actions.PUTAWAY, upgrid.editableTrans);
+    		track(Activity.PUTAWAY, upgrid.editableTrans);
     		upgrid.clearSortOrder();
     		Notifications.bottomWarning("操作成功。");
     	}
@@ -310,7 +309,7 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
 		    		downgrid.editableTrans.setDateModified(new Date());
 		    		downgrid.editableTrans.setCode(null);
 		    		ui.transactionService.update(downgrid.editableTrans);
-		    		track(Actions.REMOVEOFF, downgrid.editableTrans);
+		    		track(Activity.REMOVEOFF, downgrid.editableTrans);
 		    		downgrid.clearSortOrder();
 		    		Notifications.bottomWarning("操作成功。");
 				}
@@ -323,33 +322,26 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
      * 
      * @param act
      */
-    private void track(Actions act, Transaction trans) {
-    	Map<String, String> details = new HashMap<String, String>();
-    	details.put("1", trans.getStatus());//STATUS
-		details.put("2", trans.getBarcode());//BARCODE
-		details.put("3", trans.getPlateType());//PLATETYPE
-		details.put("4", trans.getPlateNumber());//PLATENUMBER
-		details.put("5", trans.getVin());//VIN
-		details.put("6", trans.getBusinessCode());//BUSINESSCODE
-		details.put("7", trans.getUuid());//UUID
-		String json = jsonHelper.map2Json(details);
+    private void track(Activity act, Transaction trans) {
+//    	Map<String, String> details = new HashMap<String, String>();
+//    	details.put("1", trans.getStatus());//STATUS
+//		details.put("2", trans.getBarcode());//BARCODE
+//		details.put("3", trans.getPlateType());//PLATETYPE
+//		details.put("4", trans.getPlateNumber());//PLATENUMBER
+//		details.put("5", trans.getVin());//VIN
+//		details.put("6", trans.getBusinessCode());//BUSINESSCODE
+//		details.put("7", trans.getUuid());//UUID
+//		String json = jsonHelper.map2Json(details);
     	
     	// 插入移行表
 		Transition transition = new Transition();
 		transition.setTransactionUUID(trans.getUuid());
-		transition.setAction(act.name);
-		transition.setDetails(json);
-		transition.setComments("");
-		transition.setUserName(loggedInUser.getUserName());
-		transition.setDateUpdated(new Date());
-		int transitionUniqueId = ui.transitionService.insert(transition, trans.getVin());
-		
-		// 插入用户事件
-		UserEvent event = new UserEvent();
-		event.setTransitionUniqueId(transitionUniqueId);
-		event.setUserName(loggedInUser.getUserName());
-		event.setDateUpdated(new Date());
-		ui.userEventService.insert(event, loggedInUser.getUserName());
+		transition.setVin(trans.getVin());
+		transition.setActivity(act.name);
+		transition.setComments(null);
+		transition.setOperator(loggedInUser.getUserName());
+		transition.setDateCreated(new Date());
+		int transitionUniqueId = ui.transitionService.insert(transition,trans.getVin());
     }
 
     private void openNotificationsPopup(final ClickEvent event) {

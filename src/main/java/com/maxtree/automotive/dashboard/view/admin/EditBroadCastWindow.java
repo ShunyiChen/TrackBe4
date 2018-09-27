@@ -2,7 +2,6 @@ package com.maxtree.automotive.dashboard.view.admin;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.stream.Collectors;
 import org.springframework.util.StringUtils;
 import org.vaadin.addons.autocomplete.AutocompleteExtension;
 
-import com.maxtree.automotive.dashboard.Actions;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.Openwith;
@@ -22,9 +20,7 @@ import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.MessageRecipient;
-import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
-import com.maxtree.automotive.dashboard.domain.UserEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;

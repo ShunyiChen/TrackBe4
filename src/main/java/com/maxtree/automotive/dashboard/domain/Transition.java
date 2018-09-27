@@ -4,6 +4,7 @@ import java.util.Date;
 
 /**
  * 跟踪业务记录
+ * 
  * @author chens
  *
  */
@@ -25,22 +26,22 @@ public class Transition {
 		this.transactionUUID = transactionUUID;
 	}
 
-	public String getAction() {
-		return action;
+	public String getVin() {
+		return vin;
 	}
 
-	public void setAction(String action) {
-		this.action = action;
+	public void setVin(String vin) {
+		this.vin = vin;
 	}
 
-	public String getDetails() {
-		return details;
+	public String getActivity() {
+		return activity;
 	}
 
-	public void setDetails(String details) {
-		this.details = details;
+	public void setActivity(String activity) {
+		this.activity = activity;
 	}
-	
+
 	public String getComments() {
 		return comments;
 	}
@@ -49,27 +50,27 @@ public class Transition {
 		this.comments = comments;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getOperator() {
+		return operator;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setOperator(String operator) {
+		this.operator = operator;
 	}
 
-	public Date getDateUpdated() {
-		return dateUpdated;
+	public Date getDateCreated() {
+		return dateCreated;
 	}
 
-	public void setDateUpdated(Date dateUpdated) {
-		this.dateUpdated = dateUpdated;
+	public void setDateCreated(Date dateCreated) {
+		this.dateCreated = dateCreated;
 	}
 
 	private Integer transitionUniqueId = 0;// 自增ID
 	private String transactionUUID;// 记录ID
-	private String action;// 事件动作
-	private String details;//详细信息json
-	private String comments;//评论
-	private String userName;//操作者用户名
-	private Date dateUpdated;// 更新日期
+	private String vin;//车辆识别代号
+	private String activity;// 事件动作
+	private String comments;// 评论
+	private String operator;// 操作者用户名
+	private Date dateCreated;// 创建日期
 }

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import com.google.common.eventbus.Subscribe;
-import com.maxtree.automotive.dashboard.Actions;
+import com.maxtree.automotive.dashboard.Activity;
 import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
@@ -36,7 +36,6 @@ import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
-import com.maxtree.automotive.dashboard.domain.UserEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
@@ -665,7 +664,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.transactionService.insert(editableTrans);
         		
         		//操作记录
-        		track(Actions.INPUT);
+        		track(Activity.INPUT);
         		
         		//清空舞台
             	cleanStage();
@@ -687,7 +686,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Actions.INPUT);
+        		track(Activity.INPUT);
         		
         		// 清空舞台
             	cleanStage();
@@ -727,7 +726,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.transactionService.insert(editableTrans);
         		
         		//操作记录
-        		track(Actions.INPUT);
+        		track(Activity.INPUT);
         		
         		//清空舞台
             	cleanStage();
@@ -749,7 +748,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Actions.INPUT);
+        		track(Activity.INPUT);
         		
         		// 清空舞台
             	cleanStage();
@@ -799,7 +798,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Actions.INPUT);
+        		track(Activity.INPUT);
         		
         		//清空舞台
             	cleanStage();
@@ -821,7 +820,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Actions.INPUT);
+        		track(Activity.INPUT);
         		
         		// 清空舞台
             	cleanStage();
@@ -871,7 +870,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Actions.INPUT);
+        		track(Activity.INPUT);
         		
         		//清空舞台
             	cleanStage();
@@ -893,7 +892,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Actions.INPUT);
+        		track(Activity.INPUT);
         		
         		// 清空舞台
             	cleanStage();
@@ -929,7 +928,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.transactionService.update(editableTrans);
         		
         		//操作记录
-        		track(Actions.INPUT);
+        		track(Activity.INPUT);
         		//自动删除消息
         		if(removeMessage != null)
         			removeMessage.onSuccessful();
@@ -954,7 +953,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Actions.INPUT);
+        		track(Activity.INPUT);
         		//自动删除消息
         		if(removeMessage != null)
         			removeMessage.onSuccessful();
@@ -975,7 +974,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.transactionService.update(editableTrans);
         		
         		//操作记录
-        		track(Actions.INPUT);
+        		track(Activity.INPUT);
         		//自动删除消息
         		if(removeMessage != null)
         			removeMessage.onSuccessful();
@@ -998,7 +997,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Actions.INPUT);
+        		track(Activity.INPUT);
         		//自动删除消息
         		if(removeMessage != null)
         			removeMessage.onSuccessful();
@@ -1030,7 +1029,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Actions.INPUT);
+        		track(Activity.INPUT);
         		//自动删除消息
         		if(removeMessage != null)
         			removeMessage.onSuccessful();
@@ -1055,7 +1054,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Actions.INPUT);
+        		track(Activity.INPUT);
         		//自动删除消息
         		if(removeMessage != null)
         			removeMessage.onSuccessful();
@@ -1086,7 +1085,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Actions.INPUT);
+        		track(Activity.INPUT);
         		//自动删除消息
         		if(removeMessage != null)
         			removeMessage.onSuccessful();
@@ -1110,7 +1109,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Actions.INPUT);
+        		track(Activity.INPUT);
         		//自动删除消息
         		if(removeMessage != null)
         			removeMessage.onSuccessful();
@@ -1125,33 +1124,26 @@ public final class FrontView extends Panel implements View,InputViewIF {
      * 
      * @param act
      */
-    private void track(Actions act) {
-    	Map<String, String> details = new HashMap<String, String>();
-    	details.put("1", editableTrans.getStatus());//STATUS
-		details.put("2", basicInfoPane.getBarCode());//BARCODE
-		details.put("3", basicInfoPane.getPlateType());//PLATETYPE
-		details.put("4", basicInfoPane.getPlateNumber());//PLATENUMBER
-		details.put("5", basicInfoPane.getVIN());//VIN
-		details.put("6", businessTypePane.getSelected().getName());//BUSINESSTYPE
-		details.put("7", editableTrans.getUuid());//UUID
-		String json = jsonHelper.map2Json(details);
+    private void track(Activity act) {
+//    	Map<String, String> details = new HashMap<String, String>();
+//    	details.put("1", editableTrans.getStatus());//STATUS
+//		details.put("2", basicInfoPane.getBarCode());//BARCODE
+//		details.put("3", basicInfoPane.getPlateType());//PLATETYPE
+//		details.put("4", basicInfoPane.getPlateNumber());//PLATENUMBER
+//		details.put("5", basicInfoPane.getVIN());//VIN
+//		details.put("6", businessTypePane.getSelected().getName());//BUSINESSTYPE
+//		details.put("7", editableTrans.getUuid());//UUID
+//		String json = jsonHelper.map2Json(details);
     	
     	// 插入移行表
 		Transition transition = new Transition();
 		transition.setTransactionUUID(uuid);
-		transition.setAction(act.name);
-		transition.setDetails(json);
-		transition.setComments("");
-		transition.setUserName(loggedInUser.getUserName());
-		transition.setDateUpdated(new Date());
-		int transitionUniqueId = ui.transitionService.insert(transition,basicInfoPane.getVIN());
-		
-		// 插入用户事件
-		UserEvent event = new UserEvent();
-		event.setTransitionUniqueId(transitionUniqueId);
-		event.setUserName(loggedInUser.getUserName());
-		event.setDateUpdated(new Date());
-		ui.userEventService.insert(event, loggedInUser.getUserName());
+		transition.setVin(basicInfoPane.getVIN());
+		transition.setActivity(act.name);
+		transition.setComments(null);
+		transition.setOperator(loggedInUser.getUserName());
+		transition.setDateCreated(new Date());
+		int transitionUniqueId = ui.transitionService.insert(transition, basicInfoPane.getVIN());
     }
     
 	@Override

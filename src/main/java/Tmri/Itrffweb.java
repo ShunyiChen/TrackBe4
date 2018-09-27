@@ -1,4 +1,4 @@
-package com.maxtree.trackbe4.external.tmri;
+package Tmri;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;

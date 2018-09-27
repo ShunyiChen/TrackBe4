@@ -124,7 +124,7 @@ Of course - if you want to get both scrollbars and the content size can not be s
 	 */
 	private Permission[][] getPermissionArray() {
 		// 最大值索引 = 权限分类数
-		Permission[][] array = new Permission[14][10];//key:分类 value:分类中的项
+		Permission[][] array = new Permission[16][10];//key:分类 value:分类中的项
 		List<Permission> values = ui.permissionService.findAll();
 		String key = null;
 		int i = 0;

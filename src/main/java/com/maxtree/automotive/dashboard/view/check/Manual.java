@@ -309,10 +309,10 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 		main.setSplitPosition(25, Unit.PERCENTAGE);
 		main.setFirstComponent(leftTree);
 		main.setSecondComponent(rightSplit);
-		main.addSplitPositionChangeListener(e->{
-			
-			
-		});
+//		main.addSplitPositionChangeListener(e->{
+//			
+//			
+//		});
 		
 		
 		scrollPane.setContent(main);

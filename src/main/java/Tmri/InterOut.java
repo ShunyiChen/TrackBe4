@@ -1,4 +1,4 @@
-package com.maxtree.trackbe4.external.tmri;
+package Tmri;
 
 import java.util.Vector;
 import java.sql.*;

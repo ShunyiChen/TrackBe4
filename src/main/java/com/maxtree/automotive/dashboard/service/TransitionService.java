@@ -51,7 +51,7 @@ public class TransitionService {
 	public int insert(Transition transition, String vin) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		int index = getTableIndex(vin);
-		String UPDATE_TRANS_SQL = "INSERT INTO TRANSITION_"+index+"(TRANSACTIONUUID,ACTION,DETAILS,COMMENTS,USERNAME,DATEUPDATED) VALUES(?,?,?,?,?,?)";
+		String UPDATE_TRANS_SQL = "INSERT INTO TRANSITION_"+index+"(TRANSACTIONUUID,VIN,ACTIVITY,COMMENTS,OPERATOR,DATECREATED) VALUES(?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -59,11 +59,11 @@ public class TransitionService {
 				PreparedStatement ps = con.prepareStatement(
 						UPDATE_TRANS_SQL, new String[] {"transitionuniqueid"});
 				ps.setString(1, transition.getTransactionUUID());
-				ps.setString(2, transition.getAction());
-				ps.setString(3, transition.getDetails());
+				ps.setString(2, vin);
+				ps.setString(3, transition.getActivity());
 				ps.setString(4, transition.getComments());
-				ps.setString(5, transition.getUserName());
-				long millis=transition.getDateUpdated().getTime();
+				ps.setString(5, transition.getOperator());
+				long millis = transition.getDateCreated().getTime();
 				java.sql.Date date = new java.sql.Date(millis);
 				ps.setDate(6,date);
 				return ps;
