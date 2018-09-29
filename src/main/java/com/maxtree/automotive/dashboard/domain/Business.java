@@ -62,6 +62,6 @@ public class Business {
 	private Integer businessUniqueId = 0;
 	private String name; // 业务类型名称
 	private String code; // 4位代码
-	private String checkLevel;// ""/一级审档/二级审档,例如“”表示不需要审档；一级审档标识本机构内部审档；二级审档指车管所审档
+	private String checkLevel;// ""/一级审档/二级审档,例如“”表示不需要审档；一级审档标识本机构内部审档；二级审档指同社区内车管所审档
 	private List<DataDictionary> items;
 }

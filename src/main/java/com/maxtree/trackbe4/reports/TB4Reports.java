@@ -50,19 +50,19 @@ public class TB4Reports {
 	/**
 	 * 
 	 * @param beans
-	 * @param tranactionUniqueId
+	 * @param userUniqueId
 	 * @param templateFileName
 	 * @param callback
 	 * @throws ReportException
 	 */
-	public void jasperToHtml(List<PrintableBean> beans, int tranactionUniqueId, String templateFileName, Callback callback) throws ReportException {
+	public void jasperToHtml(List<PrintableBean> beans, int userUniqueId, String templateFileName, Callback callback) throws ReportException {
 		try {
 			JRDataSource data= new JRBeanCollectionDataSource(beans);  
 			// Preparing parameters
 			FileInputStream inputStream = new FileInputStream("reports/templates/"+templateFileName);
 			JasperReport jasperReport= (JasperReport)JRLoader.loadObject(inputStream);    
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, data);
-			File dir = new File("reports/generates/" + tranactionUniqueId);
+			File dir = new File("reports/generates/" + userUniqueId);
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}

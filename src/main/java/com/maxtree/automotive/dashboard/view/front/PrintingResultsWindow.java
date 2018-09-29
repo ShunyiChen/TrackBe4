@@ -34,6 +34,8 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
+import Tmri.InterF;
+
 public class PrintingResultsWindow extends Window {
 
 	/**
@@ -106,60 +108,47 @@ public class PrintingResultsWindow extends Window {
     	radios.setSelectedItem(options.get(0));
 	}
 	
+	/**
+	 * 
+	 */
 	private void generateReport() {
+		Transition transition = ui.transitionService.findByUUID(trans.getUuid(), trans.getVin());
+//		ArrayList<Map> arry = interF.getDriverBusView(trans.getBarcode());
 		List<PrintableBean> list = new ArrayList<PrintableBean>();
 		PrintableBean bean = new PrintableBean();
-//		if(transition.getComments()) {
-//			
-//		}
-//		
-//		
-//		bean.setDateCreated(format.format(trans.getDateCreated()));
-//		bean.setPlateType(trans.getPlateType());
-//		bean.setPlateNumber(trans.getPlateNumber());
-//		bean.setVin(trans.getVin());
-//		
-//		StringBuilder info = new StringBuilder();
-//		info.append("号码种类:"+trans.getPlateType()+"\n");
-//		info.append("号码号牌:"+trans.getPlateNumber()+"\n");
-//		info.append("车辆识别代码:"+trans.getVin()+"\n");
-//		bean.setBasicInformation(info.toString());// 基本信息
-//		
-//		Transition transition = ui.transitionService.findByUUID(trans.getUuid(), trans.getVin());
-//		Map<String, String> map = jsonHelper.json2Map(transition.getDetails());
-////		Iterator<String> iter = map.keySet().iterator();
-//		StringBuilder details = new StringBuilder();
-//		details.append(transition.getComments());
-//		
-//		bean.setObjection(details.toString());
-//		bean.setChecker(transition.getUserName());
-//		bean.setDateChecked(format.format(transition.getDateUpdated()));
-//		
-//		list.add(bean);
-//		
-//		Callback callback = new Callback() {
-//			@Override
-//			public void onSuccessful() {
-//				opener = new BrowserWindowOpener(PrintUI.class);
-//				opener.setFeatures("height=595,width=842,resizable");
-//				opener.extend(btnOk);
-//				opener.setParameter("htmlFilePath", "reports/generates/"+trans.getTransactionUniqueId()+"/report.html");
-//				btnOk.setEnabled(true);
-//			}
-//		};
-//		try {
-//			new TB4Reports().jasperToHtml(list, trans.getTransactionUniqueId(), "report1.jasper", callback);
-//			
-//		} catch (ReportException e1) {
-//			e1.printStackTrace();
-//		}
+		bean.setOwner(trans.getCreator());//机动车所有人
+		bean.setIDNum("");//证件号
+		bean.setPlateType(trans.getPlateType());
+		bean.setPlateNum(trans.getPlateNumber());
+		bean.setCLSBDH(trans.getVin());
+		bean.setShelvesNum(trans.getCode());
+		bean.setVerifier(transition.getOperator());
+		bean.setVerifytime(format.format(transition.getDateCreated()));
+		list.add(bean);
+		
+		Callback callback = new Callback() {
+			@Override
+			public void onSuccessful() {
+				opener = new BrowserWindowOpener(PrintUI.class);
+				opener.setFeatures("height=595,width=842,resizable");
+				opener.extend(btnOk);
+				opener.setParameter("htmlFilePath", "reports/generates/"+loggedInUser.getUserUniqueId()+"/report.html");
+				btnOk.setEnabled(true);
+			}
+		};
+		try {
+			new TB4Reports().jasperToHtml(list, trans.getTransactionUniqueId(), "影像化档案审核合格证明书.jasper", callback);
+			
+		} catch (ReportException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	/**
 	 * 
 	 */
 	private void deleteReportFiles() {
-		new TB4Reports().deleteReportFiles("reports/generates/" + trans.getTransactionUniqueId());
+		new TB4Reports().deleteReportFiles("reports/generates/" + loggedInUser.getUserUniqueId());
 	}
 	
 	/**
@@ -187,4 +176,5 @@ public class PrintingResultsWindow extends Window {
 	private Transaction trans;
 	private Callback closableEvent;
 	private MessageBodyParser jsonHelper = new MessageBodyParser();
+	private InterF interF = new InterF();
 }

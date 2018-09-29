@@ -1,5 +1,7 @@
 package com.maxtree.automotive.dashboard.view.front;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.util.StringUtils;
@@ -22,6 +24,8 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
+
+import Tmri.InterF;
 
 public class BasicInfoPane extends Panel {
 
@@ -108,15 +112,15 @@ public class BasicInfoPane extends Panel {
 
 		
 		barCodeField.addBlurListener(e -> {
-			populateVIN();
+			callInterface();
 			ui.setPollInterval(config.getInterval());
 		});
-		plateTypeField.addBlurListener(e -> {
-			populateVIN();
-			ui.setPollInterval(config.getInterval());
-		});
+//		plateTypeField.addBlurListener(e -> {
+//			populateVIN();
+//			ui.setPollInterval(config.getInterval());
+//		});
 		plateNumberField.addBlurListener(e -> {
-			populateVIN();
+			callInterface();
 			ui.setPollInterval(config.getInterval());
 		});
 		vinField.addBlurListener(e -> {
@@ -125,27 +129,42 @@ public class BasicInfoPane extends Panel {
 	}
 	
 	/**
-	 * 为VIN赋值
+	 * 调用外部接口
 	 */
-	public void populateVIN() {
+	public void callInterface() {
 		// 通过失去焦点获得，如果有条形码，可以通过条形码查询vin.如果没有条形码，可以通过车牌号和号牌种类查询出vin.
-		if (StringUtils.isEmpty(barCodeField.getValue())) {
-//			ArrayList<HashMap<String, String>> lst = interF.getCarView(plateTypeField.getValue(), plateNumberField.getValue());
-//			view.vin = lst.get(0).get("clsbdh");
-		} else {
-//			ArrayList<HashMap<String, String>> lst = interF.getbusView(barCodeField.getValue(), plateTypeField.getValue(), plateNumberField.getValue());
-//			view.vin = lst.get(0).get("clsbdh");
-		}
-//		view.vin = "LGB12YEA9DY001226"; /// 这句话可以删除
-		// 辽BD01848
-//		vinField.setValue(view.vin());
-		// 有效性验证
-//		if(StringUtils.isEmpty(view.vin())) {
-//			Notifications.warning("有效性验证失败，VIN不能为空。");
-//			view.stoppedAtAnException(true);
+//		if (!StringUtils.isEmpty(barCodeField.getValue())) {
+////			ArrayList<HashMap<String, String>> lst = interF.getCarView(plateTypeField.getValue(), plateNumberField.getValue());
+////			view.vin = lst.get(0).get("clsbdh");
+//		} else {
+////			ArrayList<HashMap<String, String>> lst = interF.getbusView(barCodeField.getValue(), plateTypeField.getValue(), plateNumberField.getValue());
+////			view.vin = lst.get(0).get("clsbdh");
 //		}
+////		view.vin = "LGB12YEA9DY001226"; /// 这句话可以删除
+//		// 辽BD01848
+////		vinField.setValue(view.vin());
+//		// 有效性验证
+////		if(StringUtils.isEmpty(view.vin())) {
+////			Notifications.warning("有效性验证失败，VIN不能为空。");
+////			view.stoppedAtAnException(true);
+////		}
 		
-		view.businessTypePane().setSelectorEnabled(true);
+		ArrayList<HashMap<String, String>> lst = interF.getbusView(barCodeField.getValue(), plateTypeField.getValue(), plateNumberField.getValue());
+		String vin = lst.get(0).get("clsbdh");
+		String plateType = lst.get(0).get("hpzl");
+		String plateNum= lst.get(0).get("hphm");
+		
+		plateTypeField.setValue(plateType);
+		plateNumberField.setValue(plateNum);
+		
+		if(StringUtils.isEmpty(vin)) {
+			Notifications.warning("有效性验证失败，VIN不能为空。");
+			view.businessTypePane().setSelectorEnabled(false);
+		}
+		else {
+			vinField.setValue(vin);
+			view.businessTypePane().setSelectorEnabled(true);
+		}
 	}
 	
 	/**
@@ -275,7 +294,7 @@ public class BasicInfoPane extends Panel {
 	private TextField plateNumberField = new TextField("号码号牌:"); 		// 号码号牌文本框
 	private TextField vinField = new TextField("车辆识别代号:"); 			// 车辆识别码文本框
 	private String fieldHeight = "27px";
-//	private InterF interF = new InterF();
+	private InterF interF = new InterF();
 	private InputViewIF view;
 	private SystemConfiguration config = Yaml.readSystemConfiguration();
 }

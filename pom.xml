@@ -109,6 +109,13 @@
 	         <version>0.0.1-SNAPSHOT</version>
 	         <systemPath>${project.basedir}/lib/tb4beans-0.0.1-SNAPSHOT.jar</systemPath>
 	    </dependency>
+	    <dependency>
+	         <groupId>it.businesslogic.ireport</groupId>
+	         <artifactId>iReport-utils</artifactId>
+	         <scope>system</scope>
+	         <version>2.0.1</version>
+	         <systemPath>${project.basedir}/lib/iReport-utils-2.0.1.jar</systemPath>
+	    </dependency>
 	     <!-- report JavaBeans -->
         <dependency>
 	         <groupId>com.maxtree</groupId>

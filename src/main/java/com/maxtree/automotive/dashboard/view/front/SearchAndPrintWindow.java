@@ -10,6 +10,7 @@ import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
+import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
@@ -45,8 +46,8 @@ public class SearchAndPrintWindow extends Window {
 		this.setResizable(true);
 		this.setCaption("查询打印");
 		this.setModal(true);
-		this.setWidth("700px");
-		this.setHeight("495px");
+		this.setWidth("1100px");
+		this.setHeight("500px");
 		initComponents();
 	}
 	
@@ -104,11 +105,12 @@ public class SearchAndPrintWindow extends Window {
       	grid.addColumn(Transaction::getBarcode).setCaption("条形码");
       	grid.addColumn(Transaction::getPlateType).setCaption("号牌种类");
       	grid.addColumn(Transaction::getPlateNumber).setCaption("号码号牌");
-      	grid.addColumn(Transaction::getVin).setCaption("VIN");
+      	grid.addColumn(Transaction::getVin).setCaption("车辆识别代号");
       	grid.addColumn(Transaction::getStatus).setCaption("状态");
       	grid.addColumn(Transaction::getBusinessName).setCaption("业务名称");
-      	grid.addColumn(Transaction::getDateCreated).setCaption("创建时间");
-      	grid.addColumn(Transaction::getDateModified).setCaption("最近更改时间");
+      	grid.addColumn(Transaction::getCreator).setCaption("录入者");
+      	grid.addColumn(Transaction::getDateCreated).setCaption("录入时间");
+      	
         
         HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setSizeFull();
@@ -136,28 +138,49 @@ public class SearchAndPrintWindow extends Window {
       	    if (selected.size() > 0) {
       	    	
       	    	List<Transaction> list = new ArrayList<>(selected);
-      	    	Transaction selectedTransaction = list.get(0);
-      	    	if (selectedTransaction.getStatus().equals(BusinessState.B2.name)) {
-      	    		
-      	    		// 打印文件标签和车辆标签
-      	    		PrintingFiletagsWindow.open("打印确认", selectedTransaction); 
-      	    		
-      	    	} else if (selectedTransaction.getStatus().equals(BusinessState.B1.name) 
-      	    			|| selectedTransaction.getStatus().equals(BusinessState.B14.name)) {
-      	    		// 打印审核结果单
-      	    		Callback callback = new Callback() {
-						@Override
-						public void onSuccessful() {
-						}
-					};
-      	    		PrintingResultsWindow.open("打印确认", selectedTransaction,callback); 
+      	    	Transaction trans = list.get(0);
+      	    	if(trans.getBusinessName().equals("注册登记")) {
+      	    		PrintingFiletagsWindow.open("打印标签", trans);
       	    	}
       	    	else {
-      	    		
-      	    		Notifications.warning("不存在打印。");
+      	    		Business bus = ui.businessService.findByCode(trans.getBusinessCode());
+      	    		if(bus.getCheckLevel().equals("")) {//非审档业务
+      	    			PrintingFileTagOnlyWindow.open("只打印文件标签", trans);
+      	    		}
+      	    		else if(bus.getCheckLevel().equals("一级审档")
+      	    				|| bus.getCheckLevel().equals("二级审档")) {//一级审档
+          	    		Callback callback = new Callback() {
+    						@Override
+    						public void onSuccessful() {
+    						}
+    					};
+      	    			PrintingResultsWindow.open("打印审核结果单", trans, callback);
+      	    		}
       	    	}
+      	    	
+      	    	
+      	    	
+//      	    	if (selectedTransaction.getStatus().equals(BusinessState.B2.name)) {
+//      	    		
+//      	    		// 打印文件标签和车辆标签
+//      	    		PrintingFiletagsWindow.open("打印确认", selectedTransaction); 
+//      	    		
+//      	    	} else if (selectedTransaction.getStatus().equals(BusinessState.B1.name) 
+//      	    			|| selectedTransaction.getStatus().equals(BusinessState.B14.name)) {
+//      	    		// 打印审核结果单
+//      	    		Callback callback = new Callback() {
+//						@Override
+//						public void onSuccessful() {
+//						}
+//					};
+//      	    		PrintingResultsWindow.open("打印确认", selectedTransaction,callback); 
+//      	    	}
+//      	    	else {
+//      	    		
+//      	    		Notifications.warning("不存在打印。");
+//      	    	}
       	    } else {
-      	    	Notifications.warning("请选择一条记录。");
+      	    	Notifications.warning("请至少选择一条记录。");
       	    }
         });
     }

@@ -4,5 +4,5 @@ interval: 2000 #UI事件轮询间隔（毫秒），默认2000毫秒
 maximumSize: 10000 #Caffeine缓存最大行数，默认10000行
 expireAfterWrite: 5 #Caffeine缓存expireAfterWrite（分钟）
 refreshAfterWrite: 1 #Caffeine缓存refreshAfterWrite（分钟）
-createDBTableOnStartup: yes #启动服务时新建数据表（可用参数yes/no）
+createDBTableOnStartup: no #启动服务时新建数据表（可用参数yes/no）
 --- #end

@@ -194,6 +194,35 @@ public class InterF {
    * @return Map
    */
   public ArrayList getbusView(String bslsh,String hpzl,String hphm) {
+//	  if(bslsh == null || bslsh.equals("")) {
+//		  HashMap m = new HashMap();
+//		  m.put("hpzl", "2-小型汽车");
+//		  m.put("hphm", "辽B77777");
+//		  m.put("clsbdh", "7777");
+//		  ArrayList<HashMap> rs = new ArrayList<HashMap>(); 
+//		  rs.add(m);
+//		  return rs;
+//	  }
+//	  if(bslsh.equals("1")) {
+//		  HashMap m = new HashMap();
+//		  m.put("hpzl", "2-小型汽车");
+//		  m.put("hphm", "辽BB8K57");
+//		  m.put("clsbdh", "5692");
+//		  ArrayList<HashMap> rs = new ArrayList<HashMap>(); 
+//		  rs.add(m);
+//		  return rs;
+//	  }
+//	  if(bslsh.equals("2")) {
+//		  HashMap m = new HashMap();
+//		  m.put("hpzl", "2-小型汽车");
+//		  m.put("hphm", "辽BBBBBB");
+//		  m.put("clsbdh", "BBBB");
+//		  ArrayList<HashMap> rs = new ArrayList<HashMap>(); 
+//		  rs.add(m);
+//		  return rs;
+//	  }
+//	return null;
+	  
     ArrayList<Map> resultList = new ArrayList<Map> ();
     Map<String, String> Imp = new HashMap<String, String> ();
     Imp.put("LSH", bslsh);
