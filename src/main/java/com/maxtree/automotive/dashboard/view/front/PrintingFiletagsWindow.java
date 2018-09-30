@@ -1,5 +1,6 @@
 package com.maxtree.automotive.dashboard.view.front;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +17,7 @@ import com.maxtree.automotive.dashboard.exception.ReportException;
 import com.maxtree.tb4beans.PrintableBean;
 import com.maxtree.trackbe4.reports.TB4Reports;
 import com.vaadin.server.BrowserWindowOpener;
+import com.vaadin.server.FileResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -103,7 +105,6 @@ public class PrintingFiletagsWindow extends Window {
     		}
     		
     		if(e.getValue().equals("车辆标签")) {
-    			System.out.println(e.getValue()+"=======");
     			List<PrintableBean> list = new ArrayList<PrintableBean>();
     			PrintableBean bean = new PrintableBean();
     			bean.setPlateType(trans.getPlateType());
@@ -129,7 +130,6 @@ public class PrintingFiletagsWindow extends Window {
 					e1.printStackTrace();
 				}
     		} else {
-    			System.out.println(e.getValue()+"------");
     			List<PrintableBean> list = new ArrayList<PrintableBean>();
     			PrintableBean bean = new PrintableBean();
     			bean.setPlateType(trans.getPlateType());//号码种类
@@ -165,7 +165,7 @@ public class PrintingFiletagsWindow extends Window {
 //						btnOk.setEnabled(true);
 //						
 //						// 打印PDF
-//						FileResource resource = new FileResource(new File("reports/generates/"+trans.getTransactionUniqueId()+"/report.pdf"));
+//						FileResource resource = new FileResource(new File("reports/generates/"+loggedInUser.getUserUniqueId()+"/report.pdf"));
 //						// Extend the print button with an opener
 //			            // for the PDF resource
 //			            opener = new BrowserWindowOpener(resource);

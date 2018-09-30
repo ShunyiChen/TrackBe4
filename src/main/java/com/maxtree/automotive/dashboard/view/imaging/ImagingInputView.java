@@ -498,13 +498,12 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     		return;
     	}
     	
-    	Address addr = Yaml.readAddress();
     	editableTrans = new Transaction();
     	editableTrans.setBarcode("");
     	editableTrans.setPlateType("");
-    	editableTrans.setPlateNumber(addr.getLicenseplate());
+    	editableTrans.setPlateNumber("");
     	editableTrans.setVin("");
-    	basicInfoPane.transaction2Fields(editableTrans);
+    	basicInfoPane.populateFields(editableTrans);
     	// validating the transaction information
     	basicInfoPane.validatingFieldValues(binder);
     	binder.setBean(editableTrans);
@@ -555,7 +554,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	
     	resetComponents();
     	
-    	basicInfoPane.transaction2Fields(editableTrans);
+    	basicInfoPane.populateFields(editableTrans);
     	businessTypePane.populate(editableTrans.getBusinessCode());
     	
     	callback.onSuccessful();
@@ -575,7 +574,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	}
     	//新车注册流程
     	if (businessTypePane.getSelected().getName().equals("注册登记")) {
-    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
+    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
         	editableTrans.setSiteCode(editableSite.getCode());
@@ -621,7 +620,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     			Notifications.warning("上架号不存在，请先录入注册登记业务。");
     			return;
     		}
-    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
+    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
         	editableTrans.setSiteCode(editableSite.getCode());
@@ -666,7 +665,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	}
     	//新车注册流程
     	if (businessTypePane.getSelected().getName().equals("注册登记")) {
-    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
+    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateModified(new Date());
         	editableTrans.setStatus(BusinessState.B7.name);
     		ui.transactionService.update(editableTrans);
@@ -681,7 +680,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	Notifications.bottomWarning("操作成功。记录已提交,等待质检检验。");
     	}
     	else {
-    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
+    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateModified(new Date());
         	editableTrans.setStatus(BusinessState.B7.name);
     		ui.transactionService.update(editableTrans);

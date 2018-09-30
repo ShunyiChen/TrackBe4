@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.maxtree.automotive.dashboard.BusinessState;
+import org.springframework.util.StringUtils;
+
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
@@ -69,6 +70,10 @@ public class SearchAndPrintWindow extends Window {
         btnSearch.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         btnSearch.setDescription("按照条形码查找");
         btnSearch.addClickListener(e -> {
+        	if(StringUtils.isEmpty(barCodeField.getValue())) {
+        		Notifications.warning("条形码不能为空");
+        		return;
+        	}
         	
         	List<Transaction> items = ui.transactionService.findAll(-1, 0, barCodeField.getValue(), community.getCommunityName());
         	grid.setItems(items);
@@ -82,6 +87,10 @@ public class SearchAndPrintWindow extends Window {
 
 			@Override
 			public void handleAction(Object sender, Object target) {
+				if(StringUtils.isEmpty(barCodeField.getValue())) {
+	        		Notifications.warning("条形码不能为空");
+	        		return;
+	        	}
 				List<Transaction> items = ui.transactionService.findAll(-1, 0,barCodeField.getValue(), community.getCommunityName());
 	        	grid.setItems(items);
 			}

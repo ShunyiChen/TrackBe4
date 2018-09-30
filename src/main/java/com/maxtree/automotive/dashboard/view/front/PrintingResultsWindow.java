@@ -176,5 +176,5 @@ public class PrintingResultsWindow extends Window {
 	private Transaction trans;
 	private Callback closableEvent;
 	private MessageBodyParser jsonHelper = new MessageBodyParser();
-	private InterF interF = new InterF();
+//	private InterF interF = new InterF();
 }

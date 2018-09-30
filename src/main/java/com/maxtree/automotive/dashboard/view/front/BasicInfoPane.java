@@ -109,21 +109,20 @@ public class BasicInfoPane extends Panel {
 		vinField.addFocusListener(e->{
 			ui.setPollInterval(-1);
 		});
-
-		
 		barCodeField.addBlurListener(e -> {
 			callInterface();
 			ui.setPollInterval(config.getInterval());
 		});
-//		plateTypeField.addBlurListener(e -> {
-//			populateVIN();
-//			ui.setPollInterval(config.getInterval());
-//		});
+		plateTypeField.addBlurListener(e -> {
+			callInterface();
+			ui.setPollInterval(config.getInterval());
+		});
 		plateNumberField.addBlurListener(e -> {
 			callInterface();
 			ui.setPollInterval(config.getInterval());
 		});
 		vinField.addBlurListener(e -> {
+			callInterface();
 			ui.setPollInterval(config.getInterval());
 		});
 	}
@@ -132,6 +131,14 @@ public class BasicInfoPane extends Panel {
 	 * 调用外部接口
 	 */
 	public void callInterface() {
+		if(!StringUtils.isEmpty(plateTypeField.getValue())
+				&& !StringUtils.isEmpty(plateNumberField.getValue())
+				&& !StringUtils.isEmpty(vinField.getValue())) {
+			view.businessTypePane().setSelectorEnabled(true);
+		}
+		else {
+			view.businessTypePane().setSelectorEnabled(false);
+		}
 		// 通过失去焦点获得，如果有条形码，可以通过条形码查询vin.如果没有条形码，可以通过车牌号和号牌种类查询出vin.
 //		if (!StringUtils.isEmpty(barCodeField.getValue())) {
 ////			ArrayList<HashMap<String, String>> lst = interF.getCarView(plateTypeField.getValue(), plateNumberField.getValue());
@@ -149,22 +156,22 @@ public class BasicInfoPane extends Panel {
 ////			view.stoppedAtAnException(true);
 ////		}
 		
-		ArrayList<HashMap<String, String>> lst = interF.getbusView(barCodeField.getValue(), plateTypeField.getValue(), plateNumberField.getValue());
-		String vin = lst.get(0).get("clsbdh");
-		String plateType = lst.get(0).get("hpzl");
-		String plateNum= lst.get(0).get("hphm");
-		
-		plateTypeField.setValue(plateType);
-		plateNumberField.setValue(plateNum);
-		
-		if(StringUtils.isEmpty(vin)) {
-			Notifications.warning("有效性验证失败，VIN不能为空。");
-			view.businessTypePane().setSelectorEnabled(false);
-		}
-		else {
-			vinField.setValue(vin);
-			view.businessTypePane().setSelectorEnabled(true);
-		}
+//		ArrayList<HashMap<String, String>> lst = interF.getbusView(barCodeField.getValue(), plateTypeField.getValue(), plateNumberField.getValue());
+//		String vin = lst.get(0).get("clsbdh");
+//		String plateType = lst.get(0).get("hpzl");
+//		String plateNum= lst.get(0).get("hphm");
+//		
+//		plateTypeField.setValue(plateType);
+//		plateNumberField.setValue(plateNum);
+//		
+//		if(StringUtils.isEmpty(vin)) {
+//			Notifications.warning("有效性验证失败，VIN不能为空。");
+//			view.businessTypePane().setSelectorEnabled(false);
+//		}
+//		else {
+//			vinField.setValue(vin);
+//			view.businessTypePane().setSelectorEnabled(true);
+//		}
 	}
 	
 	/**
@@ -176,7 +183,7 @@ public class BasicInfoPane extends Panel {
 //		.bind(Transaction::getBarcode, Transaction::setBarcode);
 		binder.forField(plateTypeField).withValidator(new StringLengthValidator( "号牌种类长度范围在2~20个字符", 2, 20))
 		.bind(Transaction::getPlateType, Transaction::setPlateType);
-		binder.forField(plateNumberField).withValidator(new StringLengthValidator( "号码号牌长度应为7~8个字符", 7, 8))
+		binder.forField(plateNumberField).withValidator(new StringLengthValidator( "号码号牌长度应为5~6个字符", 5,6))
 		.bind(Transaction::getPlateNumber, Transaction::setPlateNumber);
 //		binder.forField(vinField).withValidator(new StringLengthValidator( "车辆识别码长度是17个字符", 17, 17))
 //		.bind(Transaction::getVin, Transaction::setVin);
@@ -190,6 +197,11 @@ public class BasicInfoPane extends Panel {
 		if (StringUtils.isEmpty(plateTypeField.getSelectedItem())) {
 			
 			plateTypeField.setComponentError(new ErrorMessage() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
 				@Override 
 				public ErrorLevel getErrorLevel() {
 					return ErrorLevel.ERROR;
@@ -203,6 +215,11 @@ public class BasicInfoPane extends Panel {
 			return false;
 		} else if (StringUtils.isEmpty(plateNumberField.getValue())) {
 			plateNumberField.setComponentError(new ErrorMessage() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
 				@Override
 				public ErrorLevel getErrorLevel() {
 					return ErrorLevel.ERROR;
@@ -216,6 +233,11 @@ public class BasicInfoPane extends Panel {
 			return false;
 		} else if (StringUtils.isEmpty(vinField.getValue())) {
 			vinField.setComponentError(new ErrorMessage() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
 				@Override
 				public ErrorLevel getErrorLevel() {
 					return ErrorLevel.ERROR;
@@ -249,23 +271,30 @@ public class BasicInfoPane extends Panel {
 		plateTypeField.clear();
 		plateNumberField.clear();
 		vinField.clear();
-		
-		Address addr = Yaml.readAddress();
-		plateNumberField.setValue(addr.getLicenseplate());
 	}
 	
 	/**
 	 * 
 	 * @param transaction
 	 */
-	public void transaction2Fields(Transaction transaction) {
+	public void populateFields(Transaction transaction) {
 		barCodeField.setValue(transaction.getBarcode());
 		plateTypeField.setValue(transaction.getPlateType());
-		plateNumberField.setValue(transaction.getPlateNumber());
+		if(transaction.getPlateNumber().equals("")) {
+			plateNumberField.setValue("");
+		}
+		else {
+			String plateNum = transaction.getPlateNumber().substring(4);
+			plateNumberField.setValue(plateNum);
+		}
 		vinField.setValue(transaction.getVin());
 	}
 
-	public void fields2Transaction(Transaction transaction) {
+	/**
+	 * 
+	 * @param transaction
+	 */
+	public void populateTransaction(Transaction transaction) {
 		transaction.setBarcode(barCodeField.getValue()==null?"":barCodeField.getValue());
 		transaction.setPlateType(plateTypeField.getValue());
 		transaction.setPlateNumber(plateNumberField.getValue());
@@ -277,7 +306,7 @@ public class BasicInfoPane extends Panel {
 	}
 	
 	public String getPlateNumber() {
-		return plateNumberField.getValue();
+		return addr.getLicenseplate()+" "+plateNumberField.getValue();
 	}
 	
 	public String getPlateType() {
@@ -288,13 +317,14 @@ public class BasicInfoPane extends Panel {
 		return vinField.getValue();
 	}
 	
+	private Address addr = Yaml.readAddress();
+	private SystemConfiguration config = Yaml.readSystemConfiguration();
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private TextField barCodeField = new TextField("条形码:"); 			// 条形码文本框
 	private ComboBox<String> plateTypeField = new ComboBox<>("号牌种类:");// 号牌种类文本框
-	private TextField plateNumberField = new TextField("号码号牌:"); 		// 号码号牌文本框
+	private TextField plateNumberField = new TextField("号码号牌:"+addr.getLicenseplate()); 		// 号码号牌文本框
 	private TextField vinField = new TextField("车辆识别代号:"); 			// 车辆识别码文本框
 	private String fieldHeight = "27px";
-	private InterF interF = new InterF();
+//	private InterF interF = new InterF();
 	private InputViewIF view;
-	private SystemConfiguration config = Yaml.readSystemConfiguration();
 }

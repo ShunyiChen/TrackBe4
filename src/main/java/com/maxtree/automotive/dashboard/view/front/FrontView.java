@@ -3,7 +3,6 @@ package com.maxtree.automotive.dashboard.view.front;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -518,13 +517,12 @@ public final class FrontView extends Panel implements View,InputViewIF {
     		return;
     	}
     	
-    	Address addr = Yaml.readAddress();
     	editableTrans = new Transaction();
     	editableTrans.setBarcode("");
     	editableTrans.setPlateType("");
-    	editableTrans.setPlateNumber(addr.getLicenseplate());
+    	editableTrans.setPlateNumber("");
     	editableTrans.setVin("");
-    	basicInfoPane.transaction2Fields(editableTrans);
+    	basicInfoPane.populateFields(editableTrans);
     	
     	// validating the transaction information
     	basicInfoPane.validatingFieldValues(binder);
@@ -605,7 +603,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	resetComponents();
     	
-    	basicInfoPane.transaction2Fields(editableTrans);
+    	basicInfoPane.populateFields(editableTrans);
     	businessTypePane.populate(editableTrans.getBusinessCode());
     	
     	callback.onSuccessful();
@@ -626,7 +624,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	//4大流程
     	//新车注册流程
     	if (businessTypePane.getSelected().getName().equals("注册登记")) {
-    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
+    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
         	editableTrans.setSiteCode(editableSite.getCode());
@@ -697,7 +695,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	// 非审档流程
     	else if (StringUtils.isEmpty(businessTypePane.getSelected().getCheckLevel())) {
-    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
+    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
         	editableTrans.setSiteCode(editableSite.getCode());
@@ -759,7 +757,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	// 需要审档（一级）流程
     	else if (businessTypePane.getSelected().getCheckLevel().equals("一级审档")) {
     		System.out.println("进入一级审档");
-    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
+    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
         	editableTrans.setSiteCode(editableSite.getCode());
@@ -832,7 +830,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	// 需要审档（二级）流程
     	else if (businessTypePane.getSelected().getCheckLevel().equals("二级审档")) {
-    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
+    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
         	editableTrans.setSiteCode(editableSite.getCode());
@@ -920,7 +918,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	// 非审档流程
     	if (businessTypePane.getSelected().getName().equals("注册登记")) {
-    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
+    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateModified(new Date());
     		// 跳过质检
     		if(editableCompany.getIgnoreChecker() == 1) {
@@ -966,7 +964,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	}
     	// 非审档流程
     	else if (StringUtils.isEmpty(businessTypePane.getSelected().getCheckLevel())) {
-    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
+    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateModified(new Date());
         	// 跳过质检
     		if(editableCompany.getIgnoreChecker() == 1) {
@@ -1010,7 +1008,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	// 两大流程
     	// 需要审档（一级）流程
     	else if (businessTypePane.getSelected().getCheckLevel().equals("一级审档")) {
-    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
+    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateModified(new Date());
         	
         	// 是否跳过质检
@@ -1067,7 +1065,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	// 需要审档（二级）流程
     	else if (businessTypePane.getSelected().getCheckLevel().equals("二级审档")) {
-    		basicInfoPane.fields2Transaction(editableTrans);//赋值基本信息
+    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateModified(new Date());
         	// 是否跳过质检
         	if(editableCompany.getIgnoreChecker() == 1) {
