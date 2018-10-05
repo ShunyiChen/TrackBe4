@@ -284,7 +284,7 @@ public class BasicInfoPane extends Panel {
 			plateNumberField.setValue("");
 		}
 		else {
-			String plateNum = transaction.getPlateNumber().substring(4);
+			String plateNum = transaction.getPlateNumber();
 			plateNumberField.setValue(plateNum);
 		}
 		vinField.setValue(transaction.getVin());
