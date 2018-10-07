@@ -69,7 +69,8 @@ public class LoginView extends VerticalLayout {
         final PasswordField password = new PasswordField("密码");
         password.setIcon(VaadinIcons.LOCK);
         password.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
-       password.setValue("");// password.setValue("123456");
+//        password.setValue("");
+        password.setValue("123456");
         
 
         final Button signin = new Button("登录");

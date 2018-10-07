@@ -694,7 +694,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	
     	// 非审档流程
-    	else if (StringUtils.isEmpty(businessTypePane.getSelected().getCheckLevel())) {
+    	else if ("无".equals(businessTypePane.getSelected().getCheckLevel())) {
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -963,7 +963,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     		
     	}
     	// 非审档流程
-    	else if (StringUtils.isEmpty(businessTypePane.getSelected().getCheckLevel())) {
+    	else if ("无".equals(businessTypePane.getSelected().getCheckLevel())) {
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateModified(new Date());
         	// 跳过质检

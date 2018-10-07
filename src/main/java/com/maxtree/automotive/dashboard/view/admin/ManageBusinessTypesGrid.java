@@ -217,9 +217,9 @@ public class ManageBusinessTypesGrid extends VerticalLayout {
 			menu.open(e.getClientX(), e.getClientY());
 		});
 		
-		labelName.setWidth("175px");
-		labelLocal.setWidth("175px");
-		labelMaterials.setWidth("180px");
+		labelName.setWidth("190px");
+		labelLocal.setWidth("170px");
+		labelMaterials.setWidth("170px");
 		row.addComponents(labelName, labelLocal,labelMaterials, moreImg);
 		row.setComponentAlignment(labelName, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(labelLocal, Alignment.MIDDLE_LEFT);

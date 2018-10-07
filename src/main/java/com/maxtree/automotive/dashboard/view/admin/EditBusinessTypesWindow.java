@@ -55,6 +55,7 @@ public class EditBusinessTypesWindow extends Window {
 		codeField.setWidth("350px");
 		codeField.setHeight("27px");
 		List<String> checkLevelItems = new ArrayList<String>();
+		checkLevelItems.add("无");
 		checkLevelItems.add("一级审档");
 		checkLevelItems.add("二级审档");
 		checkLevelBox = new ComboBox<String>("审档级别:", checkLevelItems);
@@ -62,7 +63,7 @@ public class EditBusinessTypesWindow extends Window {
 		checkLevelBox.setDescription("一级审档表示本社区本机构内部审档。二级审档表示本社区外部机构审档。");
 		checkLevelBox.setWidth("350px");
 		checkLevelBox.setHeight("27px");
-		checkLevelBox.setEmptySelectionAllowed(true);
+		checkLevelBox.setEmptySelectionAllowed(false);
 		checkLevelBox.setTextInputAllowed(false);
 		checkLevelBox.setSelectedItem("一级审档");
 		

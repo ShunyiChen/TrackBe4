@@ -1,5 +1,17 @@
 package com.maxtree.automotive.dashboard.domain;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
+
+import com.maxtree.automotive.dashboard.exception.FileException;
+import com.vaadin.server.StreamResource;
+
 public class Document {
 
 	public Integer getDocumentUniqueId() {
@@ -27,6 +39,29 @@ public class Document {
 	}
 
 	public byte[] getThumbnail() {
+		if(thumbnail == null || thumbnail.length == 0) {
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+			FileInputStream input = null;
+			try {
+				input = new FileInputStream("../VAADIN/themes/dashboard/img/frontui/none_128px_31202_easyicon.net.png");
+				byte[] buffer = new byte[4096];
+			    int n = 0;
+			    while (-1 != (n = input.read(buffer))) {
+			        output.write(buffer, 0, n);
+			    }
+			    thumbnail = output.toByteArray();
+			    
+			} catch(Exception e) {
+				e.printStackTrace();
+			}finally {
+				try {
+					input.close();
+					output.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		return thumbnail;
 	}
 

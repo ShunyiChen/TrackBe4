@@ -124,8 +124,8 @@ public class BusinessService {
 		jdbcTemplate.update(sql,
 				new Object[] {
 						business.getName(),
-						business.getCheckLevel(),
-						business.getCode(), // 快捷编码
+						business.getCheckLevel(),//审档级别
+						business.getCode(), // 业务类型编号
 						business.getBusinessUniqueId()
 						});
 		return business;

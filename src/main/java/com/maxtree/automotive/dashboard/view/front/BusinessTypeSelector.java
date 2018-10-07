@@ -236,7 +236,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 	    	 影像化录入，单独角色单独界面，根据纸质录入车辆信息，上传原文，提交给质检。
 	    	 影响化质检，单独角色单独界面，根据纸质录入车辆信息，查看原文，退回质检或完成后将纸质档案放回。
     	 */
-    	if(StringUtils.isEmpty(view.businessTypePane().getSelected())) {
+    	if("无".equals(view.businessTypePane().getSelected().getCheckLevel())) {
     		return true;
     	}
     	else if(view.businessTypePane().getSelected().getName().equals("注册登记")) {
