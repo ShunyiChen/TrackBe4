@@ -1,6 +1,5 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -17,15 +16,11 @@ import org.springframework.util.StringUtils;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.TB4Application;
-import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
-import com.vaadin.server.Resource;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -130,19 +125,20 @@ public class DEVWorkbench extends VerticalLayout {
 		}
 		if(sql.startsWith("update")
 				|| sql.startsWith("delete")
-				|| sql.startsWith("insert")) {
+				|| sql.startsWith("insert")
+				|| sql.startsWith("create")
+				|| sql.startsWith("drop")
+				|| sql.startsWith("do")) {
 			Connection conn = ui.transactionService.getConnection();
 			Statement stmt = conn.createStatement();
 			boolean bool = stmt.execute(tcomp.sql());
 			stmt.close();
 			conn.close();
 			long end = System.currentTimeMillis();
-			if(bool) {
-				tcomp.succeed("执行成功 ("+(end-start)+"毫秒)");
-			}
-			else {
-				tcomp.failure("执行失败("+(end-start)+"毫秒)");
-			}
+			
+			tcomp.succeed("执行成功 ("+(end-start)+"毫秒)");
+			tcomp.logSheet.setSelectedTab(0);
+			tcomp.errorConsole.setValue("");
 		}
 		else if(sql.startsWith("select")){
 			Connection conn = ui.transactionService.getConnection();
@@ -173,13 +169,13 @@ public class DEVWorkbench extends VerticalLayout {
 						row.add(val+"");
 					} else if (rsmd.getColumnType(j) == java.sql.Types.TIMESTAMP) {
 						Timestamp val = res.getTimestamp(rsmd.getColumnName(j));
-						row.add(val.toString());
+						row.add(val == null? "NULL" : val.toString());
 					} else if (rsmd.getColumnType(j) == java.sql.Types.BINARY) {
 						InputStream is = res.getBinaryStream(rsmd.getColumnName(j));
 						if(is != null) {
 							row.add("XXX");
 						} else {
-							row.add("null");
+							row.add("NULL");
 						}
 						// ps.setBinaryStream(4, new ByteArrayInputStream(document.getThumbnail()),
 						// document.getThumbnail().length);
@@ -188,13 +184,15 @@ public class DEVWorkbench extends VerticalLayout {
 				data.add(row);
 			}
 			long end = System.currentTimeMillis();
-			tcomp.succeed("执行成功 ("+(end-start)+"毫秒),总行数："+res.getRow());
+			tcomp.succeed("执行成功 ("+(end-start)+"毫秒),总行数："+data.size());
 		 
 			res.close();
 			stmt.close();
 			conn.close();
 			
 			tcomp.scrollTable.setItems(data);
+			tcomp.logSheet.setSelectedTab(0);
+			tcomp.errorConsole.setValue("");
 		}
 		else {
 			long end = System.currentTimeMillis();
@@ -252,6 +250,7 @@ class TabComponent extends VerticalLayout {
     	this.setSpacing(false);
     	sqlEditor.setWidth("100%");
     	sqlEditor.setHeight("100%");
+    	sqlEditor.setWordWrap(false);
     	errorConsole.setSizeFull();
     	
     	logSheet.setSizeFull();
@@ -314,20 +313,25 @@ class ResultsTable extends VerticalLayout{
 		this.setMargin(false);
 		this.setSpacing(false);
 		this.setSizeFull();
-		main.setWidth("100%");
-		main.setHeightUndefined();
+		main.setSizeUndefined();
 		main.setSpacing(false);
 		main.setMargin(false);
+		body.setSizeUndefined();
+		body.setSpacing(false);
+		body.setMargin(false);
 		header.setSpacing(false);
 		header.setMargin(false);
 		header.setWidth("100%");
 		header.setHeight("23px");
+		main.addComponents(header, body);
+		main.setExpandRatio(body, 1);
+		main.setExpandRatio(header, 0);
+		
 		Panel scroll = new Panel();
 		scroll.setWidth("100%");
 		scroll.setHeight("100%");
 		scroll.setContent(main);
-		this.addComponents(header, scroll);
-		this.setExpandRatio(header, 0);
+		this.addComponents(scroll);
 		this.setExpandRatio(scroll, 1);
 	}
 	
@@ -338,7 +342,7 @@ class ResultsTable extends VerticalLayout{
 	public void setColumnNames(String[] columnNames) {
 		for(String colName : columnNames) {
 			Label l = new Label(colName);
-			l.setWidth("100px");
+			l.setWidth("160px");
 			header.addComponent(l);
 		}
 	}
@@ -350,22 +354,24 @@ class ResultsTable extends VerticalLayout{
 	public void setItems(List<List<String>> data) {
 		for(List<String> list : data) {
 			HorizontalLayout row = new HorizontalLayout();
-			row.setWidth("100%");
+			row.setWidthUndefined();
 			row.setHeightUndefined();
 			for(String v : list) {
 				Label l = new Label(v);
-				l.setWidth("100px");
+				l.setWidth("160px");
 				l.setHeightUndefined();
 				row.addComponent(l);
 			}
-			main.addComponent(row);
+			body.addComponent(row);
 		}
 	}
 	
 	public void clearData() {
-		main.removeAllComponents();
+		header.removeAllComponents();
+		body.removeAllComponents();
 	}
 	
 	private HorizontalLayout header = new HorizontalLayout();
+	private VerticalLayout body = new VerticalLayout();
 	private VerticalLayout main = new VerticalLayout();
 }

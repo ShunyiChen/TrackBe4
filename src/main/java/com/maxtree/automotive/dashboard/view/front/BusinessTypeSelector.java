@@ -79,7 +79,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 		selector = new ComboBox<Business>("业务类型:", data);
 		// Disallow null selections
 		selector.setEmptySelectionAllowed(true);
-		selector.setTextInputAllowed(false);
+		selector.setTextInputAllowed(true);
 		selector.setPlaceholder("请选择一个业务类型");
 		selector.setWidth("100%");
 		selector.setHeight("27px");
@@ -101,6 +101,10 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 	
 	@Override
 	public void selectionChange(SingleSelectionEvent<Business> e) {
+		// 如果业务类型为null,则直接返回
+		if(StringUtils.isEmpty(view.businessTypePane().getSelected())) {
+			return;
+		}
 		if (StringUtils.isEmpty(view.vin())) {
 			Notifications.warning("车辆识别代码不能空。");
 			return;

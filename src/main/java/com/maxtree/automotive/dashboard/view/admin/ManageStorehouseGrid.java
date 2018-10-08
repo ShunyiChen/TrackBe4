@@ -192,7 +192,13 @@ public class ManageStorehouseGrid extends VerticalLayout {
 					}
 				}
 			});
-			
+			menu.addSeparator();
+			menu.addItem("属性", new Command() {
+				@Override
+				public void menuSelected(MenuItem selectedItem) {
+					ShelfPropertiesWindow.open(store);
+				}
+			});
 			menu.open(e.getClientX(), e.getClientY());
 		});
 		

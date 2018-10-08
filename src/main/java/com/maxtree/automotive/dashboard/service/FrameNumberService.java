@@ -27,6 +27,32 @@ public class FrameNumberService {
 	private JdbcTemplate jdbcTemplate;
 	
 	/**
+	 * 获取单元格总数
+	 * 
+	 * @return
+	 */
+	public int findCellTotalCount(String storeName) {
+		String sql = "select count(*) from FRAMENUMBER where STOREHOUSENAME=? AND FRAMECODE != ?  and CELLCODE=? ";
+		Integer count = jdbcTemplate.queryForObject(sql, new Object[] {storeName,0,0}, Integer.class);
+		return count;
+	}
+	
+	/**
+	 * 获取文件夹总数
+	 * 
+	 * @param storeName
+	 * @return
+	 */
+	public int findFolderTotalCount(String storeName, boolean onlyIncludeNonNullCode) {
+		String sql = "SELECT COUNT(*) FROM FRAMENUMBER WHERE STOREHOUSENAME=? AND CODE IS NOT NULL ";
+		if(onlyIncludeNonNullCode) {
+			sql = "SELECT COUNT(*) FROM FRAMENUMBER WHERE STOREHOUSENAME=? AND CODE IS NOT NULL AND VIN IS NOT NULL";
+		}
+		Integer count = jdbcTemplate.queryForObject(sql, new Object[] {storeName}, Integer.class);
+		return count;
+	}
+	
+	/**
 	 * 查询全部库房
 	 * 
 	 * @return
@@ -46,6 +72,18 @@ public class FrameNumberService {
 	public List<FrameNumber> findAllFrame(String storehouseName) {
 		String sql = "SELECT * FROM FRAMENUMBER WHERE STOREHOUSENAME=? AND FRAMECODE != ? AND CELLCODE=? ORDER BY FRAMEUNIQUEID";
 		List<FrameNumber> results = jdbcTemplate.query(sql, new Object[] {storehouseName,0,0}, new BeanPropertyRowMapper<FrameNumber>(FrameNumber.class));
+		return results;
+	}
+	
+	/**
+	 * 查询全部密集架
+	 * 
+	 * @param storehouseName
+	 * @return
+	 */
+	public List<FrameNumber> findAllFrame(String storehouseName, int limit, int offset) {
+		String sql = "SELECT * FROM FRAMENUMBER WHERE STOREHOUSENAME=? AND FRAMECODE != ? AND CELLCODE=? ORDER BY FRAMEUNIQUEID LIMIT ? OFFSET ?";
+		List<FrameNumber> results = jdbcTemplate.query(sql, new Object[] {storehouseName,0,0, limit, offset}, new BeanPropertyRowMapper<FrameNumber>(FrameNumber.class));
 		return results;
 	}
 	

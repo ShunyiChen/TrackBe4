@@ -51,8 +51,10 @@ public class DEV extends VerticalLayout {
 		Button run = new Button(new ThemeResource("img/adminmenu/Start.png"));
 		run.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		run.addStyleName(ValoTheme.BUTTON_SMALL);
+		run.setEnabled(false);
 		
 		add.addClickListener(e->{
+			run.setEnabled(true);
 			bench.newSQLScript();
 		});
 		run.addClickListener(e->{

@@ -14869,6 +14869,17 @@ div.v-layout.v-horizontal.v-widget {
 	border-width: 2px;
 	padding: 1px;
 	box-shadow: 0 0 8px rgba(0, 191, 255, 0.8);
+	cursor: pointer;
+}
+
+.dashboard .Thumbnail-selected {
+	border-radius: 5px;
+	border-style: solid;
+	border-color: cadetblue;
+	border-width: 2px;
+	padding: 1px;
+	box-shadow: 0 0 8px rgba(0, 91, 155, 0.8);
+	cursor: pointer;
 }
 
 .dashboard .drop-area {

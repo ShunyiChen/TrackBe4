@@ -13,19 +13,19 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 /**
- * 密集架
+ * 密集架结构UI
  * 
  * @author Chen
  *
  */
-public class FrameComponent extends VerticalLayout {
+public class ShelfComponent extends VerticalLayout {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public FrameComponent(FrameNumber frame) {
+	public ShelfComponent(FrameNumber frame) {
 		this.frame = frame;
 		initComponents();
 	}

@@ -3,7 +3,6 @@ package com.maxtree.automotive.dashboard.view.admin;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.util.StringUtils;
 
@@ -141,6 +140,7 @@ public class EditFrameWindow extends Window {
 	 * @param frameCode
 	 */
 	private void insertCells(FrameNumber store, int frameCode) {
+		int carCountPerCell = 300;
 		int cellCode = 0;//单元格顺序号
 		for (int i = 1; i <= frame.getMaxRow(); i++) {
 			
@@ -159,7 +159,7 @@ public class EditFrameWindow extends Window {
 				cell.setFrameUniqueId(cellId);
 				
 				List<FrameNumber> batch = new ArrayList<FrameNumber>();
-				for(int z=1; z<=100; z++) {
+				for(int z=1; z<=carCountPerCell; z++) {
 					StringBuilder codes = new StringBuilder();
 					codes.append(formatter.format(frame.getFrameCode()));
 					codes.append("-");

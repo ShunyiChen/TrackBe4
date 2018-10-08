@@ -93,11 +93,7 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 	 * @param uuid
 	 */
 	public void displayImage(String uuid) {
-		try {
-			generateNewHTML(uuid);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		
 		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
  			/**
@@ -107,6 +103,13 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 
 			@Override
  			public InputStream getStream() {
+				
+				try {
+					generateNewHTML(uuid);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
  				FileInputStream inputStream = null;
 				try {
 					inputStream = new FileInputStream("devices/"+user.getUserUniqueId()+".html");

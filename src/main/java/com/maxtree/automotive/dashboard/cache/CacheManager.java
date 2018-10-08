@@ -138,7 +138,7 @@ public class CacheManager {
 	 * @return
 	 */
 	private DataObject createDataObject(Integer userUniqueId) {
-		System.out.println("CreateDataObject by "+userUniqueId);
+//		System.out.println("CreateDataObject by "+userUniqueId);
 		User u = ui.userService.findById(userUniqueId);
 		DataObject newDataObj = new DataObject();
 		newDataObj.userUniqueId = userUniqueId;

@@ -24,10 +24,10 @@ public class PasswordSecurity {
 		// Check that an unencrypted password matches one that has
 		// previously been hashed
 		if (BCrypt.checkpw(plaintext, hashed)) {
-			System.out.println("It matches");
+//			System.out.println("It matches");
 			return true;
 		} else {
-			System.out.println("It does not match");
+//			System.out.println("It does not match");
 			return false;
 		}
 			
