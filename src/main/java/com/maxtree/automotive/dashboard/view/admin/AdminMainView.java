@@ -800,14 +800,15 @@ public class AdminMainView extends VerticalLayout {
         row3.addStyleName("detail-hlayout");
         row3.setWidth("100%");
         row3.setHeight("48px");
-        Label reportIssues = new Label("报告问题");
+        Label reportIssues = new Label("开发");
         reportIssues.addStyleName("detail-setting-text");
         Image rightArrow3 = new Image(null, new ThemeResource("img/adminmenu/rightarrow.png"));
         row3.addComponents(reportIssues, rightArrow3);
         row3.setComponentAlignment(reportIssues, Alignment.MIDDLE_LEFT);
         row3.setComponentAlignment(rightArrow3, Alignment.MIDDLE_RIGHT);
         row3.addLayoutClickListener(e -> {
-        	
+        	showDetailPane(Commands.DEV);
+        	hidePanes();
         });
         
         vContent.addComponents(row0, row2, row3);
@@ -999,6 +1000,11 @@ public class AdminMainView extends VerticalLayout {
 			content.addComponent(aboutTB4);
 			content.setComponentAlignment(aboutTB4, Alignment.TOP_CENTER);
 		}
+		else if (command == Commands.DEV) { //开发
+			dev = new DEV(this);
+			content.addComponent(dev);
+			content.setComponentAlignment(dev, Alignment.TOP_CENTER);
+		}
 	}
 	
 	/**
@@ -1058,6 +1064,7 @@ public class AdminMainView extends VerticalLayout {
 	private ManageCommunityInvitations manageCommunityInvitations;//社区邀请
 	private ManageBroadCast manageBroadCast;
 	private AboutTB4 aboutTB4;
+	private DEV dev;
 	
 	// 搜索
 	private HorizontalLayout searchPane;

@@ -26,6 +26,15 @@ public class TransactionService {
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
+	public Connection getConnection() {
+		try {
+			return jdbcTemplate.getDataSource().getConnection();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	/**
 	 * 

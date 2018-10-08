@@ -22,7 +22,7 @@ public class BusinessService {
 	private static final Logger log = LoggerFactory.getLogger(BusinessService.class);
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-
+	
 	/**
 	 * 
 	 * @param businessUniqueId
