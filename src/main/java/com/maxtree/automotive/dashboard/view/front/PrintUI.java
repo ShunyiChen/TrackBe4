@@ -25,52 +25,46 @@ public class PrintUI extends UI {
 	
 	@Override
     protected void init(VaadinRequest request) {
-		try {
-			// 获得html文件并打印该文件
-			String htmlFilePath = request.getParameter("htmlFilePath");
-			htmlFile = new File(htmlFilePath);//("reports/generates/"+transactionId+"/report.html");
-			String fileAsString = Files.toString(htmlFile, Charsets.UTF_8);
-			
-			 // Have some content to print
+		// 获得html文件并打印该文件
+		String htmlFilePath = request.getParameter("htmlFilePath");
+//			htmlFile = new File(htmlFilePath);//("reports/generates/"+transactionId+"/report.html");
+//			String fileAsString = Files.toString(htmlFile, Charsets.UTF_8);
+		
+		 // Have some content to print
 //	        setContent(new Label(fileAsString, ContentMode.HTML));
-			
-			
-			
-			com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
-	 			/**
-				 * 
-				 */
-				private static final long serialVersionUID = 1L;
+		
+		
+		
+		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
+ 			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 
-				@Override
-	 			public InputStream getStream() {
-	 				FileInputStream inputStream = null;
-					try {
-						inputStream = new FileInputStream(htmlFilePath);
-					} catch (FileNotFoundException e) {
-						e.printStackTrace();
-					}
-					return inputStream;
-	 			}
-	 		}; 
-	 		StreamResource streamResource = new StreamResource(streamSource, "report.html");
-	 		streamResource.setCacheTime(0);
-			
-			BrowserFrame bf = new BrowserFrame(null);
-			bf.setSource(streamResource);
-			bf.setSizeFull();
-			
-			setContent(bf);
-			
+			@Override
+ 			public InputStream getStream() {
+ 				FileInputStream inputStream = null;
+				try {
+					inputStream = new FileInputStream(htmlFilePath);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+				return inputStream;
+ 			}
+ 		}; 
+ 		StreamResource streamResource = new StreamResource(streamSource, "report.png");
+ 		streamResource.setCacheTime(0);
+		
+		BrowserFrame bf = new BrowserFrame(null);
+		bf.setSource(streamResource);
+		bf.setSizeFull();
+		
+		setContent(bf);
 
-	        // Print automatically when the window opens
-	        JavaScript.getCurrent().execute(
-	            "setTimeout(function() {" +
-	            "  print(); self.close();}, 0);");
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        // Print automatically when the window opens
+        JavaScript.getCurrent().execute(
+            "setTimeout(function() {" +
+            "  print(); self.close();}, 0);");
 	}
 	
 	@Override

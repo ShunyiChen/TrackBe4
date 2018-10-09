@@ -148,11 +148,11 @@ public class PrintingFiletagsWindow extends Window {
 						opener = new BrowserWindowOpener(PrintUI.class);
 						opener.setFeatures("height=595,width=842,resizable");
 						opener.extend(btnOk);
-						opener.setParameter("htmlFilePath", "reports/generates/"+loggedInUser.getUserUniqueId()+"/report.html");
+						opener.setParameter("htmlFilePath", "reports/generates/"+loggedInUser.getUserUniqueId()+"/report.png");
 					}
     			};
     			try {
-					new TB4Reports().jasperToHtml(list, loggedInUser.getUserUniqueId(), "上架标签.jasper", callback);
+					new TB4Reports().jasperToPNG(list, loggedInUser.getUserUniqueId(), "上架标签.jasper", callback);
 					
 				} catch (ReportException e1) {
 					e1.printStackTrace();

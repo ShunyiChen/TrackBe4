@@ -1,5 +1,6 @@
 package com.maxtree.trackbe4.reports;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
@@ -20,6 +22,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
+
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,11 +33,13 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.exception.ReportException;
 import com.maxtree.tb4beans.PrintableBean;
 
+import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
@@ -48,7 +54,7 @@ public class TB4Reports {
 	private static final Logger log = LoggerFactory.getLogger(TB4Reports.class);
 
 	/**
-	 * 
+	 * Export Report To Html File
 	 * @param beans
 	 * @param userUniqueId
 	 * @param templateFileName
@@ -84,6 +90,7 @@ public class TB4Reports {
 	}
 	
 	/**
+	 * Export Report To Pdf File
 	 * 
 	 * @param beans
 	 * @param tranactionUniqueId
@@ -118,6 +125,56 @@ public class TB4Reports {
 			throw new ReportException(e2.getMessage());
 		}
 	}
+	
+	/**
+	 * Export Page To Image file
+	 * 
+	 * @param beans
+	 * @param userUniqueId
+	 * @param templateFileName
+	 * @param callback
+	 * @throws ReportException
+	 */
+	public void jasperToPNG(List<PrintableBean> beans, int userUniqueId, String templateFileName, Callback callback) throws ReportException {
+		try {
+			JRDataSource data= new JRBeanCollectionDataSource(beans);  
+			// Preparing parameters
+			FileInputStream inputStream = new FileInputStream("reports/templates/"+templateFileName);
+			JasperReport jasperReport= (JasperReport)JRLoader.loadObject(inputStream);    
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, data);
+			File dir = new File("reports/generates/" + userUniqueId);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+			String destFileName2 = dir.getPath() + "/report.png";
+			File file = new File(destFileName2);
+			OutputStream ouputStream = new FileOutputStream(file);
+//			JasperExportManager.exportReportToHtmlFile(jasperPrint, destFileName2);
+			
+//			DefaultJasperReportsContext.getInstance();   
+//	        JasperPrintManager printManager = JasperPrintManager.getInstance(DefaultJasperReportsContext.getInstance());      
+	 
+	        BufferedImage rendered_image = null;      
+	        rendered_image = (BufferedImage)JasperPrintManager.printPageToImage(jasperPrint, 0, 1.6f); 
+	        ImageIO.write(rendered_image, "png", ouputStream);     
+			
+	        ouputStream.close();
+	        
+			inputStream.close();
+			log.info("Generated a report.");
+			
+			callback.onSuccessful();
+			
+		} catch (JRException e) {
+			e.printStackTrace();
+			throw new ReportException(e.getMessage());
+		} catch (FileNotFoundException e1) {
+			throw new ReportException(e1.getMessage());
+		} catch (IOException e2) {
+			throw new ReportException(e2.getMessage());
+		}
+	}
+	
 	
 	/**
 	 * 
