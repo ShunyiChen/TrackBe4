@@ -57,6 +57,7 @@
 4.修改SystemConfiguration.yaml，改为no
 5.替换InterF.java
 6.删除war敏感文件
+7.改return_table
 
 /* 部署 */
 清理log文件

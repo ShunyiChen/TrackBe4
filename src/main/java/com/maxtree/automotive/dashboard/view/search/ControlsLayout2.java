@@ -20,7 +20,7 @@ import com.vaadin.ui.UI;
  * @author chens
  *
  */
-public class ControlsLayout extends HorizontalLayout {
+public class ControlsLayout2 extends HorizontalLayout {
 
 	/**
 	 * 
@@ -31,7 +31,7 @@ public class ControlsLayout extends HorizontalLayout {
 	 * 
 	 * @param grid
 	 */
-	public ControlsLayout(SearchResultsGrid grid) {
+	public ControlsLayout2(SearchResultsGrid grid) {
 		this.grid = grid;
 		initComponents();
 	}
@@ -80,11 +80,7 @@ public class ControlsLayout extends HorizontalLayout {
 	 * 
 	 */
 	public void execute() {
-		if(StringUtils.isEmpty(grid.getKeyword().trim())) {
-			Notifications.warning("查询关键字不能为空。");
-			return;
-		}
-		pageCount = ui.transactionService.search_by_keyword_pagingcount(sizePerPage, grid.getKeyword(), grid.getCommunityName());
+		pageCount = ui.transactionService.search_by_platetype_and_platenumber_vin_pagingcount(sizePerPage, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getCommunityName());
 		pageSizeLabel.setValue("总共"+pageCount+"页");
 		first();
 	}
@@ -95,7 +91,7 @@ public class ControlsLayout extends HorizontalLayout {
 	 */
 	private void first() {
 		if (grid != null) {
-			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage, 0, grid.getKeyword(), grid.getCommunityName()); 
+			List<Transaction> items = ui.transactionService.search_by_platetype_and_platenumber_vin(sizePerPage, 0, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getCommunityName()); 
 			grid.setPerPageData(items);
 			
 			// Update inputs
@@ -115,7 +111,7 @@ public class ControlsLayout extends HorizontalLayout {
 				currentPageIndex = 1;
 			}
 			int offset = (currentPageIndex - 1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage, offset, grid.getKeyword(), grid.getCommunityName()); 
+			List<Transaction> items = ui.transactionService.search_by_platetype_and_platenumber_vin(sizePerPage, offset, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getCommunityName()); 
 			grid.setPerPageData(items);
 			
 			// Update inputs
@@ -135,7 +131,7 @@ public class ControlsLayout extends HorizontalLayout {
 				currentPageIndex = pageCount;
 			}
 			int offset = (currentPageIndex -1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage, offset, grid.getKeyword(), grid.getCommunityName()); 
+			List<Transaction> items = ui.transactionService.search_by_platetype_and_platenumber_vin(sizePerPage, offset, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getCommunityName()); 
 			grid.setPerPageData(items);
 			// Update inputs
 			numField.setValue(currentPageIndex+"");
@@ -150,7 +146,7 @@ public class ControlsLayout extends HorizontalLayout {
 		if (grid != null) {
 			currentPageIndex = pageCount;
 			int offset = (currentPageIndex -1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage, offset, grid.getKeyword(), grid.getCommunityName()); 
+			List<Transaction> items = ui.transactionService.search_by_platetype_and_platenumber_vin(sizePerPage, offset, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getCommunityName()); 
 			grid.setPerPageData(items);
 			// Update inputs
 			numField.setValue(currentPageIndex+"");
@@ -163,7 +159,7 @@ public class ControlsLayout extends HorizontalLayout {
 	 */
 	private void jumpTo() {
 		int offset = (currentPageIndex - 1) * sizePerPage;
-		List<Transaction> data = ui.transactionService.search_by_keyword(sizePerPage, offset, grid.getKeyword(), grid.getCommunityName());
+		List<Transaction> data = ui.transactionService.search_by_platetype_and_platenumber_vin(sizePerPage, offset, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getCommunityName());
 		grid.setPerPageData(data);
 	}
 	

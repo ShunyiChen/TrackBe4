@@ -124,8 +124,11 @@ public class QuickQueryWindow extends Window {
 		});
 	}
 	
+	/**
+	 * 
+	 */
 	private void doSearch() {
-		List<Transaction> rs = ui.transactionService.searchByKeyword(20, 0, plateField.getValue(), community.getCommunityName());
+		List<Transaction> rs = ui.transactionService.search_by_keyword(20, 0, plateField.getValue(), community.getCommunityName());
 		setPerPageData(rs);
 	}
 	

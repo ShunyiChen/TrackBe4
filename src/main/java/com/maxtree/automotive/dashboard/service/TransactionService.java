@@ -188,13 +188,14 @@ public class TransactionService {
 	 * @param parentCommunityName
 	 * @return
 	 */
-	public List<Transaction> searchByKeyword(int limit, int offset, String keyword, String parentCommunityName) {
+	public List<Transaction> search_by_keyword(int limit, int offset, String keyword, String parentCommunityName) {
 		List<Transaction> all = new ArrayList<Transaction>();
 		String sql = "SELECT B.COMMUNITYNAME FROM COMMUNITIES AS A INNER JOIN COMMUNITIES AS B ON A.GROUPID=B.GROUPID WHERE A.COMMUNITYNAME=? AND A.LEVEL<=B.LEVEL ORDER BY B.COMMUNITYUNIQUEID";
-		List<String> communityNames = jdbcTemplate.query(sql, new Object[] {parentCommunityName}, new BeanPropertyRowMapper<String>(String.class));
+		List<String> communityNames = jdbcTemplate.queryForList(sql, new Object[] {parentCommunityName}, String.class);
 		for (String name : communityNames){
 			keyword = "%"+keyword+"%";
-			sql = "SELECT * FROM CREATE_SEARCH(?,?,?,?)";
+			sql = "SELECT * FROM SEARCH_BY_KEYWORD(?,?,?,?)";
+			System.out.println(limit+","+offset+","+keyword+","+name);
 			List<Transaction> lst = jdbcTemplate.query(sql, new Object[] {limit, offset, keyword, name}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
 			all.addAll(lst);
 		}
@@ -208,11 +209,48 @@ public class TransactionService {
 	 * @param communityName
 	 * @return
 	 */
-	public int findPagingCount(int limit, String keyword, String communityName) {
-		keyword = "%"+keyword+"%";// B8K57 or 123456
-		String sql = "SELECT * FROM CREATE_PAGINGCOUNT2(?,?,?)";
+	public int search_by_keyword_pagingcount(int limit, String keyword, String communityName) {
+		keyword = "%"+keyword+"%";
+		String sql = "SELECT * FROM SEARCH_BY_KEYWORD_PAGINGCOUNT(?,?,?)";
 		int count = jdbcTemplate.queryForObject( sql, new Object[] {limit, keyword, communityName}, Integer.class);
 		return count;
+	}
+	
+	/**
+	 * 
+	 * @param limit
+	 * @param plateType
+	 * @param plateNumber
+	 * @param vin
+	 * @param communityName
+	 * @return
+	 */
+	public int search_by_platetype_and_platenumber_vin_pagingcount(int limit, String plateType, String plateNumber, String vin, String communityName) {
+		String sql = "SELECT * FROM SEARCH_BY_PLATETYPE_AND_PLATENUMBER_OR_VIN_PAGINGCOUNT(?,?,?,?,?)";
+		int count = jdbcTemplate.queryForObject(sql, new Object[] {limit, plateType,plateNumber,vin,communityName}, Integer.class);
+		return count;
+	}
+	
+	/**
+	 * 
+	 * @param limit
+	 * @param offset
+	 * @param plateType
+	 * @param plateNumber
+	 * @param vin
+	 * @param parentCommunityName
+	 * @return
+	 */
+	public List<Transaction> search_by_platetype_and_platenumber_vin(int limit, int offset,String plateType,String plateNumber,String vin,String parentCommunityName) {
+		List<Transaction> all = new ArrayList<Transaction>();
+		String sql = "SELECT B.COMMUNITYNAME FROM COMMUNITIES AS A INNER JOIN COMMUNITIES AS B ON A.GROUPID=B.GROUPID WHERE A.COMMUNITYNAME=? AND A.LEVEL<=B.LEVEL ORDER BY B.COMMUNITYUNIQUEID";
+		List<String> communityNames = jdbcTemplate.queryForList(sql, new Object[] {parentCommunityName}, String.class);
+		for (String name : communityNames){
+			sql = "SELECT * FROM SEARCH_BY_PLATETYPE_AND_PLATENUMBER_OR_VIN(?,?,?,?,?,?)";
+			List<Transaction> lst = jdbcTemplate.query(sql, new Object[] {limit, offset, plateType,plateNumber,vin,name}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
+			all.addAll(lst);
+		}
+		return all;
 	}
 	
 	/**
@@ -227,4 +265,16 @@ public class TransactionService {
 		int count = jdbcTemplate.queryForObject( sql, new Object[] {businessCode,vin}, Integer.class);
 		return count;
 	}
+	
+	/**
+	 * 
+	 * @param transactionUniqueId
+	 * @param vin
+	 */
+	public void deleteByUniqueID(int transactionUniqueId, String vin) {
+		int index = getTableIndex(vin);
+		String sql = "DELETE FROM TRANSACTION_"+index+" WHERE TRANSACTIONUNIQUEID=?";
+		jdbcTemplate.update(sql, new Object[] {transactionUniqueId});
+	}
+	
 }

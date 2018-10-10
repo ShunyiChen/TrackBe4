@@ -74,7 +74,7 @@ public class SearchAndPrintWindow extends Window {
         		return;
         	}
         	
-        	List<Transaction> items = ui.transactionService.searchByKeyword(-1, 0, barCodeField.getValue(), community.getCommunityName());
+        	List<Transaction> items = ui.transactionService.search_by_keyword(-1, 0, barCodeField.getValue(), community.getCommunityName());
         	grid.setItems(items);
         });
         ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER,
@@ -90,7 +90,7 @@ public class SearchAndPrintWindow extends Window {
 	        		Notifications.warning("条形码不能为空");
 	        		return;
 	        	}
-				List<Transaction> items = ui.transactionService.searchByKeyword(-1, 0,barCodeField.getValue(), community.getCommunityName());
+				List<Transaction> items = ui.transactionService.search_by_keyword(-1, 0,barCodeField.getValue(), community.getCommunityName());
 	        	grid.setItems(items);
 			}
 		};

@@ -1,6 +1,7 @@
 package com.maxtree.automotive.dashboard.view.search;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -12,36 +13,29 @@ import org.springframework.util.StringUtils;
 import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
-import com.maxtree.automotive.dashboard.DashboardNavigator;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.Box;
-import com.maxtree.automotive.dashboard.component.Hr;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
+import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
-import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Community;
-import com.maxtree.automotive.dashboard.domain.Message;
-import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
-import com.maxtree.automotive.dashboard.exception.DataException;
-import com.maxtree.automotive.dashboard.service.BusinessService;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
 import com.maxtree.automotive.dashboard.view.MessageView;
 import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
-import com.maxtree.automotive.dashboard.view.front.MessageWrapper;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
@@ -51,10 +45,8 @@ import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -65,8 +57,8 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -187,8 +179,9 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         searchbar.setSpacing(false);
         searchbar.setMargin(false);
         searchbar.setWidthUndefined();
-        box.setWidth("100px");
-        box.setEmptySelectionAllowed(false);
+        communityBox.setWidth("100px");
+        communityBox.setHeight("30px");
+        communityBox.setEmptySelectionAllowed(false);
         Community current = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
         List<Community> list = ui.communityService.findAll();
         List<Community> items = new ArrayList<Community>();
@@ -201,11 +194,12 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         		current = c;
         	}
         }
-        box.setItems(items);
-        box.setSelectedItem(current);
-        TextField searchField = new TextField();
-        searchField.setWidth("400px");
-        searchField.setPlaceholder("请输入车牌号\\车架号\\业务流水号");
+        communityBox.setItems(items);
+        communityBox.setSelectedItem(current);
+        communityBox.setHeight("30px");
+        keywordField.setWidth("400px");
+        keywordField.setHeight("30px");
+        keywordField.setPlaceholder("请输入车牌号\\车架号\\业务流水号");
         ShortcutListener enter = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER,
 				null) {
 			/**
@@ -215,36 +209,78 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 
 			@Override
 			public void handleAction(Object sender, Object target) {
-				String communityName = box.getSelectedItem().get().getCommunityName();
-				if(StringUtils.isEmpty(communityName)) {
-					Notifications.warning("该用户不属于任何社区。");
-					return;
-				}
-				grid.setCommunityName(communityName);
-				grid.setKeyword(searchField.getValue());
-				grid.execute();
+				doSearch();
 			}
 		};
-        searchField.addShortcutListener(enter);
+        keywordField.addShortcutListener(enter);
         Button searchButton = new Button();
         searchButton.addClickListener(e->{
-        	String communityName = box.getSelectedItem().get().getCommunityName();
-			if(StringUtils.isEmpty(communityName)) {
-				Notifications.warning("该用户不属于任何社区。");
-				return;
-			}
-			grid.setCommunityName(communityName);
-        	grid.setKeyword(searchField.getValue());
-        	grid.execute();
+        	doSearch();
         });
         searchButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         searchButton.setIcon(VaadinIcons.SEARCH);
-        Label textLabel = new Label("选择社区：");
-        searchbar.addComponents(textLabel,box,Box.createHorizontalBox(3),searchField, searchButton);
-        searchbar.setComponentAlignment(box, Alignment.MIDDLE_LEFT);
-        searchbar.setComponentAlignment(searchField, Alignment.MIDDLE_LEFT);
-        searchbar.setComponentAlignment(searchButton, Alignment.MIDDLE_LEFT);
-        searchbar.setComponentAlignment(textLabel, Alignment.MIDDLE_LEFT);
+        Label textLabel = new Label("选择社区:");
+        
+        // 号牌种类
+        Label plateTypeLabel = new Label("号牌种类:");
+        List<String> types = ui.dataItemService.findNamesByType(1);
+		plateTypeField.setItems(types);
+		plateTypeField.setEmptySelectionAllowed(false);
+		plateTypeField.setWidth("140px");
+		plateTypeField.setHeight("30px");
+		
+		
+		// 号牌号码
+		Label plateNumberLabel = new Label("号牌号码:");
+		Label plateNumberTitle = new Label(""+addr.getLicenseplate());
+		plateNumberField.setWidth("140px");
+		plateNumberField.setHeight("30px");
+		
+		// 车辆识别代号
+		Label vinLabel = new Label("或者 车辆识别代号:");
+		vinField.setWidth("220px");
+		vinField.setHeight("30px");
+        
+        List<String> data = Arrays.asList("基本查询","模糊查询");
+        radio.setItems(data);
+        radio.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
+        radio.setItemCaptionGenerator(item -> item);
+        radio.addValueChangeListener(e ->{
+        	if(e.getValue().equals("模糊查询")) {
+        		searchbar.removeAllComponents();
+                searchbar.addComponents(radio,textLabel,communityBox,Box.createHorizontalBox(3),keywordField,Box.createHorizontalBox(3),searchButton);
+                searchbar.setComponentAlignment(radio, Alignment.MIDDLE_LEFT);
+                searchbar.setComponentAlignment(communityBox, Alignment.MIDDLE_LEFT);
+                searchbar.setComponentAlignment(keywordField, Alignment.MIDDLE_LEFT);
+                searchbar.setComponentAlignment(searchButton, Alignment.MIDDLE_LEFT);
+                searchbar.setComponentAlignment(textLabel, Alignment.MIDDLE_LEFT);
+        	} 
+        	else {
+        		searchbar.removeAllComponents();
+                searchbar.addComponents(radio,textLabel,communityBox,
+                		Box.createHorizontalBox(3),plateTypeLabel,plateTypeField,
+                		Box.createHorizontalBox(3),plateNumberLabel,plateNumberTitle,plateNumberField,
+                		Box.createHorizontalBox(3),vinLabel,vinField,
+                		Box.createHorizontalBox(3),searchButton);
+                searchbar.setComponentAlignment(radio, Alignment.MIDDLE_LEFT);
+                searchbar.setComponentAlignment(communityBox, Alignment.MIDDLE_LEFT);
+                searchbar.setComponentAlignment(textLabel, Alignment.MIDDLE_LEFT);
+                searchbar.setComponentAlignment(plateTypeLabel, Alignment.MIDDLE_LEFT);
+                searchbar.setComponentAlignment(plateTypeField, Alignment.MIDDLE_LEFT);
+                
+                searchbar.setComponentAlignment(plateNumberLabel, Alignment.MIDDLE_LEFT);
+                searchbar.setComponentAlignment(plateNumberTitle, Alignment.MIDDLE_LEFT);
+                searchbar.setComponentAlignment(plateNumberField, Alignment.MIDDLE_LEFT);
+                searchbar.setComponentAlignment(vinLabel, Alignment.MIDDLE_LEFT);
+                searchbar.setComponentAlignment(vinField, Alignment.MIDDLE_LEFT);
+                
+                searchbar.setComponentAlignment(searchButton, Alignment.MIDDLE_LEFT);
+                
+        	}
+        });
+        
+        radio.setSelectedItem(data.get(0));
+        
         
         header.addComponents(titleLabel,searchbar);
         buildNotificationsButton();
@@ -254,6 +290,29 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         return header;
     }
 
+    /**
+     * 
+     */
+    private void doSearch() {
+    	String communityName = communityBox.getSelectedItem().get().getCommunityName();
+		if(StringUtils.isEmpty(communityName)) {
+			Notifications.warning("没有可用的社区选项。");
+			return;
+		}
+    	if(radio.getValue().equals("基本查询")) {
+    		grid.setCommunityName(communityName);
+    		grid.setPlateType(plateTypeField.getValue());
+    		grid.setPlateNumber(plateNumberField.getValue());
+    		grid.setVin(vinField.getValue());
+    		grid.executeByPlateNumberOrVIN();
+    	}
+    	else {
+			grid.setCommunityName(communityName);
+        	grid.setKeyword(keywordField.getValue());
+        	grid.executeByKeyword();
+    	}
+    }
+    
     /**
      * 
      * @param event
@@ -445,7 +504,15 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     	return transaction;
     }
     
-    private ComboBox<Community> box = new ComboBox<Community>();// community box
+    
+    private RadioButtonGroup<String> radio = new RadioButtonGroup<>(null);
+    private ComboBox<Community> communityBox = new ComboBox<Community>();// community box
+    private ComboBox<String> plateTypeField = new ComboBox<>(); //号牌种类
+    private TextField plateNumberField = new TextField();//号牌号码
+    private TextField vinField = new TextField();//车辆识别代号
+    private TextField keywordField = new TextField();
+    
+    private Address addr = Yaml.readAddress();
     private MessageBodyParser jsonHelper = new MessageBodyParser();
     private User loggedInUser;	//登录用户
     private Label titleLabel;
@@ -455,7 +522,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     private VerticalLayout root;
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private NotificationsButton notificationsButton;
-    private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>无查询结果</span>", ContentMode.HTML);
+    private Label blankLabel = new Label("<span style='font-size:30px;color: #8D99A6;font-family: Microsoft YaHei;'>无查询结果</span>", ContentMode.HTML);
     private Transaction transaction = null;
     private SearchResultsGrid grid = new SearchResultsGrid();
 }

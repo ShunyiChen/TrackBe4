@@ -714,7 +714,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		// 新车注册首个上架号
         		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
         		if(StringUtils.isEmpty(firstCode)) {
-        			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
+        			Notifications.warning("没有可用的上架号或新车注册业务不存在。");
         			return;
         		} else {
         			//跳过质检，完成逻辑上架
@@ -776,7 +776,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		// 新车注册首个上架号
         		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
         		if(StringUtils.isEmpty(firstCode)) {
-        			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
+        			Notifications.warning("没有可用的上架号或新车注册业务不存在。");
         			return;
         		} else {
         			//跳过质检，完成逻辑上架
@@ -848,7 +848,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		// 新车注册首个上架号
         		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
         		if(StringUtils.isEmpty(firstCode)) {
-        			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
+        			Notifications.warning("没有可用的上架号或新车注册业务不存在。");
         			return;
         		} else {
         			//跳过质检，完成逻辑上架
@@ -903,7 +903,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
      * 
      */
     private void updateTransaction() {
-    	if(editableTrans == null) {
+		if(editableTrans == null) {
     		Notifications.warning("请确保完成当前任务，再执行下一操作。");
     		return;
     	}

@@ -40,20 +40,21 @@ public class SearchResultsGrid extends VerticalLayout {
 		grid.addColumn(Transaction::getPlateNumber).setCaption("号码号牌");
 		grid.addColumn(Transaction::getVin).setCaption("车辆识别代码");
 		grid.addColumn(Transaction::getBusinessName).setCaption("业务类型");
+		grid.addColumn(Transaction::getBatch).setCaption("批次号");
+		grid.addColumn(Transaction::getCode).setCaption("上架号");
+		grid.addColumn(Transaction::getIndexNumber).setCaption("业务顺序号");
 		grid.addColumn(Transaction::getDateCreated).setCaption("创建日期");
 		grid.addColumn(Transaction::getDateModified).setCaption("最后修改日期");
 		grid.addColumn(Transaction::getDateFinished).setCaption("办结日期");
-		grid.addColumn(Transaction::getStatus).setCaption("业务状态");
+		grid.addColumn(Transaction::getCreator).setCaption("录入人");
+		grid.addColumn(Transaction::getStatus).setCaption("状态");
         
 		// Set the selection mode
         grid.setSelectionMode(SelectionMode.MULTI);
         grid.addContextClickListener(e->{
         	GridContextClickEvent<Transaction> event = (GridContextClickEvent<Transaction>) e;
         	trans = event.getItem();
-        	// 需要权限显示
         	
-        	int index = ui.transactionService.getTableIndex(trans.getVin());
-        	Notification.show("index="+index, Type.HUMANIZED_MESSAGE);
         });
         ContextMenu menu = new ContextMenu(grid, true);
 		menu.addItem("查看原文", new Command() {
@@ -85,16 +86,32 @@ public class SearchResultsGrid extends VerticalLayout {
 				Callback onOK = new Callback() {
 					@Override
 					public void onSuccessful() {
-						Set<Transaction> set = grid.getSelectedItems();
-						Iterator<Transaction> iter = set.iterator();
-						while(iter.hasNext()) {
-							Transaction t = iter.next();
-							
-						}
+						ui.transactionService.deleteByUniqueID(trans.getTransactionUniqueId(), trans.getVin());
+						Notification.show("删除成功");
 					}
 				};
-				MessageBox.showMessage("删除提示","请确认是否彻底删除该记录？",MessageBox.WARNING, onOK, "彻底删除");
+				MessageBox.showMessage("删除提示","请确认是否彻底删除该记录？",MessageBox.WARNING, onOK, "确定");
 				
+			}
+		});
+		
+		menu.addItem("数据表索引", new Command() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void menuSelected(MenuItem selectedItem) {
+				Callback onOK = new Callback() {
+
+					@Override
+					public void onSuccessful() {
+						
+					}
+				};
+				int index = ui.transactionService.getTableIndex(trans.getVin());
+				MessageBox.showMessage("记录信息", "表索引："+index+" ID:"+trans.getTransactionUniqueId()+" UUID:"+trans.getUuid(), onOK);
 			}
 		});
 		
@@ -118,9 +135,7 @@ public class SearchResultsGrid extends VerticalLayout {
         	}
         });
 		 
-        this.addComponents(grid, controls);
-        this.setExpandRatio(grid, 1);
-        this.setExpandRatio(controls, 0);
+        
 	}
 	
 	public void setItems(List<Transaction> data) {
@@ -158,17 +173,56 @@ public class SearchResultsGrid extends VerticalLayout {
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
 	}
+	
+	public String getPlateType() {
+		return plateType == null? "" : plateType;
+	}
 
-	public void execute() {
+	public void setPlateType(String plateType) {
+		this.plateType = plateType;
+	}
+
+	public String getPlateNumber() {
+		return plateNumber;
+	}
+
+	public void setPlateNumber(String plateNumber) {
+		this.plateNumber = plateNumber;
+	}
+
+	public String getVin() {
+		return vin;
+	}
+
+	public void setVin(String vin) {
+		this.vin = vin;
+	}
+
+	public void executeByKeyword() {
+		this.removeAllComponents();
+		this.addComponents(grid, controls);
+        this.setExpandRatio(grid, 1);
+        this.setExpandRatio(controls, 0);
 		controls.execute();
 	}
 	
+	public void executeByPlateNumberOrVIN() {
+		this.removeAllComponents();
+		this.addComponents(grid, controls);
+        this.setExpandRatio(grid, 1);
+        this.setExpandRatio(controls, 0);
+		controls2.execute();
+	}
 	
+	private String plateType; 				// 号牌种类
+	private String plateNumber; 			// 号码号牌
+	private String vin; 					// 车辆识别代码
 	private Transaction trans;
 	private String communityName;
 	private String keyword;
 	private List<Transaction> allData;
 	private Grid<Transaction> grid = new Grid<>();
-	private ControlsLayout controls = new ControlsLayout(this);
+	private ControlsLayout controls = new ControlsLayout(this); // 关键字查询分页
+	private ControlsLayout2 controls2 = new ControlsLayout2(this); // 号牌查询分页
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 }
