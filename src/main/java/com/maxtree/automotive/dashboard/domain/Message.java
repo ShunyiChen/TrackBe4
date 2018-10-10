@@ -2,6 +2,12 @@ package com.maxtree.automotive.dashboard.domain;
 
 import java.util.Date;
 
+/**
+ * 消息
+ * 
+ * @author chens
+ *
+ */
 public class Message {
 
 	public Integer getMessageUniqueId() {

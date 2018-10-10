@@ -1,5 +1,11 @@
 package com.maxtree.automotive.dashboard.domain;
 
+/**
+ * 站点
+ * 
+ * @author chens
+ *
+ */
 public class Site {
 
 	public Integer getSiteUniqueId() {

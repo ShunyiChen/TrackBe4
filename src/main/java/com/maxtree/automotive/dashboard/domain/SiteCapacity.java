@@ -1,5 +1,11 @@
 package com.maxtree.automotive.dashboard.domain;
 
+/**
+ * 站点容量
+ * 
+ * @author chens
+ *
+ */
 public class SiteCapacity {
 
 	public Integer getSiteCapacityUniqueId() {

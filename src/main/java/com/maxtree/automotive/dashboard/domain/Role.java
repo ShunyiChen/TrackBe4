@@ -2,6 +2,12 @@ package com.maxtree.automotive.dashboard.domain;
 
 import java.util.List;
 
+/**
+ * 角色
+ * 
+ * @author chens
+ *
+ */
 public class Role {
 
 	public Integer getRoleUniqueId() {

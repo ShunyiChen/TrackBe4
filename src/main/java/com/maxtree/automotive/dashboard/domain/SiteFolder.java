@@ -1,5 +1,11 @@
 package com.maxtree.automotive.dashboard.domain;
 
+/**
+ * 站点文件夹数
+ * 
+ * @author chens
+ *
+ */
 public class SiteFolder {
 
 	public Integer getSiteFolderUniqueId() {

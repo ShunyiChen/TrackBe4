@@ -1,5 +1,11 @@
 package com.maxtree.automotive.dashboard.domain;
 
+/**
+ * 系统设置参数
+ * 
+ * @author chens
+ *
+ */
 public class SystemSettings {
 
 	public Integer getSettingUniqueId() {

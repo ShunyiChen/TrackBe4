@@ -3,6 +3,7 @@ package com.maxtree.automotive.dashboard.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -15,9 +16,7 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
-import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.maxtree.automotive.dashboard.domain.Transaction;
-import com.maxtree.automotive.dashboard.exception.DataException;
 
 @Component
 public class TransactionService {
@@ -44,7 +43,7 @@ public class TransactionService {
 	 */
 	public Transaction findById(int transactionUniqueId, String vin) {
 		int index = getTableIndex(vin);
-		String sql = "SELECT * FROM TRANSACTION_"+index+" WHERE TRANSACTIONUNIQUEID=?";
+		String sql = "SELECT A.*,B.NAME AS BUSINESSNAME FROM TRANSACTION_"+index+" AS A LEFT JOIN BUSINESS AS B ON A.BUSINESSCODE=B.CODE WHERE A.TRANSACTIONUNIQUEID=?";
 		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {transactionUniqueId}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
 		Transaction trans = null;
 		if (result.size() > 0) {
@@ -61,7 +60,7 @@ public class TransactionService {
 	 */
 	public Transaction findByUUID(String uuid, String vin) {
 		int index = getTableIndex(vin);
-		String sql = "SELECT * FROM TRANSACTION_"+index+" WHERE UUID=?";
+		String sql = "SELECT A.*,B.NAME AS BUSINESSNAME FROM TRANSACTION_"+index+" AS A LEFT JOIN BUSINESS AS B ON A.BUSINESSCODE=B.CODE WHERE A.UUID=?";
 		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {uuid}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
 		Transaction trans = null;
 		if (result.size() > 0) {
@@ -78,7 +77,7 @@ public class TransactionService {
 	 */
 	public List<Transaction> findForList(String vin, int exceptUniqueId) {
 		int index = getTableIndex(vin);
-		String sql = "SELECT * FROM TRANSACTION_"+index+" WHERE VIN=? AND TRANSACTIONUNIQUEID<>? ORDER BY TRANSACTIONUNIQUEID";
+		String sql = "SELECT A.*,B.NAME AS BUSINESSNAME FROM TRANSACTION_"+index+" AS A LEFT JOIN BUSINESS AS B ON A.BUSINESSCODE=B.CODE WHERE A.VIN=? AND A.TRANSACTIONUNIQUEID<>? ORDER BY A.TRANSACTIONUNIQUEID";
 		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {vin,exceptUniqueId}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
 		return result;
 	}
@@ -132,15 +131,9 @@ public class TransactionService {
 	 */
 	public void update(Transaction transaction) {
 		int index = getTableIndex(transaction.getVin());
-//		String sql = "UPDATE TRANSACTION_"+index+" SET BARCODE=?,PLATETYPE=?,PLATENUMBER=?,VIN=?,STATUS=?,DATEMODIFIED=?,BUSINESSCODE=?,UUID=?,CODE=?,INDEXNUMBER=? WHERE TRANSACTIONUNIQUEID=?";
-//	 	int affected = jdbcTemplate.update(sql, new Object[] {transaction.getBarcode(), transaction.getPlateType(), transaction.getPlateNumber(), 
-//	 			transaction.getVin(), transaction.getStatus(),transaction.getDateModified(), transaction.getBusinessCode(), 
-//	 			transaction.getUuid(), transaction.getCode(), transaction.getIndexNumber(), transaction.getTransactionUniqueId()});
-		
 		String sql = "UPDATE TRANSACTION_"+index+" SET BARCODE=?,PLATETYPE=?,PLATENUMBER=?,VIN=?,STATUS=?,DATEMODIFIED=? WHERE TRANSACTIONUNIQUEID=?";
 	 	int affected = jdbcTemplate.update(sql, new Object[] {transaction.getBarcode(), transaction.getPlateType(), transaction.getPlateNumber(), 
 	 			transaction.getVin(), transaction.getStatus(),transaction.getDateModified(),transaction.getTransactionUniqueId()});
-		
 	 	log.info("Updated.Affected row = "+affected);
 	}
 	
@@ -169,17 +162,17 @@ public class TransactionService {
 			String code = jdbcTemplate.queryForObject( sql, new Object[] {vin,1}, String.class);
 			return code;
 		} catch (IncorrectResultSizeDataAccessException e){
-//			throw new DataException(e.getMessage());
 			return null;
 		}
 	}
 	
 	/**
+	 * 获取VIN车辆识别代号
 	 * 
 	 * @param vin
 	 * @return
 	 */
-	private int getTableIndex(String vin) {
+	public int getTableIndex(String vin) {
 		int sum = 0;
 		for (char c : vin.toCharArray()) {
 			sum += c;
@@ -192,16 +185,20 @@ public class TransactionService {
 	 * @param limit
 	 * @param offset
 	 * @param keyword
-	 * @param communityName
+	 * @param parentCommunityName
 	 * @return
 	 */
-	public List<Transaction> findAll(int limit, int offset, String keyword, String communityName) {
-		keyword = "%"+keyword+"%";
-//		String sql = "SELECT * FROM \""+communityName+"\".CREATE_SEARCH(?,?,?)";
-		String sql = "SELECT * FROM CREATE_SEARCH(?,?,?,?)";
-//		System.out.println(sql+"  "+limit +"  "+ offset +"  "+ keyword +"  "+communityName);
-		List<Transaction> results = jdbcTemplate.query(sql, new Object[] {limit, offset, keyword, communityName}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
-		return results;
+	public List<Transaction> searchByKeyword(int limit, int offset, String keyword, String parentCommunityName) {
+		List<Transaction> all = new ArrayList<Transaction>();
+		String sql = "SELECT B.COMMUNITYNAME FROM COMMUNITIES AS A INNER JOIN COMMUNITIES AS B ON A.GROUPID=B.GROUPID WHERE A.COMMUNITYNAME=? AND A.LEVEL<=B.LEVEL ORDER BY B.COMMUNITYUNIQUEID";
+		List<String> communityNames = jdbcTemplate.query(sql, new Object[] {parentCommunityName}, new BeanPropertyRowMapper<String>(String.class));
+		for (String name : communityNames){
+			keyword = "%"+keyword+"%";
+			sql = "SELECT * FROM CREATE_SEARCH(?,?,?,?)";
+			List<Transaction> lst = jdbcTemplate.query(sql, new Object[] {limit, offset, keyword, name}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
+			all.addAll(lst);
+		}
+		return all;
 	}
 	
 	/**
@@ -212,9 +209,8 @@ public class TransactionService {
 	 * @return
 	 */
 	public int findPagingCount(int limit, String keyword, String communityName) {
-		keyword = "%"+keyword+"%";
-//		String sql = "SELECT * FROM \""+communityName+"\".CREATE_PAGINGCOUNT2(?,?)";
-		String sql = "SELECT * FROM  CREATE_PAGINGCOUNT2(?,?,?)";
+		keyword = "%"+keyword+"%";// B8K57 or 123456
+		String sql = "SELECT * FROM CREATE_PAGINGCOUNT2(?,?,?)";
 		int count = jdbcTemplate.queryForObject( sql, new Object[] {limit, keyword, communityName}, Integer.class);
 		return count;
 	}

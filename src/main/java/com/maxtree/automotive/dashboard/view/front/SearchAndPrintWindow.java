@@ -18,6 +18,7 @@ import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.event.ShortcutListener;
+import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
@@ -55,11 +56,8 @@ public class SearchAndPrintWindow extends Window {
 	private void initComponents() {
 		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		final Community community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
-		VerticalLayout vlayout = new VerticalLayout();
-        vlayout.setWidth("100%");
-        vlayout.setHeightUndefined();
-        vlayout.setMargin(true);
-        vlayout.setSpacing(true);
+		VerticalLayout main = new VerticalLayout();
+		main.setSizeFull();
         
         Label barCodeLabel = new Label("条形码:");
         TextField barCodeField = new TextField();
@@ -69,13 +67,14 @@ public class SearchAndPrintWindow extends Window {
         btnSearch.addStyleName("icon-edit");
         btnSearch.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         btnSearch.setDescription("按照条形码查找");
+        btnSearch.focus();
         btnSearch.addClickListener(e -> {
         	if(StringUtils.isEmpty(barCodeField.getValue())) {
         		Notifications.warning("条形码不能为空");
         		return;
         	}
         	
-        	List<Transaction> items = ui.transactionService.findAll(-1, 0, barCodeField.getValue(), community.getCommunityName());
+        	List<Transaction> items = ui.transactionService.searchByKeyword(-1, 0, barCodeField.getValue(), community.getCommunityName());
         	grid.setItems(items);
         });
         ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER,
@@ -91,7 +90,7 @@ public class SearchAndPrintWindow extends Window {
 	        		Notifications.warning("条形码不能为空");
 	        		return;
 	        	}
-				List<Transaction> items = ui.transactionService.findAll(-1, 0,barCodeField.getValue(), community.getCommunityName());
+				List<Transaction> items = ui.transactionService.searchByKeyword(-1, 0,barCodeField.getValue(), community.getCommunityName());
 	        	grid.setItems(items);
 			}
 		};
@@ -106,11 +105,9 @@ public class SearchAndPrintWindow extends Window {
         
         // provides BugEntries
   		grid.removeAllColumns();
-  		grid.setWidth("100%");
-  		grid.setHeightUndefined();
+  		grid.setSizeFull();
   		grid.setSelectionMode(SelectionMode.SINGLE);
   		grid.setItems(new ArrayList<Transaction>());
-      	grid.setHeightByRows(7);
       	grid.addColumn(Transaction::getBarcode).setCaption("条形码");
       	grid.addColumn(Transaction::getPlateType).setCaption("号牌种类");
       	grid.addColumn(Transaction::getPlateNumber).setCaption("号码号牌");
@@ -120,28 +117,30 @@ public class SearchAndPrintWindow extends Window {
       	grid.addColumn(Transaction::getCreator).setCaption("录入者");
       	grid.addColumn(Transaction::getDateCreated).setCaption("录入时间");
       	
-        
+      	btnPrint.addStyleName(ValoTheme.BUTTON_PRIMARY);
+      	btnPrint.setClickShortcut(KeyCode.ENTER);
         HorizontalLayout buttonPane = new HorizontalLayout();
-		buttonPane.setSizeFull();
-		buttonPane.setSpacing(false);
-		buttonPane.setMargin(false);
+		buttonPane.setWidth("100%");
+		buttonPane.setHeight("30px");
         HorizontalLayout subButtonPane = new HorizontalLayout();
 		subButtonPane.setSpacing(false);
 		subButtonPane.setMargin(false);
 		subButtonPane.setWidthUndefined();
+		subButtonPane.setHeight("23px");
 		subButtonPane.addComponents(btnPrint, Box.createHorizontalBox(5), btnQuit);
-		subButtonPane.setComponentAlignment(btnPrint, Alignment.BOTTOM_LEFT);
-		subButtonPane.setComponentAlignment(btnQuit, Alignment.BOTTOM_CENTER);
 		buttonPane.addComponent(subButtonPane);
-		buttonPane.setComponentAlignment(subButtonPane, Alignment.BOTTOM_RIGHT);
+		buttonPane.setComponentAlignment(subButtonPane, Alignment.TOP_RIGHT);
         
-		vlayout.addComponents(inputsHLayout, grid, buttonPane);
-		vlayout.setComponentAlignment(inputsHLayout, Alignment.TOP_LEFT);
-		vlayout.setComponentAlignment(buttonPane, Alignment.BOTTOM_CENTER);
-        this.setContent(vlayout);
+		main.addComponents(inputsHLayout, grid, buttonPane);
+		main.setExpandRatio(inputsHLayout, 0);
+		main.setExpandRatio(grid, 1);
+		main.setExpandRatio(buttonPane, 0);
+		
+        this.setContent(main);
         btnQuit.addClickListener(e->{
         	close();
         });
+        
         btnPrint.addClickListener(e->{
         	Set<Transaction> selected = grid.getSelectedItems();
       	    if (selected.size() > 0) {
@@ -153,7 +152,7 @@ public class SearchAndPrintWindow extends Window {
       	    	}
       	    	else {
       	    		Business bus = ui.businessService.findByCode(trans.getBusinessCode());
-      	    		if(bus.getCheckLevel().equals("")) {//非审档业务
+      	    		if(bus.getCheckLevel().equals("无")) {//非审档业务
       	    			PrintingFileTagOnlyWindow.open("只打印文件标签", trans);
       	    		}
       	    		else if(bus.getCheckLevel().equals("一级审档")

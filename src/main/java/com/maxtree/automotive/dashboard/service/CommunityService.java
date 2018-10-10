@@ -45,13 +45,10 @@ private static final Logger log = LoggerFactory.getLogger(CommunityService.class
 	 * @return
 	 */
 	public Community findById(int communityUniqueId) {
-		String sql = "SELECT * FROM COMMUNITIES WHERE COMMUNITYUNIQUEID= ?";
+		String sql = "SELECT * FROM COMMUNITIES WHERE COMMUNITYUNIQUEID=?";
 		List<Community> results = jdbcTemplate.query(sql, new Object[] {communityUniqueId}, new BeanPropertyRowMapper<Community>(Community.class));
 		if (results.size() > 0) {
-			sql = "SELECT * FROM COMPANIES WHERE COMMUNITYUNIQUEID=?";
-			List<Company> companies = jdbcTemplate.query(sql, new Object[] {results.get(0).getCommunityUniqueId()}, new BeanPropertyRowMapper<Company>(Company.class));
-			results.get(0).setCompanies(companies);
-			
+			populateAssignedCompanies(results.get(0));
 			return results.get(0);
 		}
 		return new Community();
@@ -64,14 +61,20 @@ private static final Logger log = LoggerFactory.getLogger(CommunityService.class
 	public List<Community> findAll() {
 		String sql = "SELECT * FROM COMMUNITIES ORDER BY COMMUNITYUNIQUEID";
 		List<Community> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<Community>(Community.class));
-		
 		for (Community c : results) {
-			sql = "SELECT * FROM COMPANIES WHERE COMMUNITYUNIQUEID=? ORDER BY COMMUNITYUNIQUEID";
-			List<Company> companies = jdbcTemplate.query(sql, new Object[] {c.getCommunityUniqueId()}, new BeanPropertyRowMapper<Company>(Company.class));
-			c.setCompanies(companies);
+			populateAssignedCompanies(c);
 		}
-		
 		return results;
+	}
+	
+	/**
+	 * 
+	 * @param community
+	 */
+	private void populateAssignedCompanies(Community community) {
+		String sql = "SELECT * FROM COMPANIES WHERE COMMUNITYUNIQUEID=? ORDER BY COMPANYUNIQUEID";
+		List<Company> companies = jdbcTemplate.query(sql, new Object[] {community.getCommunityUniqueId()}, new BeanPropertyRowMapper<Company>(Company.class));
+		community.setCompanies(companies);
 	}
 	
 	/**

@@ -6,11 +6,7 @@ import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Transaction;
-import com.maxtree.automotive.dashboard.domain.User;
-import com.vaadin.event.ShortcutListener;
-import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -18,6 +14,11 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
+/**
+ * 
+ * @author chens
+ *
+ */
 public class ControlsLayout extends HorizontalLayout {
 
 	/**
@@ -92,7 +93,7 @@ public class ControlsLayout extends HorizontalLayout {
 	 */
 	private void first() {
 		if (grid != null) {
-			List<Transaction> items = ui.transactionService.findAll(sizePerPage, 0, grid.getKeyword(), grid.getCommunityName()); 
+			List<Transaction> items = ui.transactionService.searchByKeyword(sizePerPage, 0, grid.getKeyword(), grid.getCommunityName()); 
 			grid.setPerPageData(items);
 			
 			// Update inputs
@@ -112,7 +113,7 @@ public class ControlsLayout extends HorizontalLayout {
 				currentPageIndex = 1;
 			}
 			int offset = (currentPageIndex - 1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.findAll(sizePerPage, offset, grid.getKeyword(), grid.getCommunityName()); 
+			List<Transaction> items = ui.transactionService.searchByKeyword(sizePerPage, offset, grid.getKeyword(), grid.getCommunityName()); 
 			grid.setPerPageData(items);
 			
 			// Update inputs
@@ -132,7 +133,7 @@ public class ControlsLayout extends HorizontalLayout {
 				currentPageIndex = pageCount;
 			}
 			int offset = (currentPageIndex -1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.findAll(sizePerPage, offset, grid.getKeyword(), grid.getCommunityName()); 
+			List<Transaction> items = ui.transactionService.searchByKeyword(sizePerPage, offset, grid.getKeyword(), grid.getCommunityName()); 
 			grid.setPerPageData(items);
 			// Update inputs
 			numField.setValue(currentPageIndex+"");
@@ -147,7 +148,7 @@ public class ControlsLayout extends HorizontalLayout {
 		if (grid != null) {
 			currentPageIndex = pageCount;
 			int offset = (currentPageIndex -1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.findAll(sizePerPage, offset, grid.getKeyword(), grid.getCommunityName()); 
+			List<Transaction> items = ui.transactionService.searchByKeyword(sizePerPage, offset, grid.getKeyword(), grid.getCommunityName()); 
 			grid.setPerPageData(items);
 			// Update inputs
 			numField.setValue(currentPageIndex+"");
@@ -160,12 +161,10 @@ public class ControlsLayout extends HorizontalLayout {
 	 */
 	private void jumpTo() {
 		int offset = (currentPageIndex - 1) * sizePerPage;
-		List<Transaction> data = ui.transactionService.findAll(sizePerPage, offset, grid.getKeyword(), grid.getCommunityName());
+		List<Transaction> data = ui.transactionService.searchByKeyword(sizePerPage, offset, grid.getKeyword(), grid.getCommunityName());
 		grid.setPerPageData(data);
 	}
 	
-//	private Community community;
-//	private User loggedInUser;
 	private int pageCount;
 	private int sizePerPage = 20;//每页显示行数
 	private int currentPageIndex = 1;
@@ -178,5 +177,6 @@ public class ControlsLayout extends HorizontalLayout {
 	private Label currentPageIndexLabel = new Label();
 	private Label pageSizeLabel = new Label();
 	private Label sizePerPageLabel = new Label();
+	private Label totalCountLabel = new Label();
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 }

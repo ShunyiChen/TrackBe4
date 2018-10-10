@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 
 /**
+ * 业务类型
  * 
  * @author Chen
  *

@@ -1,5 +1,11 @@
 package com.maxtree.automotive.dashboard.domain;
 
+/**
+ * 发送消息记录
+ * 
+ * @author chens
+ *
+ */
 public class SendDetails {
 
 	public Integer getSendDetailsUniqueId() {

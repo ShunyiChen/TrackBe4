@@ -2,6 +2,12 @@ package com.maxtree.automotive.dashboard.domain;
 
 import java.util.Date;
 
+/**
+ * 提醒频率
+ * 
+ * @author chens
+ *
+ */
 public class ReminderFrequency {
 
 	public Integer getFrequencyUniqueId() {

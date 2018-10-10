@@ -2,6 +2,12 @@ package com.maxtree.automotive.dashboard.domain;
 
 import java.util.Date;
 
+/**
+ * 影响化记录
+ * 
+ * @author chens
+ *
+ */
 public class Imaging {
 
 	public Integer getImagingUniqueId() {

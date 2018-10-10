@@ -1,5 +1,11 @@
 package com.maxtree.automotive.dashboard.domain;
 
+/**
+ * 库房/密集架/单元格/文件盒
+ * 
+ * @author chens
+ *
+ */
 public class FrameNumber {
 
 	public Integer getFrameUniqueId() {

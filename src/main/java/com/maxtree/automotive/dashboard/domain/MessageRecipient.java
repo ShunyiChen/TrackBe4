@@ -1,5 +1,11 @@
 package com.maxtree.automotive.dashboard.domain;
 
+/**
+ * 消息接收者
+ * 
+ * @author chens
+ *
+ */
 public class MessageRecipient {
 
 	public Integer getMessageRecipientUniqueId() {

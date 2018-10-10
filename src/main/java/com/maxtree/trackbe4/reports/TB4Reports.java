@@ -3,24 +3,13 @@ package com.maxtree.trackbe4.reports;
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-import java.text.DecimalFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
@@ -33,7 +22,6 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.exception.ReportException;
 import com.maxtree.tb4beans.PrintableBean;
 
-import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -43,12 +31,12 @@ import net.sf.jasperreports.engine.JasperPrintManager;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
-import java.io.BufferedReader;  
-import java.io.File;  
-import java.io.FileInputStream;  
-import java.io.IOException;  
-import java.io.InputStreamReader;  
-import java.nio.charset.Charset;  
+
+/**
+ * 
+ * @author chens
+ *
+ */
 public class TB4Reports {
 
 	private static final Logger log = LoggerFactory.getLogger(TB4Reports.class);
@@ -62,10 +50,11 @@ public class TB4Reports {
 	 * @throws ReportException
 	 */
 	public void jasperToHtml(List<PrintableBean> beans, int userUniqueId, String templateFileName, Callback callback) throws ReportException {
+		FileInputStream inputStream = null;
 		try {
 			JRDataSource data= new JRBeanCollectionDataSource(beans);  
 			// Preparing parameters
-			FileInputStream inputStream = new FileInputStream("reports/templates/"+templateFileName);
+			inputStream = new FileInputStream("reports/templates/"+templateFileName);
 			JasperReport jasperReport= (JasperReport)JRLoader.loadObject(inputStream);    
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, data);
 			File dir = new File("reports/generates/" + userUniqueId);
@@ -86,6 +75,14 @@ public class TB4Reports {
 			throw new ReportException(e1.getMessage());
 		} catch (IOException e2) {
 			throw new ReportException(e2.getMessage());
+		} finally {
+			if(inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
@@ -99,10 +96,11 @@ public class TB4Reports {
 	 * @throws ReportException
 	 */
 	public void jasperToPDF(List<PrintableBean> beans, int tranactionUniqueId, String templateFileName, Callback callback) throws ReportException {
+		FileInputStream inputStream = null;
 		try {
 			JRDataSource data= new JRBeanCollectionDataSource(beans);  
 			// Preparing parameters
-			FileInputStream inputStream = new FileInputStream("reports/templates/"+templateFileName);
+			inputStream = new FileInputStream("reports/templates/"+templateFileName);
 			JasperReport jasperReport= (JasperReport)JRLoader.loadObject(inputStream);    
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, data);
 			File dir = new File("reports/generates/" + tranactionUniqueId);
@@ -111,9 +109,7 @@ public class TB4Reports {
 			}
 			String destFileName3 = dir.getPath() + "/report.pdf";
 			JasperExportManager.exportReportToPdfFile(jasperPrint, destFileName3);
-			inputStream.close();
 			log.info("Generated a report.");
-			
 			callback.onSuccessful();
 			
 		} catch (JRException e) {
@@ -121,8 +117,14 @@ public class TB4Reports {
 			throw new ReportException(e.getMessage());
 		} catch (FileNotFoundException e1) {
 			throw new ReportException(e1.getMessage());
-		} catch (IOException e2) {
-			throw new ReportException(e2.getMessage());
+		} finally {
+			if(inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
@@ -136,10 +138,12 @@ public class TB4Reports {
 	 * @throws ReportException
 	 */
 	public void jasperToPNG(List<PrintableBean> beans, int userUniqueId, String templateFileName, Callback callback) throws ReportException {
+		FileInputStream inputStream = null;
+		OutputStream ouputStream = null;
 		try {
 			JRDataSource data= new JRBeanCollectionDataSource(beans);  
 			// Preparing parameters
-			FileInputStream inputStream = new FileInputStream("reports/templates/"+templateFileName);
+			inputStream = new FileInputStream("reports/templates/"+templateFileName);
 			JasperReport jasperReport= (JasperReport)JRLoader.loadObject(inputStream);    
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, data);
 			File dir = new File("reports/generates/" + userUniqueId);
@@ -148,21 +152,11 @@ public class TB4Reports {
 			}
 			String destFileName2 = dir.getPath() + "/report.png";
 			File file = new File(destFileName2);
-			OutputStream ouputStream = new FileOutputStream(file);
-//			JasperExportManager.exportReportToHtmlFile(jasperPrint, destFileName2);
-			
-//			DefaultJasperReportsContext.getInstance();   
-//	        JasperPrintManager printManager = JasperPrintManager.getInstance(DefaultJasperReportsContext.getInstance());      
-	 
+			ouputStream = new FileOutputStream(file);
 	        BufferedImage rendered_image = null;      
 	        rendered_image = (BufferedImage)JasperPrintManager.printPageToImage(jasperPrint, 0, 1.6f); 
 	        ImageIO.write(rendered_image, "png", ouputStream);     
-			
-	        ouputStream.close();
-	        
-			inputStream.close();
 			log.info("Generated a report.");
-			
 			callback.onSuccessful();
 			
 		} catch (JRException e) {
@@ -172,6 +166,21 @@ public class TB4Reports {
 			throw new ReportException(e1.getMessage());
 		} catch (IOException e2) {
 			throw new ReportException(e2.getMessage());
+		} finally {
+			if(ouputStream != null) {
+				try {
+					ouputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if(inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	

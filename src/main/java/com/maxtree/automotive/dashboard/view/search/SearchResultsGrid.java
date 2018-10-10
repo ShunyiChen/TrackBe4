@@ -7,15 +7,16 @@ import java.util.Set;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.MessageBox;
-import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.vaadin.contextmenu.ContextMenu;
-import com.vaadin.contextmenu.MenuItem;
 import com.vaadin.contextmenu.Menu.Command;
+import com.vaadin.contextmenu.MenuItem;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.Grid.GridContextClickEvent;
 import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 public class SearchResultsGrid extends VerticalLayout {
@@ -38,6 +39,7 @@ public class SearchResultsGrid extends VerticalLayout {
 		grid.addColumn(Transaction::getPlateType).setCaption("号牌种类");
 		grid.addColumn(Transaction::getPlateNumber).setCaption("号码号牌");
 		grid.addColumn(Transaction::getVin).setCaption("车辆识别代码");
+		grid.addColumn(Transaction::getBusinessName).setCaption("业务类型");
 		grid.addColumn(Transaction::getDateCreated).setCaption("创建日期");
 		grid.addColumn(Transaction::getDateModified).setCaption("最后修改日期");
 		grid.addColumn(Transaction::getDateFinished).setCaption("办结日期");
@@ -48,10 +50,18 @@ public class SearchResultsGrid extends VerticalLayout {
         grid.addContextClickListener(e->{
         	GridContextClickEvent<Transaction> event = (GridContextClickEvent<Transaction>) e;
         	trans = event.getItem();
-//        	grid.select(trans);
+        	// 需要权限显示
+        	
+        	int index = ui.transactionService.getTableIndex(trans.getVin());
+        	Notification.show("index="+index, Type.HUMANIZED_MESSAGE);
         });
         ContextMenu menu = new ContextMenu(grid, true);
 		menu.addItem("查看原文", new Command() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
 				Callback callback = new Callback() {
@@ -64,6 +74,11 @@ public class SearchResultsGrid extends VerticalLayout {
 			}
 		});
 		menu.addItem("删除记录", new Command() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
 				
@@ -100,8 +115,6 @@ public class SearchResultsGrid extends VerticalLayout {
                 		ViewFilesWindow.open(callback, trans);
                     }
                  });
-        		
-        		
         	}
         });
 		 

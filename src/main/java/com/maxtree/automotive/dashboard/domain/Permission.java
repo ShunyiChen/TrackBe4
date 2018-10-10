@@ -2,6 +2,12 @@ package com.maxtree.automotive.dashboard.domain;
 
 import java.util.List;
 
+/**
+ * 权限
+ * 
+ * @author chens
+ *
+ */
 public class Permission {
 
 	public Integer getPermissionUniqueId() {

@@ -1,17 +1,15 @@
 package com.maxtree.automotive.dashboard.domain;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
-import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.FileSystemException;
-
-import com.maxtree.automotive.dashboard.exception.FileException;
-import com.vaadin.server.StreamResource;
-
+/**
+ * 文档
+ * 
+ * @author chens
+ *
+ */
 public class Document {
 
 	public Integer getDocumentUniqueId() {

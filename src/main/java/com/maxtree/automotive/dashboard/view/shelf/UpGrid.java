@@ -68,8 +68,9 @@ public class UpGrid extends VerticalLayout {
 	}
 	
 	public void execute() {
-		if (keyword.length() == 7 || keyword.length() == 8) {
-			 List<Transaction> rs = ui.transactionService.findAll(-1, 0, keyword, community.getCommunityName());
+		// 按车牌号后5位或后6位查询
+		if (keyword.length() == 5 || keyword.length() == 6) {
+			 List<Transaction> rs = ui.transactionService.searchByKeyword(-1, 0, keyword, community.getCommunityName());
 			 grid.setItems(rs);
 		} else {
 			Notifications.warning("关键字长度应该在7~8位。");

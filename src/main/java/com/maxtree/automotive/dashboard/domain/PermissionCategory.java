@@ -3,6 +3,12 @@ package com.maxtree.automotive.dashboard.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 权限分类
+ * 
+ * @author chens
+ *
+ */
 public class PermissionCategory {
 
 	public int getCategoryUniqueId() {

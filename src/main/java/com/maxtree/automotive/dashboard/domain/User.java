@@ -6,6 +6,12 @@ import com.maxtree.automotive.dashboard.PermissionCodes;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.cache.DataObject;
 
+/**
+ * 用户
+ * 
+ * @author chens
+ *
+ */
 public class User {
 	
 	public Integer getUserUniqueId() {

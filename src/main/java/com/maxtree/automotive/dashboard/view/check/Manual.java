@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.vfs2.FileObject;
 
-import com.maxtree.automotive.dashboard.BusinessCode;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.DoubleField;
@@ -183,7 +182,7 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 		List<Transaction> list = ui.transactionService.findForList(transaction.getVin(),transaction.getTransactionUniqueId());
 		for(Transaction trans : list) {
 			Document businessDoc = new Document();
-			businessDoc.setAlias(""+BusinessCode.get(trans.getBusinessCode()));
+			businessDoc.setAlias(trans.getBusinessName());
 			rightTreeData.addItem(rightRoot, businessDoc);
 			List<Document> primaryDocs = ui.documentService.findAllDocument1(trans.getVin(),trans.getUuid());
 	    	List<Document> secondaryDocs = ui.documentService.findAllDocument2(trans.getVin(),trans.getUuid());

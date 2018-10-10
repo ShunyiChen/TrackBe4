@@ -2,11 +2,9 @@ package com.maxtree.automotive.dashboard.domain;
 
 import java.util.Date;
 
-import com.maxtree.automotive.dashboard.BusinessCode;
-
 /**
  * 
- * 事务
+ * 主要业务
  * 
  * @author Chen
  *
@@ -174,7 +172,7 @@ public class Transaction {
 	}
 
 	public String getBusinessName() {
-		return BusinessCode.get(businessCode);
+		return businessName;
 	}
 
 	public void setBusinessName(String businessName) {
@@ -231,5 +229,5 @@ public class Transaction {
 	private Site site;						// 文件站点
 	private String creator;					// 录入人用户名
 	private Integer indexNumber = 0; 		// 业务顺序号
-	private String businessName;			// 业务名称（非数据库字段）
+	private String businessName;			// 业务名称
 }

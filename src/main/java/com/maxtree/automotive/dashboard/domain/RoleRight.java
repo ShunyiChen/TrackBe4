@@ -1,5 +1,11 @@
 package com.maxtree.automotive.dashboard.domain;
 
+/**
+ * 角色与权限关系
+ * 
+ * @author chens
+ *
+ */
 public class RoleRight {
 
 	public int getRoleRightUniqueId() {

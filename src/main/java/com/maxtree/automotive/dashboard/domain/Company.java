@@ -4,6 +4,7 @@ import java.util.List;
 
 /**
  * Represents a company. Company contains Locations and users in it.
+ * 机构/公司
  * 
  * @author chens
  *

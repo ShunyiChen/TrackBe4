@@ -1,5 +1,11 @@
 package com.maxtree.automotive.dashboard.domain;
 
+/**
+ * 角色与用户关系
+ * 
+ * @author chens
+ *
+ */
 public class RoleMember {
 
 	public int getRoleMemberUniqueId() {

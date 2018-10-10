@@ -32,7 +32,7 @@ public class PrintUI extends UI {
 		
 		 // Have some content to print
 //	        setContent(new Label(fileAsString, ContentMode.HTML));
-		
+		String fileName = "report."+(htmlFilePath.endsWith("png")?"png":"html");
 		
 		
 		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
@@ -52,7 +52,7 @@ public class PrintUI extends UI {
 				return inputStream;
  			}
  		}; 
- 		StreamResource streamResource = new StreamResource(streamSource, "report.png");
+ 		StreamResource streamResource = new StreamResource(streamSource, fileName);
  		streamResource.setCacheTime(0);
 		
 		BrowserFrame bf = new BrowserFrame(null);

@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.maxtree.automotive.dashboard.BusinessCode;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -126,7 +125,7 @@ public class QuickQueryWindow extends Window {
 	}
 	
 	private void doSearch() {
-		List<Transaction> rs = ui.transactionService.findAll(20, 0, plateField.getValue(), community.getCommunityName());
+		List<Transaction> rs = ui.transactionService.searchByKeyword(20, 0, plateField.getValue(), community.getCommunityName());
 		setPerPageData(rs);
 	}
 	
