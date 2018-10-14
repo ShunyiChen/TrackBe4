@@ -2,21 +2,19 @@ package com.maxtree.automotive.dashboard.view.front;
 
 import java.io.ByteArrayInputStream;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.util.StringUtils;
 
-import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.Popup;
+import com.maxtree.automotive.dashboard.StateHelper;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -41,13 +39,9 @@ import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.messagingsystem.Name;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.event.UIEvents;
-import com.vaadin.event.UIEvents.PollEvent;
-import com.vaadin.event.UIEvents.PollListener;
 import com.vaadin.event.selection.SingleSelectionEvent;
 import com.vaadin.event.selection.SingleSelectionListener;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.shared.EventId;
-import com.vaadin.shared.Registration;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.UI;
@@ -199,7 +193,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 		imaging.setPlateNumber(view.basicInfoPane().getPlateNumber());
 		imaging.setPlateType(view.basicInfoPane().getPlateType());
 		imaging.setVin(view.basicInfoPane().getVIN());
-		imaging.setStatus(BusinessState.B8.name);
+		imaging.setStatus(ui.state().getName("B8"));
 		int imaginguniqueid = ui.imagingService.insert(imaging);
 		if (imaginguniqueid != 0) {
 			//2.发信给影像化管理员
@@ -488,5 +482,5 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 	private UIEvents.PollListener pollListener;
 	private MessageBodyParser jsonHelper = new MessageBodyParser();
 	private User loggedinUser = null;
-
+	
 }

@@ -1,7 +1,6 @@
 package com.maxtree.automotive.dashboard.view.check;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,11 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Activity;
-import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.Openwith;
+import com.maxtree.automotive.dashboard.StateHelper;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -537,7 +536,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     			log.info(e.getMessage());
     		}
         	//2.更改状态
-        	editableTrans.setStatus(BusinessState.B2.name);
+        	editableTrans.setStatus(ui.state().getName("B2"));
         	editableTrans.setDateModified(new Date());
     		ui.transactionService.update(editableTrans);
     		//3.记录跟踪
@@ -568,7 +567,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     			log.info(e.getMessage());
     		}
         	//2.更改状态
-        	editableTrans.setStatus(BusinessState.B5.name);
+        	editableTrans.setStatus(ui.state().getName("B5"));
         	editableTrans.setDateModified(new Date());
     		ui.transactionService.update(editableTrans);
     		//3.记录跟踪
@@ -604,7 +603,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 			e.printStackTrace();
 		}
     	// 2.更改状态
-    	editableTrans.setStatus(BusinessState.B1.name);
+    	editableTrans.setStatus(ui.state().getName("B1"));
 		editableTrans.setDateModified(new Date());
 		ui.transactionService.update(editableTrans);
 		//3.记录跟踪

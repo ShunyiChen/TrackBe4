@@ -14,17 +14,16 @@ import org.springframework.util.StringUtils;
 
 import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Activity;
-import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.Openwith;
+import com.maxtree.automotive.dashboard.StateHelper;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
-import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Company;
@@ -658,7 +657,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         			ui.frameService.updateVIN(basicInfoPane.getVIN(), frame.getCode());
         		}
         		
-        		editableTrans.setStatus(BusinessState.B2.name);
+        		editableTrans.setStatus(ui.state().getName("B2"));
         		ui.transactionService.insert(editableTrans);
         		
         		//操作记录
@@ -670,7 +669,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	}
         	// 提交给质检队列
         	else {
-        		editableTrans.setStatus(BusinessState.B7.name);
+        		editableTrans.setStatus(ui.state().getName("B7"));
         		ui.transactionService.insert(editableTrans);
         		
         		// 添加到质检队列
@@ -720,7 +719,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         			//跳过质检，完成逻辑上架
         			editableTrans.setCode(firstCode+"");//上架号
         		}
-        		editableTrans.setStatus(BusinessState.B2.name);
+        		editableTrans.setStatus(ui.state().getName("B2"));
         		ui.transactionService.insert(editableTrans);
         		
         		//操作记录
@@ -732,7 +731,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	}
         	// 提交给质检队列
         	else {
-        		editableTrans.setStatus(BusinessState.B7.name);
+        		editableTrans.setStatus(ui.state().getName("B7"));
         		ui.transactionService.insert(editableTrans);
         		
         		// 添加到质检队列
@@ -782,7 +781,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         			//跳过质检，完成逻辑上架
         			editableTrans.setCode(firstCode+"");//上架号
         		}
-        		editableTrans.setStatus(BusinessState.B4.name);
+        		editableTrans.setStatus(ui.state().getName("B4"));
         		ui.transactionService.insert(editableTrans);
         		
         		// 插入待审档队列
@@ -804,7 +803,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	}
         	// 提交给质检队列
         	else {
-        		editableTrans.setStatus(BusinessState.B7.name);
+        		editableTrans.setStatus(ui.state().getName("B7"));
         		ui.transactionService.insert(editableTrans);
         		
         		// 添加到质检队列
@@ -854,7 +853,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         			//跳过质检，完成逻辑上架
         			editableTrans.setCode(firstCode+"");//上架号
         		}
-        		editableTrans.setStatus(BusinessState.B4.name);
+        		editableTrans.setStatus(ui.state().getName("B4"));
         		ui.transactionService.insert(editableTrans);
         		
         		// 插入待审档队列
@@ -876,7 +875,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	}
         	// 提交给质检队列
         	else {
-        		editableTrans.setStatus(BusinessState.B7.name);
+        		editableTrans.setStatus(ui.state().getName("B7"));
         		ui.transactionService.insert(editableTrans);
         		
         		// 添加到质检队列
@@ -922,7 +921,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setDateModified(new Date());
     		// 跳过质检
     		if(editableCompany.getIgnoreChecker() == 1) {
-    			editableTrans.setStatus(BusinessState.B2.name);
+    			editableTrans.setStatus(ui.state().getName("B2"));
         		ui.transactionService.update(editableTrans);
         		
         		//操作记录
@@ -937,7 +936,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     			
     		}
     		else {
-    			editableTrans.setStatus(BusinessState.B7.name);
+    			editableTrans.setStatus(ui.state().getName("B7"));
         		ui.transactionService.update(editableTrans);
         		
         		// 添加到质检队列
@@ -968,7 +967,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setDateModified(new Date());
         	// 跳过质检
     		if(editableCompany.getIgnoreChecker() == 1) {
-    			editableTrans.setStatus(BusinessState.B2.name);
+    			editableTrans.setStatus(ui.state().getName("B2"));
         		ui.transactionService.update(editableTrans);
         		
         		//操作记录
@@ -981,7 +980,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
             	Notifications.bottomWarning("操作成功。已完成逻辑上架。");
     		}
     		else {
-    			editableTrans.setStatus(BusinessState.B7.name);
+    			editableTrans.setStatus(ui.state().getName("B7"));
         		ui.transactionService.update(editableTrans);
         		
         		// 添加到质检队列
@@ -1013,7 +1012,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	
         	// 是否跳过质检
         	if(editableCompany.getIgnoreChecker() == 1) {
-        		editableTrans.setStatus(BusinessState.B4.name);
+        		editableTrans.setStatus(ui.state().getName("B4"));
         		ui.transactionService.update(editableTrans);
         		
         		// 插入待审档队列
@@ -1038,7 +1037,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	}
         	// 提交给质检队列
         	else {
-        		editableTrans.setStatus(BusinessState.B7.name);
+        		editableTrans.setStatus(ui.state().getName("B7"));
         		ui.transactionService.update(editableTrans);
         		
         		// 添加到质检队列
@@ -1069,7 +1068,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setDateModified(new Date());
         	// 是否跳过质检
         	if(editableCompany.getIgnoreChecker() == 1) {
-        		editableTrans.setStatus(BusinessState.B4.name);
+        		editableTrans.setStatus(ui.state().getName("B4"));
         		ui.transactionService.update(editableTrans);
         		
         		// 插入待审档队列
@@ -1093,7 +1092,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	}
         	// 提交给质检队列
         	else {
-        		editableTrans.setStatus(BusinessState.B7.name);
+        		editableTrans.setStatus(ui.state().getName("B7"));
         		ui.transactionService.update(editableTrans);
         		
         		// 添加到质检队列

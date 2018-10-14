@@ -1,7 +1,6 @@
 package com.maxtree.automotive.dashboard.view.imaging;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,14 +12,13 @@ import org.springframework.util.StringUtils;
 
 import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Activity;
-import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.Popup;
+import com.maxtree.automotive.dashboard.StateHelper;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
-import com.maxtree.automotive.dashboard.component.Hr;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.Test;
@@ -30,7 +28,6 @@ import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.maxtree.automotive.dashboard.domain.Message;
-import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
@@ -45,8 +42,8 @@ import com.maxtree.automotive.dashboard.view.MessageView;
 import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.automotive.dashboard.view.front.SearchAndPrintWindow;
 import com.maxtree.automotive.dashboard.view.quality.ConfirmInformationGrid;
-import com.maxtree.automotive.dashboard.view.quality.SplitPanel;
 import com.maxtree.automotive.dashboard.view.quality.RouterWindow;
+import com.maxtree.automotive.dashboard.view.quality.SplitPanel;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.messagingsystem.Name;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
@@ -493,16 +490,16 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
     	//3.更改状态
     	if (business.getName().equals("注册登记")) {
-    		editableTrans.setStatus(BusinessState.B2.name);
+    		editableTrans.setStatus(ui.state().getName("B2"));
     	}
     	else if(StringUtils.isEmpty(business.getCheckLevel())) {
-    		editableTrans.setStatus(BusinessState.B2.name);
+    		editableTrans.setStatus(ui.state().getName("B2"));
     	}
     	else if(business.getCheckLevel().equals("一级审档")) {
-    		editableTrans.setStatus(BusinessState.B4.name);
+    		editableTrans.setStatus(ui.state().getName("B4"));
     	}
     	else if(business.getCheckLevel().equals("二级审档")) {
-    		editableTrans.setStatus(BusinessState.B4.name);
+    		editableTrans.setStatus(ui.state().getName("B4"));
     	}
     	editableTrans.setDateModified(new Date());
 		ui.transactionService.update(editableTrans);
@@ -536,7 +533,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
      */
     private void reject(String comments) {
     	//1.更改状态
-    	editableTrans.setStatus(BusinessState.B1.name);
+    	editableTrans.setStatus(ui.state().getName("B1"));
     	editableTrans.setDateModified(new Date());
 		ui.transactionService.update(editableTrans);
 		//2.记录跟踪
@@ -635,4 +632,5 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     private Button btnCommit = new Button();
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
+    
 }

@@ -15,6 +15,7 @@ import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.security.PasswordSecurity;
 import com.maxtree.automotive.dashboard.service.BusinessService;
+import com.maxtree.automotive.dashboard.service.BusinessStateService;
 import com.maxtree.automotive.dashboard.service.CommunityService;
 import com.maxtree.automotive.dashboard.service.CompanyService;
 import com.maxtree.automotive.dashboard.service.DataItemService;
@@ -106,7 +107,10 @@ public final class DashboardUI extends UI {
 	public ImagingService imagingService;
 	@Autowired
 	public SettingsService settingsService;
+	@Autowired
+	public BusinessStateService businessStateService;
 	
+	private StateHelper state = null;
 	/*
 	 * This field stores an access to the dummy backend layer. In real applications
 	 * you most likely gain access to your beans trough lookup or injection; and not
@@ -297,4 +301,17 @@ public final class DashboardUI extends UI {
 			}
 		};
 	}
+	
+	/**
+	 * 返回业务状态
+	 * 
+	 * @return
+	 */
+	public StateHelper state() {
+		if(state == null) {
+			state = new StateHelper();
+		}
+		return state;
+	}
+	
 }

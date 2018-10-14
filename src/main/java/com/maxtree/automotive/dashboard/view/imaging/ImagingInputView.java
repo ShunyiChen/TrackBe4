@@ -16,11 +16,11 @@ import org.springframework.util.StringUtils;
 
 import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Activity;
-import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.Openwith;
+import com.maxtree.automotive.dashboard.StateHelper;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -586,7 +586,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	editableTrans.setIndexNumber(1);
-        	editableTrans.setStatus(BusinessState.B7.name);
+        	editableTrans.setStatus(ui.state().getName("B7"));
 //        	FrameNumber frame = ui.frameService.getNewCode(editableCompany.getStorehouseName());
         	// 获得社区内的全部机构
     		List<Company> companies = ui.communityService.findAllCompanies(loggedInUser.getCommunityUniqueId());
@@ -634,7 +634,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
         	editableTrans.setIndexNumber(indexNumber + 1);
         	
-        	editableTrans.setStatus(BusinessState.B7.name);
+        	editableTrans.setStatus(ui.state().getName("B7"));
     		ui.transactionService.insert(editableTrans);
     		//操作记录
     		track(Activity.INPUT);
@@ -667,7 +667,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	if (businessTypePane.getSelected().getName().equals("注册登记")) {
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateModified(new Date());
-        	editableTrans.setStatus(BusinessState.B7.name);
+        	editableTrans.setStatus(ui.state().getName("B7"));
     		ui.transactionService.update(editableTrans);
     		//操作记录
     		int transitionUniqueId = track(Activity.RE_ENTRY);
@@ -682,7 +682,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	else {
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateModified(new Date());
-        	editableTrans.setStatus(BusinessState.B7.name);
+        	editableTrans.setStatus(ui.state().getName("B7"));
     		ui.transactionService.update(editableTrans);
     		//操作记录
     		int transitionUniqueId= track(Activity.RE_ENTRY);

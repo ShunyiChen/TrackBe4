@@ -1,7 +1,6 @@
 package com.maxtree.automotive.dashboard.view.shelf;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Activity;
-import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
@@ -48,7 +46,6 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -60,7 +57,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -282,7 +278,7 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     	if(upgrid.editableTrans == null) {
     		Notifications.warning("请选择一行上架。");
     	} else {
-    		upgrid.editableTrans.setStatus(BusinessState.B3.name);
+    		upgrid.editableTrans.setStatus(ui.state().getName("B3"));
     		upgrid.editableTrans.setDateModified(new Date());
     		ui.transactionService.update(upgrid.editableTrans);
     		track(Activity.PUTAWAY, upgrid.editableTrans);
@@ -305,7 +301,7 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
 					//更新库房
 		    		ui.frameService.updateVIN(null, downgrid.editableTrans.getCode());
 		    		//更新transaction
-		    		downgrid.editableTrans.setStatus(BusinessState.B12.name);
+		    		downgrid.editableTrans.setStatus(ui.state().getName("B12"));
 		    		downgrid.editableTrans.setDateModified(new Date());
 		    		downgrid.editableTrans.setCode(null);
 		    		ui.transactionService.update(downgrid.editableTrans);

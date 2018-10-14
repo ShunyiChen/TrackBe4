@@ -1,7 +1,6 @@
 package com.maxtree.automotive.dashboard.view.quality;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,13 +12,12 @@ import org.springframework.util.StringUtils;
 
 import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Activity;
-import com.maxtree.automotive.dashboard.BusinessState;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.Openwith;
+import com.maxtree.automotive.dashboard.StateHelper;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
-import com.maxtree.automotive.dashboard.component.Hr;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.Test;
@@ -519,16 +517,16 @@ public class QCView extends Panel implements View, FrontendViewIF{
     		}
         	//2.更改状态
         	if (business.getName().equals("注册登记")) {
-        		editableTrans.setStatus(BusinessState.B2.name);
+        		editableTrans.setStatus(ui.state().getName("B2"));
         	}
         	else if(StringUtils.isEmpty(business.getCheckLevel())) {
-        		editableTrans.setStatus(BusinessState.B2.name);
+        		editableTrans.setStatus(ui.state().getName("B2"));
         	}
         	else if(business.getCheckLevel().equals("一级审档")) {
-        		editableTrans.setStatus(BusinessState.B4.name);
+        		editableTrans.setStatus(ui.state().getName("B4"));
         	}
         	else if(business.getCheckLevel().equals("二级审档")) {
-        		editableTrans.setStatus(BusinessState.B4.name);
+        		editableTrans.setStatus(ui.state().getName("B4"));
         	}
         	editableTrans.setDateModified(new Date());
     		ui.transactionService.update(editableTrans);
@@ -562,7 +560,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
     			log.info(e.getMessage());
     		}
         	//2.更改状态
-        	editableTrans.setStatus(BusinessState.B4.name);
+        	editableTrans.setStatus(ui.state().getName("B4"));
         	editableTrans.setDateModified(new Date());
     		ui.transactionService.update(editableTrans);
     		//3.记录跟踪
@@ -598,7 +596,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
 			log.info(e.getMessage());
 		}
     	//2.更改状态
-    	editableTrans.setStatus(BusinessState.B1.name);
+    	editableTrans.setStatus(ui.state().getName("B1"));
     	editableTrans.setDateModified(new Date());
 		ui.transactionService.update(editableTrans);
 		//3.记录跟踪
