@@ -27,6 +27,6 @@ Maven3.5
 Log4j
 
 ## Run and package
-spring-boot:run
+spring-boot:run -Dmaven.test.skip=true
 
 mvn clean package 
