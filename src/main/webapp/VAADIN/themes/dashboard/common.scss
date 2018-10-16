@@ -165,12 +165,7 @@
     }
   }
       
-  .adminmenuwindow{
-        width: 255px;
-        height: 100%;
-        border-radius: 0;
-//        @include animation(valo-animate-in-slide-right 700ms 700ms backwards);
-    }
+  
  
   .moviedetailswindow {
     max-height: round(30 * $v-font-size);

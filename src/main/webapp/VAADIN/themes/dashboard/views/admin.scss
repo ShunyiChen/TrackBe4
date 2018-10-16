@@ -1,6 +1,7 @@
 @mixin dashboard-admin-view {
    	.searchpane {
-        background-color: #3367D6;
+        //background-color: #3367D6;//Chrome蓝色
+        background-color: #47484B;//深灰色
         height:56px !important;
         width:100%;
         white-space: 20px;
@@ -12,16 +13,16 @@
         margin: 5px;
     }
     
-    
     .menu-button {
         cursor: pointer;
         margin-bottom: 19px;
         margin-left: 25px;
         margin-right: 12px;
-        margin-top: 21px;
+        margin-top: 16px;
     }
+    
     .search-settings-label {
-        cursor: text;
+      cursor: text;
       position: relative;
 	  color:white;
       font-weight: bold;
@@ -31,25 +32,23 @@
     .search-settings-field {
         cursor: text;
         justify-content: center;
-        background-color: #2850A7;
+//        background-color: #2850A7;//搜索文本Chrome背景颜色
+        background-color: #BBBBBB;
         height:40px;
         width:680px;
         border-radius: 2px;
         margin-left: 0px;
-//        margin-top: 50%;
         margin-top: 8px;
-//        margin-bottom: 19px;
         position:absolute;
         left:50%;
         transform:translateX(-50%);
          
     }
-    .search-button {
+    .search-settings-field .v-icon {
         cursor: pointer;
-        margin-bottom: 19px;
-        margin-left: 11px;
-        margin-right: 12px;
-        margin-top: 9px;
+        margin-left: 10px;
+        margin-top: 10px;
+        margin-right: 10px;
     }
      .search-text-field {
         cursor: text;
@@ -64,8 +63,8 @@
         caret-color:white;
         font-size: 15px;
         font-weight: bold;
-        color: white;
-         -webkit-input-placeholder:white;
+        color: #47484B;
+         -webkit-input-placeholder: white;
          -moz-placeholder: white;
     }
     .search-settings-field .v-textfield {
@@ -107,8 +106,25 @@
     .admin-menu-window-verticallayout {
 //        height:100%;
         white-space: 20px;
-//        @include animation(animate-in-scale-up 500ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
+//       @include animation(animate-in-scale-up 500ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
+//        @include animation(valo-animate-in-slide-left 700ms 700ms backwards);
     }
+    
+    .adminmenuwindow{
+        width: 255px;
+        height: 100%;
+        border-radius: 0;
+       position:absolute;
+        left:0;
+        
+        @include animation(valo-animate-in-slide-right 500ms 100ms backwards);
+//        @include animation(valo-animate-out-fade 500ms 10ms backwards, animate-in-scale-up 300ms 10ms backwards);
+    }
+    
+    .fade-out {
+        @include animation(valo-animate-in-slide-left 500ms 100ms backwards);
+     }
+    
     .createMenuItem {
         height: 65px;
         color: #898989;

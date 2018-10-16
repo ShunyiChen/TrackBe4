@@ -24,7 +24,9 @@ $v-included-components: remove($v-included-components, treetable);
 $view-padding: round($v-unit-size / 1.5) !default;
 
 // Slight adjustment to menu background-color
-$valo-menu-background-color: #3367D6;
+// 更改主题颜色
+$valo-menu-background-color: #47484B;//深灰
+//$valo-menu-background-color: #3367D6;//Chrome蓝色
 
 @mixin dashboard {
   @include valo;

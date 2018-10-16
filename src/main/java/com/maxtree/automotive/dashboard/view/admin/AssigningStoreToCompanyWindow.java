@@ -46,7 +46,8 @@ public class AssigningStoreToCompanyWindow extends Window {
 		mainLayout.setWidth("100%");
 		mainLayout.setHeightUndefined();
  
-		Image img = new Image(null, VaadinIcons.GROUP);
+		Image img = new Image();
+		img.setIcon(VaadinIcons.GROUP);
 		Label companyName = new Label(company.getCompanyName());
 		HorizontalLayout title = new HorizontalLayout();
 		title.setWidthUndefined();

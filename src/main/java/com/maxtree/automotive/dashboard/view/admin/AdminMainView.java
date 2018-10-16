@@ -37,12 +37,6 @@ import com.vaadin.ui.themes.ValoTheme;
 import de.schlichtherle.license.LicenseContent;
 
 public class AdminMainView extends VerticalLayout {
-
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
 	/**
 	 * 
 	 */
@@ -828,7 +822,7 @@ public class AdminMainView extends VerticalLayout {
 	 * @return
 	 */
 	private HorizontalLayout createSearchPane() {
-		Image image = new Image(null, new ThemeResource("img/chrome_menu.png"));
+		Image image = new Image(null, new ThemeResource("img/adminmenu/menu_24px_1130584_easyicon.net.png"));
         image.addClickListener(e -> {
         	AdminMenuWindow.open();
         });
@@ -839,12 +833,8 @@ public class AdminMainView extends VerticalLayout {
         labelSettings.addStyleName("search-settings-label");
         
         // Search image
-        Image searchImage = new Image(null, new ThemeResource("img/search.png"));
-//        searchImage.addClickListener(e -> {
-//        	VaadinSession.getCurrent().close();
-//    		Page.getCurrent().reload();
-//        	System.out.println("logged out.");});
-        searchImage.addStyleName("search-button");
+        Image searchImage = new Image();
+        searchImage.setIcon(VaadinIcons.SEARCH);
         
         // Search Text field
         TextField searchTextField = new TextField();
@@ -858,20 +848,6 @@ public class AdminMainView extends VerticalLayout {
             String value = e.getValue();
 //            System.out.println(value);
         });
-//        		new Property.ValueChangeListener() {
-//            public void valueChange(ValueChangeEvent event) {
-//                // Assuming that the value type is a String
-//                String value = (String) event.getProperty().getValue();
-//
-//                // Do something with the value
-//                Notification.show("Value is: " + value);
-//            }
-//        });
-
-        // Fire value changes immediately when the field loses focus
-//        searchTextField.setImmediate(true);
-
-        
         // Search text area
         HorizontalLayout textFieldArea = new HorizontalLayout();
         textFieldArea.setMargin(false);

@@ -2,40 +2,52 @@ package com.maxtree.automotive.dashboard.component;
 
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
-import com.vaadin.event.FieldEvents.FocusEvent;
-import com.vaadin.event.FieldEvents.FocusListener;
-import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.ValoTheme;
 
 public class AdminMenuWindow extends Window {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public AdminMenuWindow() {
-		addStyleName("adminmenuwindow");
 		setModal(true);
         this.addCloseShortcut(KeyCode.ESCAPE, null);
         setResizable(false);
         setClosable(false);
-        setPosition(0, 0);
- 
+        this.setPosition(-255, 0);
+        UI.getCurrent().addWindow(this);
+//        this.setPosition(0, 0);
+        addStyleName("adminmenuwindow");
+        
         addBlurListener(event -> {
+//        	removeStyleName("adminmenuwindow");
+//        	addStyleName("fade-out");
         	this.close();
         });
         
         this.addCloseListener(e -> {
+//        	UI.getCurrent().addWindow(AdminMenuWindow.this);
         });
+//        
+//        setVisible(false);
+//        this.addAttachListener(e->{
+//        	removeStyleName("fade-out");
+//        	 addStyleName("adminmenuwindow");
+//        	 setVisible(true);
+//        });
+
+        
         
         VerticalLayout content = new VerticalLayout();
         content.setSizeFull();
@@ -67,8 +79,6 @@ public class AdminMenuWindow extends Window {
         HorizontalLayout onstartup = createMenuItem(onStartupImage, "在启动时");
         
         content.addComponents(settings, hr, people, scanentry, appearance, search, defaultBrowser, onstartup);
-        
-        
         setContent(content);
 	}
 	
@@ -77,7 +87,6 @@ public class AdminMenuWindow extends Window {
 		 itemLayout.setWidthUndefined();
 		 itemLayout.setSpacing(true);
 		 itemLayout.addLayoutClickListener( e -> {
-			 System.out.println(""+text);
 			 this.close();
 		 });
 		 Label textLabel = new Label(text);
@@ -91,7 +100,7 @@ public class AdminMenuWindow extends Window {
 	public static void open() {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         Window w = new AdminMenuWindow();
-        UI.getCurrent().addWindow(w);
-        w.focus();
+        
+//        w.focus();
     }
 }
