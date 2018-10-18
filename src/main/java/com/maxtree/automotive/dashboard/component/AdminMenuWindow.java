@@ -12,7 +12,6 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -83,31 +82,12 @@ public class AdminMenuWindow extends Window {
         setContent(main);
 	}
 	
-//	public void infade() {
-//		UI.getCurrent().access(new Runnable() {
-//            @Override
-//            public void run() {
-////            	 this.setPosition(0, 0);
-//            	for(int i= -255;i < 0; i++) {
-//            		setPosition(i, 0);
-//            	}
-//            }
-//        });
-//	}
-//	
-//	private void outfade() {
-//		UI.getCurrent().access(new Runnable() {
-//            @Override
-//            public void run() {
-////            	 this.setPosition(0, 0);
-//            	for(int i= 0;i > -255;i--) {
-//            		setPosition(i, 0);
-//            	}
-//            	close();
-//            }
-//        });
-//	}
-	
+	/**
+	 * 
+	 * @param image
+	 * @param text
+	 * @return
+	 */
 	private HorizontalLayout createMenuItem(Image image, String text) {
 		 HorizontalLayout itemLayout = new HorizontalLayout();
 		 itemLayout.setWidthUndefined();
@@ -123,6 +103,9 @@ public class AdminMenuWindow extends Window {
 		 return itemLayout;
 	}
 	
+	/**
+	 * 
+	 */
 	public static void open() {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         AdminMenuWindow w = new AdminMenuWindow();

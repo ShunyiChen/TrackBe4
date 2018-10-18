@@ -103,15 +103,8 @@
       margin-top: 16px;
       height:35px;
     }
-    .admin-menu-window-verticallayout {
-        width: 255px;
-        height: 100%;
-        background-color: white;
-        white-space: 20px;
-//        @include animation(valo-animate-in-slide-right 200ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
-//       @include animation(animate-in-scale-up 500ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
-//        @include animation(valo-animate-in-slide-left 700ms 700ms backwards);
-    }
+    
+    
     
     .adminmenuwindow{
         border-radius: 0px;
@@ -126,22 +119,7 @@
     }
     
     
-    .sidebar-in{
-       animation: sidebarAnimationFramesIn ease 1s;
-       animation-iteration-count: 1;
-       transform-origin: 100% 50%;
-       animation-fill-mode:forwards;
-       width: 100%;
-    }
-
-    .sidebar-out{
-       animation: sidebarAnimationFramesOut ease 1s;
-       animation-iteration-count: 1;
-       transform-origin: 100% 50%;
-       animation-fill-mode:forwards;
-       width: 100%;
-    }
-    
+   
     
     
 
@@ -386,4 +364,87 @@ box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
         background: #C80000;
     }
     
+    .SearchToolBar{
+        background-color: #47484B;
+    }
+    
+    .NavigationBar_moveIn {
+        width: 255px;
+        height: 100%;
+        background-color: white;
+//        white-space: 20px;
+        @include animation(valo-animate-in-slide-right 200ms 10ms backwards);
+//        @include animation(valo-animate-in-slide-right 200ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
+//       @include animation(animate-in-scale-up 500ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
+//        @include animation(valo-animate-in-slide-left 700ms 700ms backwards);
+    }
+    
+    .NavigationBar_moveOut {
+        width: 255px;
+        height: 100%;
+        background-color: white;
+//        white-space: 20px;
+//        @include animation(valo-animate-out-fade 2500ms 500ms forwards);
+        @include animation(valo-animate-in-slide-left 200ms 10ms backwards);
+//        @include animation(valo-animate-in-slide-right 200ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
+//       @include animation(animate-in-scale-up 500ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
+//        @include animation(valo-animate-in-slide-left 700ms 700ms backwards);
+    }
+    
+    .Screen{
+        background-color:rgba(0,0,0,.5);
+    }
+    
+    .FlexTable{
+        background-color: #F1F1F1;
+    }
+    
+    .FlexTableRow{
+        background-color: white;
+        -webkit-box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
+        -moz-box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
+        box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
+        padding: 0px;
+//        margin-right: -17px;
+    }
+    
+    .FlexTable_main{
+        background-color: transparent;
+    }
+ 
+    
+    .FlexTableRowItem {
+        cursor: pointer;
+        border: #F0F0F0 solid 1px;
+        border-top-color: transparent;
+        border-left-color: transparent;
+        border-right-color: transparent;
+        background-color: white;
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+    .FlexTableRowItem:hover{
+        background-color: #F1F1F1;
+    }
+    
+    .FlexTableRowItem_name{
+        color: black;
+        font-size: 12px;
+        font-weight: normal;
+        font-family: Microsoft YaHei;
+    }
+    
+    .TitleRow{
+        background-color: transparent;
+        padding: 0px;
+    }
+    
+    .TitleRow_name{
+        color: black;
+        font-size: 12px;
+        font-weight: bold;
+        font-family: Microsoft YaHei;
+    }
 }

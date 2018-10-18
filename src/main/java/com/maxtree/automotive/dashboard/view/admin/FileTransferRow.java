@@ -1,0 +1,40 @@
+package com.maxtree.automotive.dashboard.view.admin;
+
+/**
+ * 
+ * @author Chen
+ *
+ */
+public class FileTransferRow extends FlexTableRow {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public FileTransferRow() {
+		initComponents();
+	}
+	
+	private void initComponents() {
+		this.addComponents(manageSite,manageFTPServer);
+	}
+
+	@Override
+	public String getSearchTags() {
+		return "管理站点,FTP服务器,"+getTitle();
+	}
+
+	@Override
+	public int getOrderID() {
+		return 2;
+	}
+	
+	@Override
+	public String getTitle() {
+		return "文件传输";
+	}
+	
+	private RowItemWithTitle manageSite = new RowItemWithTitle("管理站点");
+	private RowItemWithTitle manageFTPServer = new RowItemWithTitle("管理FTP服务器");
+}

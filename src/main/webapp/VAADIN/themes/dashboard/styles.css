@@ -15409,7 +15409,7 @@ div.v-layout.v-horizontal.v-widget {
 	cursor: pointer;
 }
 
-.dashboard .search-settings-label {
+.dashboard .txtSettings {
 	cursor: text;
 	position: relative;
 	color: white;
@@ -15496,13 +15496,6 @@ div.v-layout.v-horizontal.v-widget {
 	height: 35px;
 }
 
-.dashboard .admin-menu-window-verticallayout {
-	width: 255px;
-	height: 100%;
-	background-color: white;
-	white-space: 20px;
-}
-
 .dashboard .adminmenuwindow {
 	border-radius: 0px;
 	width: 255px;
@@ -15510,22 +15503,6 @@ div.v-layout.v-horizontal.v-widget {
 	border-color: transparent;
 	background-color: transparent;
 	border-right-color: transparent;
-}
-
-.dashboard .sidebar-in {
-	animation: sidebarAnimationFramesIn ease 1s;
-	animation-iteration-count: 1;
-	transform-origin: 100% 50%;
-	animation-fill-mode: forwards;
-	width: 100%;
-}
-
-.dashboard .sidebar-out {
-	animation: sidebarAnimationFramesOut ease 1s;
-	animation-iteration-count: 1;
-	transform-origin: 100% 50%;
-	animation-fill-mode: forwards;
-	width: 100%;
 }
 
 .dashboard .createMenuItem {
@@ -15755,4 +15732,82 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .fileboxcomponent-background2 .v-button-wrap {
 	background: #C80000;
+}
+
+.dashboard .SearchToolBar {
+	background-color: #47484B;
+}
+
+.dashboard .NavigationBar_moveIn {
+	width: 255px;
+	height: 100%;
+	background-color: white;
+	-webkit-animation: valo-animate-in-slide-right 200ms 10ms backwards;
+	-moz-animation: valo-animate-in-slide-right 200ms 10ms backwards;
+	animation: valo-animate-in-slide-right 200ms 10ms backwards;
+}
+
+.dashboard .NavigationBar_moveOut {
+	width: 255px;
+	height: 100%;
+	background-color: white;
+	-webkit-animation: valo-animate-in-slide-left 200ms 10ms backwards;
+	-moz-animation: valo-animate-in-slide-left 200ms 10ms backwards;
+	animation: valo-animate-in-slide-left 200ms 10ms backwards;
+}
+
+.dashboard .Screen {
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.dashboard .FlexTable {
+	background-color: #F1F1F1;
+}
+
+.dashboard .FlexTableRow {
+	background-color: white;
+	-webkit-box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.75);
+	-moz-box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.75);
+	box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.75);
+	padding: 0px;
+}
+
+.dashboard .FlexTable_main {
+	background-color: transparent;
+}
+
+.dashboard .FlexTableRowItem {
+	cursor: pointer;
+	border: #F0F0F0 solid 1px;
+	border-top-color: transparent;
+	border-left-color: transparent;
+	border-right-color: transparent;
+	background-color: white;
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+
+.dashboard .FlexTableRowItem:hover {
+	background-color: #F1F1F1;
+}
+
+.dashboard .FlexTableRowItem_name {
+	color: black;
+	font-size: 12px;
+	font-weight: normal;
+	font-family: Microsoft YaHei;
+}
+
+.dashboard .TitleRow {
+	background-color: transparent;
+	padding: 0px;
+}
+
+.dashboard .TitleRow_name {
+	color: black;
+	font-size: 12px;
+	font-weight: bold;
+	font-family: Microsoft YaHei;
 }

@@ -37,7 +37,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import de.schlichtherle.license.LicenseContent;
 
-public class AdminMainView extends AbsoluteLayout {//VerticalLayout {
+public class AdminMainView extends AbsoluteLayout {
 	/**
 	 * 
 	 */
@@ -46,42 +46,48 @@ public class AdminMainView extends AbsoluteLayout {//VerticalLayout {
 	 * 
 	 */
 	public AdminMainView() {
- 
-        this.setSizeFull();
-		
+        setSizeFull();
+        screen.addLayoutClickListener(e->{
+        	hideNavigationBar();
+        	System.out.println("hideNavigationBar");
+        });
+        
+        
+        
 		// 搜索
 //		searchPane = createSearchPane();
         // 客户信息
-		customerInformationLayout = customerInformation();
-		// 社区
-		communityLayout = community();
-		// 库房
-		storehouseLayout = storehouse();
-		// 数据存储
-		dataLayout = dataStorage();
-		// 消息
-		messageLayout = broadcastMessage();
-		// 系统
-		systemLayout = systemSettings();
-		// 帮助
-		helpLayout = help();
-	 	main.setSpacing(false);
-	 	main.setMargin(false);
-	 	main.setWidth("98%");
-	 	main.setHeight("98%");
-	 	main.addComponents(customerInformationLayout,communityLayout,storehouseLayout,dataLayout,messageLayout,systemLayout,helpLayout);
-	 	main.setComponentAlignment(customerInformationLayout, Alignment.TOP_CENTER);
-	 	main.setComponentAlignment(communityLayout, Alignment.TOP_CENTER);
-	 	main.setComponentAlignment(storehouseLayout, Alignment.TOP_CENTER);
-	 	main.setComponentAlignment(dataLayout, Alignment.TOP_CENTER);
-	 	main.setComponentAlignment(messageLayout, Alignment.TOP_CENTER);
-	 	main.setComponentAlignment(systemLayout, Alignment.TOP_CENTER);
-	 	main.setComponentAlignment(helpLayout, Alignment.TOP_CENTER);
+//		customerInformationLayout = customerInformation();
+//		// 社区
+//		communityLayout = community();
+//		// 库房
+//		storehouseLayout = storehouse();
+//		// 数据存储
+//		dataLayout = dataStorage();
+//		// 消息
+//		messageLayout = broadcastMessage();
+//		// 系统
+//		systemLayout = systemSettings();
+//		// 帮助
+//		helpLayout = help();
+//	 	main.setSpacing(false);
+//	 	main.setMargin(false);
+//	 	main.setWidth("98%");
+//	 	main.setHeight("98%");
+//	 	main.addComponents(customerInformationLayout,communityLayout,storehouseLayout,dataLayout,messageLayout,systemLayout,helpLayout);
+//	 	main.setComponentAlignment(customerInformationLayout, Alignment.TOP_CENTER);
+//	 	main.setComponentAlignment(communityLayout, Alignment.TOP_CENTER);
+//	 	main.setComponentAlignment(storehouseLayout, Alignment.TOP_CENTER);
+//	 	main.setComponentAlignment(dataLayout, Alignment.TOP_CENTER);
+//	 	main.setComponentAlignment(messageLayout, Alignment.TOP_CENTER);
+//	 	main.setComponentAlignment(systemLayout, Alignment.TOP_CENTER);
+//	 	main.setComponentAlignment(helpLayout, Alignment.TOP_CENTER);
         
 	 	
 	 	
 	 	this.addComponent(toolbar, "left: 0px; top: 0px;");
-	 	this.addComponent(main, "left: 0px; top: 50px;");
+	 	this.addComponent(table, "left: 0px; top: 56px;");
+	 	
 	 	
 //        addComponents(searchPane, main);
 //        setComponentAlignment(searchPane, Alignment.TOP_CENTER);
@@ -131,6 +137,29 @@ public class AdminMainView extends AbsoluteLayout {//VerticalLayout {
         });
         
 	}
+	
+	/**
+	 * 
+	 */
+	public void showNavigationBar() {
+		navigationBar.removeStyleName("NavigationBar_moveOut");
+		navigationBar.addStyleName("NavigationBar_moveIn");
+		
+		addComponent(screen, "left: 0px; top: 0px;");
+		addComponent(navigationBar, "left: 0px; top: 0px;z-index:999;");
+		System.out.println("+++"+this.getComponentCount());
+	}
+	
+	public void hideNavigationBar() {
+		navigationBar.removeStyleName("NavigationBar_moveIn");
+		navigationBar.addStyleName("NavigationBar_moveOut");
+		
+		
+		System.out.println("----"+this.getComponentCount());
+		addComponent(navigationBar, "left: -255px; top: 0px;z-index:999;");
+		removeComponent(screen);
+	}
+	
 	
 	/**
 	 * 客户信息模块
@@ -1052,7 +1081,12 @@ public class AdminMainView extends AbsoluteLayout {//VerticalLayout {
 	
 	// 搜索
 //	private HorizontalLayout searchPane;
-	private SearchToolBar toolbar = new SearchToolBar();
+	private SearchToolBar toolbar = new SearchToolBar(this);
+	public NavigationBar navigationBar = new NavigationBar();
+	private Screen screen = new Screen();
+	public FlexTable table = new FlexTable();
+	
+	
 	
 	// 用户
 	private VerticalLayout customerInformationLayout;
