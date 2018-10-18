@@ -1,14 +1,18 @@
 package com.maxtree.automotive.dashboard.component;
 
+import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -22,39 +26,36 @@ public class AdminMenuWindow extends Window {
 
 	public AdminMenuWindow() {
 		setModal(true);
-        this.addCloseShortcut(KeyCode.ESCAPE, null);
+//        this.addCloseShortcut(KeyCode.ESCAPE, null);
         setResizable(false);
         setClosable(false);
-        this.setPosition(-255, 0);
-        UI.getCurrent().addWindow(this);
-//        this.setPosition(0, 0);
-        addStyleName("adminmenuwindow");
+        setPosition(0, 0);
+//        addStyleName("adminmenuwindow");
+        
+        main.setSizeFull();
+        main.setMargin(false);
+        main.setSpacing(false);
+        main.setHeightUndefined();
+//        main.addStyleName("admin-menu-window-verticallayout");
+        
+        main.addStyleName("sidebar-in");
         
         addBlurListener(event -> {
-//        	removeStyleName("adminmenuwindow");
-//        	addStyleName("fade-out");
-        	this.close();
-        });
-        
-        this.addCloseListener(e -> {
-//        	UI.getCurrent().addWindow(AdminMenuWindow.this);
-        });
-//        
-//        setVisible(false);
-//        this.addAttachListener(e->{
-//        	removeStyleName("fade-out");
-//        	 addStyleName("adminmenuwindow");
-//        	 setVisible(true);
-//        });
+        	if (main.getStyleName().contains("sidebar-in"))
+            {
+        		main.removeStyleName("sidebar-in");
+        		main.setStyleName("sidebar-out");
+        		main.setWidth(0,Unit.PIXELS);
+                return;
+            }
 
-        
-        
-        VerticalLayout content = new VerticalLayout();
-        content.setSizeFull();
-        content.setMargin(false);
-        content.setSpacing(false);
-        content.setHeightUndefined();
-        content.addStyleName("admin-menu-window-verticallayout");
+        	main.removeStyleName("sidebar-out");
+        	main.setStyleName("sidebar-in");
+        	main.setWidth(300,Unit.PIXELS);
+//        	main.removeStyleName("admin-menu-window-verticallayout");
+        	
+//        	close();
+        });
         
         Label settings = new Label("设置");
         settings.addStyleName("admin-menu-window-labelh1");
@@ -78,9 +79,34 @@ public class AdminMenuWindow extends Window {
         Image onStartupImage = new Image(null, new ThemeResource("img/adminmenu/onstartup.png"));
         HorizontalLayout onstartup = createMenuItem(onStartupImage, "在启动时");
         
-        content.addComponents(settings, hr, people, scanentry, appearance, search, defaultBrowser, onstartup);
-        setContent(content);
+        main.addComponents(settings, hr, people, scanentry, appearance, search, defaultBrowser, onstartup);
+        setContent(main);
 	}
+	
+//	public void infade() {
+//		UI.getCurrent().access(new Runnable() {
+//            @Override
+//            public void run() {
+////            	 this.setPosition(0, 0);
+//            	for(int i= -255;i < 0; i++) {
+//            		setPosition(i, 0);
+//            	}
+//            }
+//        });
+//	}
+//	
+//	private void outfade() {
+//		UI.getCurrent().access(new Runnable() {
+//            @Override
+//            public void run() {
+////            	 this.setPosition(0, 0);
+//            	for(int i= 0;i > -255;i--) {
+//            		setPosition(i, 0);
+//            	}
+//            	close();
+//            }
+//        });
+//	}
 	
 	private HorizontalLayout createMenuItem(Image image, String text) {
 		 HorizontalLayout itemLayout = new HorizontalLayout();
@@ -99,8 +125,9 @@ public class AdminMenuWindow extends Window {
 	
 	public static void open() {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        Window w = new AdminMenuWindow();
-        
-//        w.focus();
+        AdminMenuWindow w = new AdminMenuWindow();
+        UI.getCurrent().addWindow(w);
     }
+	
+	private VerticalLayout main = new VerticalLayout();
 }

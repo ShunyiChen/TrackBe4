@@ -93,7 +93,6 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 	 * @param uuid
 	 */
 	public void displayImage(String uuid) {
-		
 		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
  			/**

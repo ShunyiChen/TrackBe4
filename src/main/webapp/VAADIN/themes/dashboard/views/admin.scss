@@ -13,15 +13,15 @@
         margin: 5px;
     }
     
-    .menu-button {
+    .imgMenu {
         cursor: pointer;
-        margin-bottom: 19px;
-        margin-left: 25px;
-        margin-right: 12px;
-        margin-top: 16px;
+//        margin-bottom: 19px;
+//        margin-left: 25px;
+//        margin-right: 12px;
+//        margin-top: 16px;
     }
     
-    .search-settings-label {
+    .txtSettings {
       cursor: text;
       position: relative;
 	  color:white;
@@ -104,26 +104,47 @@
       height:35px;
     }
     .admin-menu-window-verticallayout {
-//        height:100%;
+        width: 255px;
+        height: 100%;
+        background-color: white;
         white-space: 20px;
+//        @include animation(valo-animate-in-slide-right 200ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
 //       @include animation(animate-in-scale-up 500ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
 //        @include animation(valo-animate-in-slide-left 700ms 700ms backwards);
     }
     
     .adminmenuwindow{
+        border-radius: 0px;
         width: 255px;
         height: 100%;
-        border-radius: 0;
-       position:absolute;
-        left:0;
-        
-        @include animation(valo-animate-in-slide-right 500ms 100ms backwards);
+        border-color: transparent;
+        background-color: transparent;
+        border-right-color: transparent;
+//        @include animation(valo-animate-in-slide-right 300ms 10ms backwards);
+//        @include animation(valo-animate-in-slide-right 500ms 10ms backwards);
 //        @include animation(valo-animate-out-fade 500ms 10ms backwards, animate-in-scale-up 300ms 10ms backwards);
     }
     
-    .fade-out {
-        @include animation(valo-animate-in-slide-left 500ms 100ms backwards);
-     }
+    
+    .sidebar-in{
+       animation: sidebarAnimationFramesIn ease 1s;
+       animation-iteration-count: 1;
+       transform-origin: 100% 50%;
+       animation-fill-mode:forwards;
+       width: 100%;
+    }
+
+    .sidebar-out{
+       animation: sidebarAnimationFramesOut ease 1s;
+       animation-iteration-count: 1;
+       transform-origin: 100% 50%;
+       animation-fill-mode:forwards;
+       width: 100%;
+    }
+    
+    
+    
+
     
     .createMenuItem {
         height: 65px;

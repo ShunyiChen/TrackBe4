@@ -20,6 +20,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -36,18 +37,20 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import de.schlichtherle.license.LicenseContent;
 
-public class AdminMainView extends VerticalLayout {
+public class AdminMainView extends AbsoluteLayout {//VerticalLayout {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 
 	 */
 	public AdminMainView() {
-        setSpacing(false);
-        setMargin(false);
-        this.setWidth("100%");
-		this.setHeightUndefined();
+ 
+        this.setSizeFull();
 		
 		// 搜索
-		searchPane = createSearchPane();
+//		searchPane = createSearchPane();
         // 客户信息
 		customerInformationLayout = customerInformation();
 		// 社区
@@ -62,22 +65,27 @@ public class AdminMainView extends VerticalLayout {
 		systemLayout = systemSettings();
 		// 帮助
 		helpLayout = help();
-	 	content.setSpacing(false);
-	 	content.setMargin(false);
-	 	content.setWidth("98%");
-	 	content.setHeight("98%");
-	 	content.addComponents(customerInformationLayout,communityLayout,storehouseLayout,dataLayout,messageLayout,systemLayout,helpLayout);
-	 	content.setComponentAlignment(customerInformationLayout, Alignment.TOP_CENTER);
-	 	content.setComponentAlignment(communityLayout, Alignment.TOP_CENTER);
-	 	content.setComponentAlignment(storehouseLayout, Alignment.TOP_CENTER);
-	 	content.setComponentAlignment(dataLayout, Alignment.TOP_CENTER);
-	 	content.setComponentAlignment(messageLayout, Alignment.TOP_CENTER);
-	 	content.setComponentAlignment(systemLayout, Alignment.TOP_CENTER);
-	 	content.setComponentAlignment(helpLayout, Alignment.TOP_CENTER);
+	 	main.setSpacing(false);
+	 	main.setMargin(false);
+	 	main.setWidth("98%");
+	 	main.setHeight("98%");
+	 	main.addComponents(customerInformationLayout,communityLayout,storehouseLayout,dataLayout,messageLayout,systemLayout,helpLayout);
+	 	main.setComponentAlignment(customerInformationLayout, Alignment.TOP_CENTER);
+	 	main.setComponentAlignment(communityLayout, Alignment.TOP_CENTER);
+	 	main.setComponentAlignment(storehouseLayout, Alignment.TOP_CENTER);
+	 	main.setComponentAlignment(dataLayout, Alignment.TOP_CENTER);
+	 	main.setComponentAlignment(messageLayout, Alignment.TOP_CENTER);
+	 	main.setComponentAlignment(systemLayout, Alignment.TOP_CENTER);
+	 	main.setComponentAlignment(helpLayout, Alignment.TOP_CENTER);
         
-        addComponents(searchPane, content);
-        setComponentAlignment(searchPane, Alignment.TOP_CENTER);
-        setComponentAlignment(content, Alignment.TOP_CENTER);
+	 	
+	 	
+	 	this.addComponent(toolbar, "left: 0px; top: 0px;");
+	 	this.addComponent(main, "left: 0px; top: 50px;");
+	 	
+//        addComponents(searchPane, main);
+//        setComponentAlignment(searchPane, Alignment.TOP_CENTER);
+//        setComponentAlignment(main, Alignment.TOP_CENTER);
 
 //        Page.getCurrent().addBrowserWindowResizeListener(e -> {
 //        	manageBusinessType.setHeight((e.getHeight()-58)+"px");
@@ -105,8 +113,8 @@ public class AdminMainView extends VerticalLayout {
 							
 						} else {
 							
-							LicenseContent content = (LicenseContent) objects[0];
-					        long endTimes = content.getNotAfter().getTime();
+							LicenseContent main = (LicenseContent) objects[0];
+					        long endTimes = main.getNotAfter().getTime();
 					        long times = new Date().getTime();
 					        long minusTimes = endTimes - times;
 							
@@ -139,14 +147,14 @@ public class AdminMainView extends VerticalLayout {
 		Label label = new Label("用户信息");
 		label.addStyleName("setting-text");
 		// 白色方块面板
-        VerticalLayout vContent = new VerticalLayout();
-        vContent.setMargin(false);
-        vContent.setSpacing(false);
-        vContent.setWidth("100%");
-        vContent.setHeight("250px");
-        vContent.addStyleName("setting-layout-shadow");
-        vContent.setWidth("100%");
-        vContent.setHeightUndefined();
+        VerticalLayout vmain = new VerticalLayout();
+        vmain.setMargin(false);
+        vmain.setSpacing(false);
+        vmain.setWidth("100%");
+        vmain.setHeight("250px");
+        vmain.addStyleName("setting-layout-shadow");
+        vmain.setWidth("100%");
+        vmain.setHeightUndefined();
 		
         // 管理员
         HorizontalLayout rowRoot = new HorizontalLayout();
@@ -292,16 +300,16 @@ public class AdminMainView extends VerticalLayout {
         rowRoot.setExpandRatio(row0, 10);
         rowRoot.setExpandRatio(buttonHLayout, 1);
         
-        vContent.addComponents(rowRoot, row4, row5, row6, row1);
-        vContent.setComponentAlignment(row4, Alignment.TOP_CENTER);
-        vContent.setComponentAlignment(row5, Alignment.TOP_CENTER);
-        vContent.setComponentAlignment(row6, Alignment.TOP_CENTER);
-        vContent.setComponentAlignment(row1, Alignment.TOP_CENTER);
+        vmain.addComponents(rowRoot, row4, row5, row6, row1);
+        vmain.setComponentAlignment(row4, Alignment.TOP_CENTER);
+        vmain.setComponentAlignment(row5, Alignment.TOP_CENTER);
+        vmain.setComponentAlignment(row6, Alignment.TOP_CENTER);
+        vmain.setComponentAlignment(row1, Alignment.TOP_CENTER);
         
-//        vContent.addComponents(rowRoot);
-        vlayoutWithTitle.addComponents(label, vContent);
+//        vmain.addComponents(rowRoot);
+        vlayoutWithTitle.addComponents(label, vmain);
         vlayoutWithTitle.setComponentAlignment(label, Alignment.TOP_LEFT);
-        vlayoutWithTitle.setComponentAlignment(vContent, Alignment.TOP_CENTER);
+        vlayoutWithTitle.setComponentAlignment(vmain, Alignment.TOP_CENTER);
         
         vlayoutWithTitle.addStyleName("adminmainview-item");
         return vlayoutWithTitle;
@@ -323,14 +331,14 @@ public class AdminMainView extends VerticalLayout {
 		label.addStyleName("setting-text");
  
 		// 白色方块面板
-        VerticalLayout vContent = new VerticalLayout();
-        vContent.setMargin(false);
-        vContent.setSpacing(false);
-        vContent.setWidth("100%");
-        vContent.setHeight("150px");
-        vContent.addStyleName("setting-layout-shadow");
-        vContent.setWidth("100%");
-        vContent.setHeightUndefined();
+        VerticalLayout vmain = new VerticalLayout();
+        vmain.setMargin(false);
+        vmain.setSpacing(false);
+        vmain.setWidth("100%");
+        vmain.setHeight("150px");
+        vmain.addStyleName("setting-layout-shadow");
+        vmain.setWidth("100%");
+        vmain.setHeightUndefined();
         // 站点
         HorizontalLayout row2 = new HorizontalLayout();
         row2.setMargin(false);
@@ -375,13 +383,13 @@ public class AdminMainView extends VerticalLayout {
         	}
         });
         
-        vContent.addComponents(row2, row3);
-        vContent.setComponentAlignment(row2, Alignment.TOP_CENTER);
-        vContent.setComponentAlignment(row3, Alignment.TOP_CENTER);
+        vmain.addComponents(row2, row3);
+        vmain.setComponentAlignment(row2, Alignment.TOP_CENTER);
+        vmain.setComponentAlignment(row3, Alignment.TOP_CENTER);
         
-        vlayoutWithTitle.addComponents(label, vContent);
+        vlayoutWithTitle.addComponents(label, vmain);
         vlayoutWithTitle.setComponentAlignment(label, Alignment.TOP_LEFT);
-        vlayoutWithTitle.setComponentAlignment(vContent, Alignment.TOP_CENTER);
+        vlayoutWithTitle.setComponentAlignment(vmain, Alignment.TOP_CENTER);
         vlayoutWithTitle.addStyleName("adminmainview-item");
         return vlayoutWithTitle;
 	}
@@ -402,14 +410,14 @@ public class AdminMainView extends VerticalLayout {
 		label.addStyleName("setting-text");
  
 		// 白色方块面板
-        VerticalLayout vContent = new VerticalLayout();
-        vContent.setMargin(false);
-        vContent.setSpacing(false);
-        vContent.setWidth("100%");
-        vContent.setHeight("150px");
-        vContent.addStyleName("setting-layout-shadow");
-        vContent.setWidth("100%");
-        vContent.setHeightUndefined();
+        VerticalLayout vmain = new VerticalLayout();
+        vmain.setMargin(false);
+        vmain.setSpacing(false);
+        vmain.setWidth("100%");
+        vmain.setHeight("150px");
+        vmain.addStyleName("setting-layout-shadow");
+        vmain.setWidth("100%");
+        vmain.setHeightUndefined();
         
         // 管理社区
         HorizontalLayout row1 = new HorizontalLayout();
@@ -485,15 +493,15 @@ public class AdminMainView extends VerticalLayout {
 //        	hidePanes();
 //        });
         
-        vContent.addComponents(row1);//, row2, row3, row4);
-        vContent.setComponentAlignment(row1, Alignment.TOP_CENTER);
-//        vContent.setComponentAlignment(row2, Alignment.TOP_CENTER);
-//        vContent.setComponentAlignment(row3, Alignment.TOP_CENTER);
-//        vContent.setComponentAlignment(row4, Alignment.TOP_CENTER);
+        vmain.addComponents(row1);//, row2, row3, row4);
+        vmain.setComponentAlignment(row1, Alignment.TOP_CENTER);
+//        vmain.setComponentAlignment(row2, Alignment.TOP_CENTER);
+//        vmain.setComponentAlignment(row3, Alignment.TOP_CENTER);
+//        vmain.setComponentAlignment(row4, Alignment.TOP_CENTER);
         
-        vlayoutWithTitle.addComponents(label, vContent);
+        vlayoutWithTitle.addComponents(label, vmain);
         vlayoutWithTitle.setComponentAlignment(label, Alignment.TOP_LEFT);
-        vlayoutWithTitle.setComponentAlignment(vContent, Alignment.TOP_CENTER);
+        vlayoutWithTitle.setComponentAlignment(vmain, Alignment.TOP_CENTER);
         vlayoutWithTitle.addStyleName("adminmainview-item");
         return vlayoutWithTitle;
 	}
@@ -514,15 +522,15 @@ public class AdminMainView extends VerticalLayout {
 		label.addStyleName("setting-text");
  
 		// 白色方块面板
-        VerticalLayout vContent = new VerticalLayout();
-        vContent.setMargin(false);
-        vContent.setSpacing(false);
-        vContent.setWidth("100%");
-        vContent.setHeight("150px");
-        vContent.addStyleName("setting-layout-shadow");
+        VerticalLayout vmain = new VerticalLayout();
+        vmain.setMargin(false);
+        vmain.setSpacing(false);
+        vmain.setWidth("100%");
+        vmain.setHeight("150px");
+        vmain.addStyleName("setting-layout-shadow");
         
-        vContent.setWidth("100%");
-        vContent.setHeightUndefined();
+        vmain.setWidth("100%");
+        vmain.setHeightUndefined();
         
         // 管理库房
         HorizontalLayout row1 = new HorizontalLayout();
@@ -547,11 +555,11 @@ public class AdminMainView extends VerticalLayout {
         	
         });
         
-        vContent.addComponents(row1);
-        vContent.setComponentAlignment(row1, Alignment.TOP_CENTER);
-        vlayoutWithTitle.addComponents(label, vContent);
+        vmain.addComponents(row1);
+        vmain.setComponentAlignment(row1, Alignment.TOP_CENTER);
+        vlayoutWithTitle.addComponents(label, vmain);
         vlayoutWithTitle.setComponentAlignment(label, Alignment.TOP_LEFT);
-        vlayoutWithTitle.setComponentAlignment(vContent, Alignment.TOP_CENTER);
+        vlayoutWithTitle.setComponentAlignment(vmain, Alignment.TOP_CENTER);
         vlayoutWithTitle.addStyleName("adminmainview-item");
         return vlayoutWithTitle;
 	}
@@ -573,14 +581,14 @@ public class AdminMainView extends VerticalLayout {
 		label.addStyleName("setting-text");
  
 		// 白色方块面板
-        VerticalLayout vContent = new VerticalLayout();
-        vContent.setMargin(false);
-        vContent.setSpacing(false);
-        vContent.setWidth("100%");
-        vContent.setHeight("150px");
-        vContent.addStyleName("setting-layout-shadow");
-        vContent.setWidth("100%");
-        vContent.setHeightUndefined();
+        VerticalLayout vmain = new VerticalLayout();
+        vmain.setMargin(false);
+        vmain.setSpacing(false);
+        vmain.setWidth("100%");
+        vmain.setHeight("150px");
+        vmain.addStyleName("setting-layout-shadow");
+        vmain.setWidth("100%");
+        vmain.setHeightUndefined();
         HorizontalLayout row1 = new HorizontalLayout();
         row1.setMargin(false);
         row1.setSpacing(false);
@@ -604,12 +612,12 @@ public class AdminMainView extends VerticalLayout {
         	
         });
         
-        vContent.addComponents(row1);
-        vContent.setComponentAlignment(row1, Alignment.TOP_CENTER);
+        vmain.addComponents(row1);
+        vmain.setComponentAlignment(row1, Alignment.TOP_CENTER);
         
-        vlayoutWithTitle.addComponents(label, vContent);
+        vlayoutWithTitle.addComponents(label, vmain);
         vlayoutWithTitle.setComponentAlignment(label, Alignment.TOP_LEFT);
-        vlayoutWithTitle.setComponentAlignment(vContent, Alignment.TOP_CENTER);
+        vlayoutWithTitle.setComponentAlignment(vmain, Alignment.TOP_CENTER);
         vlayoutWithTitle.addStyleName("adminmainview-item");
         return vlayoutWithTitle;
 	}
@@ -630,14 +638,14 @@ public class AdminMainView extends VerticalLayout {
 		label.addStyleName("setting-text");
  
 		// 白色方块面板
-        VerticalLayout vContent = new VerticalLayout();
-        vContent.setMargin(false);
-        vContent.setSpacing(false);
-        vContent.setWidth("100%");
-        vContent.setHeight("150px");
-        vContent.addStyleName("setting-layout-shadow");
-        vContent.setWidth("100%");
-        vContent.setHeightUndefined();
+        VerticalLayout vmain = new VerticalLayout();
+        vmain.setMargin(false);
+        vmain.setSpacing(false);
+        vmain.setWidth("100%");
+        vmain.setHeight("150px");
+        vmain.addStyleName("setting-layout-shadow");
+        vmain.setWidth("100%");
+        vmain.setHeightUndefined();
         
         // 数据字典
         HorizontalLayout row0 = new HorizontalLayout();
@@ -717,14 +725,14 @@ public class AdminMainView extends VerticalLayout {
         row4.addComponents(capture, list);
         row4.setComponentAlignment(capture, Alignment.MIDDLE_LEFT);
         row4.setComponentAlignment(list, Alignment.MIDDLE_RIGHT);
-        vContent.addComponents(row0,row3,row4);
-        vContent.setComponentAlignment(row0, Alignment.TOP_CENTER);
-        vContent.setComponentAlignment(row3, Alignment.TOP_CENTER);
-        vContent.setComponentAlignment(row4, Alignment.TOP_CENTER);
+        vmain.addComponents(row0,row3,row4);
+        vmain.setComponentAlignment(row0, Alignment.TOP_CENTER);
+        vmain.setComponentAlignment(row3, Alignment.TOP_CENTER);
+        vmain.setComponentAlignment(row4, Alignment.TOP_CENTER);
         
-        vlayoutWithTitle.addComponents(label, vContent);
+        vlayoutWithTitle.addComponents(label, vmain);
         vlayoutWithTitle.setComponentAlignment(label, Alignment.TOP_LEFT);
-        vlayoutWithTitle.setComponentAlignment(vContent, Alignment.TOP_CENTER);
+        vlayoutWithTitle.setComponentAlignment(vmain, Alignment.TOP_CENTER);
         vlayoutWithTitle.addStyleName("adminmainview-item");
         return vlayoutWithTitle;
 	}
@@ -743,14 +751,14 @@ public class AdminMainView extends VerticalLayout {
 		label.addStyleName("setting-text");
  
 		// 白色方块面板
-        VerticalLayout vContent = new VerticalLayout();
-        vContent.setMargin(false); 
-        vContent.setSpacing(false);
-        vContent.setWidth("100%");
-        vContent.setHeight("150px");
-        vContent.addStyleName("setting-layout-shadow");
-        vContent.setWidth("100%");
-        vContent.setHeightUndefined();
+        VerticalLayout vmain = new VerticalLayout();
+        vmain.setMargin(false); 
+        vmain.setSpacing(false);
+        vmain.setWidth("100%");
+        vmain.setHeight("150px");
+        vmain.addStyleName("setting-layout-shadow");
+        vmain.setWidth("100%");
+        vmain.setHeightUndefined();
         
         // 关于系统
         HorizontalLayout row0 = new HorizontalLayout();
@@ -805,14 +813,14 @@ public class AdminMainView extends VerticalLayout {
         	hidePanes();
         });
         
-        vContent.addComponents(row0, row2, row3);
-        vContent.setComponentAlignment(row0, Alignment.TOP_CENTER);
-        vContent.setComponentAlignment(row2, Alignment.TOP_CENTER);
-        vContent.setComponentAlignment(row3, Alignment.TOP_CENTER);
+        vmain.addComponents(row0, row2, row3);
+        vmain.setComponentAlignment(row0, Alignment.TOP_CENTER);
+        vmain.setComponentAlignment(row2, Alignment.TOP_CENTER);
+        vmain.setComponentAlignment(row3, Alignment.TOP_CENTER);
         
-        vlayoutWithTitle.addComponents(label, vContent);
+        vlayoutWithTitle.addComponents(label, vmain);
         vlayoutWithTitle.setComponentAlignment(label, Alignment.TOP_LEFT);
-        vlayoutWithTitle.setComponentAlignment(vContent, Alignment.TOP_CENTER);
+        vlayoutWithTitle.setComponentAlignment(vmain, Alignment.TOP_CENTER);
         vlayoutWithTitle.addStyleName("adminmainview-item");
         return vlayoutWithTitle;
 	}
@@ -898,88 +906,88 @@ public class AdminMainView extends VerticalLayout {
 	private void showDetailPane(int command) {
 		if (command == Commands.EDIT_PROFILE) {
 			manageAdmin = new ManageAdmin(this);	// 管理员
-			content.addComponent(manageAdmin);
-			content.setComponentAlignment(manageAdmin, Alignment.TOP_CENTER);
+			main.addComponent(manageAdmin);
+			main.setComponentAlignment(manageAdmin, Alignment.TOP_CENTER);
 		} 
 		else if (command == Commands.MANAGE_COMPANIES) {
 			manageCompany = new ManageCompany(this);	// 管理机构
-			content.addComponent(manageCompany);
-			content.setComponentAlignment(manageCompany, Alignment.TOP_CENTER);
+			main.addComponent(manageCompany);
+			main.setComponentAlignment(manageCompany, Alignment.TOP_CENTER);
 		} 
 		else if (command == Commands.MANAGE_USERS) {
 			manageOtherUsers = new ManageOtherUsers(this);// 管理用户
-			content.addComponent(manageOtherUsers);
-			content.setComponentAlignment(manageOtherUsers, Alignment.TOP_CENTER);
+			main.addComponent(manageOtherUsers);
+			main.setComponentAlignment(manageOtherUsers, Alignment.TOP_CENTER);
 		}
 		else if (command == Commands.MANAGE_ROLES) {
 			manageRoles = new ManageRoles(this);	// 管理角色
-			content.addComponent(manageRoles);
-			content.setComponentAlignment(manageRoles, Alignment.TOP_CENTER);
+			main.addComponent(manageRoles);
+			main.setComponentAlignment(manageRoles, Alignment.TOP_CENTER);
 		}
 		else if (command == Commands.MANAGE_PERMISSIONS) {
 			managePermissions = new ManagePermissions(this);// 管理权限
-			content.addComponent(managePermissions);
-			content.setComponentAlignment(managePermissions, Alignment.TOP_CENTER);
+			main.addComponent(managePermissions);
+			main.setComponentAlignment(managePermissions, Alignment.TOP_CENTER);
 		} 
 		else if (command == Commands.MANAGE_COMMUNITIES) {
 			manageCommunity = new ManageCommunity(this);	// 管理社区
-			content.addComponent(manageCommunity);
-			content.setComponentAlignment(manageCommunity, Alignment.TOP_CENTER);
+			main.addComponent(manageCommunity);
+			main.setComponentAlignment(manageCommunity, Alignment.TOP_CENTER);
 		}
 		else if (command == Commands.MANAGE_STOREHOUSES) {
 			manageStorehouse = new ManageStorehouse(this);	// 管理库房
-			content.addComponent(manageStorehouse);
-			content.setComponentAlignment(manageStorehouse, Alignment.TOP_CENTER);
+			main.addComponent(manageStorehouse);
+			main.setComponentAlignment(manageStorehouse, Alignment.TOP_CENTER);
 		} 
 		else if (command == Commands.PENDING_APPROVAL) {
 			manageApprovals = new ManageApprovals(this);
-			content.addComponent(manageApprovals);
-			content.setComponentAlignment(manageApprovals, Alignment.TOP_CENTER);
+			main.addComponent(manageApprovals);
+			main.setComponentAlignment(manageApprovals, Alignment.TOP_CENTER);
 		} 
 		else if (command == Commands.INVITE_USRES) {
 			manageUserInvitations = new ManageUserInvitations(this);
-			content.addComponent(manageUserInvitations);
-			content.setComponentAlignment(manageUserInvitations, Alignment.TOP_CENTER);
+			main.addComponent(manageUserInvitations);
+			main.setComponentAlignment(manageUserInvitations, Alignment.TOP_CENTER);
 		}
 		else if (command == Commands.COMMUNITY_INVITATION) {
 			manageCommunityInvitations = new ManageCommunityInvitations(this);
-			content.addComponent(manageCommunityInvitations);
-			content.setComponentAlignment(manageCommunityInvitations, Alignment.TOP_CENTER);
+			main.addComponent(manageCommunityInvitations);
+			main.setComponentAlignment(manageCommunityInvitations, Alignment.TOP_CENTER);
 		}
 		else if (command == Commands.MANAGE_SITES) {
 			manageSites = new ManageSites(this);	// 管理站点
-			content.addComponent(manageSites);
-			content.setComponentAlignment(manageSites, Alignment.TOP_CENTER);
+			main.addComponent(manageSites);
+			main.setComponentAlignment(manageSites, Alignment.TOP_CENTER);
 		}
 		else if (command == Commands.MANAGE_SERVERS) {
 			manageServers = new ManageServers(this);	// 管理服务器
-			content.addComponent(manageServers);
-			content.setComponentAlignment(manageServers, Alignment.TOP_CENTER);
+			main.addComponent(manageServers);
+			main.setComponentAlignment(manageServers, Alignment.TOP_CENTER);
 		}
 		else if (command == Commands.BROADCAST_MESSAGE) {
 			manageBroadCast = new ManageBroadCast(this);
-			content.addComponent(manageBroadCast);
-			content.setComponentAlignment(manageBroadCast, Alignment.TOP_CENTER);
+			main.addComponent(manageBroadCast);
+			main.setComponentAlignment(manageBroadCast, Alignment.TOP_CENTER);
 		}
 		else if (command == Commands.EDIT_DATA_DICTIONARY) {
 			manageDataDictionary = new ManageDataDictionary(this);//业务类型管理
-			content.addComponent(manageDataDictionary);
-			content.setComponentAlignment(manageDataDictionary, Alignment.TOP_CENTER);
+			main.addComponent(manageDataDictionary);
+			main.setComponentAlignment(manageDataDictionary, Alignment.TOP_CENTER);
 		}
 		else if (command == Commands.MANAGE_BUSINESS_TYPES) {
 			manageBusinessType = new ManageBusinessTypes(this);//业务类型管理
-			content.addComponent(manageBusinessType);
-			content.setComponentAlignment(manageBusinessType, Alignment.TOP_CENTER);
+			main.addComponent(manageBusinessType);
+			main.setComponentAlignment(manageBusinessType, Alignment.TOP_CENTER);
 		}
 		else if (command == Commands.ABOUT_TB4) { //关于TB4
 			aboutTB4 = new AboutTB4(this);
-			content.addComponent(aboutTB4);
-			content.setComponentAlignment(aboutTB4, Alignment.TOP_CENTER);
+			main.addComponent(aboutTB4);
+			main.setComponentAlignment(aboutTB4, Alignment.TOP_CENTER);
 		}
 		else if (command == Commands.DEV) { //开发
 			dev = new DEV(this);
-			content.addComponent(dev);
-			content.setComponentAlignment(dev, Alignment.TOP_CENTER);
+			main.addComponent(dev);
+			main.setComponentAlignment(dev, Alignment.TOP_CENTER);
 		}
 	}
 	
@@ -1021,7 +1029,7 @@ public class AdminMainView extends VerticalLayout {
 	 * @return
 	 */
 	public VerticalLayout getContent() {
-		return content;
+		return main;
 	}
 	
 	private ManageAdmin manageAdmin;// 管理管理员
@@ -1043,7 +1051,9 @@ public class AdminMainView extends VerticalLayout {
 	private DEV dev;
 	
 	// 搜索
-	private HorizontalLayout searchPane;
+//	private HorizontalLayout searchPane;
+	private SearchToolBar toolbar = new SearchToolBar();
+	
 	// 用户
 	private VerticalLayout customerInformationLayout;
 	// 社区
@@ -1060,6 +1070,6 @@ public class AdminMainView extends VerticalLayout {
 	private VerticalLayout helpLayout;
     private Image userAvatar = null;
     private HorizontalLayout subRow = null;
-    private VerticalLayout content = new VerticalLayout();
+    private VerticalLayout main = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
 }

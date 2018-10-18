@@ -15405,12 +15405,8 @@ div.v-layout.v-horizontal.v-widget {
 	margin: 5px;
 }
 
-.dashboard .menu-button {
+.dashboard .imgMenu {
 	cursor: pointer;
-	margin-bottom: 19px;
-	margin-left: 25px;
-	margin-right: 12px;
-	margin-top: 16px;
 }
 
 .dashboard .search-settings-label {
@@ -15501,24 +15497,35 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .admin-menu-window-verticallayout {
+	width: 255px;
+	height: 100%;
+	background-color: white;
 	white-space: 20px;
 }
 
 .dashboard .adminmenuwindow {
+	border-radius: 0px;
 	width: 255px;
 	height: 100%;
-	border-radius: 0;
-	position: absolute;
-	left: 0;
-	-webkit-animation: valo-animate-in-slide-right 500ms 100ms backwards;
-	-moz-animation: valo-animate-in-slide-right 500ms 100ms backwards;
-	animation: valo-animate-in-slide-right 500ms 100ms backwards;
+	border-color: transparent;
+	background-color: transparent;
+	border-right-color: transparent;
 }
 
-.dashboard .fade-out {
-	-webkit-animation: valo-animate-in-slide-left 500ms 100ms backwards;
-	-moz-animation: valo-animate-in-slide-left 500ms 100ms backwards;
-	animation: valo-animate-in-slide-left 500ms 100ms backwards;
+.dashboard .sidebar-in {
+	animation: sidebarAnimationFramesIn ease 1s;
+	animation-iteration-count: 1;
+	transform-origin: 100% 50%;
+	animation-fill-mode: forwards;
+	width: 100%;
+}
+
+.dashboard .sidebar-out {
+	animation: sidebarAnimationFramesOut ease 1s;
+	animation-iteration-count: 1;
+	transform-origin: 100% 50%;
+	animation-fill-mode: forwards;
+	width: 100%;
 }
 
 .dashboard .createMenuItem {
