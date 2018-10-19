@@ -1,8 +1,11 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
+import org.springframework.util.StringUtils;
+
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.AbsoluteLayout;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
@@ -29,46 +32,56 @@ public class SearchToolBar extends AbsoluteLayout {
 		this.setWidth("100%");
 		this.setHeight("56px");
 		// Image of menu
-		Image imgMenu = new Image(null, new ThemeResource("img/adminmenu/menu_24px_1130584_easyicon.net.png"));
-		imgMenu.addClickListener(e -> {
+		Image menu = new Image(null, new ThemeResource("img/adminmenu/menu_24px_1130584_easyicon.net.png"));
+		menu.addClickListener(e -> {
 			view.showNavigationBar();
         });
-		imgMenu.addStyleName("imgMenu");
+		menu.addStyleName("SearchToolBar_menu");
         
         // Text of settings
-        Label txtSettings = new Label("设置");
-        txtSettings.addStyleName("txtSettings");
+        Label settings = new Label("设置");
+        settings.addStyleName("SearchToolBar_settings");
         
-        // Search image
-        Image imgSearchInField = new Image();
-        imgSearchInField.setIcon(VaadinIcons.SEARCH);
-        
-        TextField keywordField = new TextField();
         keywordField.setPlaceholder("搜索设置");
-        keywordField.addStyleName("search-text-field");
+        keywordField.addStyleName("SearchToolBar_keywordField");
         keywordField.addStyleName("v-textfield:focus");
         keywordField.addStyleName("v-textfield");
         keywordField.addValueChangeListener(e ->{
             String keyword = e.getValue();
+           
             view.table.doFilter(keyword);
+            close.setVisible(!StringUtils.isEmpty(keyword));
         });
-       
+        
+        
+        close.addStyleName("SearchToolBar_close");
+        close.addClickListener(e->{
+        	close.setVisible(false);
+        	keywordField.setValue("");
+        	
+        });
+        close.setVisible(false);
+        
+        // Search image
+        Image search = new Image();
+        search.setIcon(VaadinIcons.SEARCH);
+        
         // menu
         HorizontalLayout menuHLayout = new HorizontalLayout();
         menuHLayout.setSizeUndefined();
-//        menuHLayout.setMargin(false);
-//        menuHLayout.setSpacing(false);
-        menuHLayout.addComponents(imgMenu, txtSettings);
+        menuHLayout.addComponents(menu, settings);
         // text field
-        HorizontalLayout fieldHLayout = new HorizontalLayout();
-        fieldHLayout.setMargin(false);
-        fieldHLayout.setSpacing(false);
-        fieldHLayout.addComponents(imgSearchInField, keywordField);
-        fieldHLayout.addStyleName("search-settings-field");
+        HorizontalLayout outerField = new HorizontalLayout();
+        outerField.setMargin(false);
+        outerField.setSpacing(false);
+        outerField.addComponents(search, keywordField, close);
+        outerField.addStyleName("SearchToolBar_outerField");
         
         this.addComponent(menuHLayout,"left: 25px; top: 15px;");
-        this.addComponent(fieldHLayout,"left: 50%;");
+        this.addComponent(outerField,"left: 50%;");
 	}
 	
+	private TextField keywordField = new TextField();
+	private Image close = new Image(null, new ThemeResource("img/adminmenu/close-circle.png"));
 	private AdminMainView view;
 }

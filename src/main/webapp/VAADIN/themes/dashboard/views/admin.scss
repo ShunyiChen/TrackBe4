@@ -13,46 +13,22 @@
         margin: 5px;
     }
     
-    .imgMenu {
+    .SearchToolBar_menu {
         cursor: pointer;
-//        margin-bottom: 19px;
-//        margin-left: 25px;
-//        margin-right: 12px;
-//        margin-top: 16px;
     }
     
-    .txtSettings {
-      cursor: text;
-      position: relative;
-	  color:white;
-      font-weight: bold;
-      font-family: Microsoft YaHei;
-      text-shadow: 0 0 12px black;
-    }
-    .search-settings-field {
+    .SearchToolBar_settings {
         cursor: text;
-        justify-content: center;
-//        background-color: #2850A7;//搜索文本Chrome背景颜色
-        background-color: #BBBBBB;
-        height:40px;
-        width:680px;
-        border-radius: 2px;
-        margin-left: 0px;
-        margin-top: 8px;
-        position:absolute;
-        left:50%;
-        transform:translateX(-50%);
-         
+        position: relative;
+        color:white;
+        font-weight: bold;
+        font-family: Microsoft YaHei;
+        text-shadow: 0 0 12px black;
     }
-    .search-settings-field .v-icon {
-        cursor: pointer;
-        margin-left: 10px;
-        margin-top: 10px;
-        margin-right: 10px;
-    }
-     .search-text-field {
+    
+    .SearchToolBar_keywordField{
         cursor: text;
-        background-color: transparent;
+        background-color:transparent;
         border-color: transparent;
         border-width: 0px;
         border-style: none;
@@ -67,10 +43,38 @@
          -webkit-input-placeholder: white;
          -moz-placeholder: white;
     }
-    .search-settings-field .v-textfield {
+    
+    .SearchToolBar_outerField{
+        cursor: text;
+        justify-content: center;
+//        background-color: #2850A7;//搜索文本Chrome背景颜色
+        background-color: #BBBBBB;
+        height:40px;
+        width:680px;
+        border-radius: 2px;
+        margin-left: -8px;
+        margin-top: 8px;
+        position:absolute;
+        left:50%;
+        transform:translateX(-50%);
+    }
+    .SearchToolBar_outerField .v-icon {
+        cursor: pointer;
+        margin-left: 10px;
+        margin-top: 10px;
+        margin-right: 10px;
+    }
+    .v-horizontallayout .v-slot-SearchToolBar_close {
+        margin-top: 5px;
+    }
+    .v-horizontallayout .v-slot-SearchToolBar_close .v-image{
+        cursor: pointer;
+        vertical-align: middle;
+    }
+    .SearchToolBar_outerField .v-textfield {
         padding: 0;
     }
-    .search-settings-field .v-textfield:focus{
+    .SearchToolBar_outerField .v-textfield:focus{
         border-color: transparent;
         webkit-box-shadow: none;
         box-shadow: none;
@@ -405,19 +409,22 @@ box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
         background-color: #F1F1F1;
     }
     
+    .FlexTable .v-scrollable{
+         overflow-y:scroll;
+//         overflow:hidden;
+    }
+    
     .FlexTableRow{
         background-color: white;
         -webkit-box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
         -moz-box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
         box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
         padding: 0px;
-//        margin-right: -17px;
     }
     
     .FlexTable_main{
         background-color: transparent;
     }
- 
     
     .FlexTableRowItem {
         cursor: pointer;
@@ -479,30 +486,16 @@ box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
         font-size: 16px;
         font-weight: bold;
         font-family: Microsoft YaHei;
-//        border: #F0F0F0 solid 1px;
-//        border-right-color: transparent;
-//        border-top-color: transparent;
-//        border-left-color: transparent;
-//        border-bottom-color:#F0F0F0;
+        margin-left: 20px;
     }
-    .NavigationBar_hrHLayout{
-        border: #F0F0F0 solid 1px;
-        border-right-color: transparent;
-        border-top-color: transparent;
-        border-left-color: transparent;
-        border-bottom-color:#F0F0F0;
-    }
-    .NavigationBar_hrHLayout .v-slot .v-slot-NavigationBar_hrHLayout{
-        height: 2px;
-    }
- 
+    
     .NavigationBar_menuItem{
         cursor:pointer;
         width: 100%;
-        height: 40px;
-//        padding-left: 15px;
-//        padding-top: 0px;
-//        padding-bottom: 10px;
+        height: 20px;
+        padding-left: 25px;
+        padding-top: 10px;
+        padding-bottom: 10px;
     }
     
     .NavigationBar_menuItem .v-label{
@@ -510,6 +503,15 @@ box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
         font-size: 13px;
         font-weight:normal;
         font-family: Microsoft YaHei;
-        padding-left: 20px;
+        margin-left: 15px;
+    }
+ 
+    .Hr{
+        width: 100%;
+        height: 0px;
+    }
+    //去除hr下面空行
+    .v-verticallayout .v-slot-Hr{
+        height: 0px;
     }
 }

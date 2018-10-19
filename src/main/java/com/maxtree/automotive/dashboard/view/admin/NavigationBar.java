@@ -41,24 +41,15 @@ public class NavigationBar extends Panel {
 	    settingHLayout.addComponent(settings);
 	    settingHLayout.setComponentAlignment(settings, Alignment.MIDDLE_LEFT);
 	    
-	    HorizontalLayout hrHLayout = new HorizontalLayout();
-//	    Hr hr = new Hr();
-	    hrHLayout.setWidth("100%");
-	    hrHLayout.setHeight("2px");
-	    hrHLayout.setSpacing(false);
-	    hrHLayout.setMargin(false);
-	    hrHLayout.addStyleName("NavigationBar_hrHLayout");
-//	    hrHLayout.addComponent(hr);
-//	    hrHLayout.setComponentAlignment(hr, Alignment.MIDDLE_LEFT);
-	    
-	    main.addComponents(settingHLayout,hrHLayout);
+	    Hr hr = new Hr();
+	    main.addComponents(settingHLayout,hr);
 	    main.setComponentAlignment(settingHLayout, Alignment.TOP_LEFT);
-	    main.setComponentAlignment(hrHLayout, Alignment.TOP_LEFT);
 	    for(FlexTableRow row : view.table.data) {
 	    	HorizontalLayout item = menuItem(row);
 	    	main.addComponent(item);
 	    	main.setComponentAlignment(item, Alignment.TOP_LEFT);
 	    }
+	    
 	    this.addStyleName("NavigationBar");
 	    this.setContent(main);
 	}

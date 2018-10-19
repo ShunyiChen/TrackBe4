@@ -15405,11 +15405,11 @@ div.v-layout.v-horizontal.v-widget {
 	margin: 5px;
 }
 
-.dashboard .imgMenu {
+.dashboard .SearchToolBar_menu {
 	cursor: pointer;
 }
 
-.dashboard .txtSettings {
+.dashboard .SearchToolBar_settings {
 	cursor: text;
 	position: relative;
 	color: white;
@@ -15418,28 +15418,7 @@ div.v-layout.v-horizontal.v-widget {
 	text-shadow: 0 0 12px black;
 }
 
-.dashboard .search-settings-field {
-	cursor: text;
-	justify-content: center;
-	background-color: #BBBBBB;
-	height: 40px;
-	width: 680px;
-	border-radius: 2px;
-	margin-left: 0px;
-	margin-top: 8px;
-	position: absolute;
-	left: 50%;
-	transform: translateX(-50%);
-}
-
-.dashboard .search-settings-field .v-icon {
-	cursor: pointer;
-	margin-left: 10px;
-	margin-top: 10px;
-	margin-right: 10px;
-}
-
-.dashboard .search-text-field {
+.dashboard .SearchToolBar_keywordField {
 	cursor: text;
 	background-color: transparent;
 	border-color: transparent;
@@ -15457,11 +15436,41 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-placeholder: white;
 }
 
-.dashboard .search-settings-field .v-textfield {
+.dashboard .SearchToolBar_outerField {
+	cursor: text;
+	justify-content: center;
+	background-color: #BBBBBB;
+	height: 40px;
+	width: 680px;
+	border-radius: 2px;
+	margin-left: -8px;
+	margin-top: 8px;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.dashboard .SearchToolBar_outerField .v-icon {
+	cursor: pointer;
+	margin-left: 10px;
+	margin-top: 10px;
+	margin-right: 10px;
+}
+
+.dashboard .v-horizontallayout .v-slot-SearchToolBar_close {
+	margin-top: 4px;
+}
+
+.dashboard .v-horizontallayout .v-slot-SearchToolBar_close .v-image {
+	cursor: pointer;
+	vertical-align: middle;
+}
+
+.dashboard .SearchToolBar_outerField .v-textfield {
 	padding: 0;
 }
 
-.dashboard .search-settings-field .v-textfield:focus {
+.dashboard .SearchToolBar_outerField .v-textfield:focus {
 	border-color: transparent;
 	webkit-box-shadow: none;
 	box-shadow: none;
@@ -15770,6 +15779,10 @@ div.v-layout.v-horizontal.v-widget {
 	background-color: #F1F1F1;
 }
 
+.dashboard .FlexTable .v-scrollable {
+	overflow-y: scroll;
+}
+
 .dashboard .FlexTableRow {
 	background-color: white;
 	-webkit-box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.75);
@@ -15844,25 +15857,16 @@ div.v-layout.v-horizontal.v-widget {
 	font-size: 16px;
 	font-weight: bold;
 	font-family: Microsoft YaHei;
-}
-
-.dashboard .NavigationBar_hrHLayout {
-	height: 2px;
-	border: #F0F0F0 solid 1px;
-	border-right-color: transparent;
-	border-top-color: transparent;
-	border-left-color: transparent;
-	border-bottom-color: #F0F0F0;
-}
-
-.dashboard .NavigationBar_hrHLayout .v-slot .v-slot-NavigationBar_hrHLayout {
-	height: 2px;
+	margin-left: 20px;
 }
 
 .dashboard .NavigationBar_menuItem {
 	cursor: pointer;
 	width: 100%;
-	height: 40px;
+	height: 20px;
+	padding-left: 25px;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .dashboard .NavigationBar_menuItem .v-label {
@@ -15870,5 +15874,14 @@ div.v-layout.v-horizontal.v-widget {
 	font-size: 13px;
 	font-weight: normal;
 	font-family: Microsoft YaHei;
-	padding-left: 20px;
+	margin-left: 15px;
+}
+
+.dashboard .Hr {
+	width: 100%;
+	height: 0px;
+}
+
+.dashboard .v-verticallayout .v-slot-Hr {
+	height: 0px;
 }
