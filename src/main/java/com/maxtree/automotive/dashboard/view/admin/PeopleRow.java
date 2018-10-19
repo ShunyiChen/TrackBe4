@@ -27,6 +27,11 @@ public class PeopleRow extends FlexTableRow {
 	}
 
 	@Override
+	public String getImageName() {
+		return "users.png";
+	}
+	
+	@Override
 	public int getOrderID() {
 		return 0;
 	}

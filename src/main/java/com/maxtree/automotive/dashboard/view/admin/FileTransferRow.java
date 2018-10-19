@@ -35,6 +35,11 @@ public class FileTransferRow extends FlexTableRow {
 		return "文件传输";
 	}
 	
+	@Override
+	public String getImageName() {
+		return "filetransfer.png";
+	}
+	
 	private RowItemWithTitle manageSite = new RowItemWithTitle("管理站点");
 	private RowItemWithTitle manageFTPServer = new RowItemWithTitle("管理FTP服务器");
 }

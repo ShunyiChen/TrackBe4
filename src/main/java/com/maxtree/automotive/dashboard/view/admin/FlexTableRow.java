@@ -27,6 +27,9 @@ public class FlexTableRow extends VerticalLayout {
 		this.addStyleName("FlexTableRow");
 	}
 	
+	protected String getImageName() {
+		return "Unknown";
+	}
 	
 	protected String getTitle() {
 		return "Unknown";

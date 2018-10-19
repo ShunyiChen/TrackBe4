@@ -27,12 +27,17 @@ public class DataDictionaryRow extends FlexTableRow {
 
 	@Override
 	public int getOrderID() {
-		return 2;
+		return 3;
 	}
 	
 	@Override
 	public String getTitle() {
 		return "数据字典";
+	}
+	
+	@Override
+	public String getImageName() {
+		return "DD.png";
 	}
 	
 	private RowItemWithTitle manageBusinessType = new RowItemWithTitle("管理业务类型");

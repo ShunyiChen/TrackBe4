@@ -144,22 +144,19 @@ public class AdminMainView extends AbsoluteLayout {
 	public void showNavigationBar() {
 		navigationBar.removeStyleName("NavigationBar_moveOut");
 		navigationBar.addStyleName("NavigationBar_moveIn");
-		
 		addComponent(screen, "left: 0px; top: 0px;");
 		addComponent(navigationBar, "left: 0px; top: 0px;z-index:999;");
-		System.out.println("+++"+this.getComponentCount());
 	}
 	
+	/**
+	 * 
+	 */
 	public void hideNavigationBar() {
 		navigationBar.removeStyleName("NavigationBar_moveIn");
 		navigationBar.addStyleName("NavigationBar_moveOut");
-		
-		
-		System.out.println("----"+this.getComponentCount());
 		addComponent(navigationBar, "left: -255px; top: 0px;z-index:999;");
 		removeComponent(screen);
 	}
-	
 	
 	/**
 	 * 客户信息模块
@@ -1081,10 +1078,11 @@ public class AdminMainView extends AbsoluteLayout {
 	
 	// 搜索
 //	private HorizontalLayout searchPane;
-	private SearchToolBar toolbar = new SearchToolBar(this);
-	public NavigationBar navigationBar = new NavigationBar();
-	private Screen screen = new Screen();
 	public FlexTable table = new FlexTable();
+	private SearchToolBar toolbar = new SearchToolBar(this);
+	public NavigationBar navigationBar = new NavigationBar(this);
+	private Screen screen = new Screen();
+	
 	
 	
 	

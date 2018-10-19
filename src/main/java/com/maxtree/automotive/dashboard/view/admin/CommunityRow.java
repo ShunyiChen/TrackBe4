@@ -35,6 +35,11 @@ public class CommunityRow extends FlexTableRow {
 		return "社区";
 	}
 	
+	@Override
+	public String getImageName() {
+		return "community.png";
+	}
+	
 	private RowItemWithTitle manageCommunity = new RowItemWithTitle("管理社区");
 	private RowItemWithTitle manageCompany = new RowItemWithTitle("管理机构");
 	private RowItemWithTitle manageStore = new RowItemWithTitle("管理库房");

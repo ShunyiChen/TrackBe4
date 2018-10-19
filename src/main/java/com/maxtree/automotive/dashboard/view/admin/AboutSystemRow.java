@@ -27,12 +27,17 @@ public class AboutSystemRow extends FlexTableRow {
 
 	@Override
 	public int getOrderID() {
-		return 2;
+		return 5;
 	}
 	
 	@Override
 	public String getTitle() {
 		return "关于系统";
+	}
+	
+	@Override
+	public String getImageName() {
+		return "about.png";
 	}
 	
 	private RowItemWithTitle aboutTB4Sys = new RowItemWithTitle("关于TB4系统");

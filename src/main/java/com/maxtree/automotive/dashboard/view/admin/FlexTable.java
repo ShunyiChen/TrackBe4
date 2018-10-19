@@ -69,7 +69,6 @@ public class FlexTable extends Panel {
 	 * @param keyword
 	 */
 	public void doFilter(String keyword) {
-		
 		clearAllFlexTableRows();
 		
 		if(StringUtils.isEmpty(keyword)) {
@@ -80,6 +79,20 @@ public class FlexTable extends Panel {
 				if(row.getSearchTags().contains(keyword)) {
 					addFlexTableRow(row);
 				}
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @param orderID
+	 */
+	public void doFilter(int orderID) {
+		clearAllFlexTableRows();
+	 
+		for(FlexTableRow row : data) {
+			if(row.getOrderID() >= orderID) {
+				addFlexTableRow(row);
 			}
 		}
 	}
@@ -103,6 +116,6 @@ public class FlexTable extends Panel {
 		data.add(aboutSys);
 	}
 	
-	private List<FlexTableRow> data = new ArrayList<>();
+	public List<FlexTableRow> data = new ArrayList<>();
 	private VerticalLayout main = new VerticalLayout();
 }

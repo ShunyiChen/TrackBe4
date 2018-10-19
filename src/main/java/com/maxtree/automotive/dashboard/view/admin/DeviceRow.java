@@ -22,7 +22,7 @@ public class DeviceRow extends FlexTableRow {
 
 	@Override
 	public int getOrderID() {
-		return 2;
+		return 4;
 	}
 	
 	@Override
@@ -30,5 +30,10 @@ public class DeviceRow extends FlexTableRow {
 		return "设备";
 	}
 	
-	private RowItemWithOptions HighqualityShooting = new RowItemWithOptions("选择高拍仪");
+	@Override
+	public String getImageName() {
+		return "device.png";
+	}
+	
+	private RowItemWithOptions HighqualityShooting = new RowItemWithOptions("高拍仪设备", new String[] {"无","无锡华通H6-1","维山VSA305FD"});
 }
