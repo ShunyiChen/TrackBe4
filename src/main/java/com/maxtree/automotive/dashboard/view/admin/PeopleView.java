@@ -14,17 +14,13 @@ import com.maxtree.automotive.dashboard.domain.User;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.Menu.Command;
 import com.vaadin.contextmenu.MenuItem;
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -61,35 +57,27 @@ public class PeopleView extends ContentView {
 		}
 		grid = new CustomGrid("用户列表",columns, data);
 		
-		
-		HorizontalLayout buttonPane = new HorizontalLayout();
-		buttonPane.setWidth("95%");
-		buttonPane.setHeight("50px");
-		Button btnAdd = new Button();
-		btnAdd.setDescription("添加新用户");
-		btnAdd.setIcon(VaadinIcons.PLUS_CIRCLE);
-		btnAdd.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-		btnAdd.addClickListener(e->{
-			if (loggedInUser.isPermitted(PermissionCodes.C1)) {
-				Callback2 callback = new Callback2() {
-					@Override
-					public void onSuccessful(Object... objects) {
-						int userUniqueId = (int) objects[0];
-						User user = ui.userService.findById(userUniqueId);
-						Object[] rowData = generateOneRow(user);
-						grid.insertRow(new CustomGridRow(rowData));
-					}
-				};
-				EditUserWindow.open(callback);
+		Callback addEvent = new Callback() {
+
+			@Override
+			public void onSuccessful() {
+				if (loggedInUser.isPermitted(PermissionCodes.C1)) {
+					Callback2 callback = new Callback2() {
+						@Override
+						public void onSuccessful(Object... objects) {
+							int userUniqueId = (int) objects[0];
+							User user = ui.userService.findById(userUniqueId);
+							Object[] rowData = generateOneRow(user);
+							grid.insertRow(new CustomGridRow(rowData));
+						}
+					};
+					EditUserWindow.open(callback);
+				}
 			}
-		});
-		buttonPane.addComponent(btnAdd);
-		buttonPane.setComponentAlignment(btnAdd, Alignment.BOTTOM_RIGHT);
-		
-		main.addComponents(grid, buttonPane);
+		};
+		grid.setAddEvent(addEvent);
+		main.addComponents(grid);
 		main.setComponentAlignment(grid, Alignment.TOP_CENTER);
-		main.setComponentAlignment(buttonPane, Alignment.TOP_CENTER);
-		
 		
 		this.addComponent(main);
 		this.setComponentAlignment(main, Alignment.TOP_CENTER);

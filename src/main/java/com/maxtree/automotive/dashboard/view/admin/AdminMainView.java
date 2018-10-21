@@ -1075,11 +1075,11 @@ public class AdminMainView extends AbsoluteLayout {
 	
 	private ProfileView manageAdmin;// 管理管理员
 	private ManageCompany manageCompany;// 管理机构
-	private ManageOtherUsers manageOtherUsers;// 管理其他用户
+//	private ManageOtherUsers manageOtherUsers;// 管理其他用户
  	private ManageBusinessTypes manageBusinessType;//业务类型管理
 	private ManageSites manageSites;// 管理站点
 	private ManageServers manageServers;//管理服务器
-	private ManageRoles manageRoles;// 管理角色
+//	private ManageRoles manageRoles;// 管理角色
 	private ManagePermissions managePermissions;// 管理权限
 	private ManageDataDictionary manageDataDictionary;
 	private ManageCommunity manageCommunity; // 社区

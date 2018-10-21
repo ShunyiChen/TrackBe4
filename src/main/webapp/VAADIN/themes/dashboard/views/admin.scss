@@ -506,7 +506,7 @@ box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
     .ContentView{
         background-color: white;
         @include box-shadow(0 2px 7px 1px rgba(0,0,0,.5));
-        @include animation(valo-animate-in-slide-up 200ms 200ms backwards);
+        @include animation(valo-animate-in-slide-up 200ms 100ms backwards);
     }
     .ContentView_toolbar{
         cursor:pointer;

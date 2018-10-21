@@ -38,7 +38,12 @@ public class PeopleRow extends FlexTableRow {
 		manageUser.addLayoutClickListener(e->{
 			rootView.forward(new PeopleView("管理用户", rootView));
 		});
-		
+		manageRole.addLayoutClickListener(e->{
+			rootView.forward(new RoleView("管理角色", rootView));
+		});
+		managePermission.addLayoutClickListener(e->{
+//			rootView.forward(new RoleView("管理权限", rootView));
+		});
 	}
 
 	@Override

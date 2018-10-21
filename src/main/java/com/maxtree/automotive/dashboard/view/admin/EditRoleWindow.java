@@ -3,6 +3,7 @@ package com.maxtree.automotive.dashboard.view.admin;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
+import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.Role;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
@@ -144,16 +145,16 @@ public class EditRoleWindow extends Window {
 		return true;
 	}
 	
-	public static void open(Callback callback) {
+	public static void open(Callback2 callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditRoleWindow w = new EditRoleWindow();
         w.btnAdd.setCaption("添加");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
         		
-    			ui.roleService.insert(w.role);
+    			int roleUniqueId = ui.roleService.insert(w.role);
     			w.close();
-    			callback.onSuccessful();
+    			callback.onSuccessful(roleUniqueId);
         	}
 		});
         w.btnPermission.addClickListener(e -> {
@@ -170,7 +171,7 @@ public class EditRoleWindow extends Window {
         w.center();
     }
 	
-	public static void edit(Role role, Callback callback) {
+	public static void edit(Role role, Callback2 callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditRoleWindow w = new EditRoleWindow();
         w.refreshAction = callback;
@@ -202,5 +203,5 @@ public class EditRoleWindow extends Window {
 	private Binder<Role> binder = new Binder<>();
 	private Role role = new Role();
 	private static DashboardUI ui = (DashboardUI) UI.getCurrent();
-	private Callback refreshAction;
+	private Callback2 refreshAction;
 }

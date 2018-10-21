@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.maxtree.automotive.dashboard.Callback;
+import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.Box;
@@ -270,7 +271,7 @@ Of course - if you want to get both scrollbars and the content size can not be s
 		}
 	}
 	
-	public static void open(Callback callback, Role role) {
+	public static void open(Callback2 callback, Role role) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         AssigningPermissionsToRoleWindow w = new AssigningPermissionsToRoleWindow(role);
         w.btnApply.addClickListener(e -> {

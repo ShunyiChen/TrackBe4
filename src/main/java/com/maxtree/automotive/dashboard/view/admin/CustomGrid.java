@@ -3,10 +3,14 @@ package com.maxtree.automotive.dashboard.view.admin;
 import java.util.Iterator;
 import java.util.List;
 
+import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.component.Box;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
@@ -15,6 +19,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -85,7 +90,7 @@ public class CustomGrid extends VerticalLayout {
 		titleBar.setSpacing(false);
 		titleBar.setMargin(false);
 		titleBar.setWidth("100%");
-		titleBar.setHeight("40px");
+		titleBar.setHeight("35px");
 		titleBar.addStyleName("CustomGrid_titleBar");
 		Label titleLabel = new Label(title);
 		titleBar.addComponents(titleLabel,searchBar);
@@ -129,10 +134,37 @@ public class CustomGrid extends VerticalLayout {
 				initData();
 			}
 		});
-		
 		grid.addComponents(columnBar,dataGrid);
 		scrollPanel.setContent(grid);
-		main.addComponents(titleBar,scrollPanel);
+
+
+		
+		
+		HorizontalLayout footer = new HorizontalLayout();
+		footer.setSpacing(false);
+		footer.setMargin(false);
+		footer.setWidth("98%");
+		footer.setHeight("50px");
+		
+		HorizontalLayout countPane = new HorizontalLayout();
+		countPane.setSizeUndefined();
+		countPane.setSpacing(false);
+		countPane.setMargin(false);
+		countPane.addComponents(Box.createHorizontalBox(40),countLabel);
+		countPane.setComponentAlignment(countLabel, Alignment.BOTTOM_LEFT);
+		
+		Button btnAdd = new Button();
+		btnAdd.setDescription("添加新用户");
+		btnAdd.setIcon(VaadinIcons.PLUS_CIRCLE);
+		btnAdd.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		btnAdd.addClickListener(e->{
+			if(addEvent != null)
+				addEvent.onSuccessful();
+		});
+		footer.addComponents(countPane,btnAdd);
+		footer.setComponentAlignment(countPane, Alignment.BOTTOM_LEFT);
+		footer.setComponentAlignment(btnAdd, Alignment.BOTTOM_RIGHT);
+		main.addComponents(titleBar,scrollPanel,footer);
 		this.addComponent(main);
 		this.setComponentAlignment(main, Alignment.TOP_CENTER);
 	}
@@ -162,20 +194,31 @@ public class CustomGrid extends VerticalLayout {
 			if(obj instanceof String || obj instanceof StringBuilder) {
 				
 				Label objLabel = new Label(obj.toString());
+				objLabel.setDescription(obj.toString());
 				objLabel.addStyleName("CustomGrid_objLabel");
-				objLabel.setWidth(col.getWidth()+"px");
-				objLabel.setHeight("40px");
-				row.addComponent(objLabel);
-				row.setComponentAlignment(objLabel, Alignment.MIDDLE_LEFT);
+				VerticalLayout cell = new VerticalLayout();
+				cell.setSpacing(false);
+				cell.setMargin(false);
+				cell.setWidth(col.getWidth()+"px");
+				cell.setHeight("40px");
+				cell.addComponent(objLabel);
+				cell.setComponentAlignment(objLabel, Alignment.MIDDLE_LEFT);
+				row.addComponent(cell);
+				row.setComponentAlignment(cell, Alignment.MIDDLE_LEFT);
 			}
 			else if(obj instanceof Integer) {
-
 				Label objLabel = new Label(obj+"");
+				objLabel.setDescription(obj+"");
 				objLabel.addStyleName("CustomGrid_objLabel");
-				objLabel.setWidth(col.getWidth()+"px");
-				objLabel.setHeight("40px");
-				row.addComponent(objLabel);
-				row.setComponentAlignment(objLabel, Alignment.MIDDLE_LEFT);
+				VerticalLayout cell = new VerticalLayout();
+				cell.setSpacing(false);
+				cell.setMargin(false);
+				cell.setWidth(col.getWidth()+"px");
+				cell.setHeight("40px");
+				cell.addComponent(objLabel);
+				cell.setComponentAlignment(objLabel, Alignment.MIDDLE_LEFT);
+				row.addComponent(cell);
+				row.setComponentAlignment(cell, Alignment.MIDDLE_LEFT);
 			}
 			else if(obj instanceof Image) {
 
@@ -185,11 +228,13 @@ public class CustomGrid extends VerticalLayout {
 				innerCell.setMargin(false);
 				innerCell.setSizeUndefined();
 				innerCell.addComponent(img);
+				innerCell.setComponentAlignment(img, Alignment.MIDDLE_LEFT);
 				
 				VerticalLayout cell = new VerticalLayout();
 				cell.setSpacing(false);
 				cell.setMargin(false);
 				cell.setWidth(col.getWidth()+"px");
+				cell.setHeight("40px");
 				cell.addComponent(innerCell);
 				row.addComponent(cell);
 				row.setComponentAlignment(cell, Alignment.MIDDLE_LEFT);
@@ -198,11 +243,15 @@ public class CustomGrid extends VerticalLayout {
 				
 				ImageWithString iws = (ImageWithString) obj;
 				Label objLabel = new Label(iws.getName());
+				objLabel.setDescription(iws.getName());
+				objLabel.addStyleName("CustomGrid_objLabel");
 				HorizontalLayout innerCell = new HorizontalLayout();
 				innerCell.setSpacing(false);
 				innerCell.setMargin(false);
 				innerCell.setSizeUndefined();
-				innerCell.addComponents(iws.getImage(),objLabel);
+				innerCell.addComponents(iws.getImage(),Box.createHorizontalBox(5),objLabel);
+				innerCell.setComponentAlignment(iws.getImage(), Alignment.MIDDLE_LEFT);
+				innerCell.setComponentAlignment(objLabel, Alignment.MIDDLE_LEFT);
 				
 				VerticalLayout cell = new VerticalLayout();
 				cell.setSpacing(false);
@@ -290,6 +339,7 @@ public class CustomGrid extends VerticalLayout {
 			}
 			i++;
 		}
+		countLabel.setCaption("行数:"+data.size());
 	}
 	
 	/**
@@ -317,6 +367,13 @@ public class CustomGrid extends VerticalLayout {
 						matched = true;
 					}
 				}
+				else if(obj instanceof ImageWithString) {
+					ImageWithString iws = (ImageWithString) obj;
+					if(iws.getName().contains(keyword)) {
+						matched = true;
+					}
+				}
+				j++;
 			}
 			if(matched) {
 				dataGrid.addComponent(row);
@@ -328,6 +385,7 @@ public class CustomGrid extends VerticalLayout {
 				i++;
 			}
 		}
+		countLabel.setCaption("行数:"+dataGrid.getComponentCount());
 	}
 
 	/**
@@ -346,6 +404,9 @@ public class CustomGrid extends VerticalLayout {
 		}
 	}
 	
+	public void setAddEvent(Callback addEvent) {
+		this.addEvent = addEvent;
+	}
 	
 	private String title;
 	private GridColumn[] columns;
@@ -355,4 +416,6 @@ public class CustomGrid extends VerticalLayout {
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private Panel scrollPanel = new Panel();
 	private int scrollPanelHeight;
+	private Label countLabel = new Label();
+	private Callback addEvent;
 }

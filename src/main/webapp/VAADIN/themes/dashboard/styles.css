@@ -15869,9 +15869,9 @@ div.v-layout.v-horizontal.v-widget {
 	background-color: white;
 	-webkit-box-shadow: 0 2px 7px 1px rgba(0, 0, 0, 0.5);
 	box-shadow: 0 2px 7px 1px rgba(0, 0, 0, 0.5);
-	-webkit-animation: valo-animate-in-slide-up 200ms 200ms backwards;
-	-moz-animation: valo-animate-in-slide-up 200ms 200ms backwards;
-	animation: valo-animate-in-slide-up 200ms 200ms backwards;
+	-webkit-animation: valo-animate-in-slide-up 200ms 100ms backwards;
+	-moz-animation: valo-animate-in-slide-up 200ms 100ms backwards;
+	animation: valo-animate-in-slide-up 200ms 100ms backwards;
 }
 
 .dashboard .ContentView_toolbar {
