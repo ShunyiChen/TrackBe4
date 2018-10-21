@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
+import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.User;
@@ -63,7 +64,7 @@ public class EditUserWindow extends Window {
 		userNameField.focus();
 		passwordField = new PasswordField("初始密码:");
 		passwordField.setIcon(VaadinIcons.PASSWORD);
-		confirmPasswordField = new PasswordField("初始重复密码:");
+		confirmPasswordField = new PasswordField("重复密码:");
 		confirmPasswordField.setIcon(VaadinIcons.PASSWORD);
 		firstNameField = new TextField("名:");
 		firstNameField.setIcon(VaadinIcons.TEXT_LABEL);
@@ -76,7 +77,7 @@ public class EditUserWindow extends Window {
 		companySelector.setTextInputAllowed(false);
 		companySelector.setItems(companies);
 		companySelector.setIcon(VaadinIcons.GROUP);
-		activateBox.setIcon(VaadinIcons.FACTORY);
+		activateBox.setIcon(VaadinIcons.LOCK);
 		activateBox.setEmptySelectionAllowed(false);
 		activateBox.setTextInputAllowed(false);
 		activateBox.setSelectedItem("是");
@@ -286,7 +287,10 @@ public class EditUserWindow extends Window {
     		profile.setPicture("img/adminmenu/users/user1.png");
     		profile.setFirstName(firstNameField.getValue());
     		profile.setLastName(lastNameField.getValue());
-			ui.userService.create(user, profile);
+			
+    		int userUniqueId = ui.userService.create(user, profile);
+    		user.setUserUniqueId(userUniqueId);
+			user.setProfile(profile);
 		
 		} else {
 			
@@ -320,7 +324,11 @@ public class EditUserWindow extends Window {
 		return true;
 	}
 	
-	public static void open(Callback callback) {
+	/**
+	 * 
+	 * @param callback
+	 */
+	public static void open(Callback2 callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditUserWindow w = new EditUserWindow();
         w.btnApply.setVisible(false);
@@ -329,7 +337,7 @@ public class EditUserWindow extends Window {
         	if (w.checkEmptyValues(false)) {
         		if(w.apply(true)) {
         			w.close();
-        			callback.onSuccessful();
+        			callback.onSuccessful(w.user.getUserUniqueId());
         		}
         	}
 		});
@@ -340,7 +348,7 @@ public class EditUserWindow extends Window {
     }
 	
 	public static void edit(User user, Callback callback) {
-        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
+//        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditUserWindow w = new EditUserWindow();
         w.oldUserName = user.getUserName();
         w.user.setUserUniqueId(user.getUserUniqueId());

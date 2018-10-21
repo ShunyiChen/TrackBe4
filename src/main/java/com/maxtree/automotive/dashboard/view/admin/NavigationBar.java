@@ -9,6 +9,11 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class NavigationBar extends Panel {
 
 	/**
@@ -68,6 +73,9 @@ public class NavigationBar extends Panel {
 	    item.setComponentAlignment(label, Alignment.MIDDLE_LEFT);
 	    item.addLayoutClickListener(e->{
 	    	view.hideNavigationBar();
+	    	
+	    	view.back();
+	    	
 	    	view.table.doFilter(row.getOrderID());
 	    });
 	    item.addStyleName("NavigationBar_menuItem");

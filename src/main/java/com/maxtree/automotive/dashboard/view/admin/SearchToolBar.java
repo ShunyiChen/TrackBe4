@@ -11,6 +11,11 @@ import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class SearchToolBar extends AbsoluteLayout {
 
 	/**

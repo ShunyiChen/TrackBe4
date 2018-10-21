@@ -14,14 +14,19 @@ import com.vaadin.ui.VerticalLayout;
  * @author Chen
  *
  */
-public class FlexTable extends Panel {
+public class FlexTable extends Panel{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public FlexTable() {
+	/**
+	 * 
+	 * @param view
+	 */
+	public FlexTable(AdminMainView view) {
+		this.view = view;
 		initComponents();
 	}
 	
@@ -101,7 +106,7 @@ public class FlexTable extends Panel {
 	 * 
 	 */
 	private void init() {
-		PeopleRow people = new PeopleRow();
+		PeopleRow people = new PeopleRow(view);
 		CommunityRow community = new CommunityRow();
 		FileTransferRow fileTransfer = new FileTransferRow();
 		DataDictionaryRow DD = new DataDictionaryRow();
@@ -118,4 +123,5 @@ public class FlexTable extends Panel {
 	
 	public List<FlexTableRow> data = new ArrayList<>();
 	private VerticalLayout main = new VerticalLayout();
+	public AdminMainView view;
 }

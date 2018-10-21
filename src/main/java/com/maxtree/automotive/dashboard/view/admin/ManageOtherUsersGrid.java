@@ -53,7 +53,7 @@ public class ManageOtherUsersGrid extends VerticalLayout {
 						refreshTable();
 					}
 				};
-				EditUserWindow.open(callback);
+//				EditUserWindow.open(callback);
 			}
 		});
 		

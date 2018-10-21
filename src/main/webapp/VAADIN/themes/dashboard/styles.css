@@ -15458,7 +15458,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .v-horizontallayout .v-slot-SearchToolBar_close {
-	margin-top: 4px;
+	margin-top: 5px;
 }
 
 .dashboard .v-horizontallayout .v-slot-SearchToolBar_close .v-image {
@@ -15548,39 +15548,6 @@ div.v-layout.v-horizontal.v-widget {
 	width: 677px;
 	margin-top: -20px;
 	padding: 0px;
-}
-
-.dashboard .left-arrow-image {
-	cursor: pointer;
-	margin-top: 2px;
-}
-
-.dashboard .detail-pane-with-padding20 {
-	padding: 20px;
-	background-color: white;
-	-webkit-box-shadow: 0 2px 7px 1px rgba(0, 0, 0, 0.5);
-	box-shadow: 0 2px 7px 1px rgba(0, 0, 0, 0.5);
-	-webkit-animation: valo-animate-in-slide-up 300ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards;
-	-moz-animation: valo-animate-in-slide-up 300ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards;
-	animation: valo-animate-in-slide-up 300ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards;
-}
-
-.dashboard .detail-pane-with-padding20 .v-textfield {
-	webkit-box-shadow: none;
-	box-shadow: none;
-	font-size: 13px;
-	color: #666666;
-	border-radius: 0px;
-	border-color: transparent;
-	border-bottom-color: #666666;
-	padding: 0px;
-	margin-top: -3px;
-}
-
-.dashboard .parent-title {
-	font-size: 13px;
-	font-weight: bold !important;
-	color: #666666 !important;
 }
 
 .dashboard .grid-title {
@@ -15884,4 +15851,138 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .v-verticallayout .v-slot-Hr {
 	height: 0px;
+}
+
+.dashboard .ViewportView {
+	background-color: #F1F1F1;
+}
+
+.dashboard .ViewportView .v-scrollable {
+	overflow-y: scroll;
+}
+
+.dashboard .ViewportView_main {
+	background-color: transparent;
+}
+
+.dashboard .ContentView {
+	background-color: white;
+	-webkit-box-shadow: 0 2px 7px 1px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 2px 7px 1px rgba(0, 0, 0, 0.5);
+	-webkit-animation: valo-animate-in-slide-up 200ms 200ms backwards;
+	-moz-animation: valo-animate-in-slide-up 200ms 200ms backwards;
+	animation: valo-animate-in-slide-up 200ms 200ms backwards;
+}
+
+.dashboard .ContentView_toolbar {
+	cursor: pointer;
+	padding-top: 8px;
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-bottom: 24px;
+}
+
+.dashboard .ContentView_parentTitleLabel {
+	font-size: 13px;
+	font-weight: bold !important;
+	color: #666666 !important;
+}
+
+.dashboard .ContentView_backImage {
+	margin-top: 2px;
+}
+
+.dashboard .ProfileView_main {
+	padding-top: 60px;
+	padding-left: 20px;
+	padding-right: 10px;
+	padding-bottom: 14px;
+}
+
+.dashboard .ProfileView_btnPass {
+	font-size: 13px;
+	font-weight: normal !important;
+	color: #666666 !important;
+}
+
+.dashboard .CustomGrid_scrollPanel {
+	border-color: transparent;
+	border-width: 0px;
+	border-style: none;
+	border: none;
+	box-shadow: none;
+	margin-top: 50px;
+	padding-left: 40px;
+	padding-right: 27px;
+}
+
+.dashboard .CustomGrid_titleBar {
+	font-size: 16px;
+	font-weight: bold !important;
+	color: #666666 !important;
+	padding-top: 32px;
+	padding-bottom: 12px;
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+.dashboard .CustomGrid_columnBar {
+	border: #F0F0F0 solid 1px;
+	border-right-color: #F0F0F0;
+	border-top-color: transparent;
+	border-left-color: transparent;
+	border-right-color: transparent;
+}
+
+.dashboard .CustomGrid_colLabel {
+	font-size: 13px;
+	font-weight: bold !important;
+	color: #666666 !important;
+}
+
+.dashboard .CustomGrid_objLabel {
+	font-size: 13px;
+	font-weight: normal !important;
+	color: #666666 !important;
+}
+
+.dashboard .CustomGridRow {
+	border: #F0F0F0 solid 1px;
+	border-right-color: #F0F0F0;
+	border-top-color: transparent;
+	border-left-color: transparent;
+	border-right-color: transparent;
+}
+
+.dashboard .CustomGrid_row {
+	background-color: aliceblue;
+}
+
+.dashboard .PeopleView_menuImage {
+	cursor: pointer;
+}
+
+.dashboard .CustomGrid_searchBar {
+	padding: 0px;
+}
+
+.dashboard .CustomGrid_searchBar .v-textfield {
+	webkit-box-shadow: none;
+	box-shadow: none;
+	font-size: 13px;
+	color: #666666;
+	border-radius: 0px;
+	border-color: transparent;
+	border-bottom-color: #666666;
+	padding: 0px;
+	margin-top: -3px;
+	width: 163px;
+	height: 23px;
+}
+
+.dashboard .CustomGrid_searchBar .v-textfield:focus {
+	border-color: transparent;
+	border-bottom-color: #666666;
+	webkit-box-shadow: none;
+	box-shadow: none;
 }

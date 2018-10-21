@@ -164,37 +164,15 @@
         padding: 0px;
     }
      
-    .left-arrow-image {
-       cursor:pointer;
-       margin-top: 2px;
-    }
+    
  
     
-    .detail-pane-with-padding20 {
-        padding: 20px;
-        background-color: white;
-        @include box-shadow(0 2px 7px 1px rgba(0,0,0,.5));
-//        @include animation(animate-in-scale-up 500ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
-        @include animation(valo-animate-in-slide-up 300ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
-    }
     
-    .detail-pane-with-padding20 .v-textfield {
-        webkit-box-shadow: none;
-        box-shadow: none;
-        font-size: 13px;
-        color: #666666;
-        border-radius: 0px;
-        border-color: transparent;
-        border-bottom-color : #666666;
-        padding: 0px;
-        margin-top: -3px;
-    }
+    
+   
+   
  
-    .parent-title {
-        font-size: 13px;
-        font-weight: bold !important;
-        color: #666666 !important;
-    }
+    
     
     .grid-title {
         color:#9D9D9D;
@@ -411,7 +389,6 @@ box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
     
     .FlexTable .v-scrollable{
          overflow-y:scroll;
-//         overflow:hidden;
     }
     
     .FlexTableRow{
@@ -513,5 +490,120 @@ box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
     //去除hr下面空行
     .v-verticallayout .v-slot-Hr{
         height: 0px;
+    }
+    
+    .ViewportView {
+        background-color: #F1F1F1;
+       
+    }
+    .ViewportView .v-scrollable{
+        overflow-y:scroll;
+    }
+    
+    .ViewportView_main{
+        background-color: transparent;
+    }
+    .ContentView{
+        background-color: white;
+        @include box-shadow(0 2px 7px 1px rgba(0,0,0,.5));
+        @include animation(valo-animate-in-slide-up 200ms 200ms backwards);
+    }
+    .ContentView_toolbar{
+        cursor:pointer;
+        padding-top: 8px;
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-bottom: 24px;
+    }
+    .ContentView_parentTitleLabel{
+        font-size: 13px;
+        font-weight: bold !important;
+        color: #666666 !important;
+    }
+    .ContentView_backImage{
+       margin-top: 2px;
+    }
+    
+    .ProfileView_main{
+        padding-top: 60px;
+        padding-left: 20px;
+        padding-right: 10px;
+        padding-bottom: 14px;
+    }
+    .ProfileView_btnPass{
+        font-size: 13px;
+        font-weight: normal !important;
+        color: #666666 !important;
+    }
+    .CustomGrid_scrollPanel{
+        border-color: transparent;
+        border-width: 0px;
+        border-style: none;
+        border: none;
+        box-shadow: none;
+        margin-top: 50px;
+        padding-left: 40px;
+        padding-right: 27px;
+    }
+    .CustomGrid_titleBar{
+        font-size: 16px;
+        font-weight: bold !important;
+        color: #666666 !important;
+        padding-top: 32px;
+        padding-bottom: 12px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    .CustomGrid_columnBar{
+        border: #F0F0F0 solid 1px;
+        border-right-color: #F0F0F0;
+        border-top-color: transparent;
+        border-left-color: transparent;
+        border-right-color: transparent;
+    }
+    .CustomGrid_colLabel{
+        font-size: 13px;
+        font-weight: bold !important;
+        color: #666666 !important;
+    }
+    .CustomGrid_objLabel{
+        font-size: 13px;
+        font-weight: normal !important;
+        color: #666666 !important;
+    }
+    .CustomGridRow{
+        border: #F0F0F0 solid 1px;
+        border-right-color: #F0F0F0;
+        border-top-color: transparent;
+        border-left-color: transparent;
+        border-right-color: transparent;
+    }
+    .CustomGrid_row{
+        background-color: aliceblue;
+    }
+    .PeopleView_menuImage{
+        cursor:pointer;
+    }
+    .CustomGrid_searchBar {
+       padding: 0px;
+    }
+    .CustomGrid_searchBar .v-textfield{
+         webkit-box-shadow: none;
+        box-shadow: none;
+        font-size: 13px;
+        color: #666666;
+        border-radius: 0px;
+        border-color: transparent;
+        border-bottom-color : #666666;
+        padding: 0px;
+        margin-top: -3px;
+        width: 163px;
+        height: 23px;
+    }
+    .CustomGrid_searchBar .v-textfield:focus{
+        border-color: transparent;
+        border-bottom-color : #666666;
+        webkit-box-shadow: none;
+        box-shadow: none;
     }
 }

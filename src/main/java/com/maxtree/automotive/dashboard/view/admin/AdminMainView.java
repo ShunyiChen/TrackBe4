@@ -7,7 +7,6 @@ import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.PermissionCodes;
 import com.maxtree.automotive.dashboard.TB4Application;
-import com.maxtree.automotive.dashboard.component.AdminMenuWindow;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.Test;
@@ -49,7 +48,6 @@ public class AdminMainView extends AbsoluteLayout {
         setSizeFull();
         screen.addLayoutClickListener(e->{
         	hideNavigationBar();
-        	System.out.println("hideNavigationBar");
         });
         
         
@@ -156,6 +154,24 @@ public class AdminMainView extends AbsoluteLayout {
 		navigationBar.addStyleName("NavigationBar_moveOut");
 		addComponent(navigationBar, "left: -255px; top: 0px;z-index:999;");
 		removeComponent(screen);
+	}
+	
+	/**
+	 * 
+	 */
+	public void back() {
+		this.removeComponent(viewportView);
+		this.addComponent(table, "left: 0px; top: 56px;");
+	}
+
+	/**
+	 * 
+	 * @param customeView
+	 */
+	public void forward(ContentView customeView) {
+		this.removeComponent(table);
+		viewportView.setCustomeView(customeView);
+		this.addComponent(viewportView, "left: 0px; top: 56px;");
 	}
 	
 	/**
@@ -858,7 +874,7 @@ public class AdminMainView extends AbsoluteLayout {
 	private HorizontalLayout createSearchPane() {
 		Image image = new Image(null, new ThemeResource("img/adminmenu/menu_24px_1130584_easyicon.net.png"));
         image.addClickListener(e -> {
-        	AdminMenuWindow.open();
+//        	AdminMenuWindow.open();
         });
         image.addStyleName("menu-button");
         
@@ -930,91 +946,91 @@ public class AdminMainView extends AbsoluteLayout {
 	 * @param command
 	 */
 	private void showDetailPane(int command) {
-		if (command == Commands.EDIT_PROFILE) {
-			manageAdmin = new ManageAdmin(this);	// 管理员
-			main.addComponent(manageAdmin);
-			main.setComponentAlignment(manageAdmin, Alignment.TOP_CENTER);
-		} 
-		else if (command == Commands.MANAGE_COMPANIES) {
-			manageCompany = new ManageCompany(this);	// 管理机构
-			main.addComponent(manageCompany);
-			main.setComponentAlignment(manageCompany, Alignment.TOP_CENTER);
-		} 
-		else if (command == Commands.MANAGE_USERS) {
-			manageOtherUsers = new ManageOtherUsers(this);// 管理用户
-			main.addComponent(manageOtherUsers);
-			main.setComponentAlignment(manageOtherUsers, Alignment.TOP_CENTER);
-		}
-		else if (command == Commands.MANAGE_ROLES) {
-			manageRoles = new ManageRoles(this);	// 管理角色
-			main.addComponent(manageRoles);
-			main.setComponentAlignment(manageRoles, Alignment.TOP_CENTER);
-		}
-		else if (command == Commands.MANAGE_PERMISSIONS) {
-			managePermissions = new ManagePermissions(this);// 管理权限
-			main.addComponent(managePermissions);
-			main.setComponentAlignment(managePermissions, Alignment.TOP_CENTER);
-		} 
-		else if (command == Commands.MANAGE_COMMUNITIES) {
-			manageCommunity = new ManageCommunity(this);	// 管理社区
-			main.addComponent(manageCommunity);
-			main.setComponentAlignment(manageCommunity, Alignment.TOP_CENTER);
-		}
-		else if (command == Commands.MANAGE_STOREHOUSES) {
-			manageStorehouse = new ManageStorehouse(this);	// 管理库房
-			main.addComponent(manageStorehouse);
-			main.setComponentAlignment(manageStorehouse, Alignment.TOP_CENTER);
-		} 
-		else if (command == Commands.PENDING_APPROVAL) {
-			manageApprovals = new ManageApprovals(this);
-			main.addComponent(manageApprovals);
-			main.setComponentAlignment(manageApprovals, Alignment.TOP_CENTER);
-		} 
-		else if (command == Commands.INVITE_USRES) {
-			manageUserInvitations = new ManageUserInvitations(this);
-			main.addComponent(manageUserInvitations);
-			main.setComponentAlignment(manageUserInvitations, Alignment.TOP_CENTER);
-		}
-		else if (command == Commands.COMMUNITY_INVITATION) {
-			manageCommunityInvitations = new ManageCommunityInvitations(this);
-			main.addComponent(manageCommunityInvitations);
-			main.setComponentAlignment(manageCommunityInvitations, Alignment.TOP_CENTER);
-		}
-		else if (command == Commands.MANAGE_SITES) {
-			manageSites = new ManageSites(this);	// 管理站点
-			main.addComponent(manageSites);
-			main.setComponentAlignment(manageSites, Alignment.TOP_CENTER);
-		}
-		else if (command == Commands.MANAGE_SERVERS) {
-			manageServers = new ManageServers(this);	// 管理服务器
-			main.addComponent(manageServers);
-			main.setComponentAlignment(manageServers, Alignment.TOP_CENTER);
-		}
-		else if (command == Commands.BROADCAST_MESSAGE) {
-			manageBroadCast = new ManageBroadCast(this);
-			main.addComponent(manageBroadCast);
-			main.setComponentAlignment(manageBroadCast, Alignment.TOP_CENTER);
-		}
-		else if (command == Commands.EDIT_DATA_DICTIONARY) {
-			manageDataDictionary = new ManageDataDictionary(this);//业务类型管理
-			main.addComponent(manageDataDictionary);
-			main.setComponentAlignment(manageDataDictionary, Alignment.TOP_CENTER);
-		}
-		else if (command == Commands.MANAGE_BUSINESS_TYPES) {
-			manageBusinessType = new ManageBusinessTypes(this);//业务类型管理
-			main.addComponent(manageBusinessType);
-			main.setComponentAlignment(manageBusinessType, Alignment.TOP_CENTER);
-		}
-		else if (command == Commands.ABOUT_TB4) { //关于TB4
-			aboutTB4 = new AboutTB4(this);
-			main.addComponent(aboutTB4);
-			main.setComponentAlignment(aboutTB4, Alignment.TOP_CENTER);
-		}
-		else if (command == Commands.DEV) { //开发
-			dev = new DEV(this);
-			main.addComponent(dev);
-			main.setComponentAlignment(dev, Alignment.TOP_CENTER);
-		}
+//		if (command == Commands.EDIT_PROFILE) {
+//			manageAdmin = new ProfileView(this);	// 管理员
+//			main.addComponent(manageAdmin);
+//			main.setComponentAlignment(manageAdmin, Alignment.TOP_CENTER);
+//		} 
+//		else if (command == Commands.MANAGE_COMPANIES) {
+//			manageCompany = new ManageCompany(this);	// 管理机构
+//			main.addComponent(manageCompany);
+//			main.setComponentAlignment(manageCompany, Alignment.TOP_CENTER);
+//		} 
+//		else if (command == Commands.MANAGE_USERS) {
+//			manageOtherUsers = new ManageOtherUsers(this);// 管理用户
+//			main.addComponent(manageOtherUsers);
+//			main.setComponentAlignment(manageOtherUsers, Alignment.TOP_CENTER);
+//		}
+//		else if (command == Commands.MANAGE_ROLES) {
+//			manageRoles = new ManageRoles(this);	// 管理角色
+//			main.addComponent(manageRoles);
+//			main.setComponentAlignment(manageRoles, Alignment.TOP_CENTER);
+//		}
+//		else if (command == Commands.MANAGE_PERMISSIONS) {
+//			managePermissions = new ManagePermissions(this);// 管理权限
+//			main.addComponent(managePermissions);
+//			main.setComponentAlignment(managePermissions, Alignment.TOP_CENTER);
+//		} 
+//		else if (command == Commands.MANAGE_COMMUNITIES) {
+//			manageCommunity = new ManageCommunity(this);	// 管理社区
+//			main.addComponent(manageCommunity);
+//			main.setComponentAlignment(manageCommunity, Alignment.TOP_CENTER);
+//		}
+//		else if (command == Commands.MANAGE_STOREHOUSES) {
+//			manageStorehouse = new ManageStorehouse(this);	// 管理库房
+//			main.addComponent(manageStorehouse);
+//			main.setComponentAlignment(manageStorehouse, Alignment.TOP_CENTER);
+//		} 
+//		else if (command == Commands.PENDING_APPROVAL) {
+//			manageApprovals = new ManageApprovals(this);
+//			main.addComponent(manageApprovals);
+//			main.setComponentAlignment(manageApprovals, Alignment.TOP_CENTER);
+//		} 
+//		else if (command == Commands.INVITE_USRES) {
+//			manageUserInvitations = new ManageUserInvitations(this);
+//			main.addComponent(manageUserInvitations);
+//			main.setComponentAlignment(manageUserInvitations, Alignment.TOP_CENTER);
+//		}
+//		else if (command == Commands.COMMUNITY_INVITATION) {
+//			manageCommunityInvitations = new ManageCommunityInvitations(this);
+//			main.addComponent(manageCommunityInvitations);
+//			main.setComponentAlignment(manageCommunityInvitations, Alignment.TOP_CENTER);
+//		}
+//		else if (command == Commands.MANAGE_SITES) {
+//			manageSites = new ManageSites(this);	// 管理站点
+//			main.addComponent(manageSites);
+//			main.setComponentAlignment(manageSites, Alignment.TOP_CENTER);
+//		}
+//		else if (command == Commands.MANAGE_SERVERS) {
+//			manageServers = new ManageServers(this);	// 管理服务器
+//			main.addComponent(manageServers);
+//			main.setComponentAlignment(manageServers, Alignment.TOP_CENTER);
+//		}
+//		else if (command == Commands.BROADCAST_MESSAGE) {
+//			manageBroadCast = new ManageBroadCast(this);
+//			main.addComponent(manageBroadCast);
+//			main.setComponentAlignment(manageBroadCast, Alignment.TOP_CENTER);
+//		}
+//		else if (command == Commands.EDIT_DATA_DICTIONARY) {
+//			manageDataDictionary = new ManageDataDictionary(this);//业务类型管理
+//			main.addComponent(manageDataDictionary);
+//			main.setComponentAlignment(manageDataDictionary, Alignment.TOP_CENTER);
+//		}
+//		else if (command == Commands.MANAGE_BUSINESS_TYPES) {
+//			manageBusinessType = new ManageBusinessTypes(this);//业务类型管理
+//			main.addComponent(manageBusinessType);
+//			main.setComponentAlignment(manageBusinessType, Alignment.TOP_CENTER);
+//		}
+//		else if (command == Commands.ABOUT_TB4) { //关于TB4
+//			aboutTB4 = new AboutTB4(this);
+//			main.addComponent(aboutTB4);
+//			main.setComponentAlignment(aboutTB4, Alignment.TOP_CENTER);
+//		}
+//		else if (command == Commands.DEV) { //开发
+//			dev = new DEV(this);
+//			main.addComponent(dev);
+//			main.setComponentAlignment(dev, Alignment.TOP_CENTER);
+//		}
 	}
 	
 	/**
@@ -1031,7 +1047,6 @@ public class AdminMainView extends AbsoluteLayout {
             public void buttonClick(final ClickEvent event) {
             	VaadinSession.getCurrent().close();
         		Page.getCurrent().reload();
-            	System.out.println("logged out.");
             }
         });
         return result;
@@ -1058,7 +1073,7 @@ public class AdminMainView extends AbsoluteLayout {
 		return main;
 	}
 	
-	private ManageAdmin manageAdmin;// 管理管理员
+	private ProfileView manageAdmin;// 管理管理员
 	private ManageCompany manageCompany;// 管理机构
 	private ManageOtherUsers manageOtherUsers;// 管理其他用户
  	private ManageBusinessTypes manageBusinessType;//业务类型管理
@@ -1078,12 +1093,11 @@ public class AdminMainView extends AbsoluteLayout {
 	
 	// 搜索
 //	private HorizontalLayout searchPane;
-	public FlexTable table = new FlexTable();
+	public FlexTable table = new FlexTable(this);
 	private SearchToolBar toolbar = new SearchToolBar(this);
 	public NavigationBar navigationBar = new NavigationBar(this);
 	private Screen screen = new Screen();
-	
-	
+	private ViewportView viewportView = new ViewportView();
 	
 	
 	// 用户
