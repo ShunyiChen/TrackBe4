@@ -1074,19 +1074,19 @@ public class AdminMainView extends AbsoluteLayout {
 	}
 	
 	private ProfileView manageAdmin;// 管理管理员
-	private ManageCompany manageCompany;// 管理机构
+//	private ManageCompany manageCompany;// 管理机构
 //	private ManageOtherUsers manageOtherUsers;// 管理其他用户
  	private ManageBusinessTypes manageBusinessType;//业务类型管理
 	private ManageSites manageSites;// 管理站点
 	private ManageServers manageServers;//管理服务器
 //	private ManageRoles manageRoles;// 管理角色
-	private ManagePermissions managePermissions;// 管理权限
+//	private ManagePermissions managePermissions;// 管理权限
 	private ManageDataDictionary manageDataDictionary;
-	private ManageCommunity manageCommunity; // 社区
-	private ManageStorehouse manageStorehouse; // 库房
+//	private ManageCommunity manageCommunity; // 社区
+//	private ManageStorehouse manageStorehouse; // 库房
 	private ManageApprovals manageApprovals;// 等待审批
 	private ManageUserInvitations manageUserInvitations;// 邀请用户
-	private ManageCommunityInvitations manageCommunityInvitations;//社区邀请
+//	private ManageCommunityInvitations manageCommunityInvitations;//社区邀请
 	private ManageBroadCast manageBroadCast;
 	private AboutTB4 aboutTB4;
 	private DEV dev;

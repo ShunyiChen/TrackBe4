@@ -17,12 +17,12 @@ public class FileTransferRow extends FlexTableRow {
 	}
 	
 	private void initComponents() {
-		this.addComponents(manageSite,manageFTPServer);
+		this.addComponents(manageSite,manageEmbeddedServer);
 	}
 
 	@Override
 	public String getSearchTags() {
-		return "管理站点,FTP服务器,"+getTitle();
+		return "管理站点,管理内嵌服务器,"+getTitle();
 	}
 
 	@Override
@@ -41,5 +41,5 @@ public class FileTransferRow extends FlexTableRow {
 	}
 	
 	private RowItemWithTitle manageSite = new RowItemWithTitle("管理站点");
-	private RowItemWithTitle manageFTPServer = new RowItemWithTitle("管理FTP服务器");
+	private RowItemWithTitle manageEmbeddedServer = new RowItemWithTitle("管理内嵌服务器");
 }

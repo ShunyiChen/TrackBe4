@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
+import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
@@ -200,15 +201,15 @@ public class EditCommunityWindow extends Window {
 		}
 	}
 	
-	public static void open(Callback callback) {
-        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
+	public static void open(Callback2 callback) {
+//        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditCommunityWindow w = new EditCommunityWindow();
         w.btnAdd.setCaption("添加");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
-    			ui.communityService.create(w.community);
+    			int communityuniqueid = ui.communityService.insert(w.community);
     			w.close();
-    			callback.onSuccessful();
+    			callback.onSuccessful(communityuniqueid);
         	}
 		});
         UI.getCurrent().addWindow(w);

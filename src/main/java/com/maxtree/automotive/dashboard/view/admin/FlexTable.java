@@ -107,7 +107,7 @@ public class FlexTable extends Panel{
 	 */
 	private void init() {
 		PeopleRow people = new PeopleRow(view);
-		CommunityRow community = new CommunityRow();
+		CommunityRow community = new CommunityRow(view);
 		FileTransferRow fileTransfer = new FileTransferRow();
 		DataDictionaryRow DD = new DataDictionaryRow();
 		DeviceRow device = new DeviceRow();

@@ -1,5 +1,8 @@
 package com.maxtree.automotive.dashboard.service;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import com.maxtree.automotive.dashboard.domain.Community;
@@ -123,11 +129,26 @@ private static final Logger log = LoggerFactory.getLogger(CommunityService.class
 	/**
 	 * 
 	 * @param community
+	 * @return
 	 */
-	public void create(Community community) {
+	public int insert(Community community) {
+		KeyHolder keyHolder = new GeneratedKeyHolder();
 		String sql = "INSERT INTO COMMUNITIES(COMMUNITYNAME,COMMUNITYDESCRIPTION,GROUPID,LEVEL) VALUES(?,?,?,?)";
-	 	int opt = jdbcTemplate.update(sql, new Object[] { community.getCommunityName(), community.getCommunityDescription(), community.getGroupId(), community.getLevel()});
-	 	log.info("Created row "+opt);
+		jdbcTemplate.update(new PreparedStatementCreator() {
+			@Override
+			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+				PreparedStatement ps = con.prepareStatement(
+						sql, new String[] {"communityuniqueid"});
+				ps.setString(1, community.getCommunityName());
+				ps.setString(2, community.getCommunityDescription());
+				ps.setInt(3, community.getGroupId());
+				ps.setInt(4, community.getLevel());
+				return ps;
+			}
+			
+		}, keyHolder);
+		int communityuniqueid  = keyHolder.getKey().intValue(); 
+		return communityuniqueid;
 	}
 	
 	/**

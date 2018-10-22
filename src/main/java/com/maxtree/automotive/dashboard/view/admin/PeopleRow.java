@@ -1,7 +1,6 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
 import com.maxtree.automotive.dashboard.Callback2;
-import com.vaadin.ui.Image;
 
 /**
  * 
@@ -42,7 +41,7 @@ public class PeopleRow extends FlexTableRow {
 			rootView.forward(new RoleView("管理角色", rootView));
 		});
 		managePermission.addLayoutClickListener(e->{
-//			rootView.forward(new RoleView("管理权限", rootView));
+			rootView.forward(new PermissionView("管理权限", rootView));
 		});
 	}
 

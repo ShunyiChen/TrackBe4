@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
+import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -159,15 +160,15 @@ public class EditStorehouseWindow extends Window {
 	 * 
 	 * @param callback
 	 */
-	public static void open(Callback callback) {
-        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
+	public static void open(Callback2 callback) {
+//        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditStorehouseWindow w = new EditStorehouseWindow();
         w.btnAdd.setCaption("添加库房");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
-    			ui.frameService.insert(w.storehouse);
+    			int frameUniqueId = ui.frameService.insert(w.storehouse);
     			w.close();
-    			callback.onSuccessful();
+    			callback.onSuccessful(frameUniqueId);
         	}
 		});
         UI.getCurrent().addWindow(w);

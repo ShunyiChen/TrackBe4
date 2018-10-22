@@ -1,6 +1,6 @@
 @mixin dashboard-dashboard-view {
   .image-background{
-      background: url(../img/blue.jpg) no-repeat fixed;
+       background: url(../img/blue.jpg) no-repeat fixed;//背景图片
 	  -webkit-background-size: cover;
 	  -moz-background-size: cover;
 	  -o-background-size: cover;

@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
+import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.Yaml;
@@ -241,7 +242,7 @@ public class EditCompanyWindow extends Window {
 	 * 
 	 * @param callback
 	 */
-	public static void open(Callback callback) {
+	public static void open(Callback2 callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditCompanyWindow w = new EditCompanyWindow();
         w.btnAdd.setCaption("添加");
@@ -260,9 +261,9 @@ public class EditCompanyWindow extends Window {
         		w.company.setCommunityUniqueId(w.communitySelector.getValue() == null?0:w.communitySelector.getValue().getCommunityUniqueId());
         		w.company.setHasStoreHouse(w.hasStore.getValue().equals("是")?1:0);
         		w.company.setIgnoreChecker(w.hasChecker.getValue().equals("是")?1:0);
-        		ui.companyService.create(w.company);
+        		int companyuniqueid = ui.companyService.create(w.company);
     			w.close();
-    			callback.onSuccessful();
+    			callback.onSuccessful(companyuniqueid);
         	}
 		});
         UI.getCurrent().addWindow(w);

@@ -40,9 +40,21 @@ public class CustomGrid extends VerticalLayout {
 	 * @param data
 	 */
 	public CustomGrid(String title, GridColumn[] columns, List<CustomGridRow> data) {
+		this(title, columns, data, true);
+	}
+	
+	/**
+	 * 
+	 * @param title
+	 * @param columns
+	 * @param data
+	 * @param showingAddButton
+	 */
+	public CustomGrid(String title, GridColumn[] columns, List<CustomGridRow> data, boolean showingAddButton) {
 		this.title = title;
 		this.columns = columns;
 		this.data = data;
+		this.showingAddButton = showingAddButton;
 		initComponents();
 	}
 	
@@ -136,9 +148,6 @@ public class CustomGrid extends VerticalLayout {
 		});
 		grid.addComponents(columnBar,dataGrid);
 		scrollPanel.setContent(grid);
-
-
-		
 		
 		HorizontalLayout footer = new HorizontalLayout();
 		footer.setSpacing(false);
@@ -161,6 +170,9 @@ public class CustomGrid extends VerticalLayout {
 			if(addEvent != null)
 				addEvent.onSuccessful();
 		});
+		if(!showingAddButton) {
+			btnAdd.setVisible(false);
+		}
 		footer.addComponents(countPane,btnAdd);
 		footer.setComponentAlignment(countPane, Alignment.BOTTOM_LEFT);
 		footer.setComponentAlignment(btnAdd, Alignment.BOTTOM_RIGHT);
@@ -418,4 +430,5 @@ public class CustomGrid extends VerticalLayout {
 	private int scrollPanelHeight;
 	private Label countLabel = new Label();
 	private Callback addEvent;
+	private boolean showingAddButton;
 }
