@@ -1,6 +1,11 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
-public class DeviceRow extends FlexTableRow {
+/**
+ * 
+ * @author Chen
+ *
+ */
+public class NotificationRow extends FlexTableRow {
 
 	/**
 	 * 
@@ -11,35 +16,35 @@ public class DeviceRow extends FlexTableRow {
 	 * 
 	 * @param rootView
 	 */
-	public DeviceRow(AdminMainView rootView) {
+	public NotificationRow(AdminMainView rootView) {
 		this.rootView = rootView;
 		initComponents();
 	}
 	
 	private void initComponents() {
-		this.addComponents(HighqualityShooting);
+		this.addComponents(messageManagement);
 	}
 
 	@Override
 	public String getSearchTags() {
-		return "选择高拍仪,"+getTitle();
+		return "管理消息,"+getTitle();
 	}
 
 	@Override
 	public int getOrderID() {
-		return 4;
+		return 5;
 	}
 	
 	@Override
 	public String getTitle() {
-		return "设备";
+		return "消息提醒";
 	}
 	
 	@Override
 	public String getImageName() {
-		return "device.png";
+		return "notification.png";
 	}
 	
-	private RowItemWithOptions HighqualityShooting = new RowItemWithOptions("高拍仪设备", new String[] {"无","无锡华通H6-1","维山VSA305FD"});
+	private RowItemWithTitle messageManagement = new RowItemWithTitle("管理消息");
 	private AdminMainView rootView;
 }

@@ -42,16 +42,6 @@ public class DataItemService {
 	
 	/**
 	 * 
-	 * @return
-	 */
-	public List<DataDictionary> findAll() {
-		String sql = "SELECT * FROM DATADICTIONARY ORDER BY ITEMTYPE,DICTIONARYUNIQUEID";
-		List<DataDictionary> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<DataDictionary>(DataDictionary.class));
-		return results;
-	}
-	
-	/**
-	 * 
 	 * 获取字典
 	 * 
 	 * @param itemType 1：号牌种类，2：地区代号，3：业务材料
@@ -123,8 +113,8 @@ public class DataItemService {
 			}
 			
 		}, keyHolder);
-		int dictuniqueid  = keyHolder.getKey().intValue(); 
-		return dictuniqueid;
+		int dduniqueid  = keyHolder.getKey().intValue(); 
+		return dduniqueid;
 	}
 	
 	/**

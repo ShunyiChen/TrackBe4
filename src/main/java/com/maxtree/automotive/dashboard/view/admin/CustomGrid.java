@@ -207,12 +207,13 @@ public class CustomGrid extends VerticalLayout {
 				
 				Label objLabel = new Label(obj.toString());
 				objLabel.setDescription(obj.toString());
+				objLabel.setWidth(col.getWidth()+"px");
 				objLabel.addStyleName("CustomGrid_objLabel");
 				VerticalLayout cell = new VerticalLayout();
 				cell.setSpacing(false);
 				cell.setMargin(false);
 				cell.setWidth(col.getWidth()+"px");
-				cell.setHeight("40px");
+				cell.setHeightUndefined();
 				cell.addComponent(objLabel);
 				cell.setComponentAlignment(objLabel, Alignment.MIDDLE_LEFT);
 				row.addComponent(cell);

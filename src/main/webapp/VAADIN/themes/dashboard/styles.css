@@ -15943,6 +15943,9 @@ div.v-layout.v-horizontal.v-widget {
 	font-size: 13px;
 	font-weight: normal !important;
 	color: #666666 !important;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: pre-wrap;
 }
 
 .dashboard .CustomGridRow {

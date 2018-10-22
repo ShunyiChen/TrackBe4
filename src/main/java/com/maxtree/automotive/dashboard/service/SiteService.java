@@ -149,6 +149,7 @@ public class SiteService {
 			}
 		}, keyHolder);
 		int siteUniqueId = keyHolder.getKey().intValue();
+		site.setSiteUniqueId(siteUniqueId);
 		
 		String sql = "INSERT INTO SITECAPACITY(SITEUNIQUEID,CAPACITY,USEDSPACE,UPDATETIMEMILLIS,UNIT,UNITNUMBER,MAXBATCH,MAXBUSINESS) VALUES(?,?,?,?,?,?,?,?)";
 		jdbcTemplate.update(sql, new Object[] {

@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
+import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.DoubleField;
@@ -429,8 +430,8 @@ public class EditSiteWindow extends Window {
 		return true;
 	}
 	
-	public static void open(Callback callback) {
-        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
+	public static void open(Callback2 callback) {
+//        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditSiteWindow w = new EditSiteWindow();
         w.sizePercentage.setValue(0);
         w.folderPercentage.setValue(0);
@@ -471,9 +472,9 @@ public class EditSiteWindow extends Window {
         		
         		w.site.setSiteCapacity(siteCapacity);
         		
-        		ui.siteService.insert(w.site);
+        		Site site = ui.siteService.insert(w.site);
     			w.close();
-    			callback.onSuccessful();
+    			callback.onSuccessful(site.getSiteUniqueId());
         	}
 		});
         UI.getCurrent().addWindow(w);

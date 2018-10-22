@@ -12,7 +12,7 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.data.Yaml;
-import com.maxtree.automotive.dashboard.domain.CommonProblem;
+import com.maxtree.automotive.dashboard.domain.CorrectingSuggestions;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.icons.VaadinIcons;
@@ -58,7 +58,7 @@ public class RouterWindow extends Window {
 		header.setWidthUndefined();
 		header.setHeightUndefined();
 		
-		List<CommonProblem> list = ui.commonProblemService.findByUserName(loggedInUser.getUserName());
+		List<CorrectingSuggestions> list = ui.suggestionService.findByUserName(loggedInUser.getUserName());
 		combobox.setItems(list);
 		combobox.setWidth("490px");
 		combobox.setTextInputAllowed(true);
@@ -194,7 +194,7 @@ public class RouterWindow extends Window {
 	public User loggedInUser;	//登录用户
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private static final long serialVersionUID = 1L;
-	private ComboBox<CommonProblem> combobox = new ComboBox<CommonProblem>();
+	private ComboBox<CorrectingSuggestions> combobox = new ComboBox<CorrectingSuggestions>();
 	private int rowCount = 1;
 	private TextArea content = new TextArea("审批建议:");
 	private Button btnCancel = new Button("取消");

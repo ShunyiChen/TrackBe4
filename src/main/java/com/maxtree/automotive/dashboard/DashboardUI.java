@@ -20,6 +20,7 @@ import com.maxtree.automotive.dashboard.service.CommunityService;
 import com.maxtree.automotive.dashboard.service.CompanyService;
 import com.maxtree.automotive.dashboard.service.DataItemService;
 import com.maxtree.automotive.dashboard.service.DocumentService;
+import com.maxtree.automotive.dashboard.service.EmbeddedServerService;
 import com.maxtree.automotive.dashboard.service.FrameNumberService;
 import com.maxtree.automotive.dashboard.service.ImagingService;
 import com.maxtree.automotive.dashboard.service.MessagingService;
@@ -31,7 +32,7 @@ import com.maxtree.automotive.dashboard.service.SettingsService;
 import com.maxtree.automotive.dashboard.service.SiteService;
 import com.maxtree.automotive.dashboard.service.TransactionService;
 import com.maxtree.automotive.dashboard.service.TransitionService;
-import com.maxtree.automotive.dashboard.service.CommonProblemService;
+import com.maxtree.automotive.dashboard.service.CorrectingSuggestionsService;
 import com.maxtree.automotive.dashboard.service.UserService;
 import com.maxtree.automotive.dashboard.view.LoginView;
 import com.maxtree.automotive.dashboard.view.MainView;
@@ -102,13 +103,15 @@ public final class DashboardUI extends UI {
 	@Autowired
 	public TransitionService transitionService;
 	@Autowired
-	public CommonProblemService commonProblemService;
+	public CorrectingSuggestionsService suggestionService;
 	@Autowired
 	public ImagingService imagingService;
 	@Autowired
 	public SettingsService settingsService;
 	@Autowired
 	public BusinessStateService businessStateService;
+	@Autowired
+	public EmbeddedServerService embeddedServerService;
 	
 	private StateHelper state = null;
 	/*

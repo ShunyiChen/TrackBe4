@@ -10,12 +10,13 @@ import com.maxtree.automotive.dashboard.PermissionCodes;
 import com.maxtree.automotive.dashboard.TB4Application;
 import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.domain.Community;
+import com.maxtree.automotive.dashboard.domain.Business;
+import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.DataException;
 import com.vaadin.contextmenu.ContextMenu;
-import com.vaadin.contextmenu.MenuItem;
 import com.vaadin.contextmenu.Menu.Command;
+import com.vaadin.contextmenu.MenuItem;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
@@ -26,10 +27,10 @@ import com.vaadin.ui.VerticalLayout;
 
 /**
  * 
- * @author chens
+ * @author Chen
  *
  */
-public class CommunityView extends ContentView {
+public class BusinessView extends ContentView {
 
 	/**
 	 * 
@@ -41,7 +42,7 @@ public class CommunityView extends ContentView {
 	 * @param parentTitle
 	 * @param rootView
 	 */
-	public CommunityView(String parentTitle, AdminMainView rootView) {
+	public BusinessView(String parentTitle, AdminMainView rootView) {
 		super(parentTitle, rootView);
 		this.setHeight((Page.getCurrent().getBrowserWindowHeight()-58)+"px");
 		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
@@ -50,34 +51,33 @@ public class CommunityView extends ContentView {
 		main.setSpacing(false);
 		main.setMargin(false);
 		
-		GridColumn[] columns = {new GridColumn("社区名",130), new GridColumn("描述",220), new GridColumn("组",70),new GridColumn("查询级别",80),new GridColumn("机构数",70),new GridColumn("", 20)}; 
+		GridColumn[] columns = {new GridColumn("业务名称"), new GridColumn("审档级别",100), new GridColumn("业务材料",270), new GridColumn("", 20)}; 
 		List<CustomGridRow> data = new ArrayList<>();
-		List<Community> list = ui.communityService.findAll();
-		for (Community c : list) {
-			Object[] rowData = generateOneRow(c);
+		List<Business> lstBusiness = ui.businessService.findAll();
+		for (Business business : lstBusiness) {
+			Object[] rowData = generateOneRow(business);
 			data.add(new CustomGridRow(rowData));
 		}
-		grid = new CustomGrid("社区列表",columns, data);
+		grid = new CustomGrid("业务列表",columns, data);
 		
 		Callback addEvent = new Callback() {
 
 			@Override
 			public void onSuccessful() {
-				if (loggedInUser.isPermitted(PermissionCodes.G1)) {
+				if (loggedInUser.isPermitted(PermissionCodes.N1)) {
 					Callback2 callback = new Callback2() {
 
 						@Override
 						public void onSuccessful(Object... objects) {
-							 
-							int communityUniqueId = (int) objects[0];
-							Community community = ui.communityService.findById(communityUniqueId);
-							Object[] rowData = generateOneRow(community);
+							int businessuniqueid = (int) objects[0];
+							Business business = ui.businessService.findById(businessuniqueid);
+							Object[] rowData = generateOneRow(business);
 							grid.insertRow(new CustomGridRow(rowData));
 						}
 					};
-					EditCommunityWindow.open(callback);
-					
-				} else {
+					EditBusinessTypesWindow.open(callback);
+				}
+				else {
 	        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
 	        	}
 			}
@@ -93,15 +93,15 @@ public class CommunityView extends ContentView {
 	
 	/**
 	 * 
-	 * @param community
+	 * @param business
 	 * @return
 	 */
-	private Object[] generateOneRow(Community community) {
+	private Object[] generateOneRow(Business business) {
 		Image img = new Image(null, new ThemeResource("img/adminmenu/menu.png"));
 		img.addStyleName("PeopleView_menuImage");
 		img.addClickListener(e->{
 			ContextMenu menu = new ContextMenu(img, true);
-			menu.addItem("分配机构", new Command() {
+			menu.addItem("设置业务材料", new Command() {
 				/**
 				 * 
 				 */
@@ -109,53 +109,25 @@ public class CommunityView extends ContentView {
 
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-					if (loggedInUser.isPermitted(PermissionCodes.G4)) {
+					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+					if (loginUser.isPermitted(PermissionCodes.N5)) {
 						Callback callback = new Callback() {
-
 							@Override
 							public void onSuccessful() {
-								Community c = ui.communityService.findById(community.getCommunityUniqueId());
-								Object[] rowData = generateOneRow(c);
-								grid.setValueAt(new CustomGridRow(rowData),community.getCommunityUniqueId());
+								Business b = ui.businessService.findById(business.getBusinessUniqueId());
+								Object[] rowData = generateOneRow(b);
+								grid.setValueAt(new CustomGridRow(rowData),business.getBusinessUniqueId());
 							}
 						};
-						AssigningCompaniesToCommunityWindow.open(community, callback);
+						AssigningDataitemToBusinessWindow.open(callback, business);
 					}
 					else {
 		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
 		        	}
 				}
 			});
-			menu.addSeparator();
 			
-			menu.addItem("分配站点", new Command() {
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void menuSelected(MenuItem selectedItem) {
-					if (loggedInUser.isPermitted(PermissionCodes.G6)) {
-						Callback callback = new Callback() {
-
-							@Override
-							public void onSuccessful() {
-								Community c = ui.communityService.findById(community.getCommunityUniqueId());
-								Object[] rowData = generateOneRow(c);
-								grid.setValueAt(new CustomGridRow(rowData),community.getCommunityUniqueId());
-							}
-						};
-						AssigningSitesToCommunityWindow.open(community, callback);
-					}
-					else {
-		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
-		        	}
-					
-				}
-			});
 			menu.addSeparator();
-			
 			menu.addItem("编辑", new Command() {
 				/**
 				 * 
@@ -164,62 +136,70 @@ public class CommunityView extends ContentView {
 
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-					
-					if (loggedInUser.isPermitted(PermissionCodes.G2)) {
+					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+					if (loginUser.isPermitted(PermissionCodes.N2)) {
 						Callback callback = new Callback() {
 
 							@Override
 							public void onSuccessful() {
-								Community c = ui.communityService.findById(community.getCommunityUniqueId());
-								Object[] rowData = generateOneRow(c);
-								grid.setValueAt(new CustomGridRow(rowData),community.getCommunityUniqueId());
+								Business b = ui.businessService.findById(business.getBusinessUniqueId());
+								Object[] rowData = generateOneRow(b);
+								grid.setValueAt(new CustomGridRow(rowData),business.getBusinessUniqueId());
 							}
 						};
-						EditCommunityWindow.edit(community, callback);
+						EditBusinessTypesWindow.edit(business, callback);
 					}
 					else {
 		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
 		        	}
+					
 				}
 			});
-			
-			if (community.getLevel() > 1) {
-				menu.addItem("从列表删除", new Command() {
-					/**
-					 * 
-					 */
-					private static final long serialVersionUID = 1L;
+			menu.addItem("从列表删除", new Command() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
 
-					@Override
-					public void menuSelected(MenuItem selectedItem) {
+				@Override
+				public void menuSelected(MenuItem selectedItem) {
+					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+					if (loginUser.isPermitted(PermissionCodes.N3)) {
 						
-						if (loggedInUser.isPermitted(PermissionCodes.G3)) {
-							
-							Callback event = new Callback() {
-
-								@Override
-								public void onSuccessful() {
-									try {
-										ui.communityService.delete(community.getCommunityUniqueId());
-									} catch (DataException e) {
-										e.printStackTrace();
-									}
-									grid.deleteRow(community.getCommunityUniqueId());
+						Callback event = new Callback() {
+							@Override
+							public void onSuccessful() {
+								try {
+									ui.businessService.delete(business.getBusinessUniqueId());
+								} catch (DataException e) {
+									Notifications.warning("无法删除正在引用的业务类型。");
 								}
-							};
-							MessageBox.showMessage("提示", "请确定是否删除该社区。", MessageBox.WARNING, event, "删除");
-							
-						} else {
-							Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
-						}
+								grid.deleteRow(business.getBusinessUniqueId());
+							}
+						};
+						MessageBox.showMessage("删除提示", "您确定要删除当前业务类型"+business.getName()+"?",MessageBox.WARNING, event, "删除");
 					}
-				});
-			}
+					else {
+		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
+		        	}
+					
+				}
+			});
 			
 			menu.open(e.getClientX(), e.getClientY());
 		});
 		
-		return new Object[] {community.getCommunityName(), community.getCommunityDescription(), community.getGroupId(), community.getLevel(),community.getCompanies().size(),img,community.getCommunityUniqueId()};
+		// 所需资料
+		StringBuilder materialStr = new StringBuilder("");
+		for (DataDictionary item : business.getItems()) {
+			materialStr.append(item.getItemName());
+			materialStr.append(",");
+		}
+		if (materialStr.length() > 0) {
+			materialStr.delete(materialStr.length() - 1, materialStr.length());
+		}
+		
+		return new Object[] {business.getName(),business.getCheckLevel(),materialStr.toString(),img,business.getBusinessUniqueId()};
 	}
 	
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();

@@ -108,16 +108,18 @@ public class FlexTable extends Panel{
 	private void init() {
 		PeopleRow people = new PeopleRow(view);
 		CommunityRow community = new CommunityRow(view);
-		FileTransferRow fileTransfer = new FileTransferRow();
-		DataDictionaryRow DD = new DataDictionaryRow();
-		DeviceRow device = new DeviceRow();
-		AboutSystemRow aboutSys = new AboutSystemRow();
+		FileTransferRow fileTransfer = new FileTransferRow(view);
+		DataDictionaryRow DD = new DataDictionaryRow(view);
+		DeviceRow device = new DeviceRow(view);
+		NotificationRow notification = new NotificationRow(view);
+		AboutSystemRow aboutSys = new AboutSystemRow(view);
 		
 		data.add(people);
 		data.add(community);
 		data.add(fileTransfer);
 		data.add(DD);
 		data.add(device);
+		data.add(notification);
 		data.add(aboutSys);
 	}
 	

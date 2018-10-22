@@ -12,12 +12,23 @@ public class FileTransferRow extends FlexTableRow {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public FileTransferRow() {
+	/**
+	 * 
+	 * @param rootView
+	 */
+	public FileTransferRow(AdminMainView rootView) {
+		this.rootView = rootView;
 		initComponents();
 	}
 	
 	private void initComponents() {
 		this.addComponents(manageSite,manageEmbeddedServer);
+		manageSite.addLayoutClickListener(e->{
+			rootView.forward(new SiteView("管理站点", rootView));
+		});
+		manageEmbeddedServer.addLayoutClickListener(e->{
+			rootView.forward(new EmbeddedServerView("管理内嵌服务器", rootView));
+		});
 	}
 
 	@Override
@@ -42,4 +53,5 @@ public class FileTransferRow extends FlexTableRow {
 	
 	private RowItemWithTitle manageSite = new RowItemWithTitle("管理站点");
 	private RowItemWithTitle manageEmbeddedServer = new RowItemWithTitle("管理内嵌服务器");
+	private AdminMainView rootView;
 }

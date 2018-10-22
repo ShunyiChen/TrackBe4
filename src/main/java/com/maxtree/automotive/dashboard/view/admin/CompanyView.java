@@ -50,7 +50,7 @@ public class CompanyView extends ContentView {
 		main.setSpacing(false);
 		main.setMargin(false);
 		
-		GridColumn[] columns = {new GridColumn("机构名",130), new GridColumn("地址",220), new GridColumn("是否跳过质检",120),new GridColumn("员工数",80),new GridColumn("", 20)}; 
+		GridColumn[] columns = {new GridColumn("机构名",130), new GridColumn("地址",220), new GridColumn("是否跳过质检",135),new GridColumn("员工数",85),new GridColumn("", 20)}; 
 		List<CustomGridRow> data = new ArrayList<>();
 		List<Company> list = ui.companyService.findAll();
 		for (Company c : list) {
@@ -187,8 +187,7 @@ public class CompanyView extends ContentView {
 
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-					if (loginUser.isPermitted(PermissionCodes.F2)) {
+					if (loggedInUser.isPermitted(PermissionCodes.F2)) {
 						Callback callback = new Callback() {
 
 							@Override

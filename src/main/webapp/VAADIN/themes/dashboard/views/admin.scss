@@ -570,6 +570,9 @@ box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
         font-size: 13px;
         font-weight: normal !important;
         color: #666666 !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space:pre-wrap;//文本不换行，这样超出一行的部分被截取，显示...
     }
     .CustomGridRow{
         border: #F0F0F0 solid 1px;

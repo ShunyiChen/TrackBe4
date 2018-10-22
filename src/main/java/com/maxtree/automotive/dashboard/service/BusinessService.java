@@ -1,5 +1,6 @@
 package com.maxtree.automotive.dashboard.service;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -10,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import com.maxtree.automotive.dashboard.domain.Business;
@@ -104,14 +108,23 @@ public class BusinessService {
 	 * @param business
 	 * @return
 	 */
-	public Business insert(Business business) {
+	public int insert(Business business) {
+		KeyHolder keyHolder = new GeneratedKeyHolder();
 		String sql = "INSERT INTO BUSINESS(NAME,CHECKLEVEL,CODE) VALUES(?,?,?)";
-		jdbcTemplate.update(sql, new Object[] {
-				business.getName(),
-				business.getCheckLevel(),
-				business.getCode() // 快捷代码
-		});
-		return business;
+		jdbcTemplate.update(new PreparedStatementCreator() {
+			@Override
+			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+				PreparedStatement ps = con.prepareStatement(
+						sql, new String[] {"businessuniqueid"});
+				ps.setString(1, business.getName());
+				ps.setString(2, business.getCheckLevel());
+				ps.setString(3, business.getCode());
+				return ps;
+			}
+			
+		}, keyHolder);
+		int businessuniqueid  = keyHolder.getKey().intValue(); 
+		return businessuniqueid;
 	}
 
 	/**

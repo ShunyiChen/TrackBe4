@@ -12,12 +12,17 @@ public class AboutSystemRow extends FlexTableRow {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public AboutSystemRow() {
+	/**
+	 * 
+	 * @param rootView
+	 */
+	public AboutSystemRow(AdminMainView rootView) {
+		this.rootView = rootView;
 		initComponents();
 	}
 	
 	private void initComponents() {
-		this.addComponents(aboutTB4Sys,help,developTool);
+		this.addComponents(aboutTB4Sys,help,log,developTool);
 	}
 
 	@Override
@@ -27,7 +32,7 @@ public class AboutSystemRow extends FlexTableRow {
 
 	@Override
 	public int getOrderID() {
-		return 5;
+		return 6;
 	}
 	
 	@Override
@@ -42,5 +47,7 @@ public class AboutSystemRow extends FlexTableRow {
 	
 	private RowItemWithTitle aboutTB4Sys = new RowItemWithTitle("关于TB4系统");
 	private RowItemWithTitle help = new RowItemWithTitle("帮助文档");
+	private RowItemWithTitle log = new RowItemWithTitle("系统日志");
 	private RowItemWithTitle developTool = new RowItemWithTitle("开发者工具");
+	private AdminMainView rootView;
 }

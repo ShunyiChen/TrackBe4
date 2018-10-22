@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
+import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Business;
@@ -94,7 +95,7 @@ public class EditBusinessTypesWindow extends Window {
 		});
 	}
 	
-	public static void open(Callback callback) {
+	public static void open(Callback2 callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditBusinessTypesWindow w = new EditBusinessTypesWindow();
         w.btnAdd.addClickListener(e -> {
@@ -104,14 +105,13 @@ public class EditBusinessTypesWindow extends Window {
         		return;
         	}
         	w.btnAdd.setCaption("添加");
-			DashboardUI ui = (DashboardUI) UI.getCurrent();
 			Business newInstance = new Business();
 			newInstance.setName(w.nameField.getValue());
 			newInstance.setCode(w.codeField.getValue());
 			newInstance.setCheckLevel(w.checkLevelBox.getValue());
-			ui.businessService.insert(newInstance);
+			int businessuniqueid = ui.businessService.insert(newInstance);
 			w.close();
-			callback.onSuccessful();
+			callback.onSuccessful(businessuniqueid);
 		});
         UI.getCurrent().addWindow(w);
         w.center();

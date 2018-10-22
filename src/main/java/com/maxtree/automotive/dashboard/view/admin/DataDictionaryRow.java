@@ -12,12 +12,29 @@ public class DataDictionaryRow extends FlexTableRow {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public DataDictionaryRow() {
+	/**
+	 * 
+	 * @param rootView
+	 */
+	public DataDictionaryRow(AdminMainView rootView) {
+		this.rootView = rootView;
 		initComponents();
 	}
 	
 	private void initComponents() {
 		this.addComponents(manageBusinessType,manageMaterialName,managePlatenumType,manageLocation);
+		manageBusinessType.addLayoutClickListener(e->{
+			rootView.forward(new BusinessView("管理业务类型", rootView));
+		});
+		manageMaterialName.addLayoutClickListener(e->{
+			rootView.forward(new MaterialView("管理材料名称", rootView));
+		});
+		managePlatenumType.addLayoutClickListener(e->{
+			rootView.forward(new NumberplateView("管理号牌种类", rootView));
+		});
+		manageLocation.addLayoutClickListener(e->{
+			rootView.forward(new LocationView("管理地点", rootView));
+		});
 	}
 
 	@Override
@@ -44,5 +61,5 @@ public class DataDictionaryRow extends FlexTableRow {
 	private RowItemWithTitle manageMaterialName = new RowItemWithTitle("管理材料名称");
 	private RowItemWithTitle managePlatenumType = new RowItemWithTitle("管理号牌种类");
 	private RowItemWithTitle manageLocation = new RowItemWithTitle("管理地点");
-	
+	private AdminMainView rootView;
 }

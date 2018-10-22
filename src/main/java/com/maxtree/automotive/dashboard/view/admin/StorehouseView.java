@@ -49,7 +49,7 @@ public class StorehouseView extends ContentView {
 		main.setSpacing(false);
 		main.setMargin(false);
 		
-		GridColumn[] columns = {new GridColumn("库房名",430),new GridColumn("", 20)}; 
+		GridColumn[] columns = {new GridColumn("库房名",570),new GridColumn("", 20)}; 
 		List<CustomGridRow> data = new ArrayList<>();
 		List<FrameNumber> results = ui.frameService.findAllStorehouse();
 		for (FrameNumber store : results) {

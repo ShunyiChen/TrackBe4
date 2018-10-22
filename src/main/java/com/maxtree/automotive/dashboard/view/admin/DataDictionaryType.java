@@ -1,39 +1,15 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class DataDictionaryType {
-	
-	/**
-	 * 
-	 * @param type
-	 * @param name
-	 */
-	public DataDictionaryType(int type, String name) {
-		this.type = type;
-		this.name = name;
-	}
-
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	@Override
-	public String toString() {
-		return name;
-	}
-	
-	private int type;
-	private String name;
-
+	// 号牌种类
+	public static final int NUMPLATE_TYPE = 1;
+	// 地点
+	public static final int LOCATION = 2;
+	// 材料
+	public static final int MATERIAL = 3;
 }
