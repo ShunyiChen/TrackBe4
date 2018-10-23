@@ -29,6 +29,7 @@ public class FileTransferRow extends FlexTableRow {
 		manageEmbeddedServer.addLayoutClickListener(e->{
 			rootView.forward(new EmbeddedServerView("管理内嵌服务器", rootView));
 		});
+//		EditEmbeddedServerWindow
 	}
 
 	@Override

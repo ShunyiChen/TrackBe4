@@ -50,16 +50,19 @@ public class EditFrameWindow extends Window {
 		
 		maxColField.setWidth("200px");
 		maxRowField.setWidth("200px");
+		maxFolderField.setWidth("200px");
 		frameCodeField.setWidth("200px");
+		
 		maxColField.setHeight("27px");
 		maxRowField.setHeight("27px");
 		frameCodeField.setHeight("27px");
+		maxFolderField.setHeight("27px");
 		
 		FormLayout form = new FormLayout();
 		form.setSpacing(false);
 		form.setMargin(false);
 		form.setSizeFull();
-		form.addComponents(maxColField,maxRowField,frameCodeField);
+		form.addComponents(maxColField,maxRowField,maxFolderField,frameCodeField);
 		frameCodeField.setReadOnly(true);
 		HorizontalLayout buttons = new HorizontalLayout();
 		buttons.setSpacing(false);
@@ -102,6 +105,11 @@ public class EditFrameWindow extends Window {
 		  .withValidator(new EmptyValidator("输入行数不能为空"))
 		  .withConverter(new StringToIntegerConverter("请输入一个数字"))
 		  .bind(FrameNumber::getMaxRow, FrameNumber::setMaxRow);
+		
+		binder.forField(maxFolderField)
+		  .withValidator(new EmptyValidator("输入最大文件夹数不能为空"))
+		  .withConverter(new StringToIntegerConverter("请输入一个数字"))
+		  .bind(FrameNumber::getMaxfolder, FrameNumber::setMaxfolder);
 	}
 	
 	/**
@@ -122,14 +130,19 @@ public class EditFrameWindow extends Window {
 			try {
 				int maxCol = Integer.parseInt(maxColField.getValue());
 				int maxRow = Integer.parseInt(maxRowField.getValue());
+				int maxFolder = Integer.parseInt(maxFolderField.getValue());
 				if (maxCol < 1 || maxCol > 20 || maxRow < 1 || maxRow > 20) {
 					Notifications.warning("请输入一个数字，范围应该在1-20。");
 					return false;
 				}
+				else if(maxFolder < 1 || maxFolder > 10000) {
+					Notifications.warning("请输入一个数字，范围应该在1-10000。");
+					return false;
+				}
 			} catch(NumberFormatException e) {
-				Notifications.warning("请输入一个数字，范围应该在1-20。");
+				Notifications.warning("请输入一个数字。");
 				return false;
-			} 
+			}
 		}
 		return true;
 	}
@@ -139,8 +152,7 @@ public class EditFrameWindow extends Window {
 	 * @param store
 	 * @param frameCode
 	 */
-	private void insertCells(FrameNumber store, int frameCode) {
-		int carCountPerCell = 300;
+	private void insertCells(FrameNumber store, int frameCode, int carCountPerCell) {
 		int cellCode = 0;//单元格顺序号
 		for (int i = 1; i <= frame.getMaxRow(); i++) {
 			
@@ -204,7 +216,7 @@ public class EditFrameWindow extends Window {
 				int frameId = ui.frameService.insert(w.frame);
 				w.frame.setFrameUniqueId(frameId);
 				
-				w.insertCells(store, frameCode);
+				w.insertCells(store, frameCode, w.frame.getMaxfolder());
 				
     			w.close();
     			callback.onSuccessful(w.frame);
@@ -244,7 +256,7 @@ public class EditFrameWindow extends Window {
         		ui.frameService.deleteFrameCells(w.frame.getStorehouseName(), w.frame.getFrameCode());
         		
         		//插入新的cells
-        		w.insertCells(store, frame.getFrameCode());
+        		w.insertCells(store, frame.getFrameCode(),w.frame.getMaxfolder());
         		
         		//更新frame文件夹记录，把vin更新到新纪录上。
         		ui.frameService.batchUpdateVIN(folerWithVINList);
@@ -259,6 +271,7 @@ public class EditFrameWindow extends Window {
 	
 	private DoubleField maxColField = new DoubleField("最大列数:");
 	private DoubleField maxRowField = new DoubleField("最大行数:");
+	private DoubleField maxFolderField = new DoubleField("单元格内最大文件夹数:");
 	private TextField frameCodeField = new TextField("顺序号:");
 	private Button btnAdd = new Button("添加");
 	private Button btnCancel = new Button("取消");

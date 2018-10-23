@@ -87,6 +87,14 @@ public class FrameNumber {
 	public void setCode(String code) {
 		this.code = code;
 	}
+	
+	public Integer getMaxfolder() {
+		return maxfolder;
+	}
+
+	public void setMaxfolder(Integer maxfolder) {
+		this.maxfolder = maxfolder;
+	}
 
 	@Override
 	public String toString() {
@@ -104,6 +112,7 @@ public class FrameNumber {
 	private Integer cellCode = 0;
 	private Integer col = 0;
 	private Integer row = 0;
-	private String vin;// 车辆识别代码
-	private String code;// 上架号，例如014-002-003-001(密集架号-列-行-文件夹序号）
+	private String vin;		// 车辆识别代码
+	private String code;	// 上架号，例如014-002-003-001(密集架号-列-行-文件夹序号）
+	private Integer maxfolder = 0;//单元格内最大文件夹数
 }

@@ -92,14 +92,6 @@ public class ManageFrameWindow extends Window {
  
 		
 		gridLayout.setSizeFull();
-//		clayout = new CssLayout() {
-//            @Override
-//            protected String getCss(final Component c) {
-//                return "";//"font-size: " + (12 + getComponentIndex(c)) + "px";
-//            }
-//      };
-//      clayout.addStyleName("csslayout-overflow");
-		
 		HorizontalLayout toolbar = new HorizontalLayout();
 		toolbar.setSpacing(false);
 		toolbar.setMargin(false);
@@ -130,12 +122,10 @@ public class ManageFrameWindow extends Window {
 		toolbar.setComponentAlignment(scope, Alignment.MIDDLE_LEFT);
 		toolbar.setComponentAlignment(scopeTxt, Alignment.MIDDLE_LEFT);
 		
-		
 		scrollPane.setSizeFull();
 	        
         VerticalSplitPanel vlayout = new VerticalSplitPanel();
         vlayout.setSizeFull();
-//	        vlayout.setSplitPosition(150, Unit.PIXELS);
         vlayout.setFirstComponent(gridLayout);
         vlayout.setSecondComponent(scrollPane);
         Hr hr = new Hr();
@@ -215,10 +205,10 @@ public class ManageFrameWindow extends Window {
 				return;
 			}
 				
-			Callback event = new Callback() {
+			Callback2 event = new Callback2() {
 
 				@Override
-				public void onSuccessful() {
+				public void onSuccessful(Object... objects) {
 					FrameNumber template = currentShelf.getShelfComponent().getFrame();
 					
 					int newFrameCode = ui.frameService.findNextCodeOfFrame(template.getStorehouseName());
@@ -288,7 +278,20 @@ public class ManageFrameWindow extends Window {
 						
 				}
 			};
-			MessageBox.showMessage("提示", "请确定是否复制。", MessageBox.WARNING, event, "确定");
+			
+			Callback2 callback = new Callback2() {
+
+				@Override
+				public void onSuccessful(Object... objects) {
+					if(objects.length > 0) {
+						int count = Integer.parseInt(objects[0].toString());
+						for(int i = 0; i < count; i++) {
+							event.onSuccessful();
+						}
+					}
+				}
+			};
+			NumberofCopiesWindow.open(callback);
         });
 	
 	}
@@ -300,7 +303,6 @@ public class ManageFrameWindow extends Window {
 	private void loadAllFrames(QueryScope queryScope) {
 		// clean
 		gridLayout.removeAllComponents();
-		// 
 		List<FrameNumber> lstFrame = ui.frameService.findAllFrame(storehouse.getStorehouseName(), 20, queryScope.getFrom()-1);
 		for(int i = 0; i < lstFrame.size(); i++) {
 			FrameNumber frame = lstFrame.get(i);
@@ -373,8 +375,6 @@ public class ManageFrameWindow extends Window {
 	private Button btnDelete = new Button();
 	private Button btnCopy = new Button();
 	private ComboBox<QueryScope> scope = new ComboBox<QueryScope>();
-//	private CheckBox selectAll = new CheckBox("全选/全不选");
-//	private CssLayout clayout;
 	private GridLayout gridLayout = new GridLayout(10, 2);
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private static DecimalFormat formatter = new DecimalFormat("000");

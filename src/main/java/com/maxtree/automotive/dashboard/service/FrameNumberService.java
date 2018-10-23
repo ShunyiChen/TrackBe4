@@ -163,7 +163,7 @@ public class FrameNumberService {
 	 */
 	public int insert(FrameNumber frameNumber) {
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-		String INSERT_TRANS_SQL = "INSERT INTO FRAMENUMBER(STOREHOUSENAME,FRAMECODE,MAXCOLUMN,MAXROW,CELLCODE,COL,ROW,VIN,CODE) VALUES(?,?,?,?,?,?,?,?,?)";
+		String INSERT_TRANS_SQL = "INSERT INTO FRAMENUMBER(STOREHOUSENAME,FRAMECODE,MAXCOLUMN,MAXROW,CELLCODE,COL,ROW,VIN,CODE,MAXFOLDER) VALUES(?,?,?,?,?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -179,6 +179,7 @@ public class FrameNumberService {
 				ps.setInt(7, frameNumber.getRow());
 				ps.setString(8, frameNumber.getVin());
 				ps.setString(9, frameNumber.getCode());
+				ps.setInt(10, frameNumber.getMaxfolder());
 				return ps;
 			}
 		}, keyHolder);

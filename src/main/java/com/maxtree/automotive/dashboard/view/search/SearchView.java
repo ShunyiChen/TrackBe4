@@ -143,13 +143,14 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         });
     }
 	
+	/**
+	 * 
+	 */
 	private void startPolling() {
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
 		ui.setPollInterval(sc.getInterval());
 		ui.addPollListener(new UIEvents.PollListener() {
-			/**
-			 * 
-			 */
+			/** */
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -159,6 +160,10 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 		});
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
     private Component buildSparklines() {
         CssLayout sparks = new CssLayout();
         sparks.addStyleName("sparks");
@@ -167,6 +172,10 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         return sparks;
     }
 
+    /**
+     * 
+     * @return
+     */
     private Component buildHeader() {
         HorizontalLayout header = new HorizontalLayout();
         header.addStyleName("viewheader");
@@ -200,12 +209,11 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         keywordField.setWidth("400px");
         keywordField.setHeight("30px");
         keywordField.setPlaceholder("请输入车牌号\\车架号\\业务流水号");
-        ShortcutListener enter = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER,
-				null) {
+        ShortcutListener enter = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER, null) {
 			/**
-					 * 
-					 */
-					private static final long serialVersionUID = 1L;
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void handleAction(Object sender, Object target) {
@@ -228,19 +236,15 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 		plateTypeField.setEmptySelectionAllowed(false);
 		plateTypeField.setWidth("140px");
 		plateTypeField.setHeight("30px");
-		
-		
 		// 号牌号码
 		Label plateNumberLabel = new Label("号牌号码:");
 		Label plateNumberTitle = new Label(""+addr.getLicenseplate());
 		plateNumberField.setWidth("140px");
 		plateNumberField.setHeight("30px");
-		
 		// 车辆识别代号
 		Label vinLabel = new Label("或者 车辆识别代号:");
 		vinField.setWidth("220px");
 		vinField.setHeight("30px");
-        
         List<String> data = Arrays.asList("基本查询","模糊查询");
         radio.setItems(data);
         radio.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
@@ -278,10 +282,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
                 
         	}
         });
-        
         radio.setSelectedItem(data.get(0));
-        
-        
         header.addComponents(titleLabel,searchbar);
         buildNotificationsButton();
         HorizontalLayout tools = new HorizontalLayout(notificationsButton);

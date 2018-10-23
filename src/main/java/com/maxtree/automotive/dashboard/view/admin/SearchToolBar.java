@@ -2,10 +2,10 @@ package com.maxtree.automotive.dashboard.view.admin;
 
 import org.springframework.util.StringUtils;
 
+import com.maxtree.automotive.dashboard.component.NotificationsButton;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.AbsoluteLayout;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
@@ -13,7 +13,7 @@ import com.vaadin.ui.TextField;
 
 /**
  * 
- * @author Chen
+ * @author chens
  *
  */
 public class SearchToolBar extends AbsoluteLayout {
@@ -53,28 +53,28 @@ public class SearchToolBar extends AbsoluteLayout {
         keywordField.addStyleName("v-textfield");
         keywordField.addValueChangeListener(e ->{
             String keyword = e.getValue();
-           
             view.table.doFilter(keyword);
             close.setVisible(!StringUtils.isEmpty(keyword));
         });
-        
-        
         close.addStyleName("SearchToolBar_close");
         close.addClickListener(e->{
         	close.setVisible(false);
         	keywordField.setValue("");
-        	
         });
         close.setVisible(false);
         
         // Search image
         Image search = new Image();
         search.setIcon(VaadinIcons.SEARCH);
+        //Menu
+        HorizontalLayout menuLayout = new HorizontalLayout();
+        menuLayout.setSizeUndefined();
+        menuLayout.addComponents(menu, settings);
+        //Notification
+        HorizontalLayout notificationLayout = new HorizontalLayout();
+        notificationLayout.setSizeUndefined();
+        notificationLayout.addComponents(notificationButton);
         
-        // menu
-        HorizontalLayout menuHLayout = new HorizontalLayout();
-        menuHLayout.setSizeUndefined();
-        menuHLayout.addComponents(menu, settings);
         // text field
         HorizontalLayout outerField = new HorizontalLayout();
         outerField.setMargin(false);
@@ -82,10 +82,12 @@ public class SearchToolBar extends AbsoluteLayout {
         outerField.addComponents(search, keywordField, close);
         outerField.addStyleName("SearchToolBar_outerField");
         
-        this.addComponent(menuHLayout,"left: 25px; top: 15px;");
+        this.addComponent(menuLayout,"left: 25px; top: 15px;");
         this.addComponent(outerField,"left: 50%;");
+        this.addComponent(notificationLayout,"right:15px; top: 10px;");
 	}
 	
+	private NotificationsButton notificationButton = new NotificationsButton();
 	private TextField keywordField = new TextField();
 	private Image close = new Image(null, new ThemeResource("img/adminmenu/close-circle.png"));
 	private AdminMainView view;
