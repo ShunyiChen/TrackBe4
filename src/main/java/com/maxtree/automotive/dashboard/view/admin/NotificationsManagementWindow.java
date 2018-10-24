@@ -1,7 +1,6 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.maxtree.automotive.dashboard.Callback;
@@ -52,6 +51,27 @@ public class NotificationsManagementWindow extends Window {
 		
 		progressBar.setIndeterminate(true);
 		Button markAllAsRead = new Button("全部标记已读");
+		markAllAsRead.addClickListener(e->{
+			ui.messagingService.allMarkAsRead(loggedInUser.getUserUniqueId());
+			if(unread.isSelected()) {
+				ui.access(new Runnable() {
+
+					@Override
+					public void run() {
+						loadUnreaded();
+					}
+				});
+			}
+			else {
+				ui.access(new Runnable() {
+
+					@Override
+					public void run() {
+						loadAll();
+					}
+				});
+			}
+		});
 		TabSheet tabSheet = new TabSheet();
 		tabSheet.setWidth(100.0f, Unit.PERCENTAGE);
         tabSheet.setHeight(100.0f, Unit.PERCENTAGE);
@@ -63,8 +83,7 @@ public class NotificationsManagementWindow extends Window {
 		navigationBar.setMargin(false);
 		navigationBar.addStyleName("NotificationsManagementWindow_navigationBar");
 		
-		NavigationButton unread = new NavigationButton("未读", "2342");
-		NavigationButton all = new NavigationButton("全部消息", "2");
+		
 		buttonGroup.add(unread);
 		buttonGroup.add(all);
 		
@@ -87,79 +106,105 @@ public class NotificationsManagementWindow extends Window {
 		main.addComponent(markAllAsRead,"top:10px; right:10px;");
 		this.setContent(main);
 		
+		// 初始化
+//		unread.select();
+//		loadUnreaded();
+		ui.access(new Runnable() {
+
+			@Override
+			public void run() {
+				loadUnreaded();
+			}
+		});
 		unread.addLayoutClickListener(e->{
 			if(unread.isSelected()) {
 				return;
 			}
-			showProgressBar();
-			
-			Thread t = new Thread() {
-				@Override
-				public void run() {
-					ui.access(new Runnable() {
-						@Override
-						public void run() {
-							for (NavigationButton b : buttonGroup) {
-								if (b == unread) {
-									b.select();
-								} else {
-									b.deselect();
-								}
-							}
-							Callback callback = new Callback() {
-
-								@Override
-								public void onSuccessful() {
-									hideProgressBar();
-									ui.push();
-								}
-							};
-							loadNotifications(true, callback);
-						}
-					});
-				}
-			};
-			t.start();
+			loadUnreaded();
 			
 		});
 		all.addLayoutClickListener(e->{
 			if(all.isSelected()) {
-				System.out.println("return");
 				return;
 			}
-			
-			showProgressBar();
-			
-			Thread t = new Thread() {
-				@Override
-				public void run() {
-					ui.access(new Runnable() {
-						@Override
-						public void run() {
-							for (NavigationButton b : buttonGroup) {
-								if (b == all) {
-									b.select();
-								} else {
-									b.deselect();
-								}
-							}
-							Callback callback = new Callback() {
-
-								@Override
-								public void onSuccessful() {
-									hideProgressBar();
-									ui.push();
-								}
-							};
-							loadNotifications(false, callback);
-							
-						}
-					});
-				}
-			};
-			t.start();
+			loadAll();
 		});
 	}
+	
+	/**
+	 * 
+	 */
+	private void loadUnreaded() {
+		
+		showProgressBar();
+		
+		Thread t = new Thread() {
+			@Override
+			public void run() {
+				ui.access(new Runnable() {
+					@Override
+					public void run() {
+						for (NavigationButton b : buttonGroup) {
+							if (b == unread) {
+								b.select();
+							} else {
+								b.deselect();
+							}
+						}
+						Callback callback = new Callback() {
+
+							@Override
+							public void onSuccessful() {
+								hideProgressBar();
+								ui.push();
+							}
+						};
+						loadNotifications(true, callback);
+					}
+				});
+			}
+		};
+		t.start();
+	}
+	
+	/**
+	 * 
+	 */
+	private void loadAll() {
+		
+		
+		showProgressBar();
+		
+		Thread t = new Thread() {
+			@Override
+			public void run() {
+				ui.access(new Runnable() {
+					@Override
+					public void run() {
+						for (NavigationButton b : buttonGroup) {
+							if (b == all) {
+								b.select();
+							} else {
+								b.deselect();
+							}
+						}
+						Callback callback = new Callback() {
+
+							@Override
+							public void onSuccessful() {
+								hideProgressBar();
+								ui.push();
+							}
+						};
+						loadNotifications(false, callback);
+						
+					}
+				});
+			}
+		};
+		t.start();
+	}
+	
 	
 	/**
 	 * 
@@ -181,24 +226,17 @@ public class NotificationsManagementWindow extends Window {
 	 * @param callback
 	 */
 	private void loadNotifications(boolean onlyShowingUnread, Callback callback) {
-		List<Notification> lst = new ArrayList<Notification>();
-		for(int i = 0; i < 5; i++) {
-//			Notification n1 = new Notification();
-//			n1.setChecked(false);
-//			n1.setContent("都是错的商店出售的山地车山地车山地车是"+i);
-//			n1.setRelativeTime(new Date());
-//			n1.setUserName(loggedInUser.getUserName());
-//			lst.add(n1);
-//			Notification n2 = new Notification();
-//			n2.setChecked(false);
-//			n2.setContent("22323rfddfdfdsvfdv反对法vDVD发v地方v地方v地方反感不反感边防官兵v反对法v地方v的v发的发的发模拟"+i);
-//			n2.setRelativeTime(new Date());
-//			n2.setUserName(loggedInUser.getUserName());
-//			lst.add(n2);
+		if (onlyShowingUnread) {
+			List<Notification> notificationList = ui.messagingService.findAllNotifications(loggedInUser.getUserUniqueId(), "", true);
+			table.setItems(notificationList);
+			unread.setUnreadCount(notificationList.size());
+			callback.onSuccessful();
+		} else {
+			List<Notification> notificationList = ui.messagingService.findAllNotifications(loggedInUser.getUserUniqueId(), "", false);
+			table.setItems(notificationList);
+			all.setUnreadCount(notificationList.size());
+			callback.onSuccessful();
 		}
-		
-		table.setItems(lst);
-		callback.onSuccessful();
 	}
 	
 	/**
@@ -213,6 +251,9 @@ public class NotificationsManagementWindow extends Window {
 		w.center();
 	}
 	
+	
+	private NavigationButton unread = new NavigationButton("未读",0);
+	private NavigationButton all = new NavigationButton("全部消息",0);
 	private User loggedInUser;
 	private ProgressBar progressBar = new ProgressBar(0.0f);
 	private List<NavigationButton> buttonGroup = new ArrayList<>();
@@ -224,8 +265,14 @@ public class NotificationsManagementWindow extends Window {
 	private Button btnOk = new Button("确定");
 	private Button btnCancel = new Button("取消");
 	private static DashboardUI ui = (DashboardUI) UI.getCurrent();
+	
 }
 
+/**
+ * 
+ * @author Chen
+ *
+ */
 class NavigationButton extends HorizontalLayout{
 	
 	/**
@@ -238,12 +285,11 @@ class NavigationButton extends HorizontalLayout{
 	 * @param text
 	 * @param unreadCount
 	 */
-	public NavigationButton(String text, String unreadCount) {
+	public NavigationButton(String text, int count) {
 		setWidth("100%");
 		setHeight("36px");
 		addStyleName("NotificationsManagementWindow_buttons");
 		Label txt = new Label(text);
-		Label unread = new Label(unreadCount);
 		
 		txt.addStyleName("NotificationsManagementWindow_txt");
 		unread.addStyleName("NotificationsManagementWindow_unread");
@@ -251,6 +297,8 @@ class NavigationButton extends HorizontalLayout{
 		addComponents(txt,unread);
 		setComponentAlignment(txt, Alignment.MIDDLE_LEFT);
 		setComponentAlignment(unread, Alignment.MIDDLE_RIGHT);
+		
+		setUnreadCount(count);
 	}
 	
 	/**
@@ -279,5 +327,15 @@ class NavigationButton extends HorizontalLayout{
 		return selected;
 	}
 	
+	/**
+	 * 
+	 * @param count
+	 */
+	public void setUnreadCount(int count) {
+		unread.setValue(""+count);
+	}
+
+
+	private Label unread = new Label("0");
 	private boolean selected;
 }

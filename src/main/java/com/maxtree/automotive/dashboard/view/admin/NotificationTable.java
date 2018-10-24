@@ -3,11 +3,16 @@ package com.maxtree.automotive.dashboard.view.admin;
 import java.util.Date;
 import java.util.List;
 
+import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
+import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
+import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.Notification;
+import com.maxtree.automotive.dashboard.domain.User;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
@@ -42,7 +47,7 @@ public class NotificationTable extends VerticalLayout {
 		this.setSpacing(false);
 		this.setMargin(false);
 		this.addStyleName("NotificationTable");
-		
+		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		HorizontalLayout header = new HorizontalLayout();
 		header.setWidth("100%");
 		header.setHeight("37px");
@@ -110,10 +115,16 @@ public class NotificationTable extends VerticalLayout {
 		Label contentLabel = new Label(notification.getSubject());
 		Label relativeTimeLabel = new Label(new TimeAgo().toDuration(duration));
 		Image checkedImg = new Image(null, new ThemeResource("img/adminmenu/check.png"));
-		
+//		checkedImg.addClickListener(e->{
+//			ui.messagingService.markAsRead(notification.getMessageUniqueId(), loggedInUser.getUserUniqueId());
+//		});
 		checkedImg.addStyleName("NotificationTable_checkedImg");
 		contentLabel.addStyleName("NotificationTable_contentLabel");
 		relativeTimeLabel.addStyleName("NotificationTable_contentLabel");
+		checkedImg.setVisible(false);
+		if(notification.isMarkedAsRead()) {
+			checkedImg.setVisible(true);
+		}
 		
 		VerticalLayout cell = new VerticalLayout();
 		cell.setSpacing(false);
@@ -137,10 +148,25 @@ public class NotificationTable extends VerticalLayout {
 		row.setExpandRatio(relativeTimeLabel, 0.2f);
 		row.setExpandRatio(checkedImg, 0.05f);
 		row.addStyleName("NotificationTable_row");
+		row.addLayoutClickListener(e->{
+			if(e.getMouseEventDetails().isDoubleClick()) {
+				Callback onOK = new Callback() {
+
+					@Override
+					public void onSuccessful() {
+					}
+				};
+				
+				Message msg = ui.messagingService.findById(notification.getMessageUniqueId());
+				
+				MessageBox.showMessage("消息内容", msg.getContent(), onOK);
+			}
+		});
 		return row;
 	}
 	
 	private String title;
 	private VerticalLayout body = new VerticalLayout();
 	private static DashboardUI ui = (DashboardUI) UI.getCurrent();
+	private User loggedInUser;
 }

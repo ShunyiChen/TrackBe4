@@ -38,21 +38,15 @@ public class EditFrameWindow extends Window {
 	}
 	
 	private void initComponents() {
-		this.setCaption("添加新密集架");
-		this.setWidth("310px");
-		this.setHeightUndefined();
+		this.setWidth("320px");
+		this.setHeight("252px");
 		this.setClosable(true);
-		this.setResizable(true);
+//		this.setResizable(true);
 		this.setModal(true);
 		VerticalLayout main = new VerticalLayout();
 		main.setWidth("100%");
 		main.setHeightUndefined();
-		
-		maxColField.setWidth("200px");
-		maxRowField.setWidth("200px");
-		maxFolderField.setWidth("200px");
-		frameCodeField.setWidth("200px");
-		
+		maxColField.focus();
 		maxColField.setHeight("27px");
 		maxRowField.setHeight("27px");
 		frameCodeField.setHeight("27px");
@@ -64,18 +58,20 @@ public class EditFrameWindow extends Window {
 		form.setSizeFull();
 		form.addComponents(maxColField,maxRowField,maxFolderField,frameCodeField);
 		frameCodeField.setReadOnly(true);
+		
+		
 		HorizontalLayout buttons = new HorizontalLayout();
 		buttons.setSpacing(false);
 		buttons.setMargin(false);
 		buttons.setWidthUndefined();
 		buttons.setHeight("27px");
-		buttons.addComponents(btnAdd, Box.createHorizontalBox(5), btnCancel);
-		buttons.setComponentAlignment(btnAdd, Alignment.MIDDLE_LEFT);
+		buttons.addComponents(btnCancel,Box.createHorizontalBox(5),btnAdd);
 		buttons.setComponentAlignment(btnCancel, Alignment.MIDDLE_LEFT);
+		buttons.setComponentAlignment(btnAdd, Alignment.MIDDLE_LEFT);
 		
 		main.addComponents(form, buttons);
 		main.setComponentAlignment(form, Alignment.MIDDLE_CENTER);
-		main.setComponentAlignment(buttons, Alignment.BOTTOM_CENTER);
+		main.setComponentAlignment(buttons, Alignment.BOTTOM_RIGHT);
 		setContent(main);
 		
         btnCancel.addClickListener(e -> {
@@ -151,8 +147,9 @@ public class EditFrameWindow extends Window {
 	 * 
 	 * @param store
 	 * @param frameCode
+	 * @param maxFolder
 	 */
-	private void insertCells(FrameNumber store, int frameCode, int carCountPerCell) {
+	private void insertCells(FrameNumber store, int frameCode, int maxFolder) {
 		int cellCode = 0;//单元格顺序号
 		for (int i = 1; i <= frame.getMaxRow(); i++) {
 			
@@ -171,7 +168,7 @@ public class EditFrameWindow extends Window {
 				cell.setFrameUniqueId(cellId);
 				
 				List<FrameNumber> batch = new ArrayList<FrameNumber>();
-				for(int z=1; z<=carCountPerCell; z++) {
+				for(int z=1; z<=maxFolder; z++) {
 					StringBuilder codes = new StringBuilder();
 					codes.append(formatter.format(frame.getFrameCode()));
 					codes.append("-");
@@ -205,9 +202,11 @@ public class EditFrameWindow extends Window {
 	 * @param callback
 	 */
 	public static void open(FrameNumber store, Callback2 callback) {
-        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
+//        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditFrameWindow w = new EditFrameWindow();
+        w.setCaption("添加新密集架");
         int frameCode = ui.frameService.findNextCodeOfFrame(store.getStorehouseName());
+        w.maxFolderField.setValue("100");
         w.frameCodeField.setValue(frameCode+"");
         w.btnAdd.addClickListener(e -> {
 			if (w.checkEmptyValues()) {
@@ -232,13 +231,14 @@ public class EditFrameWindow extends Window {
 	 * @param callback
 	 */
 	public static void edit(FrameNumber store, FrameNumber frame, Callback2 callback) {
-        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
+//        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditFrameWindow w = new EditFrameWindow();
+        w.setCaption("更改密集架-"+frame.getFrameCode());
         w.frame.setStorehouseName(frame.getStorehouseName());
         w.frame.setFrameCode(frame.getFrameCode());
         w.frame.setMaxColumn(frame.getMaxColumn());
         w.frame.setMaxRow(frame.getMaxRow());
-        
+        w.maxFolderField.setValue(frame.getMaxfolder()+"");
         w.maxColField.setValue(frame.getMaxColumn()+"");
         w.maxRowField.setValue(frame.getMaxRow()+"");
         w.frameCodeField.setValue(frame.getFrameCode()+"");
@@ -271,7 +271,7 @@ public class EditFrameWindow extends Window {
 	
 	private DoubleField maxColField = new DoubleField("最大列数:");
 	private DoubleField maxRowField = new DoubleField("最大行数:");
-	private DoubleField maxFolderField = new DoubleField("单元格内最大文件夹数:");
+	private DoubleField maxFolderField = new DoubleField("最大文件夹数:");
 	private TextField frameCodeField = new TextField("顺序号:");
 	private Button btnAdd = new Button("添加");
 	private Button btnCancel = new Button("取消");

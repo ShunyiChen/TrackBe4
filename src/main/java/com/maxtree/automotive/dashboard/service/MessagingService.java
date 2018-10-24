@@ -50,7 +50,7 @@ public class MessagingService {
 				ps.setString(2, message.getContent());
 				ps.setString(3, message.getMatedata());
 				ps.setInt(4, message.getCreatorUniqueId());
-				long millis = System.currentTimeMillis();
+				long millis = message.getDateCreated().getTime();
 				ps.setTimestamp(5, new Timestamp(millis));
 				ps.setInt(6, message.getSentTimes());
 				ps.setInt(7, message.getReminderFrequencyId());
@@ -156,6 +156,15 @@ public class MessagingService {
 	
 	/**
 	 * 
+	 * @param userUniqueId
+	 */
+	public void allMarkAsRead(int userUniqueId) {
+		String sql = "UPDATE NOTIFICATIONS SET MARKEDASREAD=? WHERE USERUNIQUEID=?";
+		jdbcTemplate.update(sql, new Object[] {true, userUniqueId});
+	}
+	
+	/**
+	 * 
 	 * @param messageUniqueId
 	 * @param recipientUniqueId
 	 */
@@ -215,35 +224,34 @@ public class MessagingService {
 		complexSQL.append("SELECT A.*,");
 		complexSQL.append("CASE COUNT(B.MARKEDASREAD) ");
 		complexSQL.append("WHEN 0 THEN (0)");
-		complexSQL.append(" ELSE (ROUND(CAST((SELECT COUNT(*) FROM NOTIFICATIONS WHERE MARKEDASREAD= 1 AND MESSAGEUNIQUEID=A.MESSAGEUNIQUEID) AS NUMERIC) /CAST(COUNT(B.MARKEDASREAD) AS NUMERIC ) * 100,2))");
+		complexSQL.append(" ELSE (ROUND(CAST((SELECT COUNT(*) FROM NOTIFICATIONS WHERE MARKEDASREAD=? AND MESSAGEUNIQUEID=A.MESSAGEUNIQUEID) AS NUMERIC) /CAST(COUNT(B.MARKEDASREAD) AS NUMERIC ) * 100,2))");
 		complexSQL.append(" END AS READRATE ");
 		complexSQL.append(" FROM MESSAGES AS A LEFT JOIN NOTIFICATIONS AS B ON A.MESSAGEUNIQUEID=B.MESSAGEUNIQUEID");
 		complexSQL.append(" GROUP BY A.MESSAGEUNIQUEID HAVING A.CREATORUNIQUEID=? AND A.DELETED=0 ORDER BY MESSAGEUNIQUEID DESC");
-		List<Message> results = jdbcTemplate.query(complexSQL.toString(), new Object[] {userUniqueId}, new BeanPropertyRowMapper<Message>(Message.class));
+		List<Message> results = jdbcTemplate.query(complexSQL.toString(), new Object[] {true,userUniqueId}, new BeanPropertyRowMapper<Message>(Message.class));
 		
 		return results;
 	}
 	
 	/**
-	 * 查找未读的通知
 	 * 
 	 * @param userUniqueId
+	 * @param viewName
+	 * @param onlyUnread true:查找未读的通知
 	 * @return
 	 */
-	public List<Notification> findAllNotifications(int userUniqueId, String viewName) {
-//		String sql = "SELECT * FROM NOTIFICATIONS WHERE MARKEDASREAD=? AND USERUNIQUEID=? ORDER BY NOTIFICATIONUNIQUEID DESC";
-//		List<Notification> results = jdbcTemplate.query(sql, new Object[] {false, userUniqueId}, new BeanPropertyRowMapper<Notification>(Notification.class));
+	public List<Notification> findAllNotifications(int userUniqueId, String viewName, boolean onlyUnread) {
+		String condition = "";
+		if(onlyUnread) {
+			condition = "A.MARKEDASREAD=FALSE AND ";
+		}
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT A.*,B.SUBJECT AS SUBJECT,C.USERNAME AS USERNAME,D.PICTURE");
 		sql.append(" FROM NOTIFICATIONS AS A ");
 		sql.append("  LEFT JOIN MESSAGES AS B ON A.MESSAGEUNIQUEID=B.MESSAGEUNIQUEID ");
 		sql.append("  LEFT JOIN USERS AS C ON C.USERUNIQUEID=B.CREATORUNIQUEID ");
-		sql.append("  LEFT JOIN USERPROFILES AS D ON D.USERUNIQUEID=C.USERUNIQUEID WHERE A.USERUNIQUEID=? AND A.VIEWNAME IN('',?)ORDER BY B.MESSAGEUNIQUEID DESC ");
-//		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql.toString(), new Object[] {user.getUserUniqueId(), viewName});
+		sql.append("  LEFT JOIN USERPROFILES AS D ON D.USERUNIQUEID=C.USERUNIQUEID WHERE "+condition+" A.USERUNIQUEID=? AND A.VIEWNAME IN('',?)ORDER BY B.MESSAGEUNIQUEID DESC ");
 		List<Notification> results = jdbcTemplate.query(sql.toString(), new Object[] {userUniqueId,viewName}, new BeanPropertyRowMapper<Notification>(Notification.class));
-		for(Notification n:results) {
-			System.out.println(n.toString());
-		}
 		return results;
 	}
 	
@@ -268,6 +276,10 @@ public class MessagingService {
 	public void markAsDeleted(int messageUniqueId) {
 		String sql = "UPDATE MESSAGES SET DELETED=? WHERE MESSAGEUNIQUEID=?";
 		jdbcTemplate.update(sql, new Object[] {1, messageUniqueId});
+		
+		Message msg = findById(messageUniqueId);
+		sql = "DELETE FROM REMINDERFREQUENCY WHERE FREQUENCYUNIQUEID=?";
+		jdbcTemplate.update(sql, new Object[] {msg.getReminderFrequencyId()});
 	}
 	
 	/**

@@ -1,16 +1,17 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
-import com.vaadin.event.LayoutEvents.LayoutClickEvent;
-import com.vaadin.event.LayoutEvents.LayoutClickListener;
+import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.domain.SystemSettings;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.UI;
 
 /**
  * 
  * @author Chen
  *
  */
-public class RowItemWithOptions extends FlexTableRowItem implements LayoutClickListener {
+public class RowItemWithOptions extends FlexTableRowItem {
 
 	/**
 	 * 
@@ -31,17 +32,19 @@ public class RowItemWithOptions extends FlexTableRowItem implements LayoutClickL
 		selector.setItems(options);
 		selector.setSelectedItem(options[0]);
 		selector.addStyleName("RowItemWithOptions_selector");
+		selector.addValueChangeListener(e->{
+			SystemSettings device = new SystemSettings();
+			device.setItemName("高拍仪");
+			device.setItemSettings(e.getValue());
+			ui.settingsService.update(device);
+		});
 		this.removeAllComponents();
 		this.addComponents(name, selector);
 		this.setComponentAlignment(name, Alignment.MIDDLE_LEFT);
 		this.setComponentAlignment(selector, Alignment.MIDDLE_RIGHT);
 	}
 
-	@Override
-	public void layoutClick(LayoutClickEvent event) {
-		
-	}
-
+	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private ComboBox<String> selector = new ComboBox<>();
 	private String[] options;
 }

@@ -132,7 +132,7 @@ public class CacheManager {
 	 * @return
 	 */
 	private List<Notification> createNotification(Integer userUniqueId) {
-		List<Notification> listSendDetails = ui.messagingService.findAllNotifications(userUniqueId, "");
+		List<Notification> listSendDetails = ui.messagingService.findAllNotifications(userUniqueId, "", false);
 		return listSendDetails;
 	}
 }

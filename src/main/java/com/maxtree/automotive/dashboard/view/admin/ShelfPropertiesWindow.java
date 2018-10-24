@@ -54,16 +54,24 @@ public class ShelfPropertiesWindow extends Window {
 	 * @param storename
 	 */
 	private void populate(String storename) {
-		List<FrameNumber> allShelf = ui.frameService.findAllFrame(storename);
-		name.setValue(storename);
-		shelfCount.setValue(allShelf.size()+"");
-		int cellAllCount = ui.frameService.findCellTotalCount(storename);
-		cellCount.setValue(cellAllCount+"");
-		recordPerCellCount.setValue("300");
-		int folderCount = ui.frameService.findFolderTotalCount(storename, false);
-		recordCount.setValue(folderCount+"");
-		int usedFolderCount = ui.frameService.findFolderTotalCount(storename, true);
-		usedCount.setValue(usedFolderCount+"");
+		ui.access(new Runnable() {
+
+			@Override
+			public void run() {
+				List<FrameNumber> allShelf = ui.frameService.findAllFrame(storename);
+				name.setValue(storename);
+				shelfCount.setValue(allShelf.size()+"");
+				int cellAllCount = ui.frameService.findCellTotalCount(storename);
+				cellCount.setValue(cellAllCount+"");
+				recordPerCellCount.setValue("300");
+				int folderCount = ui.frameService.findFolderTotalCount(storename, false);
+				recordCount.setValue(folderCount+"");
+				int usedFolderCount = ui.frameService.findFolderTotalCount(storename, true);
+				usedCount.setValue(usedFolderCount+"");
+			}
+			
+		});
+		
 	} 
 	
 	public static void open(FrameNumber store) {

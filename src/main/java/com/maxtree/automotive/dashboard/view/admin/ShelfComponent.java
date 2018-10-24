@@ -1,76 +1,76 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
-import java.util.List;
-
-import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.FrameNumber;
+import com.vaadin.server.Resource;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.VerticalLayout;
 
 /**
- * 密集架结构UI
+ * 密集架缩略图形式
  * 
  * @author Chen
  *
  */
 public class ShelfComponent extends VerticalLayout {
-	
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	public ShelfComponent(FrameNumber frame) {
-		this.frame = frame;
-		initComponents();
+	/**
+	 * 
+	 * @param frameNumber
+	 */
+	public ShelfComponent(FrameNumber frameNumber) {
+		this.frameNumber = frameNumber;
+		this.setSizeUndefined();
+		this.setMargin(false);
+		this.setSpacing(false);
+		Resource icon = new ThemeResource("img/adminmenu/bookshelf_46.08px_1164538_easyicon.net.png");
+		image = new Image("密集架:"+frameNumber.getFrameCode()+"("+frameNumber.getMaxColumn()+"列 x "+frameNumber.getMaxRow()+"行)", icon);// x "+frameNumber.getMaxfolder()+"个文件夹
+		image.addStyleName("ShelfComponent");
+		image.setDescription(frameNumber.getMaxColumn()+"列 x "+frameNumber.getMaxRow()+"行 x"+ frameNumber.getMaxfolder()+"个文件夹");
+		this.addComponent(image);
+		this.setComponentAlignment(image, Alignment.TOP_CENTER);
 	}
 	
-	private void initComponents() {
-		addStyleName("denseframecomponent-border");
-		this.setSizeUndefined();
-		Label title = new Label(frame.getFrameCode()+"");
-		HorizontalLayout hlayout = new HorizontalLayout();
-		hlayout.setSpacing(false);
-		hlayout.setMargin(false);
-		hlayout.setWidthUndefined();
-		hlayout.setHeight("40px");
-		hlayout.addComponents(checkBox, title);
-		hlayout.setComponentAlignment(checkBox, Alignment.MIDDLE_LEFT);
-		hlayout.setComponentAlignment(title, Alignment.MIDDLE_LEFT);
-		
-		GridLayout grid = new GridLayout();
-		grid.setRows(frame.getMaxRow());
-		grid.setColumns(frame.getMaxColumn());
-		
-		
-		List<FrameNumber> cells = ui.frameService.findAllCell(frame.getStorehouseName(), frame.getFrameCode());
-		for (FrameNumber cell : cells) {
-			CellComponent child = new CellComponent(cell);
-			grid.addComponent(child);
-//			grid.setRowExpandRatio(i, 0.0f);
-//			grid.setColumnExpandRatio(j, 0.0f);
-		}
-		this.addComponents(hlayout, grid);
+	public FrameNumber getFrameNumber() {
+		return frameNumber;
+	}
+
+	public void setFrameNumber(FrameNumber frameNumber) {
+		this.frameNumber = frameNumber;
+	}
+
+	/**
+	 * 修改密集架图标
+	 * 
+	 * @param fn
+	 */
+	public void updateTitle(FrameNumber fn) {
+		image.setCaption("密集架:"+fn.getFrameCode()+"("+fn.getMaxColumn()+"列 x "+fn.getMaxRow()+"行)");///x "+fn.getMaxfolder()+"个文件夹
+		image.setDescription(fn.getMaxColumn()+"列 x "+fn.getMaxRow()+"行 x"+ fn.getMaxfolder()+"个文件夹");
+	}
+	
+	public void select() {
+		selected = true;
+		image.addStyleName("ShelfComponent-selected");
+	}
+	
+	public void deselect() {
+		selected = false;
+		image.removeStyleName("ShelfComponent-selected");
+		image.addStyleName("Shelf");
 	}
 	
 	public boolean isSelected() {
-		return checkBox.getValue();
+		return selected;
 	}
+
+	private Image image;
+	private boolean selected;
+	private FrameNumber frameNumber;
 	
-	public void sertSelected(boolean bool) {
-		checkBox.setValue(bool);
-	}
-	
-	public FrameNumber getFrame() {
-		return frame;
-	}
-	
-	private FrameNumber frame;
-	private DashboardUI ui = (DashboardUI) UI.getCurrent();
-	private CheckBox checkBox = new CheckBox("密集架:", false);
 }

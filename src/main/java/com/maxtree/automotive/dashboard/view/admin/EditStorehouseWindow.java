@@ -50,20 +50,20 @@ public class EditStorehouseWindow extends Window {
 	 * 
 	 */
 	private void initComponents() {
-		this.setWidth("513px");
-		this.setHeightUndefined();
+		this.setWidth("296px");
+		this.setHeight("138px");
 		this.setModal(true);
-		this.setResizable(false);
 		this.setCaption("添加库房");
-		this.addStyleName("edit-window");
-		VerticalLayout mainLayout = new VerticalLayout(); 
-		mainLayout.setSpacing(true);
-		mainLayout.setMargin(false);
+		
 		FormLayout form = new FormLayout();
 		form.setSizeFull();
+		form.setMargin(false);
+		form.setSpacing(false);
 		nameField = new TextField("库房名:");
+		nameField.setHeight("27px");
 		nameField.setIcon(VaadinIcons.EDIT);
-		nameField.focus(); //设置焦点
+		nameField.focus();
+		
 		form.addComponents(nameField);
 		
 		Button btnCancel = new Button("取消");
@@ -76,15 +76,14 @@ public class EditStorehouseWindow extends Window {
 		subButtonPane.addComponents(btnCancel,Box.createHorizontalBox(3),btnAdd);
 		subButtonPane.setComponentAlignment(btnCancel, Alignment.MIDDLE_LEFT);
 		subButtonPane.setComponentAlignment(btnAdd, Alignment.MIDDLE_LEFT);
-		mainLayout.addComponents(form, subButtonPane);
-		mainLayout.setComponentAlignment(subButtonPane, Alignment.BOTTOM_RIGHT);
-		
-		this.setContent(mainLayout);
+		main.setSizeFull();
+		main.addComponents(form, subButtonPane);
+		main.setComponentAlignment(subButtonPane, Alignment.BOTTOM_RIGHT);
+		this.setContent(main);
 		
 		btnCancel.addClickListener(e -> {
 			close();
 		});
-		setComponentSize(350, 27);
 		
 		// Bind nameField to the Person.name property
 		// by specifying its getter and setter
@@ -98,25 +97,6 @@ public class EditStorehouseWindow extends Window {
 		// of nameField, p.setName is automatically called.
 		binder.setBean(storehouse);
 	}
-	
-	/**
-	 * 
-	 * @param w
-	 * @param h
-	 */
-	private void setComponentSize(int w, int h) {
-		nameField.setWidth(w+"px");
-		nameField.setHeight(h+"px");
-	}
-	
-//	/**
-//	 * 
-//	 */
-//	private void bindFields(){
-//		// Bind nameField to the Person.name property
-//		// by specifying its getter and setter
-//		binder.bind(nameField, FrameNumber::getStorehouseName, FrameNumber::setStorehouseName);
-//	}
 	
 	/**
 	 * 
@@ -163,7 +143,7 @@ public class EditStorehouseWindow extends Window {
 	public static void open(Callback2 callback) {
 //        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditStorehouseWindow w = new EditStorehouseWindow();
-        w.btnAdd.setCaption("添加库房");
+        w.btnAdd.setCaption("添加");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
     			int frameUniqueId = ui.frameService.insert(w.storehouse);
@@ -181,7 +161,7 @@ public class EditStorehouseWindow extends Window {
 	 * @param callback
 	 */
 	public static void edit(FrameNumber store, Callback callback) {
-        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
+//        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditStorehouseWindow w = new EditStorehouseWindow();
         w.nameField.setValue(store.getStorehouseName());
         w.btnAdd.setCaption("保存");
@@ -201,6 +181,7 @@ public class EditStorehouseWindow extends Window {
         w.center();
     }
 	
+	private VerticalLayout main = new VerticalLayout(); 
 	private TextField nameField;
 	private Button btnAdd;
 	private Binder<FrameNumber> binder = new Binder<>();

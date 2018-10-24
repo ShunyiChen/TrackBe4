@@ -103,6 +103,7 @@ public class Notification {
 	private String viewName;// 视图名，区分相同接收者不同的视图
 	private Date sendTime;// 发送时间
 	private boolean markedAsRead;// 是否已读 ,true-是， false-否
+	
 	private String subject;// 消息标题（非数据库字段）
 	private String sender;// 发送姓名 （非数据库字段）
 	private String senderPicture;//发送者照片路径（非数据库字段）

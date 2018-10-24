@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import org.vaadin.addons.autocomplete.AutocompleteExtension;
 
 import com.maxtree.automotive.dashboard.Callback;
+import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.component.Box;
@@ -283,7 +284,7 @@ public class EditBroadCastWindow extends Window {
 		return true;
 	}
 	
-	public static void open(Callback callback) {
+	public static void open(Callback2 callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditBroadCastWindow w = new EditBroadCastWindow();
         w.btnAdd.setCaption("发送");
@@ -304,7 +305,7 @@ public class EditBroadCastWindow extends Window {
         		new TB4MessagingSystem().sendMessageTo(newMessage.getMessageUniqueId(), w.nameSets, viewName);
         		
     			w.close();
-    			callback.onSuccessful();
+    			callback.onSuccessful(newMessage);
         	}
 		});
         UI.getCurrent().addWindow(w);

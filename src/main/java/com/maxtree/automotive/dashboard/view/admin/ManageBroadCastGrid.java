@@ -57,7 +57,7 @@ public class ManageBroadCastGrid extends VerticalLayout {
 						refreshTable();
 					}
 				};
-				EditBroadCastWindow.open(callback);
+//				EditBroadCastWindow.open(callback);
 			} else {
         		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
         	}

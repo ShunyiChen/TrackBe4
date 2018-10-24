@@ -1,6 +1,7 @@
 package com.maxtree.trackbe4.messagingsystem;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ public class TB4MessagingSystem {
 		newMessage.setMatedata(matedata);
 		newMessage.setSentTimes(1);
 		newMessage.setReminderFrequencyId(0);
+		newMessage.setDateCreated(new Date());
 		int messageUniqueId = ui.messagingService.insertMessage(newMessage);
 		newMessage.setMessageUniqueId(messageUniqueId);
 		return newMessage;
@@ -188,6 +190,7 @@ public class TB4MessagingSystem {
 		sd.setUserUniqueId(recipient.getUserUniqueId());
 		sd.setMarkedAsRead(false);
 		sd.setViewName(viewName);
+		sd.setSendTime(new Date());
 		return sd;
 	}
 	

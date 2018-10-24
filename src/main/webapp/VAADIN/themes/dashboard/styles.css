@@ -14865,16 +14865,6 @@ div.v-layout.v-horizontal.v-widget {
 	cursor: pointer;
 }
 
-.dashboard .Thumbnail-selected {
-	border-radius: 5px;
-	border-style: solid;
-	border-color: cadetblue;
-	border-width: 2px;
-	padding: 1px;
-	box-shadow: 0 0 8px rgba(0, 91, 155, 0.8);
-	cursor: pointer;
-}
-
 .dashboard .drop-area {
 	cursor: pointer;
 	background-color: transparent;
@@ -15669,17 +15659,6 @@ div.v-layout.v-horizontal.v-widget {
 	cursor: pointer;
 }
 
-.dashboard .denseframecomponent-border {
-	cursor: pointer;
-	background-color: transparent;
-	border-radius: 0px;
-	border-color: #A4A4A2;
-	border: 1px dashed #A4A4A2;
-	border-spacing: 2px;
-	padding: 3px;
-	margin: 3px;
-}
-
 .dashboard .mycombobox {
 	outline: none;
 	webkit-box-shadow: none;
@@ -16090,4 +16069,40 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .NotificationTable_left {
 	cursor: pointer;
 	padding-top: 8px;
+}
+
+.dashboard .ShelfComponent {
+	cursor: pointer;
+	padding: 5px;
+}
+
+.dashboard .ShelfComponent:hover {
+	border-radius: 5px;
+	border-style: solid;
+	border-color: #666666;
+	border-width: 2px;
+	padding: 1px;
+	box-shadow: 0 0 8px rgba(0, 191, 255, 0.8);
+	cursor: pointer;
+}
+
+.dashboard .ShelfComponent-selected {
+	border-radius: 5px;
+	border-style: solid;
+	border-color: deepskyblue;
+	border-width: 2px;
+	padding: 1px;
+	box-shadow: 0 0 8px rgba(0, 91, 155, 0.8);
+	cursor: pointer;
+}
+
+.dashboard .ShelfGridComponent {
+	cursor: pointer;
+	background-color: transparent;
+	border-radius: 0px;
+	border-color: #A4A4A2;
+	border: 1px dashed #A4A4A2;
+	border-spacing: 2px;
+	padding: 3px;
+	margin: 3px;
 }

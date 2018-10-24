@@ -5,7 +5,7 @@ package com.maxtree.automotive.dashboard.view.admin;
  * @author Chen
  *
  */
-public class NotificationRow extends FlexTableRow {
+public class MessgeRow extends FlexTableRow {
 
 	/**
 	 * 
@@ -16,13 +16,16 @@ public class NotificationRow extends FlexTableRow {
 	 * 
 	 * @param rootView
 	 */
-	public NotificationRow(AdminMainView rootView) {
+	public MessgeRow(AdminMainView rootView) {
 		this.rootView = rootView;
 		initComponents();
 	}
 	
 	private void initComponents() {
 		this.addComponents(messageManagement);
+		messageManagement.addLayoutClickListener(e->{
+			rootView.forward(new MessageView("管理消息", rootView));
+		});
 	}
 
 	@Override

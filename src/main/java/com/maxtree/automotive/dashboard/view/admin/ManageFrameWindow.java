@@ -2,6 +2,7 @@ package com.maxtree.automotive.dashboard.view.admin;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.maxtree.automotive.dashboard.Callback;
@@ -17,7 +18,9 @@ import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -59,31 +62,12 @@ public class ManageFrameWindow extends Window {
 		VerticalLayout main = new VerticalLayout();
 		main.setSizeFull();
 		
-		List<FrameNumber> allShelf = ui.frameService.findAllFrame(storehouse.getStorehouseName());
-		int count = allShelf.size() / 20;
-		if(count == 0) {
-			count = 1;
-		} else if(allShelf.size() == 20) {
-			count = 1;
-		} else {
-			count++;
-		}
-		
-		List<QueryScope> items = new ArrayList<QueryScope>();
-		QueryScope first = null;
-		for(int i = 0; i < count; i++) {
-			QueryScope scope = new QueryScope((i*20+1),((i+1)*20));
-			if(i == 0) {
-				first = scope;
-			}
-			items.add(scope);
-		}
-		scope.setItems(items);
+		updateScopeOptions(true);
+		scope.setHeight("28px");
 		scope.setEmptySelectionAllowed(false);
 		scope.setTextInputAllowed(false);
 		scope.setWidth("150px");
 		scope.setDescription("选择查询范围");
-		scope.setSelectedItem(first);
 		scope.addValueChangeListener(e->{
 			QueryScope sc = e.getValue();
 			loadAllFrames(sc);
@@ -114,13 +98,18 @@ public class ManageFrameWindow extends Window {
 		btnCopy.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		
 		
-		toolbar.addComponents(btnAdd,Box.createHorizontalBox(8), btnEdit, Box.createHorizontalBox(8), btnDelete, Box.createHorizontalBox(8), btnCopy, Box.createHorizontalBox(18), scopeTxt,scope);//, Box.createHorizontalBox(5), selectAll);
+		toolbar.addComponents(btnAdd,Box.createHorizontalBox(8), btnEdit, Box.createHorizontalBox(8), btnDelete, Box.createHorizontalBox(8), btnCopy, Box.createHorizontalBox(18), scopeTxt,scope,Box.createHorizontalBox(18),checkbox);
 		toolbar.setComponentAlignment(btnAdd, Alignment.MIDDLE_LEFT);
 		toolbar.setComponentAlignment(btnEdit, Alignment.MIDDLE_LEFT);
 		toolbar.setComponentAlignment(btnDelete, Alignment.MIDDLE_LEFT);
 		toolbar.setComponentAlignment(btnCopy, Alignment.MIDDLE_LEFT);
 		toolbar.setComponentAlignment(scope, Alignment.MIDDLE_LEFT);
 		toolbar.setComponentAlignment(scopeTxt, Alignment.MIDDLE_LEFT);
+		toolbar.setComponentAlignment(checkbox, Alignment.MIDDLE_LEFT);
+		
+		checkbox.addValueChangeListener(e->{
+			selectAll(e.getValue());
+		});
 		
 		scrollPane.setSizeFull();
 	        
@@ -142,25 +131,19 @@ public class ManageFrameWindow extends Window {
 				@Override
 				public void onSuccessful(Object... objects) {
 					FrameNumber frame = (FrameNumber) objects[0];
+					ShelfGridComponent gridComponent = new ShelfGridComponent(frame);
 					ShelfComponent component = new ShelfComponent(frame);
+					addListener(component, gridComponent);
+					addShelfComponent(component);
 					
-					Callback2 viewCallback = new Callback2() {
-
-						@Override
-						public void onSuccessful(Object... objects) {
-							currentShelf = (Shelf) objects[0];
-							scrollPane.setContent(currentShelf.getShelfComponent());
-						}
-					};
-					currentShelf = new Shelf(component, viewCallback);
-					addShelf(currentShelf);
+					updateScopeOptions(false);
 				}
 			};
 			EditFrameWindow.open(storehouse, callback);
         });
 		
 		btnEdit.addClickListener(e -> {
-			if (currentShelf == null) {
+			if (template == null) {
 				Notifications.warning("请选择一个密集架。");
 				return;
 			}
@@ -168,55 +151,72 @@ public class ManageFrameWindow extends Window {
 
 				@Override
 				public void onSuccessful(Object... objects) {
-					FrameNumber frame = (FrameNumber) objects[0];
-					ShelfComponent component = new ShelfComponent(frame);
-					currentShelf.setShelfComponent(component);
-					currentShelf.changeIconTitle(frame);
-					
-					currentShelf.view();
+					FrameNumber updatedFrame = (FrameNumber) objects[0];
+					ShelfGridComponent gridComponent = new ShelfGridComponent(updatedFrame);
+					template.updateTitle(updatedFrame);
+					template.setFrameNumber(updatedFrame);
+					scrollPane.setContent(gridComponent);
 				}
 			};
 			
-			EditFrameWindow.edit(storehouse, currentShelf.getShelfComponent().getFrame(), callback);
+			EditFrameWindow.edit(storehouse, template.getFrameNumber(), callback);
         });
         
 		btnDelete.addClickListener(e -> {
-			if(currentShelf == null) {
-				Notifications.warning("请选择一个密集架");
+			if (template == null) {
+				Notifications.warning("请选择一个密集架。");
 				return;
 			}
+			// 收集要删除的密集架
+			List<ShelfComponent> removeable = collectAllSelectedShelfComponents();
 			
 			Callback okEvent = new Callback() {
 				@Override
 				public void onSuccessful() {
-					ShelfComponent dcomp = currentShelf.getShelfComponent();
-					ui.frameService.deleteFrame(dcomp.getFrame().getStorehouseName(), dcomp.getFrame().getFrameCode());
+					
+					Callback2 delete = new Callback2() {
+						@Override
+						public void onSuccessful(Object... objects) {
+							FrameNumber f = (FrameNumber) objects[0];
+							ui.frameService.deleteFrame(f.getStorehouseName(), f.getFrameCode());
+						}
+					};
+					
+					// 删除
+					removeAllSelectedShelfComponents(removeable,delete);
+					
+					scrollPane.setContent(new Label());
+					//更新查询范围选项
+					updateScopeOptions(false);
+					//重新加载密集架
 					loadAllFrames(scope.getValue());
+					
+					template = null;
 				}
 			};
 			
-			MessageBox.showMessage("提示", "请确定是否彻底删除密集架。", MessageBox.INFO, okEvent, "删除");
+			MessageBox.showMessage("提示", "请确定是否删除这 "+removeable.size()+" 个密集架？", MessageBox.INFO, okEvent, "确定");
 
         });
 		
 		btnCopy.addClickListener(e -> {
-			if (currentShelf == null) {
-				Notifications.warning("请选择一个密集架作为要复制的模板。");
+			if (template == null) {
+				Notifications.warning("请选择一个密集架作为模板。");
 				return;
 			}
 				
-			Callback2 event = new Callback2() {
+			Callback2 create = new Callback2() {
 
 				@Override
 				public void onSuccessful(Object... objects) {
-					FrameNumber template = currentShelf.getShelfComponent().getFrame();
 					
-					int newFrameCode = ui.frameService.findNextCodeOfFrame(template.getStorehouseName());
+					int newFrameCode = ui.frameService.findNextCodeOfFrame(template.getFrameNumber().getStorehouseName());
 					FrameNumber newFrame = new FrameNumber();
-					newFrame.setStorehouseName(template.getStorehouseName());
+					newFrame.setStorehouseName(template.getFrameNumber().getStorehouseName());
 					newFrame.setFrameCode(newFrameCode);
-					newFrame.setMaxColumn(template.getMaxColumn());
-					newFrame.setMaxRow(template.getMaxRow());
+					newFrame.setMaxColumn(template.getFrameNumber().getMaxColumn());
+					newFrame.setMaxRow(template.getFrameNumber().getMaxRow());
+					newFrame.setMaxfolder(template.getFrameNumber().getMaxfolder());
 					int frameId = ui.frameService.insert(newFrame);
 					newFrame.setFrameUniqueId(frameId);
 					
@@ -238,7 +238,7 @@ public class ManageFrameWindow extends Window {
 							cell.setFrameUniqueId(cellId);
 							
 							List<FrameNumber> batch = new ArrayList<FrameNumber>();
-							for(int z=1; z<=100; z++) {
+							for(int z=1; z<=newFrame.getMaxfolder(); z++) {
 								StringBuilder codes = new StringBuilder();
 								codes.append(formatter.format(newFrame.getFrameCode()));
 								codes.append("-");
@@ -265,33 +265,28 @@ public class ManageFrameWindow extends Window {
 						}
 					}
 					
+					ShelfGridComponent gridComponent = new ShelfGridComponent(newFrame);
 					ShelfComponent component = new ShelfComponent(newFrame);
-					Callback2 viewCallback = new Callback2() {
-						@Override
-						public void onSuccessful(Object... objects) {
-							currentShelf = (Shelf) objects[0];
-							scrollPane.setContent(currentShelf.getShelfComponent());
-						}
-						
-					};
-					addShelf(new Shelf(component, viewCallback));
-						
+					addListener(component, gridComponent);
+					
+					addShelfComponent(component);
 				}
 			};
 			
-			Callback2 callback = new Callback2() {
+			Callback2 batch = new Callback2() {
 
 				@Override
 				public void onSuccessful(Object... objects) {
 					if(objects.length > 0) {
 						int count = Integer.parseInt(objects[0].toString());
 						for(int i = 0; i < count; i++) {
-							event.onSuccessful();
+							create.onSuccessful();
 						}
+						updateScopeOptions(false);
 					}
 				}
 			};
-			NumberofCopiesWindow.open(callback);
+			NumberofCopiesWindow.open(batch);
         });
 	
 	}
@@ -301,59 +296,133 @@ public class ManageFrameWindow extends Window {
 	 * @param queryScope
 	 */
 	private void loadAllFrames(QueryScope queryScope) {
-		// clean
-		gridLayout.removeAllComponents();
-		List<FrameNumber> lstFrame = ui.frameService.findAllFrame(storehouse.getStorehouseName(), 20, queryScope.getFrom()-1);
-		for(int i = 0; i < lstFrame.size(); i++) {
-			FrameNumber frame = lstFrame.get(i);
-			ShelfComponent component = new ShelfComponent(frame);
-			Callback2 callback = new Callback2() {
-
-				@Override
-				public void onSuccessful(Object... objects) {
-					currentShelf = (Shelf) objects[0];
-					scrollPane.setContent(currentShelf.getShelfComponent());
-				}
-			};
-			Shelf shelf = new Shelf(component, callback);
-			addShelf(shelf);
-			if(i == 0) {
-				currentShelf = shelf;
-				shelf.view();
+		if(queryScope != null) {
+			template = null;
+			// clean
+			gridLayout.removeAllComponents();
+			List<FrameNumber> lstFrame = ui.frameService.findAllFrame(storehouse.getStorehouseName(), 20, queryScope.getFrom()-1);
+			for(int i = 0; i < lstFrame.size(); i++) {
+				FrameNumber frame = lstFrame.get(i);
+				ShelfGridComponent gridComponent = new ShelfGridComponent(frame);
+				ShelfComponent component = new ShelfComponent(frame);
+				addShelfComponent(component);
+				addListener(component, gridComponent);
 			}
 		}
-		
-		int count = gridLayout.getComponentCount();
-		if(count == 0) {
-			currentShelf = null;
-		}
 	}
-	
-//	/**
-//	 * 
-//	 * @param removeableList
-//	 */
-//	private void removeComponent(List<Component> removeableList) {
-//		if (removeableList.size() > 0) {
-//			
-//			Component comp = removeableList.get(0);
-//			
-//			gridLayout.removeComponent(comp);
-//			
-//			removeableList.remove(0);
-//			
-//			removeComponent(removeableList);
-//		}
-//	}
 	
 	/**
 	 * 
 	 * @param component
+	 * @param gridComponent
 	 */
-	private void addShelf(Shelf shelf) {
+	private void addListener(ShelfComponent component, ShelfGridComponent gridComponent) {
+		component.addLayoutClickListener(e->{
+			if(component.isSelected()) {
+				component.deselect();
+				scrollPane.setContent(new Label());
+				template = null;
+			}
+			else {
+				component.select();
+				scrollPane.setContent(gridComponent);
+				template = component;
+			}
+		});
+	}
+	
+	/**
+	 * 
+	 * @param shelf
+	 */
+	private void addShelfComponent(ShelfComponent shelf) {
 		int count = gridLayout.getComponentCount();
-		if(count < 20) {
-			gridLayout.addComponents(shelf.getIcon());
+		if(count < rowsPerPage) {
+			gridLayout.addComponent(shelf);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param selectAll
+	 */
+	private void selectAll(boolean selectAll) {
+		Iterator<Component> iter = gridLayout.iterator();
+		while(iter.hasNext()) {
+			ShelfComponent shelf = (ShelfComponent) iter.next();
+			if(selectAll) {
+				shelf.select();
+			}
+			else {
+				shelf.deselect();
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @param delete
+	 */
+	private List<ShelfComponent> collectAllSelectedShelfComponents() {
+		List<ShelfComponent> removeableList = new ArrayList<>();
+		Iterator<Component> iter = gridLayout.iterator();
+		while(iter.hasNext()) {
+			ShelfComponent shelf = (ShelfComponent) iter.next();
+			if(shelf.isSelected()) {
+				removeableList.add(shelf);
+			}
+		}
+		
+		return removeableList;
+	}
+	
+	/**
+	 * 
+	 * @param removeableList
+	 * @param delete
+	 */
+	private void removeAllSelectedShelfComponents(List<ShelfComponent> removeableList, Callback2 delete) {
+		if (removeableList.size() > 0) {
+			
+			ShelfComponent comp = removeableList.get(0);
+			
+			gridLayout.removeComponent(comp);
+			
+			delete.onSuccessful(comp.getFrameNumber());
+			
+			removeableList.remove(0);
+			
+			removeAllSelectedShelfComponents(removeableList, delete);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param selectFirstOption
+	 */
+	private void updateScopeOptions(boolean selectFirstOption) {
+		List<FrameNumber> allShelf = ui.frameService.findAllFrame(storehouse.getStorehouseName());
+		int count = allShelf.size() / 20;
+		if(count == 0) {
+			count = 1;
+		} else if(allShelf.size() == 20) {
+			count = 1;
+		} else {
+			count++;
+		}
+		
+		List<QueryScope> items = new ArrayList<QueryScope>();
+		QueryScope first = null;
+		for(int i = 0; i < count; i++) {
+			QueryScope scope = new QueryScope((i*20+1),((i+1)*20));
+			if(i == 0) {
+				first = scope;
+			}
+			items.add(scope);
+		}
+		scope.setItems(items);
+		if(selectFirstOption) {
+			scope.setSelectedItem(first);
 		}
 	}
 	
@@ -374,12 +443,14 @@ public class ManageFrameWindow extends Window {
 	private Button btnEdit = new Button();
 	private Button btnDelete = new Button();
 	private Button btnCopy = new Button();
+	private CheckBox checkbox = new CheckBox("全选");
 	private ComboBox<QueryScope> scope = new ComboBox<QueryScope>();
 	private GridLayout gridLayout = new GridLayout(10, 2);
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private static DecimalFormat formatter = new DecimalFormat("000");
 	private Panel scrollPane = new Panel();
-	private Shelf currentShelf;
+	private ShelfComponent template;
+	private int rowsPerPage = 20;
 }
 
 class QueryScope {

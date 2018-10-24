@@ -53,7 +53,7 @@ public class SiteView extends ContentView {
 		main.setSpacing(false);
 		main.setMargin(false);
 		
-		GridColumn[] columns = {new GridColumn("站点名",130), new GridColumn("主机地址",220), new GridColumn("端口",120), new GridColumn("站点类型",120), new GridColumn("运行状态",100),new GridColumn("", 20)}; 
+		GridColumn[] columns = {new GridColumn("站点名",100), new GridColumn("主机地址",170), new GridColumn("端口",100), new GridColumn("站点类型",100), new GridColumn("运行状态",100),new GridColumn("", 20)}; 
 		List<CustomGridRow> data = new ArrayList<>();
 		List<Site> lstSite = ui.siteService.findAll();
 		for (Site site : lstSite) {

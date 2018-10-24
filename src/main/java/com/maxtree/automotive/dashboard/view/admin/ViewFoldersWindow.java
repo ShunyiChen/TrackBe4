@@ -49,9 +49,7 @@ public class ViewFoldersWindow extends Window {
 		
 		List<FrameNumber> lst = ui.frameService.findAllFolders(cell.getStorehouseName(), cell.getFrameCode(), cell.getCellCode());
     	grid.setWidth("100%");
-    	grid.setHeightUndefined();
-    	grid.setHeightByRows(12);
-    	
+    	grid.setHeight("100%");
     	grid.setItems(lst);
     	grid.removeAllColumns();
     	grid.addColumn(FrameNumber::getCode).setCaption("上架号");

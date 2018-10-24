@@ -94,7 +94,7 @@ public class Message {
 	public String toString() {
 		return String.format(
 				"Message[messageUniqueId=%d, subject='%s', content='%s',matedata='%s',creatorUniqueId=%d,dateCreated='%s',sentTimes=%d,reminderFrequencyId=%d,deleted=%d,readRate=%d]",
-				messageUniqueId, subject, content, matedata, creatorUniqueId, dateCreated.toString(), sentTimes,
+				messageUniqueId, subject, content, matedata, creatorUniqueId, dateCreated, sentTimes,
 				reminderFrequencyId, deleted, readRate);
 	}
 
