@@ -25,7 +25,6 @@ import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Community;
-import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
@@ -363,7 +362,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 					public void onSuccessful() {
 						//更改已读状态
 						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
-						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+						CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
 					}
         		};
             	if(openWith.equals(Openwith.MESSAGE)) {
@@ -484,17 +483,17 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     
     @Override
 	public void updateUnreadCount() {
-    	List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().get(loggedInUser.getUserUniqueId());
-		int unreadCount = 0;
-		for (SendDetails sd : sendDetailsList) {
-			if (sd.getViewName().equals(DashboardViewType.SEARCH.getViewName())
-					|| sd.getViewName().equals("")) {
-				unreadCount++;
-			}
-		}
-		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
-		event.setCount(unreadCount);
-		notificationsButton.updateNotificationsCount(event);
+//    	List<SendDetails> sendDetailsList = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
+//		int unreadCount = 0;
+//		for (SendDetails sd : sendDetailsList) {
+//			if (sd.getViewName().equals(DashboardViewType.SEARCH.getViewName())
+//					|| sd.getViewName().equals("")) {
+//				unreadCount++;
+//			}
+//		}
+//		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
+//		event.setCount(unreadCount);
+//		notificationsButton.updateNotificationsCount(event);
 	}
 
 	@Override

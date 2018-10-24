@@ -29,7 +29,7 @@ import com.maxtree.automotive.dashboard.service.PermissionCategoryService;
 import com.maxtree.automotive.dashboard.service.PermissionService;
 import com.maxtree.automotive.dashboard.service.QueueService;
 import com.maxtree.automotive.dashboard.service.RoleService;
-import com.maxtree.automotive.dashboard.service.SettingsService;
+import com.maxtree.automotive.dashboard.service.SystemSettingsService;
 import com.maxtree.automotive.dashboard.service.SiteService;
 import com.maxtree.automotive.dashboard.service.TransactionService;
 import com.maxtree.automotive.dashboard.service.TransitionService;
@@ -105,7 +105,7 @@ public final class DashboardUI extends UI {
 	@Autowired
 	public ImagingService imagingService;
 	@Autowired
-	public SettingsService settingsService;
+	public SystemSettingsService settingsService;
 	@Autowired
 	public BusinessStateService businessStateService;
 	@Autowired

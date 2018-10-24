@@ -12,9 +12,10 @@ import org.springframework.stereotype.Component;
 import com.maxtree.automotive.dashboard.domain.SystemSettings;
 
 @Component
-public class SettingsService {
+public class SystemSettingsService {
 
-	private static final Logger log = LoggerFactory.getLogger(SettingsService.class);
+	private static final Logger log = LoggerFactory.getLogger(SystemSettingsService.class);
+	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
@@ -23,9 +24,9 @@ public class SettingsService {
 	 * @param key
 	 * @return
 	 */
-	public SystemSettings findByKey(String key) {
-		String sql = "SELECT * FROM SYSTEM_SETTINGS WHERE K=?";
-		List<SystemSettings> results = jdbcTemplate.query(sql, new Object[] {key}, new BeanPropertyRowMapper<SystemSettings>(SystemSettings.class));
+	public SystemSettings findByName(String name) {
+		String sql = "SELECT * FROM SYSTEMSETTINGS WHERE ITEMNAME=?";
+		List<SystemSettings> results = jdbcTemplate.query(sql, new Object[] {name}, new BeanPropertyRowMapper<SystemSettings>(SystemSettings.class));
 		if(results.size() > 0) {
 			return results.get(0);
 		}
@@ -37,8 +38,8 @@ public class SettingsService {
 	 * @param settings
 	 */
 	public void update(SystemSettings settings) {
-		String sql = "UPDATE SYSTEM_SETTINGS SET V=? WHERE K=?";
-		jdbcTemplate.update(sql, new Object[] {settings.getV(),settings.getK()});
+		String sql = "UPDATE SYSTEMSETTINGS SET ITEMSETTINGS=? WHERE ITEMNAME=?";
+		jdbcTemplate.update(sql, new Object[] {settings.getItemSettings(),settings.getItemName()});
 	}
 	
 }

@@ -183,18 +183,18 @@ public class NotificationsManagementWindow extends Window {
 	private void loadNotifications(boolean onlyShowingUnread, Callback callback) {
 		List<Notification> lst = new ArrayList<Notification>();
 		for(int i = 0; i < 5; i++) {
-			Notification n1 = new Notification();
-			n1.setChecked(false);
-			n1.setContent("都是错的商店出售的山地车山地车山地车是"+i);
-			n1.setRelativeTime(new Date());
-			n1.setUserName(loggedInUser.getUserName());
-			lst.add(n1);
-			Notification n2 = new Notification();
-			n2.setChecked(false);
-			n2.setContent("22323rfddfdfdsvfdv反对法vDVD发v地方v地方v地方反感不反感边防官兵v反对法v地方v的v发的发的发模拟"+i);
-			n2.setRelativeTime(new Date());
-			n2.setUserName(loggedInUser.getUserName());
-			lst.add(n2);
+//			Notification n1 = new Notification();
+//			n1.setChecked(false);
+//			n1.setContent("都是错的商店出售的山地车山地车山地车是"+i);
+//			n1.setRelativeTime(new Date());
+//			n1.setUserName(loggedInUser.getUserName());
+//			lst.add(n1);
+//			Notification n2 = new Notification();
+//			n2.setChecked(false);
+//			n2.setContent("22323rfddfdfdsvfdv反对法vDVD发v地方v地方v地方反感不反感边防官兵v反对法v地方v的v发的发的发模拟"+i);
+//			n2.setRelativeTime(new Date());
+//			n2.setUserName(loggedInUser.getUserName());
+//			lst.add(n2);
 		}
 		
 		table.setItems(lst);

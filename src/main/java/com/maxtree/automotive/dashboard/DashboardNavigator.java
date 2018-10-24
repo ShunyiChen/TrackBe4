@@ -73,9 +73,8 @@ public class DashboardNavigator extends Navigator {
     private void initViewProviders() {
         // A dedicated view provider is added for each separate view type
         for (final DashboardViewType viewType : DashboardViewType.values()) {
-            ViewProvider viewProvider = new ClassBasedViewProvider(
-                    viewType.getViewName(), viewType.getViewClass()) {
-            	
+        	
+            ViewProvider viewProvider = new ClassBasedViewProvider(viewType.getViewName(), viewType.getViewClass()) {
                 // This field caches an already initialized view instance if the
                 // view should be cached (stateful views).
                 private View cachedInstance;
@@ -88,8 +87,7 @@ public class DashboardNavigator extends Navigator {
                         if (viewType.isStateful()) {
                             // Stateful views get lazily instantiated
                             if (cachedInstance == null) {
-                                cachedInstance = super.getView(viewType
-                                        .getViewName());
+                                cachedInstance = super.getView(viewType.getViewName());
                             }
                             result = cachedInstance;
                         } else {

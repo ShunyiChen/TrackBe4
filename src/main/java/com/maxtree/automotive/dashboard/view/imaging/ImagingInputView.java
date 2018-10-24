@@ -32,7 +32,6 @@ import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.maxtree.automotive.dashboard.domain.Message;
-import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
@@ -261,7 +260,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 					public void onSuccessful() {
 						//更改已读状态
 						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
-						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+						CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
 					}
         		};
             	String openWith = matedataMap.get("openwith");
@@ -715,7 +714,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 		names.add(target);
 		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_QUALITY.getViewName());
 		// 更新消息轮询的缓存
-		CacheManager.getInstance().getSendDetailsCache().refresh(receiver.getUserUniqueId());
+		CacheManager.getInstance().getNotificationsCache().refresh(receiver.getUserUniqueId());
     }
     
     /**
@@ -767,17 +766,17 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 
 	@Override
 	public void updateUnreadCount() {
-		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().get(loggedInUser.getUserUniqueId());
-		int unreadCount = 0;
-		for (SendDetails sd : sendDetailsList) {
-			if (sd.getViewName().equals(DashboardViewType.IMAGING_INPUT.getViewName())
-					|| sd.getViewName().equals("")) {
-				unreadCount++;
-			}
-		}
-		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
-		event.setCount(unreadCount);
-		notificationsButton.updateNotificationsCount(event);
+//		List<SendDetails> sendDetailsList = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
+//		int unreadCount = 0;
+//		for (SendDetails sd : sendDetailsList) {
+//			if (sd.getViewName().equals(DashboardViewType.IMAGING_INPUT.getViewName())
+//					|| sd.getViewName().equals("")) {
+//				unreadCount++;
+//			}
+//		}
+//		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
+//		event.setCount(unreadCount);
+//		notificationsButton.updateNotificationsCount(event);
 	}
     
 	@Override

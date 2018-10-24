@@ -22,7 +22,6 @@ import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Queue;
-import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
@@ -386,7 +385,7 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
 					public void onSuccessful() {
 						//更改已读状态
 						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
-						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+						CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
 					}
         		};
             	if(openWith.equals(Openwith.MESSAGE)) {
@@ -511,21 +510,21 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
   
     @Override
    	public void updateUnreadCount() {
-   		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-   		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().get(loginUser.getUserUniqueId());
-    	int unreadCount = 0;
-		for (SendDetails sd : sendDetailsList) {
-			if (sd.getViewName().equals(DashboardViewType.SHELF.getViewName())
-					|| sd.getViewName().equals("")) {
-				unreadCount++;
-			}
-		}
-   		
-   		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
-   		event.setCount(unreadCount);
-   		notificationsButton.updateNotificationsCount(event);
-   		
-   		seeAvailableQueueSize();
+//   		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+//   		List<SendDetails> sendDetailsList = CacheManager.getInstance().getNotificationsCache().get(loginUser.getUserUniqueId());
+//    	int unreadCount = 0;
+//		for (SendDetails sd : sendDetailsList) {
+//			if (sd.getViewName().equals(DashboardViewType.SHELF.getViewName())
+//					|| sd.getViewName().equals("")) {
+//				unreadCount++;
+//			}
+//		}
+//   		
+//   		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
+//   		event.setCount(unreadCount);
+//   		notificationsButton.updateNotificationsCount(event);
+//   		
+//   		seeAvailableQueueSize();
    	}
     
     /**

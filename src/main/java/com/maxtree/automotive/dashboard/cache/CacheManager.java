@@ -77,13 +77,14 @@ public class CacheManager {
 	 */
 	private CacheManager() {
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
+		//Permissions cache
 		permissionCache = Caffeine.newBuilder()
 			    .maximumSize(sc.getMaximumSize())
 			    .expireAfterWrite(sc.getExpireAfterWrite(), TimeUnit.MINUTES)
 			    .refreshAfterWrite(sc.getRefreshAfterWrite(), TimeUnit.MINUTES)
 			    .build(key -> createDataObject(key));
 		
-		// Send details
+		//Notifications cache
 		notificationCache = Caffeine.newBuilder()
 				.maximumSize(sc.getMaximumSize())
 				.expireAfterWrite(sc.getExpireAfterWrite(), TimeUnit.MINUTES)
@@ -125,8 +126,13 @@ public class CacheManager {
 		return newDataObj;
 	}
 	
+	/**
+	 * 
+	 * @param userUniqueId
+	 * @return
+	 */
 	private List<Notification> createNotification(Integer userUniqueId) {
-		List<Notification> listSendDetails = ui.messagingService.findUnreadNotifications(userUniqueId);
+		List<Notification> listSendDetails = ui.messagingService.findAllNotifications(userUniqueId, "");
 		return listSendDetails;
 	}
 }

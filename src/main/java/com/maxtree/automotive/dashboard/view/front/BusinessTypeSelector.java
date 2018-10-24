@@ -210,7 +210,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 			names.add(target);
 			messageSystem.sendMessageTo(newMessage.getMessageUniqueId(),names,DashboardViewType.IMAGING_MANAGER.getViewName());
 			//3.更新消息轮询的缓存
-			CacheManager.getInstance().getSendDetailsCache().refresh(receiver.getUserUniqueId());
+			CacheManager.getInstance().getNotificationsCache().refresh(receiver.getUserUniqueId());
 		}
 		
 		Callback callback = new Callback() {

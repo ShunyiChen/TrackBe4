@@ -122,7 +122,7 @@ public class MessagingService {
 	 * @param notificationsList
 	 */
 	public void insertNotifications(List<Notification> notificationsList) {
-		final String inserQuery = "INSERT INTO NOTIFICATIONS(MESSAGEUNIQUEID,WARNING,USERUNIQUEID,VIEWNAME,RELATIVETIME,MARKEDASREAD) VALUES(?,?,?,?,?,?)";
+		final String inserQuery = "INSERT INTO NOTIFICATIONS(MESSAGEUNIQUEID,WARNING,USERUNIQUEID,VIEWNAME,SENDTIME,MARKEDASREAD) VALUES(?,?,?,?,?,?)";
 		jdbcTemplate.batchUpdate(inserQuery, new BatchPreparedStatementSetter() {
 
 			@Override
@@ -132,7 +132,7 @@ public class MessagingService {
 				ps.setBoolean(2, n.isWarning());
 				ps.setInt(3, n.getUserUniqueId());
 				ps.setString(4, n.getViewName());
-				long millis = n.getRelativeTime().getTime();
+				long millis = n.getSendTime().getTime();
 				ps.setTimestamp(5, new Timestamp(millis));
 				ps.setBoolean(6, n.isMarkedAsRead());
 			}
@@ -230,9 +230,20 @@ public class MessagingService {
 	 * @param userUniqueId
 	 * @return
 	 */
-	public List<Notification> findUnreadNotifications(int userUniqueId) {
-		String sql = "SELECT * FROM NOTIFICATIONS WHERE MARKEDASREAD=? AND USERUNIQUEID=? ORDER BY NOTIFICATIONUNIQUEID DESC";
-		List<Notification> results = jdbcTemplate.query(sql, new Object[] {false, userUniqueId}, new BeanPropertyRowMapper<Notification>(Notification.class));
+	public List<Notification> findAllNotifications(int userUniqueId, String viewName) {
+//		String sql = "SELECT * FROM NOTIFICATIONS WHERE MARKEDASREAD=? AND USERUNIQUEID=? ORDER BY NOTIFICATIONUNIQUEID DESC";
+//		List<Notification> results = jdbcTemplate.query(sql, new Object[] {false, userUniqueId}, new BeanPropertyRowMapper<Notification>(Notification.class));
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT A.*,B.SUBJECT AS SUBJECT,C.USERNAME AS USERNAME,D.PICTURE");
+		sql.append(" FROM NOTIFICATIONS AS A ");
+		sql.append("  LEFT JOIN MESSAGES AS B ON A.MESSAGEUNIQUEID=B.MESSAGEUNIQUEID ");
+		sql.append("  LEFT JOIN USERS AS C ON C.USERUNIQUEID=B.CREATORUNIQUEID ");
+		sql.append("  LEFT JOIN USERPROFILES AS D ON D.USERUNIQUEID=C.USERUNIQUEID WHERE A.USERUNIQUEID=? AND A.VIEWNAME IN('',?)ORDER BY B.MESSAGEUNIQUEID DESC ");
+//		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql.toString(), new Object[] {user.getUserUniqueId(), viewName});
+		List<Notification> results = jdbcTemplate.query(sql.toString(), new Object[] {userUniqueId,viewName}, new BeanPropertyRowMapper<Notification>(Notification.class));
+		for(Notification n:results) {
+			System.out.println(n.toString());
+		}
 		return results;
 	}
 	
@@ -309,6 +320,4 @@ public class MessagingService {
 		List<MessageRecipient> results = jdbcTemplate.query(sql, new Object[] {messageUniqueId},new BeanPropertyRowMapper<MessageRecipient>(MessageRecipient.class));
 		return results;
 	}
-	
-	
 }

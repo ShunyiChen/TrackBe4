@@ -21,7 +21,6 @@ import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.maxtree.automotive.dashboard.domain.Message;
-import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
@@ -247,7 +246,7 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 					public void onSuccessful() {
 						//更改已读状态
 						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
-						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+						CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
 					}
         		};
         		// 显示消息
@@ -395,39 +394,39 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
     
     @Override
 	public void updateUnreadCount() {
-    	// 显示未读消息数
-		List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().get(loggedInUser.getUserUniqueId());
-		int unreadCount = 0;
-		for (SendDetails sd : sendDetailsList) {
-			if ((sd.getViewName().equals(DashboardViewType.IMAGING_MANAGER.getViewName())
-					|| sd.getViewName().equals("")) && sd.getMarkedAsRead()==0) {
-				unreadCount++;
-			}
-		}
-		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
-		event.setCount(unreadCount);
-		notificationsButton.updateNotificationsCount(event);
-		// 自动弹出未读消息
-		if(sendDetailsList.size() > 0) {
-			SendDetails sd = sendDetailsList.get(sendDetailsList.size() -1);
-			Message message = ui.messagingService.findById(sd.getMessageUniqueId());
-			Map<String, String> matedataMap = new MessageBodyParser().json2Map(message.getMatedata());
-			String popup = matedataMap.get("popup");
-			if(popup != null && popup.equals(Popup.YES)) {
-				Callback callback = new Callback() {
-
-					@Override
-					public void onSuccessful() {
-						ui.messagingService.markAsRead(sd.getMessageUniqueId(), loggedInUser.getUserUniqueId());
-						
-						//更新消息轮询的缓存
-						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
-					}
-				};
-				ConfirmDialog.showDialog("提示",message.getContent(),callback);
-			}
-			
-		}
+//    	// 显示未读消息数
+//		List<SendDetails> sendDetailsList = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
+//		int unreadCount = 0;
+//		for (SendDetails sd : sendDetailsList) {
+//			if ((sd.getViewName().equals(DashboardViewType.IMAGING_MANAGER.getViewName())
+//					|| sd.getViewName().equals("")) && sd.getMarkedAsRead()==0) {
+//				unreadCount++;
+//			}
+//		}
+//		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
+//		event.setCount(unreadCount);
+//		notificationsButton.updateNotificationsCount(event);
+//		// 自动弹出未读消息
+//		if(sendDetailsList.size() > 0) {
+//			SendDetails sd = sendDetailsList.get(sendDetailsList.size() -1);
+//			Message message = ui.messagingService.findById(sd.getMessageUniqueId());
+//			Map<String, String> matedataMap = new MessageBodyParser().json2Map(message.getMatedata());
+//			String popup = matedataMap.get("popup");
+//			if(popup != null && popup.equals(Popup.YES)) {
+//				Callback callback = new Callback() {
+//
+//					@Override
+//					public void onSuccessful() {
+//						ui.messagingService.markAsRead(sd.getMessageUniqueId(), loggedInUser.getUserUniqueId());
+//						
+//						//更新消息轮询的缓存
+//						CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
+//					}
+//				};
+//				ConfirmDialog.showDialog("提示",message.getContent(),callback);
+//			}
+//			
+//		}
 	}
     
 	@Override

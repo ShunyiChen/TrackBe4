@@ -11,7 +11,7 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.MessageRecipient;
-import com.maxtree.automotive.dashboard.domain.SendDetails;
+import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.vaadin.ui.UI;
 
@@ -60,18 +60,18 @@ public class TB4MessagingSystem {
     			int communityUniqueId = n.getUniqueId();
     			List<User> users = ui.communityService.findAllUsers(communityUniqueId);
     			// details
-    			List<SendDetails> list = new ArrayList<SendDetails>();
+    			List<Notification> list = new ArrayList<>();
     			for (User u : users) {
     				// 一个用户只发送一次
     				if (!sent.contains(u.getUserUniqueId())) {
-    					SendDetails sd = user2SendDetails(messageUniqueId, u, viewName);
+    					Notification sd = user2Notification(messageUniqueId, u, viewName);
         				list.add(sd);
         				
         				sent.add(u.getUserUniqueId());
     				}
     				
     			}
-    			ui.messagingService.insertSendDetails(list);
+    			ui.messagingService.insertNotifications(list);
     			
     		} else if (n.getType() == Name.COMPANY) {
     			mr = name2MessageRecipient(n, Name.COMPANY, messageUniqueId);
@@ -79,30 +79,29 @@ public class TB4MessagingSystem {
     			int companyUniqueId = n.getUniqueId();
     			List<User> users = ui.companyService.findAllUsers(companyUniqueId);
     			// details
-    			List<SendDetails> list = new ArrayList<SendDetails>();
+    			List<Notification> list = new ArrayList<>();
     			for (User u : users) {
     				if (!sent.contains(u.getUserUniqueId())) {
-    					SendDetails sd = user2SendDetails(messageUniqueId, u, viewName);
+    					Notification sd = user2Notification(messageUniqueId, u, viewName);
         				list.add(sd);
         				
         				sent.add(u.getUserUniqueId());
     				}
     			}
-    			ui.messagingService.insertSendDetails(list);
+    			ui.messagingService.insertNotifications(list);
     			
     		} else if (n.getType() == Name.USER) {
     			mr = name2MessageRecipient(n, Name.USER, messageUniqueId);
     			
-    			List<SendDetails> list = new ArrayList<SendDetails>();
+    			List<Notification> list = new ArrayList<>();
     			User u = ui.userService.findById(n.getUniqueId());
-    			
     			if (!sent.contains(u.getUserUniqueId())) {
-    				SendDetails sd = user2SendDetails(messageUniqueId, u, viewName);
+    				Notification sd = user2Notification(messageUniqueId, u, viewName);
     				list.add(sd);
     				
     				sent.add(u.getUserUniqueId());
     			}
-				ui.messagingService.insertSendDetails(list);
+				ui.messagingService.insertNotifications(list);
 				
     		}
     		recipients.add(mr);
@@ -125,12 +124,12 @@ public class TB4MessagingSystem {
     			int communityUniqueId = n.getUniqueId();
     			List<User> users = ui.communityService.findAllUsers(communityUniqueId);
     			// details
-    			List<SendDetails> list = new ArrayList<SendDetails>();
+    			List<Notification> list = new ArrayList<>();
     			for (User u : users) {
-    				SendDetails sd = user2SendDetails(messageUniqueId, u, viewName);
+    				Notification sd = user2Notification(messageUniqueId, u, viewName);
     				list.add(sd);
     			}
-    			ui.messagingService.insertSendDetails(list);
+    			ui.messagingService.insertNotifications(list);
     			
     		} else if (n.getType() == Name.COMPANY) {
     			mr = name2MessageRecipient(n, Name.COMPANY, messageUniqueId);
@@ -138,21 +137,21 @@ public class TB4MessagingSystem {
     			int companyUniqueId = n.getUniqueId();
     			List<User> users = ui.companyService.findAllUsers(companyUniqueId);
     			// details
-    			List<SendDetails> list = new ArrayList<SendDetails>();
+    			List<Notification> list = new ArrayList<Notification>();
     			for (User u : users) {
-    				SendDetails sd = user2SendDetails(messageUniqueId, u, viewName);
+    				Notification sd = user2Notification(messageUniqueId, u, viewName);
     				list.add(sd);
     			}
-    			ui.messagingService.insertSendDetails(list);
+    			ui.messagingService.insertNotifications(list);
     			
     		} else if (n.getType() == Name.USER) {
     			mr = name2MessageRecipient(n, Name.USER, messageUniqueId);
-    			List<SendDetails> list = new ArrayList<SendDetails>();
+    			List<Notification> list = new ArrayList<Notification>();
     			
     			User u = ui.userService.findById(n.getUniqueId());
-    			SendDetails sd = user2SendDetails(messageUniqueId, u, viewName);
+    			Notification sd = user2Notification(messageUniqueId, u, viewName);
 				list.add(sd);
-				ui.messagingService.insertSendDetails(list);
+				ui.messagingService.insertNotifications(list);
     		}
 		}
 	}
@@ -165,7 +164,7 @@ public class TB4MessagingSystem {
 	 * @param deleteType （MARKASDELETED：删除接收者并标识Message为删除状态，PERMANENTLYDELETE:删除接收者并永久删除Message,ONLYDELETERECIPIENT:只删除接收者）
 	 */
 	public void deleteMessage(int messageUniqueId, int recipientUniqueId, int deleteType) {
-		ui.messagingService.deleteSendDetails(messageUniqueId,recipientUniqueId);
+		ui.messagingService.deleteNotifications(messageUniqueId,recipientUniqueId);
 		ui.messagingService.deleteMessageRecipient(messageUniqueId,recipientUniqueId);
 		if (deleteType == MARKASDELETED) {
 			ui.messagingService.markAsDeleted(messageUniqueId);
@@ -173,7 +172,7 @@ public class TB4MessagingSystem {
 		else if(deleteType == PERMANENTLYDELETE) {
 			ui.messagingService.permanentlyDeleteMessage(messageUniqueId);
 		}
-		CacheManager.getInstance().getSendDetailsCache().refresh(recipientUniqueId);
+		CacheManager.getInstance().getNotificationsCache().refresh(recipientUniqueId);
 	}
 	
 	/**
@@ -183,11 +182,11 @@ public class TB4MessagingSystem {
 	 * @param viewName
 	 * @return
 	 */
-	private SendDetails user2SendDetails(int messageUniqueId, User recipient, String viewName) {
-		SendDetails sd = new SendDetails();
+	private Notification user2Notification(int messageUniqueId, User recipient, String viewName) {
+		Notification sd = new Notification();
 		sd.setMessageUniqueId(messageUniqueId);
-		sd.setRecipientUniqueId(recipient.getUserUniqueId());
-		sd.setMarkedAsRead(0);
+		sd.setUserUniqueId(recipient.getUserUniqueId());
+		sd.setMarkedAsRead(false);
 		sd.setViewName(viewName);
 		return sd;
 	}

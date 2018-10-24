@@ -1,9 +1,11 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
+import java.util.Date;
 import java.util.List;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
+import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.domain.Notification;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
@@ -45,8 +47,6 @@ public class NotificationTable extends VerticalLayout {
 		header.setWidth("100%");
 		header.setHeight("37px");
 		Label titleLabel = new Label(title);
-		
-		
 		
 		Image left = new Image(null, new ThemeResource("img/adminmenu/chevron-left.png"));
 		Image right = new Image(null, new ThemeResource("img/adminmenu/chevron-right.png"));
@@ -106,21 +106,15 @@ public class NotificationTable extends VerticalLayout {
 		HorizontalLayout row = new HorizontalLayout();
 		row.setWidth("100%");
 		row.setHeight("40px");
-		Label contentLabel = new Label(notification.getContent());
-		Label relativeTimeLabel = new Label("三天前");
+		long duration = new Date().getTime() - notification.getSendTime().getTime();
+		Label contentLabel = new Label(notification.getSubject());
+		Label relativeTimeLabel = new Label(new TimeAgo().toDuration(duration));
 		Image checkedImg = new Image(null, new ThemeResource("img/adminmenu/check.png"));
 		
 		checkedImg.addStyleName("NotificationTable_checkedImg");
 		contentLabel.addStyleName("NotificationTable_contentLabel");
 		relativeTimeLabel.addStyleName("NotificationTable_contentLabel");
 		
-//		HorizontalLayout firstCell = new HorizontalLayout();
-//		firstCell.setWidth("470px");
-//		firstCell.setHeight("100%");
-//		firstCell.setSpacing(false);
-//		firstCell.setMargin(false);
-//		firstCell.addComponents(contentLabel);
-//		firstCell.setComponentAlignment(contentLabel, Alignment.MIDDLE_LEFT);
 		VerticalLayout cell = new VerticalLayout();
 		cell.setSpacing(false);
 		cell.setMargin(false);
@@ -145,7 +139,6 @@ public class NotificationTable extends VerticalLayout {
 		row.addStyleName("NotificationTable_row");
 		return row;
 	}
-	
 	
 	private String title;
 	private VerticalLayout body = new VerticalLayout();

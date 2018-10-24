@@ -16,23 +16,23 @@ public class SystemSettings {
 		this.settingUniqueId = settingUniqueId;
 	}
 
-	public String getK() {
-		return K;
+	public String getItemName() {
+		return itemName;
 	}
 
-	public void setK(String k) {
-		K = k;
+	public void setItemName(String itemName) {
+		this.itemName = itemName;
 	}
 
-	public String getV() {
-		return V;
+	public String getItemSettings() {
+		return itemSettings;
 	}
 
-	public void setV(String v) {
-		V = v;
+	public void setItemSettings(String itemSettings) {
+		this.itemSettings = itemSettings;
 	}
 
 	private Integer settingUniqueId = 0;
-	private String K;
-	private String V;
+	private String itemName;
+	private String itemSettings;
 }

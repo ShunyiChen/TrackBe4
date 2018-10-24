@@ -26,7 +26,6 @@ import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.Queue;
-import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
@@ -247,7 +246,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 					public void onSuccessful() {
 						//更改已读状态
 						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
-						CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+						CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
 					}
         		};
             	if(openWith.equals(Openwith.MESSAGE)) {
@@ -503,16 +502,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     			editableTrans = ui.transactionService.findByUUID(availableQueue.getUuid(),availableQueue.getVin());
     			
     			resetComponents();
-    			
-//    			Transition tran = ui.transitionService.findByUUID(availableQueue.getUuid(), availableQueue.getVin());
-//    			TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-//    			Message newMessage = messageSystem.createNewMessage(loggedInUser, "获取一笔新业务", tran.getDetails());
-//    			Set<Name> names = new HashSet<Name>();
-//    			Name target = new Name(loggedInUser.getUserUniqueId(), Name.USER, loggedInUser.getProfile().getLastName()+loggedInUser.getProfile().getFirstName(), loggedInUser.getProfile().getPicture());
-//    			names.add(target);
-//    			messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.CHECK.getViewName());
-//    			
-//    			CacheManager.getInstance().getSendDetailsCache().refresh(loggedInUser.getUserUniqueId());
+ 
     		}
     		else {
     			Notifications.warning("没有可办的业务了。");
@@ -551,7 +541,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     		names.add(target);
     		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.INPUT.getViewName());
     		// 更新消息轮询的缓存
-    		CacheManager.getInstance().getSendDetailsCache().refresh(receiver.getUserUniqueId());
+    		CacheManager.getInstance().getNotificationsCache().refresh(receiver.getUserUniqueId());
     		// 5.清空
     		cleanStage();
     		// 6.提示信息
@@ -618,7 +608,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		names.add(target);
 		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.INPUT.getViewName());
 		// 更新消息轮询的缓存
-		CacheManager.getInstance().getSendDetailsCache().refresh(receiver.getUserUniqueId());
+		CacheManager.getInstance().getNotificationsCache().refresh(receiver.getUserUniqueId());
 		// 5.清空
 		cleanStage();
 		// 6.提示信息
@@ -657,19 +647,19 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     
     @Override
 	public void updateUnreadCount() {
-    	List<SendDetails> sendDetailsList = CacheManager.getInstance().getSendDetailsCache().get(loggedInUser.getUserUniqueId());
-    	int unreadCount = 0;
-		for (SendDetails sd : sendDetailsList) {
-			if (sd.getViewName().equals(DashboardViewType.CHECK.getViewName())
-					|| sd.getViewName().equals("")) {
-				unreadCount++;
-			}
-		}
-   		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
-   		event.setCount(unreadCount);
-   		notificationsButton.updateNotificationsCount(event);
-   		
-   		updateQueueSize();
+//    	List<SendDetails> sendDetailsList = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
+//    	int unreadCount = 0;
+//		for (SendDetails sd : sendDetailsList) {
+//			if (sd.getViewName().equals(DashboardViewType.CHECK.getViewName())
+//					|| sd.getViewName().equals("")) {
+//				unreadCount++;
+//			}
+//		}
+//   		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
+//   		event.setCount(unreadCount);
+//   		notificationsButton.updateNotificationsCount(event);
+//   		
+//   		updateQueueSize();
 	}
 
 	@Override

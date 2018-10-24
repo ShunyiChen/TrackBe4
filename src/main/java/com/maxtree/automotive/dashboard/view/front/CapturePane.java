@@ -72,8 +72,8 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 		int height = UI.getCurrent().getPage().getBrowserWindowHeight() - 173;
 		this.setWidth("100%");
 		this.setHeight(height+"px");
-		settings = ui.settingsService.findByKey("高拍仪");
-		if("选择上传".equals(settings.getV())) {
+		settings = ui.settingsService.findByName("高拍仪");
+		if("选择上传".equals(settings.getItemSettings())) {
 			Upload upload = new Upload(null, this);
 			upload.setButtonCaption("选择文件");
 			upload.setButtonStyleName("upload-button");
@@ -134,7 +134,7 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		String everything = "";
 		File template;
-		if(settings.getV().equals("无锡华通H6-1")) {
+		if(settings.getItemSettings().equals("无锡华通H6-1")) {
 			template = new File("devices/templates/HtmlDemo3.html");//无锡华通H6-1
 		}
 		else {
