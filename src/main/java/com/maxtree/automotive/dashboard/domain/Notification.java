@@ -12,62 +12,58 @@ public class Notification {
 	public Integer getNotificationUniqueId() {
 		return notificationUniqueId;
 	}
-
 	public void setNotificationUniqueId(Integer notificationUniqueId) {
 		this.notificationUniqueId = notificationUniqueId;
 	}
-	
+	public Integer getMessageUniqueId() {
+		return messageUniqueId;
+	}
+	public void setMessageUniqueId(Integer messageUniqueId) {
+		this.messageUniqueId = messageUniqueId;
+	}
 	public boolean isWarning() {
 		return warning;
 	}
-
 	public void setWarning(boolean warning) {
 		this.warning = warning;
 	}
-
-	public String getContent() {
-		return content;
+	public Integer getUserUniqueId() {
+		return userUniqueId;
 	}
-
-	public void setContent(String content) {
-		this.content = content;
+	public void setUserUniqueId(Integer userUniqueId) {
+		this.userUniqueId = userUniqueId;
 	}
-
+	public String getViewName() {
+		return viewName;
+	}
+	public void setViewName(String viewName) {
+		this.viewName = viewName;
+	}
 	public Date getRelativeTime() {
 		return relativeTime;
 	}
-
 	public void setRelativeTime(Date relativeTime) {
 		this.relativeTime = relativeTime;
 	}
-
-	public boolean isChecked() {
-		return checked;
+	public boolean isMarkedAsRead() {
+		return markedAsRead;
 	}
-
-	public void setChecked(boolean checked) {
-		this.checked = checked;
+	public void setMarkedAsRead(boolean markedAsRead) {
+		this.markedAsRead = markedAsRead;
 	}
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
 	@Override
 	public String toString() {
 		return String.format(
-				"Notification[notificationUniqueId=%d, warning='%s' content='%s',relativeTime='%s',checked='%d',userName='%d']",
-				notificationUniqueId, warning, content, relativeTime, checked, userName);
+				"Notification[notificationUniqueId=%d, messageUniqueId=%d, warning='%s' userUniqueId=%d,viewName='%s',relativeTime='%s',markedAsRead='%s']",
+				notificationUniqueId, messageUniqueId,warning, userUniqueId, viewName,relativeTime,markedAsRead);
 	}
 	
 	private Integer notificationUniqueId = 0; //自增ID
-	private boolean warning;//警告图标
-	private String content;//通知内容
+	private Integer messageUniqueId = 0;//消息ID
+	private boolean warning;//警告级别，true为警告，false为info
+	private Integer userUniqueId;//接收者ID
+	private String viewName;//视图名，区分相同接收者不同的视图
 	private Date relativeTime;//相对时间
-	private boolean checked;//是否已查阅
-	private String userName;//被通知人
+	private boolean markedAsRead;//是否已读 ,true-是， false-否
+	
 }

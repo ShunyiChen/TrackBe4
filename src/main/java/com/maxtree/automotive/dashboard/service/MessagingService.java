@@ -20,8 +20,8 @@ import org.springframework.stereotype.Component;
 
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.MessageRecipient;
+import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.ReminderFrequency;
-import com.maxtree.automotive.dashboard.domain.SendDetails;
 import com.maxtree.automotive.dashboard.domain.User;
 
 @Component
@@ -119,37 +119,39 @@ public class MessagingService {
 	
 	/**
 	 * 
-	 * @param detailsList
+	 * @param notificationsList
 	 */
-	public void insertSendDetails(List<SendDetails> detailsList) {
-		final String inserQuery = "INSERT INTO SENDDETAILS(RECIPIENTUNIQUEID,MESSAGEUNIQUEID,MARKEDASREAD,VIEWNAME) VALUES(?,?,?,?)";
+	public void insertNotifications(List<Notification> notificationsList) {
+		final String inserQuery = "INSERT INTO NOTIFICATIONS(MESSAGEUNIQUEID,WARNING,USERUNIQUEID,VIEWNAME,RELATIVETIME,MARKEDASREAD) VALUES(?,?,?,?,?,?)";
 		jdbcTemplate.batchUpdate(inserQuery, new BatchPreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				SendDetails details = detailsList.get(i);
-				ps.setInt(1, details.getRecipientUniqueId());
-				ps.setInt(2, details.getMessageUniqueId());
-				ps.setInt(3, details.getMarkedAsRead());
-				ps.setString(4, details.getViewName());
+				Notification n = notificationsList.get(i);
+				ps.setInt(1, n.getMessageUniqueId());
+				ps.setBoolean(2, n.isWarning());
+				ps.setInt(3, n.getUserUniqueId());
+				ps.setString(4, n.getViewName());
+				long millis = n.getRelativeTime().getTime();
+				ps.setTimestamp(5, new Timestamp(millis));
+				ps.setBoolean(6, n.isMarkedAsRead());
 			}
 
 			@Override
 			public int getBatchSize() {
-				return detailsList.size();
+				return notificationsList.size();
 			}
 		});
-		log.info("InsertSendDetails has done.");
 	}
 	
 	/**
 	 * 
 	 * @param messageUniqueId
-	 * @param recipientUniqueId
+	 * @param userUniqueId
 	 */
-	public void markAsRead(int messageUniqueId, int recipientUniqueId) {
-		String sql = "UPDATE SENDDETAILS SET MARKEDASREAD=? WHERE MESSAGEUNIQUEID=? AND RECIPIENTUNIQUEID=?";
-		jdbcTemplate.update(sql, new Object[] {1, messageUniqueId, recipientUniqueId});
+	public void markAsRead(int messageUniqueId, int userUniqueId) {
+		String sql = "UPDATE NOTIFICATIONS SET MARKEDASREAD=? WHERE MESSAGEUNIQUEID=? AND USERUNIQUEID=?";
+		jdbcTemplate.update(sql, new Object[] {true, messageUniqueId, userUniqueId});
 	}
 	
 	/**
@@ -165,11 +167,11 @@ public class MessagingService {
 	/**
 	 * 
 	 * @param messageUniqueId
-	 * @param recipientUniqueId
+	 * @param userUniqueId
 	 */
-	public void deleteSendDetails(int messageUniqueId, int recipientUniqueId) {
-		String sql = "DELETE FROM SENDDETAILS WHERE MESSAGEUNIQUEID=? AND RECIPIENTUNIQUEID=?";
-		jdbcTemplate.update(sql, new Object[] {messageUniqueId,recipientUniqueId});
+	public void deleteNotifications(int messageUniqueId, int userUniqueId) {
+		String sql = "DELETE FROM NOTIFICATIONS WHERE MESSAGEUNIQUEID=? AND USERUNIQUEID=?";
+		jdbcTemplate.update(sql, new Object[] {messageUniqueId,userUniqueId});
 	}
 	
 	/**
@@ -181,10 +183,10 @@ public class MessagingService {
 	public List<Map<String, Object>> findAllMessagesByUser(User user, String viewName) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT B.*,A.MARKEDASREAD,A.VIEWNAME,C.USERNAME,D.PICTURE");
-		sql.append(" FROM SENDDETAILS AS A ");
+		sql.append(" FROM NOTIFICATIONS AS A ");
 		sql.append("  LEFT JOIN MESSAGES AS B ON A.MESSAGEUNIQUEID=B.MESSAGEUNIQUEID ");
 		sql.append("  LEFT JOIN USERS AS C ON C.USERUNIQUEID=B.CREATORUNIQUEID ");
-		sql.append("  LEFT JOIN USERPROFILES AS D ON D.USERUNIQUEID=C.USERUNIQUEID WHERE A.RECIPIENTUNIQUEID=? AND A.VIEWNAME IN('',?)ORDER BY B.MESSAGEUNIQUEID DESC ");
+		sql.append("  LEFT JOIN USERPROFILES AS D ON D.USERUNIQUEID=C.USERUNIQUEID WHERE A.USERUNIQUEID=? AND A.VIEWNAME IN('',?)ORDER BY B.MESSAGEUNIQUEID DESC ");
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql.toString(), new Object[] {user.getUserUniqueId(), viewName});
 		return rows;
 	}
@@ -213,9 +215,9 @@ public class MessagingService {
 		complexSQL.append("SELECT A.*,");
 		complexSQL.append("CASE COUNT(B.MARKEDASREAD) ");
 		complexSQL.append("WHEN 0 THEN (0)");
-		complexSQL.append(" ELSE (ROUND(CAST((SELECT COUNT(*) FROM SENDDETAILS WHERE MARKEDASREAD= 1 AND MESSAGEUNIQUEID=A.MESSAGEUNIQUEID) AS NUMERIC) /CAST(COUNT(B.MARKEDASREAD) AS NUMERIC ) * 100,2))");
+		complexSQL.append(" ELSE (ROUND(CAST((SELECT COUNT(*) FROM NOTIFICATIONS WHERE MARKEDASREAD= 1 AND MESSAGEUNIQUEID=A.MESSAGEUNIQUEID) AS NUMERIC) /CAST(COUNT(B.MARKEDASREAD) AS NUMERIC ) * 100,2))");
 		complexSQL.append(" END AS READRATE ");
-		complexSQL.append(" FROM MESSAGES AS A LEFT JOIN SENDDETAILS AS B ON A.MESSAGEUNIQUEID=B.MESSAGEUNIQUEID");
+		complexSQL.append(" FROM MESSAGES AS A LEFT JOIN NOTIFICATIONS AS B ON A.MESSAGEUNIQUEID=B.MESSAGEUNIQUEID");
 		complexSQL.append(" GROUP BY A.MESSAGEUNIQUEID HAVING A.CREATORUNIQUEID=? AND A.DELETED=0 ORDER BY MESSAGEUNIQUEID DESC");
 		List<Message> results = jdbcTemplate.query(complexSQL.toString(), new Object[] {userUniqueId}, new BeanPropertyRowMapper<Message>(Message.class));
 		
@@ -223,14 +225,14 @@ public class MessagingService {
 	}
 	
 	/**
+	 * 查找未读的通知
 	 * 
 	 * @param userUniqueId
 	 * @return
 	 */
-	public List<SendDetails> findUnreadSendDetails(int userUniqueId) {
-		String sql = "SELECT * FROM SENDDETAILS WHERE MARKEDASREAD=? AND RECIPIENTUNIQUEID=? ORDER BY MESSAGERECIPIENTUNIQUEID DESC";
-		List<SendDetails> results = jdbcTemplate.query(sql, new Object[] {0, userUniqueId}, new BeanPropertyRowMapper<SendDetails>(SendDetails.class));
-		
+	public List<Notification> findUnreadNotifications(int userUniqueId) {
+		String sql = "SELECT * FROM NOTIFICATIONS WHERE MARKEDASREAD=? AND USERUNIQUEID=? ORDER BY NOTIFICATIONUNIQUEID DESC";
+		List<Notification> results = jdbcTemplate.query(sql, new Object[] {false, userUniqueId}, new BeanPropertyRowMapper<Notification>(Notification.class));
 		return results;
 	}
 	
