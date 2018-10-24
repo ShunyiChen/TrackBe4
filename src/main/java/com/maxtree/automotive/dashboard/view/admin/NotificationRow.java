@@ -37,7 +37,7 @@ public class NotificationRow extends FlexTableRow {
 	
 	@Override
 	public String getTitle() {
-		return "消息提醒";
+		return "消息";
 	}
 	
 	@Override

@@ -15988,3 +15988,106 @@ div.v-layout.v-horizontal.v-widget {
 	webkit-box-shadow: none;
 	box-shadow: none;
 }
+
+.dashboard .NotificationsManagementWindow {
+	border: #F0F0F0 solid 1px;
+	border-radius: 2px;
+}
+
+.dashboard .NotificationsManagementWindow .v-button {
+	width: 90px;
+	height: 28px;
+	font-size: 13px;
+	font-weight: normal !important;
+	color: #666666 !important;
+	padding: 0px;
+	padding-left: 5px;
+}
+
+.dashboard .NotificationsManagementWindow_navigationBar {
+	padding: 5px;
+	padding-left: 0px;
+}
+
+.dashboard .NotificationsManagementWindow_buttons {
+	background-color: white;
+	cursor: pointer;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	color: #666666;
+}
+
+.dashboard .NotificationsManagementWindow_buttons_selected {
+	color: white;
+	background-color: #0366D6;
+	border-radius: 2px;
+	cursor: pointer;
+}
+
+.dashboard .NotificationsManagementWindow_buttons:hover {
+	background-color: #EAECEF;
+	border-radius: 2px;
+	cursor: pointer;
+}
+
+.dashboard .NotificationsManagementWindow_txt {
+	padding-left: 5px;
+	font-size: 13px;
+	font-weight: normal !important;
+}
+
+.dashboard .NotificationsManagementWindow_unread {
+	padding-right: 5px;
+	font-size: 13px;
+	font-weight: normal !important;
+}
+
+.dashboard .NotificationTable {
+	padding: 5px;
+	padding-top: 0px;
+	border: #F0F0F0 solid 1px;
+	border-top-color: transparent;
+}
+
+.dashboard .NotificationTable_contentLabel {
+	font-size: 13px;
+	font-weight: normal !important;
+	color: #666666 !important;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.dashboard .NotificationTable_header {
+	background-color: #F6F8FA;
+	border: #F0F0F0 solid 1px;
+	border-top-color: transparent;
+	border-left-color: transparent;
+	border-right-color: transparent;
+}
+
+.dashboard .NotificationTable_row {
+	border: #F0F0F0 solid 1px;
+	border-top-color: transparent;
+	border-left-color: transparent;
+	border-right-color: transparent;
+}
+
+.dashboard .NotificationTable_row:hover {
+	background-color: #F5F9FC;
+}
+
+.dashboard .NotificationTable_checkedImg {
+	cursor: pointer;
+}
+
+.dashboard .NotificationTable_scroll {
+	border: 0px;
+	border-radius: 0px;
+	border-color: transparent;
+}
+
+.dashboard .NotificationTable_left {
+	cursor: pointer;
+	padding-top: 8px;
+}

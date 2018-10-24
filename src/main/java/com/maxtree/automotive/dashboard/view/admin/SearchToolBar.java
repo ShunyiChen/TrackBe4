@@ -84,7 +84,7 @@ public class SearchToolBar extends AbsoluteLayout {
         
         this.addComponent(menuLayout,"left: 25px; top: 15px;");
         this.addComponent(outerField,"left: 50%;");
-        this.addComponent(notificationLayout,"right:15px; top: 10px;");
+        this.addComponent(notificationLayout,"right:10px; top: 10px;");
 	}
 	
 	private NotificationsButton notificationButton = new NotificationsButton();

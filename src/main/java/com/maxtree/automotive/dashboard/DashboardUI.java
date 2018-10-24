@@ -18,6 +18,7 @@ import com.maxtree.automotive.dashboard.service.BusinessService;
 import com.maxtree.automotive.dashboard.service.BusinessStateService;
 import com.maxtree.automotive.dashboard.service.CommunityService;
 import com.maxtree.automotive.dashboard.service.CompanyService;
+import com.maxtree.automotive.dashboard.service.CorrectingSuggestionsService;
 import com.maxtree.automotive.dashboard.service.DataItemService;
 import com.maxtree.automotive.dashboard.service.DocumentService;
 import com.maxtree.automotive.dashboard.service.EmbeddedServerService;
@@ -32,11 +33,11 @@ import com.maxtree.automotive.dashboard.service.SettingsService;
 import com.maxtree.automotive.dashboard.service.SiteService;
 import com.maxtree.automotive.dashboard.service.TransactionService;
 import com.maxtree.automotive.dashboard.service.TransitionService;
-import com.maxtree.automotive.dashboard.service.CorrectingSuggestionsService;
 import com.maxtree.automotive.dashboard.service.UserService;
 import com.maxtree.automotive.dashboard.view.LoginView;
 import com.maxtree.automotive.dashboard.view.MainView;
 import com.maxtree.automotive.dashboard.view.admin.AdminMainView;
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -53,18 +54,15 @@ import com.vaadin.server.SessionInitListener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.Position;
+import com.vaadin.shared.communication.PushMode;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.server.SpringVaadinServlet;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.PopupView;
-import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
+@Push(PushMode.MANUAL)
 @Theme("dashboard")
 @Title(TB4Application.NAME+" "+TB4Application.VERSION)
 @SuppressWarnings("serial")
