@@ -12,11 +12,9 @@ import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -259,11 +257,6 @@ public class NotificationsManagementWindow extends Window {
 	private List<NavigationButton> buttonGroup = new ArrayList<>();
 	private NotificationTable table = new NotificationTable("通知列表");
 	private AbsoluteLayout main = new AbsoluteLayout();
-	private Image notificationImage = new Image();
-	private Label notificationLabel = new Label("消息列表");
-	private TextField numField = new TextField();
-	private Button btnOk = new Button("确定");
-	private Button btnCancel = new Button("取消");
 	private static DashboardUI ui = (DashboardUI) UI.getCurrent();
 	
 }

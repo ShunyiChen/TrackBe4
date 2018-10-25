@@ -14,7 +14,7 @@ import com.vaadin.ui.themes.ValoTheme;
  * @author chens
  *
  */
-public class NotificationsButton extends Button implements com.vaadin.ui.Button.ClickListener{
+public class NotificationsButton extends Button {
     /**
 	 * 
 	 */
@@ -29,7 +29,6 @@ public class NotificationsButton extends Button implements com.vaadin.ui.Button.
         setId(ID);
         addStyleName("notifications");
         addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        this.addClickListener(this);
         DashboardEventBus.register(this);
     }
 
@@ -55,9 +54,9 @@ public class NotificationsButton extends Button implements com.vaadin.ui.Button.
         setDescription(description);
     }
 
-	@Override
-	public void buttonClick(ClickEvent event) {
-		NotificationsManagementWindow.open();
-	}
+//	@Override
+//	public void buttonClick(ClickEvent event) {
+//		NotificationsManagementWindow.open();
+//	}
     
 }

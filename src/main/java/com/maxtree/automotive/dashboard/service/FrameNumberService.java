@@ -289,7 +289,7 @@ public class FrameNumberService {
 		log.info("Affected row:"+opt);
 
 		sql =  "UPDATE COMPANIES SET STOREHOUSENAME=? WHERE STOREHOUSENAME=?";
-		opt = jdbcTemplate.update(sql, new Object[] {0, store.getStorehouseName()});
+		opt = jdbcTemplate.update(sql, new Object[] {null, store.getStorehouseName()});
 		log.info("Affected row:"+opt);
 	}
 	

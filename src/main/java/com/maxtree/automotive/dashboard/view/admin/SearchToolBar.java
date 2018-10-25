@@ -74,6 +74,9 @@ public class SearchToolBar extends AbsoluteLayout {
         HorizontalLayout notificationLayout = new HorizontalLayout();
         notificationLayout.setSizeUndefined();
         notificationLayout.addComponents(notificationButton);
+        notificationButton.addClickListener(e->{
+        	NotificationsManagementWindow.open();
+        });
         
         // text field
         HorizontalLayout outerField = new HorizontalLayout();

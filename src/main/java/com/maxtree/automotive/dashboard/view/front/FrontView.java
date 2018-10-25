@@ -369,7 +369,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	main.setHeightUndefined();
     	
     	fileGrid.removeAllRows();
-    	businessTypePane.setSelectorEnabled(false);
+//    	businessTypePane.setSelectorEnabled(false);
     	
     	spliterSouth.setSizeFull();
     	spliterSouth.addComponents(fileGrid, capturePane);
@@ -591,7 +591,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	}
     	//4大流程
     	//新车注册流程
-    	if (businessTypePane.getSelected().getName().equals("注册登记")) {
+    	if (businessTypePane.getSelected().getName().contains("注册登记")) {
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -885,7 +885,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	}
     	
     	// 非审档流程
-    	if (businessTypePane.getSelected().getName().equals("注册登记")) {
+    	if (businessTypePane.getSelected().getName().contains("注册登记")) {
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateModified(new Date());
     		// 跳过质检

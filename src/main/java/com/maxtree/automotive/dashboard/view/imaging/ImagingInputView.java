@@ -369,7 +369,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	main.setHeightUndefined();
  
     	fileGrid.removeAllRows();
-    	businessTypePane.setSelectorEnabled(false);
+//    	businessTypePane.setSelectorEnabled(false);
     	
     	spliterSouth.setSizeFull();
     	spliterSouth.addComponents(fileGrid, capturePane);
@@ -572,7 +572,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 			return;
     	}
     	//新车注册流程
-    	if (businessTypePane.getSelected().getName().equals("注册登记")) {
+    	if (businessTypePane.getSelected().getName().contains("注册登记")) {
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -663,7 +663,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 			return;
     	}
     	//新车注册流程
-    	if (businessTypePane.getSelected().getName().equals("注册登记")) {
+    	if (businessTypePane.getSelected().getName().contains("注册登记")) {
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateModified(new Date());
         	editableTrans.setStatus(ui.state().getName("B7"));

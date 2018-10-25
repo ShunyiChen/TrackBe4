@@ -95,7 +95,7 @@ public class LoginView extends VerticalLayout {
         CssLayout labels = new CssLayout();
         labels.addStyleName("labels");
 
-        Label welcome = new Label("Welcome");
+        Label welcome = new Label("机动车影像档案综合管理平台");
         welcome.setSizeUndefined();
         welcome.addStyleName(ValoTheme.LABEL_H4);
         welcome.addStyleName(ValoTheme.LABEL_COLORED);

@@ -515,7 +515,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
     			log.info(e.getMessage());
     		}
         	//2.更改状态
-        	if (business.getName().equals("注册登记")) {
+        	if (business.getName().contains("注册登记")) {
         		editableTrans.setStatus(ui.state().getName("B2"));
         	}
         	else if(StringUtils.isEmpty(business.getCheckLevel())) {

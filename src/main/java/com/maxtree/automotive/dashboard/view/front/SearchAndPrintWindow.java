@@ -147,7 +147,7 @@ public class SearchAndPrintWindow extends Window {
       	    	
       	    	List<Transaction> list = new ArrayList<>(selected);
       	    	Transaction trans = list.get(0);
-      	    	if(trans.getBusinessName().equals("注册登记")) {
+      	    	if(trans.getBusinessName().contains("注册登记")) {
       	    		PrintingFiletagsWindow.open("打印标签", trans);
       	    	}
       	    	else {

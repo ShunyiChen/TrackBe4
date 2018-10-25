@@ -156,6 +156,9 @@ public class TransactionService {
 	 * @return
 	 */
 	public String findTransactionCode(String vin) {
+		
+		System.out.println("vin="+vin);
+		
 		try {
 			int index = getTableIndex(vin);
 			String sql = "SELECT CODE FROM TRANSACTION_"+index+" WHERE VIN=? AND CODE IS NOT NULL LIMIT ?";

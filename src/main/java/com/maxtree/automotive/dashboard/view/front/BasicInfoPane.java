@@ -131,14 +131,14 @@ public class BasicInfoPane extends Panel {
 	 * 调用外部接口
 	 */
 	public void callInterface() {
-		if(!StringUtils.isEmpty(plateTypeField.getValue())
-				&& !StringUtils.isEmpty(plateNumberField.getValue())
-				&& !StringUtils.isEmpty(vinField.getValue())) {
-			view.businessTypePane().setSelectorEnabled(true);
-		}
-		else {
-			view.businessTypePane().setSelectorEnabled(false);
-		}
+//		if(!StringUtils.isEmpty(plateTypeField.getValue())
+//				&& !StringUtils.isEmpty(plateNumberField.getValue())
+//				&& !StringUtils.isEmpty(vinField.getValue())) {
+//			view.businessTypePane().setSelectorEnabled(true);
+//		}
+//		else {
+//			view.businessTypePane().setSelectorEnabled(false);
+//		}
 		// 通过失去焦点获得，如果有条形码，可以通过条形码查询vin.如果没有条形码，可以通过车牌号和号牌种类查询出vin.
 //		if (!StringUtils.isEmpty(barCodeField.getValue())) {
 ////			ArrayList<HashMap<String, String>> lst = interF.getCarView(plateTypeField.getValue(), plateNumberField.getValue());

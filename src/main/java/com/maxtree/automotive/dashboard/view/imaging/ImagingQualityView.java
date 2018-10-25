@@ -488,7 +488,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     	//2.取业务类型
     	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
     	//3.更改状态
-    	if (business.getName().equals("注册登记")) {
+    	if (business.getName().contains("注册登记")) {
     		editableTrans.setStatus(ui.state().getName("B2"));
     	}
     	else if(StringUtils.isEmpty(business.getCheckLevel())) {

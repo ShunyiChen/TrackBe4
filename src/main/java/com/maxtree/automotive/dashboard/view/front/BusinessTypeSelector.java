@@ -77,7 +77,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 		selector.setPlaceholder("请选择一个业务类型");
 		selector.setWidth("100%");
 		selector.setHeight("27px");
-		selector.setEnabled(false);
+//		selector.setEnabled(false);
 		this.addComponent(selector);
 		
 		this.initPollListener();
@@ -237,7 +237,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
     	if("无".equals(view.businessTypePane().getSelected().getCheckLevel())) {
     		return true;
     	}
-    	else if(view.businessTypePane().getSelected().getName().equals("注册登记")) {
+    	else if(view.businessTypePane().getSelected().getName().contains("注册登记")) {
     		return true;
     	}
     	else if (view instanceof ImagingInputView){
@@ -372,13 +372,13 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 		return selector.getValue();
 	}
 	
-	/**
-	 * 
-	 * @param enabled
-	 */
-	public void setEnabled2(boolean enabled) {
-		selector.setEnabled(enabled);
-	}
+//	/**
+//	 * 
+//	 * @param enabled
+//	 */
+//	public void setEnabled2(boolean enabled) {
+//		selector.setEnabled(enabled);
+//	}
 	
 	/**
 	 * 业务编码

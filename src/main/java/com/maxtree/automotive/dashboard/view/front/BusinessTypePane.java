@@ -47,13 +47,13 @@ public class BusinessTypePane extends Panel{
 		return selector.getValue();
 	}
 	
-	/**
-	 * 
-	 * @param enabled
-	 */
-	public void setSelectorEnabled(boolean enabled) {
-		selector.setEnabled2(enabled);
-	}
+//	/**
+//	 * 
+//	 * @param enabled
+//	 */
+//	public void setSelectorEnabled(boolean enabled) {
+//		selector.setEnabled2(enabled);
+//	}
 	
 	/**
 	 * 业务代码
