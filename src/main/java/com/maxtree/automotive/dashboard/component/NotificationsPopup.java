@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
@@ -68,7 +69,6 @@ public class NotificationsPopup extends Window{
         
         List<Notification> list = ui.messagingService.findAllNotifications(loggedInUser.getUserUniqueId(), true, viewName);
         for(Notification n : list) {
-         	
          	Label subjectLabel = new Label();
          	subjectLabel.addStyleName("notification-title");
          	subjectLabel.setValue(n.getSubject());
@@ -81,7 +81,6 @@ public class NotificationsPopup extends Window{
          	
          	Label contentLabel = new Label();
          	
-         	
          	VerticalLayout item = new VerticalLayout();
          	item.setMargin(false);
          	item.setSpacing(false);
@@ -90,6 +89,11 @@ public class NotificationsPopup extends Window{
             item.addStyleName("switchbutton");
             item.addStyleName("NotificationsPopup_item");
             listLayout.addComponent(item);
+            
+            item.addLayoutClickListener(e->{
+            	Message message = ui.messagingService.findById(n.getMessageUniqueId());
+            	Openwith.open(message);
+            });
         }
         
         scrollPane.setContent(listLayout);

@@ -2,7 +2,6 @@ package com.maxtree.automotive.dashboard.view.shelf;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,14 +10,13 @@ import com.maxtree.automotive.dashboard.Activity;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.NotificationsButton;
+import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
-import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Notification;
@@ -30,13 +28,10 @@ import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
-import com.maxtree.automotive.dashboard.view.MessageView;
-import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.automotive.dashboard.view.quality.QCView;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
-import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
@@ -44,7 +39,6 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -342,125 +336,110 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
 		int transitionUniqueId = ui.transitionService.insert(transition,trans.getVin());
     }
 
-    private void openNotificationsPopup(final ClickEvent event) {
-    	VerticalLayout mainVLayout = new VerticalLayout();
-    	mainVLayout.setSpacing(false);
-        Label title = new Label("事件提醒");
-        title.addStyleName(ValoTheme.LABEL_H3);
-        title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
-        mainVLayout.addComponent(title);
-
-        Panel scrollPane = new Panel();
-    	scrollPane.addStyleName("reminder-scrollpane");
-    	scrollPane.setHeight("220px");
-    	scrollPane.setWidth("100%");
-        VerticalLayout listLayout = new VerticalLayout();
-        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.SHELF.getViewName());
-        for (Map<String, Object> m : allMessages) {
-        	VerticalLayout vLayout = new VerticalLayout();
-        	vLayout.setMargin(false);
-        	vLayout.setSpacing(false);
-        	vLayout.addStyleName("notification-item");
-            Label timeLabel = new Label();
-            Label subjectLabel = new Label();
-            subjectLabel.addStyleName("notification-title");
-            int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-            String subject = m.get("subject").toString();
-            subjectLabel.setValue(subject);
-            String content = m.get("content").toString();
-            Label contentLabel = new Label(content);
-            String matedata = m.get("matedata").toString();
-            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
-            contentLabel.addStyleName("notification-content");
-            Date dateCreated = (Date) m.get("datecreated");
-            long duration = new Date().getTime() - dateCreated.getTime();
-            timeLabel.setValue(new TimeAgo().toDuration(duration));
-            timeLabel.addStyleName("notification-time");
-            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
-            listLayout.addComponent(vLayout);
-            vLayout.addStyleName("switchbutton");
-            vLayout.addLayoutClickListener(e -> {
-            	notificationsWindow.close();
-            	String openWith = matedataMap.get("openwith");
-            	Callback callback = new Callback() {
-
-					@Override
-					public void onSuccessful() {
-						//更改已读状态
-						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
-						CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
-					}
-        		};
-            	if(openWith.equals(Openwith.MESSAGE)) {
-            		MessageView.open(m, callback);
-            	}
-            });
-            
-        }
-        scrollPane.setContent(listLayout);
-        mainVLayout.addComponent(scrollPane);
-        mainVLayout.setExpandRatio(scrollPane, 0.9f);
-        
-        HorizontalLayout footer = new HorizontalLayout();
-        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
-        footer.setWidth("100%");
-        footer.setSpacing(false);
-        Button showAll = new Button("查看全部事件");
-        showAll.addClickListener(e->{
-        	showAll(allMessages, 0);
-        	notificationsWindow.close();
-        });
-        
-        showAll.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
-        showAll.addStyleName(ValoTheme.BUTTON_SMALL);
-        footer.addComponent(showAll);
-        footer.setComponentAlignment(showAll, Alignment.TOP_CENTER);
-        mainVLayout.addComponent(footer);
-        mainVLayout.setExpandRatio(footer, 0.1f);
-        
-        if (notificationsWindow == null) {
-            notificationsWindow = new Window();
-            notificationsWindow.setWidth(300.0f, Unit.PIXELS);
-            notificationsWindow.addStyleName("notifications");
-            notificationsWindow.setClosable(false);
-            notificationsWindow.setResizable(false);
-            notificationsWindow.setDraggable(false);
-            notificationsWindow.setCloseShortcut(KeyCode.ESCAPE, null);
-            notificationsWindow.setContent(mainVLayout);
-        } else {
-        	notificationsWindow.setContent(mainVLayout);
-        }
-
-        if (!notificationsWindow.isAttached()) {
-            notificationsWindow.setPositionY(event.getClientY()
-                    - event.getRelativeY() + 40);
-            getUI().addWindow(notificationsWindow);
-            notificationsWindow.focus();
-        } else {
-            notificationsWindow.close();
-        }
-    }
+//    private void openNotificationsPopup(final ClickEvent event) {
+//    	VerticalLayout mainVLayout = new VerticalLayout();
+//    	mainVLayout.setSpacing(false);
+//        Label title = new Label("事件提醒");
+//        title.addStyleName(ValoTheme.LABEL_H3);
+//        title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
+//        mainVLayout.addComponent(title);
+//
+//        Panel scrollPane = new Panel();
+//    	scrollPane.addStyleName("reminder-scrollpane");
+//    	scrollPane.setHeight("220px");
+//    	scrollPane.setWidth("100%");
+//        VerticalLayout listLayout = new VerticalLayout();
+//        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.SHELF.getViewName());
+//        for (Map<String, Object> m : allMessages) {
+//        	VerticalLayout vLayout = new VerticalLayout();
+//        	vLayout.setMargin(false);
+//        	vLayout.setSpacing(false);
+//        	vLayout.addStyleName("notification-item");
+//            Label timeLabel = new Label();
+//            Label subjectLabel = new Label();
+//            subjectLabel.addStyleName("notification-title");
+//            int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
+//            String subject = m.get("subject").toString();
+//            subjectLabel.setValue(subject);
+//            String content = m.get("content").toString();
+//            Label contentLabel = new Label(content);
+//            String matedata = m.get("matedata").toString();
+//            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
+//            contentLabel.addStyleName("notification-content");
+//            Date dateCreated = (Date) m.get("datecreated");
+//            long duration = new Date().getTime() - dateCreated.getTime();
+//            timeLabel.setValue(new TimeAgo().toDuration(duration));
+//            timeLabel.addStyleName("notification-time");
+//            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
+//            listLayout.addComponent(vLayout);
+//            vLayout.addStyleName("switchbutton");
+//            vLayout.addLayoutClickListener(e -> {
+//            	notificationsWindow.close();
+//            	String openWith = matedataMap.get("openwith");
+//            	Callback callback = new Callback() {
+//
+//					@Override
+//					public void onSuccessful() {
+//						//更改已读状态
+//						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
+//						CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
+//					}
+//        		};
+//            	if(openWith.equals(Openwith.MESSAGE)) {
+//            		MessageView.open(m, callback);
+//            	}
+//            });
+//            
+//        }
+//        scrollPane.setContent(listLayout);
+//        mainVLayout.addComponent(scrollPane);
+//        mainVLayout.setExpandRatio(scrollPane, 0.9f);
+//        
+//        HorizontalLayout footer = new HorizontalLayout();
+//        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
+//        footer.setWidth("100%");
+//        footer.setSpacing(false);
+//        Button showAll = new Button("查看全部事件");
+//        showAll.addClickListener(e->{
+//        	showAll(allMessages, 0);
+//        	notificationsWindow.close();
+//        });
+//        
+//        showAll.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+//        showAll.addStyleName(ValoTheme.BUTTON_SMALL);
+//        footer.addComponent(showAll);
+//        footer.setComponentAlignment(showAll, Alignment.TOP_CENTER);
+//        mainVLayout.addComponent(footer);
+//        mainVLayout.setExpandRatio(footer, 0.1f);
+//        
+//        if (notificationsWindow == null) {
+//            notificationsWindow = new Window();
+//            notificationsWindow.setWidth(300.0f, Unit.PIXELS);
+//            notificationsWindow.addStyleName("notifications");
+//            notificationsWindow.setClosable(false);
+//            notificationsWindow.setResizable(false);
+//            notificationsWindow.setDraggable(false);
+//            notificationsWindow.setCloseShortcut(KeyCode.ESCAPE, null);
+//            notificationsWindow.setContent(mainVLayout);
+//        } else {
+//        	notificationsWindow.setContent(mainVLayout);
+//        }
+//
+//        if (!notificationsWindow.isAttached()) {
+//            notificationsWindow.setPositionY(event.getClientY()
+//                    - event.getRelativeY() + 40);
+//            getUI().addWindow(notificationsWindow);
+//            notificationsWindow.focus();
+//        } else {
+//            notificationsWindow.close();
+//        }
+//    }
 
     @Override
     public void enter(final ViewChangeEvent event) {
-//    	updateUnreadCount();
+    	updateUnreadCount();
     }
 
-    /**
-     * 
-     * @param allMessages
-     * @param selectedMessageUniqueId
-     */
-    private void showAll(List<Map<String, Object>> allMessages, int selectedMessageUniqueId) {
-    	Callback2 event = new Callback2() {
-			@Override
-			public void onSuccessful(Object... objects) {
-//				updateUnreadCount();
-			}
-    	};
-    	MessageInboxWindow.open(allMessages, event, selectedMessageUniqueId);
-    }
-    
     /**
      * 提醒按钮
      * 
@@ -471,7 +450,7 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     	notificationsButton.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(final ClickEvent event) {
-                openNotificationsPopup(event);
+                popup.open(event);
             }
         });
     }
@@ -512,4 +491,5 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     private UpGrid upgrid = new UpGrid();
     private DownGrid downgrid = new DownGrid();
     private MessageBodyParser jsonHelper = new MessageBodyParser();
+    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.SHELF.getViewName());
 }

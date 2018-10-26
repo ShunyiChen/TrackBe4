@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
@@ -16,14 +15,12 @@ import com.maxtree.automotive.dashboard.Activity;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.NotificationsButton;
 import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
-import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Company;
@@ -40,14 +37,10 @@ import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.InputViewIF;
-import com.maxtree.automotive.dashboard.view.MessageView;
-import com.maxtree.automotive.dashboard.view.admin.NotificationsManagementWindow;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
-import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.data.Binder;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
-import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
@@ -66,7 +59,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.schlichtherle.license.LicenseContent;
@@ -426,7 +418,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
 			Notifications.warning("有效性验证失败。");
 			return;
     	}
-    	if (!fileGrid.emptyChecks()) {
+    	if (fileGrid.emptyChecks()) {
 			Notifications.warning("请将业务材料上传完整。");
 			return;
     	}
@@ -459,7 +451,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		}
         		FrameNumber frame = ui.frameService.getNewCode(com.getStorehouseName());
         		if(StringUtils.isEmpty(frame.getCode())) {
-        			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
+        			Notifications.warning("没有可用的上架号，请联系管理员设置库房（注册登记）。");
         			return;
         		} else {
         			//跳过质检，完成逻辑上架
@@ -475,7 +467,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("操作成功。已完成逻辑上架。");
+            	Notifications.bottomWarning("提交成功！已完成逻辑上架。");
         	}
         	// 提交给质检队列
         	else {
@@ -497,7 +489,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		// 清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("操作成功。记录已提交到质检队列等待质检。");
+            	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
         	}
     	}
     	
@@ -523,7 +515,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		// 新车注册首个上架号
         		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
         		if(StringUtils.isEmpty(firstCode)) {
-        			Notifications.warning("没有可用的上架号或新车注册业务不存在。");
+        			Notifications.warning("没有可用的上架号或新车注册业务不存在(非审档)。");
         			return;
         		} else {
         			//跳过质检，完成逻辑上架
@@ -537,7 +529,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("操作成功。已完成逻辑上架。");
+            	Notifications.bottomWarning("提交成功！已完成逻辑上架。");
         	}
         	// 提交给质检队列
         	else {
@@ -559,7 +551,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		// 清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("操作成功。记录已提交到质检队列等待质检。");
+            	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
         	}
     	}
     	
@@ -584,7 +576,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		// 新车注册首个上架号
         		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
         		if(StringUtils.isEmpty(firstCode)) {
-        			Notifications.warning("没有可用的上架号或新车注册业务不存在。");
+        			Notifications.warning("没有可用的上架号或新车注册业务不存在(一级审档)。");
         			return;
         		} else {
         			//跳过质检，完成逻辑上架
@@ -608,7 +600,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("操作成功。已完成逻辑上架。");
+            	Notifications.bottomWarning("提交成功！已完成逻辑上架。");
         	}
         	// 提交给质检队列
         	else {
@@ -630,9 +622,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		// 清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("操作成功。记录已提交到质检队列等待质检。");
+            	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
         	}
-    		
     	}
     	
     	
@@ -656,7 +647,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		// 新车注册首个上架号
         		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
         		if(StringUtils.isEmpty(firstCode)) {
-        			Notifications.warning("没有可用的上架号或新车注册业务不存在。");
+        			Notifications.warning("没有可用的上架号或新车注册业务不存在(二级审档)。");
         			return;
         		} else {
         			//跳过质检，完成逻辑上架
@@ -680,7 +671,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("操作成功。已完成逻辑上架。");
+            	Notifications.bottomWarning("提交成功！已完成逻辑上架。");
         	}
         	// 提交给质检队列
         	else {
@@ -702,7 +693,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		// 清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("操作成功。记录已提交到质检队列等待质检。");
+            	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
         	}
     	}
     }

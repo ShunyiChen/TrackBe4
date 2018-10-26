@@ -4,24 +4,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.NotificationsButton;
+import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
-import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
@@ -30,17 +27,13 @@ import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
-import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
-import com.maxtree.automotive.dashboard.view.MessageView;
-import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
-import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
@@ -319,122 +312,108 @@ public class SearchView extends Panel implements View, FrontendViewIF{
      * 
      * @param event
      */
-    private void openNotificationsPopup(final ClickEvent event) {
-    	VerticalLayout mainVLayout = new VerticalLayout();
-    	mainVLayout.setSpacing(false);
-        Label title = new Label("事件提醒");
-        title.addStyleName(ValoTheme.LABEL_H3);
-        title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
-        mainVLayout.addComponent(title);
-
-        Panel scrollPane = new Panel();
-    	scrollPane.addStyleName("reminder-scrollpane");
-    	scrollPane.setHeight("250px");
-    	VerticalLayout listLayout = new VerticalLayout();
-    	List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.SEARCH.getViewName());
-        for (Map<String, Object> m : allMessages) {
-        	VerticalLayout vLayout = new VerticalLayout();
-        	vLayout.setMargin(false);
-        	vLayout.setSpacing(false);
-        	vLayout.addStyleName("notification-item");
-            Label timeLabel = new Label();
-            Label subjectLabel = new Label();
-            subjectLabel.addStyleName("notification-title");
-            int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-            String subject = m.get("subject").toString();
-            subjectLabel.setValue(subject);
-            String content = m.get("content").toString();
-            Label contentLabel = new Label(content);
-            String matedata = m.get("matedata").toString();
-            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
-            contentLabel.addStyleName("notification-content");
-            Date dateCreated = (Date) m.get("datecreated");
-            long duration = new Date().getTime() - dateCreated.getTime();
-            timeLabel.setValue(new TimeAgo().toDuration(duration));
-            timeLabel.addStyleName("notification-time");
-            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
-            listLayout.addComponent(vLayout);
-            vLayout.addStyleName("switchbutton");
-            vLayout.addLayoutClickListener(e -> {
-            	notificationsWindow.close();
-            	String openWith = matedataMap.get("openwith");
-            	Callback callback = new Callback() {
-
-					@Override
-					public void onSuccessful() {
-						//更改已读状态
-						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
-						CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
-					}
-        		};
-            	if(openWith.equals(Openwith.MESSAGE)) {
-            		MessageView.open(m, callback);
-            	}
-            });
-        }
-        scrollPane.setContent(listLayout);
-        mainVLayout.addComponent(scrollPane);
-        mainVLayout.setExpandRatio(scrollPane, 0.9f);
-        
-        HorizontalLayout footer = new HorizontalLayout();
-        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
-        footer.setWidth("100%");
-        footer.setSpacing(false);
-        Button showAll = new Button("查看全部事件");
-        showAll.addClickListener(e->{
-        	
-        	notificationsWindow.close();
-        	showAll(allMessages, 0);
-        });
-        
-        showAll.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
-        showAll.addStyleName(ValoTheme.BUTTON_SMALL);
-        footer.addComponent(showAll);
-        footer.setComponentAlignment(showAll, Alignment.TOP_CENTER);
-        mainVLayout.addComponent(footer);
-        mainVLayout.setExpandRatio(footer, 0.1f);
-        
-        if (notificationsWindow == null) {
-            notificationsWindow = new Window();
-            notificationsWindow.setWidth(300.0f, Unit.PIXELS);
-            notificationsWindow.addStyleName("notifications");
-            notificationsWindow.setClosable(false);
-            notificationsWindow.setResizable(false);
-            notificationsWindow.setDraggable(false);
-            notificationsWindow.setCloseShortcut(KeyCode.ESCAPE, null);
-            notificationsWindow.setContent(mainVLayout);
-        } else {
-        	notificationsWindow.setContent(mainVLayout);
-        }
-
-        if (!notificationsWindow.isAttached()) {
-            notificationsWindow.setPositionY(event.getClientY() - event.getRelativeY() + 40);
-            getUI().addWindow(notificationsWindow);
-            notificationsWindow.focus();
-        } else {
-            notificationsWindow.close();
-        }
-    }
+//    private void openNotificationsPopup(final ClickEvent event) {
+//    	VerticalLayout mainVLayout = new VerticalLayout();
+//    	mainVLayout.setSpacing(false);
+//        Label title = new Label("事件提醒");
+//        title.addStyleName(ValoTheme.LABEL_H3);
+//        title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
+//        mainVLayout.addComponent(title);
+//
+//        Panel scrollPane = new Panel();
+//    	scrollPane.addStyleName("reminder-scrollpane");
+//    	scrollPane.setHeight("250px");
+//    	VerticalLayout listLayout = new VerticalLayout();
+//    	List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.SEARCH.getViewName());
+//        for (Map<String, Object> m : allMessages) {
+//        	VerticalLayout vLayout = new VerticalLayout();
+//        	vLayout.setMargin(false);
+//        	vLayout.setSpacing(false);
+//        	vLayout.addStyleName("notification-item");
+//            Label timeLabel = new Label();
+//            Label subjectLabel = new Label();
+//            subjectLabel.addStyleName("notification-title");
+//            int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
+//            String subject = m.get("subject").toString();
+//            subjectLabel.setValue(subject);
+//            String content = m.get("content").toString();
+//            Label contentLabel = new Label(content);
+//            String matedata = m.get("matedata").toString();
+//            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
+//            contentLabel.addStyleName("notification-content");
+//            Date dateCreated = (Date) m.get("datecreated");
+//            long duration = new Date().getTime() - dateCreated.getTime();
+//            timeLabel.setValue(new TimeAgo().toDuration(duration));
+//            timeLabel.addStyleName("notification-time");
+//            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
+//            listLayout.addComponent(vLayout);
+//            vLayout.addStyleName("switchbutton");
+//            vLayout.addLayoutClickListener(e -> {
+//            	notificationsWindow.close();
+//            	String openWith = matedataMap.get("openwith");
+//            	Callback callback = new Callback() {
+//
+//					@Override
+//					public void onSuccessful() {
+//						//更改已读状态
+//						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
+//						CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
+//					}
+//        		};
+//            	if(openWith.equals(Openwith.MESSAGE)) {
+//            		MessageView.open(m, callback);
+//            	}
+//            });
+//        }
+//        scrollPane.setContent(listLayout);
+//        mainVLayout.addComponent(scrollPane);
+//        mainVLayout.setExpandRatio(scrollPane, 0.9f);
+//        
+//        HorizontalLayout footer = new HorizontalLayout();
+//        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
+//        footer.setWidth("100%");
+//        footer.setSpacing(false);
+//        Button showAll = new Button("查看全部事件");
+//        showAll.addClickListener(e->{
+//        	
+//        	notificationsWindow.close();
+//        	showAll(allMessages, 0);
+//        });
+//        
+//        showAll.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+//        showAll.addStyleName(ValoTheme.BUTTON_SMALL);
+//        footer.addComponent(showAll);
+//        footer.setComponentAlignment(showAll, Alignment.TOP_CENTER);
+//        mainVLayout.addComponent(footer);
+//        mainVLayout.setExpandRatio(footer, 0.1f);
+//        
+//        if (notificationsWindow == null) {
+//            notificationsWindow = new Window();
+//            notificationsWindow.setWidth(300.0f, Unit.PIXELS);
+//            notificationsWindow.addStyleName("notifications");
+//            notificationsWindow.setClosable(false);
+//            notificationsWindow.setResizable(false);
+//            notificationsWindow.setDraggable(false);
+//            notificationsWindow.setCloseShortcut(KeyCode.ESCAPE, null);
+//            notificationsWindow.setContent(mainVLayout);
+//        } else {
+//        	notificationsWindow.setContent(mainVLayout);
+//        }
+//
+//        if (!notificationsWindow.isAttached()) {
+//            notificationsWindow.setPositionY(event.getClientY() - event.getRelativeY() + 40);
+//            getUI().addWindow(notificationsWindow);
+//            notificationsWindow.focus();
+//        } else {
+//            notificationsWindow.close();
+//        }
+//    }
 
     @Override
     public void enter(final ViewChangeEvent event) {
-//        notificationsButton.updateNotificationsCount(null);
+    	updateUnreadCount();
     }
-
-    /**
-     * 
-     * @param allMessages
-     * @param selectedMessageUniqueId
-     */
-    private void showAll(List<Map<String, Object>> allMessages, int selectedMessageUniqueId) {
-    	Callback2 event = new Callback2() {
-			@Override
-			public void onSuccessful(Object... objects) {
-//				updateUnreadCount();
-			}
-    	};
-    	MessageInboxWindow.open(allMessages, event, selectedMessageUniqueId);
-    }
+ 
     
     /**
      * 提醒按钮
@@ -446,7 +425,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     	notificationsButton.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(final ClickEvent event) {
-                openNotificationsPopup(event);
+                popup.open(event);
             }
         });
     }
@@ -492,7 +471,8 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     private VerticalLayout root;
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private NotificationsButton notificationsButton;
-    private Label blankLabel = new Label("<span style='font-size:30px;color: #8D99A6;font-family: Microsoft YaHei;'>无查询结果</span>", ContentMode.HTML);
     private Transaction transaction = null;
     private SearchResultsGrid grid = new SearchResultsGrid();
+    private Label blankLabel = new Label("<span style='font-size:30px;color: #8D99A6;font-family: Microsoft YaHei;'>无查询结果</span>", ContentMode.HTML);
+    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.SEARCH.getViewName());
 }

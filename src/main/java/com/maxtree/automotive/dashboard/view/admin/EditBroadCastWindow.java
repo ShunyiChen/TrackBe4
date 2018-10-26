@@ -14,7 +14,6 @@ import org.vaadin.addons.autocomplete.AutocompleteExtension;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Community;
@@ -296,10 +295,9 @@ public class EditBroadCastWindow extends Window {
         			return;
         		}
         		User creator = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-        		TB4MessagingSystem messagingSystem = new TB4MessagingSystem();
         		String subject = w.message.getSubject();
-        		String matedata = "{\"openwith\":\""+Openwith.MESSAGE+"\"}";
-        		Message newMessage = messagingSystem.createNewMessage(creator, subject, w.message.getContent(), matedata);
+        		String matedata = "";
+        		Message newMessage = w.messagingSystem.createNewMessage(creator, subject, w.message.getContent(), matedata);
         		
         		String viewName = "";// 如果viewName等于空，则表示消息将发送到对方的首个view上
         		new TB4MessagingSystem().sendMessageTo(newMessage.getMessageUniqueId(), w.nameSets, viewName);
@@ -341,14 +339,14 @@ public class EditBroadCastWindow extends Window {
         		String viewName = "";// 如果viewName等于空，则表示消息将发送到对方的首个view上
         		
         		String subject = w.message.getSubject();
-        		String matedata = "{\"openwith\":\""+Openwith.MESSAGE+"\"}";//9代表打开方式
+        		String matedata = "";
         		msg.setSubject(subject);
         		msg.setContent(w.descArea.getValue());
         		msg.setMatedata(matedata);
         		msg.setSentTimes(msg.getSentTimes()+1);
         		msg.setDateCreated(new Date());
         		int newMessageUniqueId = ui.messagingService.insertMessage(msg);
-        		new TB4MessagingSystem().sendMessageTo(newMessageUniqueId, w.nameSets, viewName);
+        		w.messagingSystem.sendMessageTo(newMessageUniqueId, w.nameSets, viewName);
         		
         		w.close();
         		
@@ -370,5 +368,6 @@ public class EditBroadCastWindow extends Window {
 	private Binder<Message> binder = new Binder<>();
 	private Message message = new Message();
 	private static DashboardUI ui = (DashboardUI) UI.getCurrent();
+	private TB4MessagingSystem messagingSystem = new TB4MessagingSystem();
 }
 

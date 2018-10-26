@@ -12,9 +12,6 @@ import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.Openwith;
-import com.maxtree.automotive.dashboard.Popup;
-import com.maxtree.automotive.dashboard.StateHelper;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -202,9 +199,11 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 				Notifications.warning("无法找到影像化管理员，请联系系统管理员进行设置。");
 				return;
 			}
-			String matedata = "{\"openwith\":\""+Openwith.MESSAGE+"\",\"imaginguniqueid\":\""+imaginguniqueid+"\",\"popup\":\""+Popup.YES+"\"}";
-			TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-			Message newMessage = messageSystem.createNewMessage(loggedinUser, view.basicInfoPane().getPlateNumber()+"影像化补充", "请补充车牌号"+imaging.getPlateNumber()+"的全部历史影像化记录。", matedata);
+			String matedata = "{\"UUID\":\""+view.uuid()+"\",\"VIN\":\""+imaging.getVin()+"\",\"STATE\":\""+imaging.getStatus()+"\",\"CHECKLEVEL\":\"\"}";
+			String subject = loggedinUser.getUserName()+"提交了影像化申请";
+			String content = "请补充车牌号"+imaging.getPlateNumber()+"的全部历史影像化记录。";
+			Message newMessage = messageSystem.createNewMessage(loggedinUser,subject, content, matedata);
+			
 			Set<Name> names = new HashSet<Name>();
 			Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 			names.add(target);
@@ -487,5 +486,5 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 	private UIEvents.PollListener pollListener;
 	private MessageBodyParser jsonHelper = new MessageBodyParser();
 	private User loggedinUser = null;
-	
+	private TB4MessagingSystem messageSystem = new TB4MessagingSystem();
 }

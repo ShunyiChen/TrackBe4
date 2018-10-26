@@ -3,7 +3,6 @@ package com.maxtree.automotive.dashboard.view.quality;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -14,13 +13,12 @@ import com.maxtree.automotive.dashboard.Activity;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.NotificationsButton;
+import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
-import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
@@ -36,14 +34,11 @@ import com.maxtree.automotive.dashboard.exception.DataException;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
-import com.maxtree.automotive.dashboard.view.MessageView;
-import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.messagingsystem.Name;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
-import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
@@ -68,6 +63,11 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import de.schlichtherle.license.LicenseContent;
 
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class QCView extends Panel implements View, FrontendViewIF{
 
 	/**
@@ -194,123 +194,108 @@ public class QCView extends Panel implements View, FrontendViewIF{
         return header;
     }
 
-    private void openNotificationsPopup(final ClickEvent event) {
-    	VerticalLayout mainVLayout = new VerticalLayout();
-    	mainVLayout.setSpacing(false);
-        Label title = new Label("事件提醒");
-        title.addStyleName(ValoTheme.LABEL_H3);
-        title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
-        mainVLayout.addComponent(title);
-        Panel scrollPane = new Panel();
-    	scrollPane.addStyleName("reminder-scrollpane");
-    	scrollPane.setHeight("220px");
-    	scrollPane.setWidth("100%");
-        VerticalLayout listLayout = new VerticalLayout();
-        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.QUALITY.getViewName());
-        for (Map<String, Object> m : allMessages) {
-        	VerticalLayout vLayout = new VerticalLayout();
-        	vLayout.setMargin(false);
-        	vLayout.setSpacing(false);
-        	vLayout.addStyleName("notification-item");
-            Label timeLabel = new Label();
-            Label subjectLabel = new Label();
-            subjectLabel.addStyleName("notification-title");
-            int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-            String subject = m.get("subject").toString();
-            subjectLabel.setValue(subject);
-            String content = m.get("content").toString();
-            Label contentLabel = new Label(content);
-            String matedata = m.get("matedata").toString();
-            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
-            contentLabel.addStyleName("notification-content");
-            Date dateCreated = (Date) m.get("datecreated");
-            long duration = new Date().getTime() - dateCreated.getTime();
-            timeLabel.setValue(new TimeAgo().toDuration(duration));
-            timeLabel.addStyleName("notification-time");
-            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
-            listLayout.addComponent(vLayout);
-            vLayout.addStyleName("switchbutton");
-            vLayout.addLayoutClickListener(e -> {
-            	notificationsWindow.close();
-            	String openWith = matedataMap.get("openwith");
-            	Callback callback = new Callback() {
-
-					@Override
-					public void onSuccessful() {
-						//更改已读状态
-						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
-						CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
-					}
-        		};
-            	
-            	if(openWith.equals(Openwith.MESSAGE)) {
-            		MessageView.open(m, callback);
-            	}
-            });
-            
-        }
-        scrollPane.setContent(listLayout);
-        mainVLayout.addComponent(scrollPane);
-        mainVLayout.setExpandRatio(scrollPane, 0.9f);
-        
-        HorizontalLayout footer = new HorizontalLayout();
-        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
-        footer.setWidth("100%");
-        footer.setSpacing(false);
-        Button showAll = new Button("查看全部事件");
-        showAll.addClickListener(e->{
-        	showAll(allMessages, 0);
-        	notificationsWindow.close();
-        });
-        
-        showAll.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
-        showAll.addStyleName(ValoTheme.BUTTON_SMALL);
-        footer.addComponent(showAll);
-        footer.setComponentAlignment(showAll, Alignment.TOP_CENTER);
-        mainVLayout.addComponent(footer);
-        mainVLayout.setExpandRatio(footer, 0.1f);
-        
-        if (notificationsWindow == null) {
-            notificationsWindow = new Window();
-            notificationsWindow.setWidth(300.0f, Unit.PIXELS);
-            notificationsWindow.addStyleName("notifications");
-            notificationsWindow.setClosable(false);
-            notificationsWindow.setResizable(false);
-            notificationsWindow.setDraggable(false);
-            notificationsWindow.setCloseShortcut(KeyCode.ESCAPE, null);
-            notificationsWindow.setContent(mainVLayout);
-        } else {
-        	notificationsWindow.setContent(mainVLayout);
-        }
-
-        if (!notificationsWindow.isAttached()) {
-            notificationsWindow.setPositionY(event.getClientY()
-                    - event.getRelativeY() + 40);
-            getUI().addWindow(notificationsWindow);
-            notificationsWindow.focus();
-        } else {
-            notificationsWindow.close();
-        }
-    }
+//    private void openNotificationsPopup(final ClickEvent event) {
+//    	VerticalLayout mainVLayout = new VerticalLayout();
+//    	mainVLayout.setSpacing(false);
+//        Label title = new Label("事件提醒");
+//        title.addStyleName(ValoTheme.LABEL_H3);
+//        title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
+//        mainVLayout.addComponent(title);
+//        Panel scrollPane = new Panel();
+//    	scrollPane.addStyleName("reminder-scrollpane");
+//    	scrollPane.setHeight("220px");
+//    	scrollPane.setWidth("100%");
+//        VerticalLayout listLayout = new VerticalLayout();
+//        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.QUALITY.getViewName());
+//        for (Map<String, Object> m : allMessages) {
+//        	VerticalLayout vLayout = new VerticalLayout();
+//        	vLayout.setMargin(false);
+//        	vLayout.setSpacing(false);
+//        	vLayout.addStyleName("notification-item");
+//            Label timeLabel = new Label();
+//            Label subjectLabel = new Label();
+//            subjectLabel.addStyleName("notification-title");
+//            int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
+//            String subject = m.get("subject").toString();
+//            subjectLabel.setValue(subject);
+//            String content = m.get("content").toString();
+//            Label contentLabel = new Label(content);
+//            String matedata = m.get("matedata").toString();
+//            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
+//            contentLabel.addStyleName("notification-content");
+//            Date dateCreated = (Date) m.get("datecreated");
+//            long duration = new Date().getTime() - dateCreated.getTime();
+//            timeLabel.setValue(new TimeAgo().toDuration(duration));
+//            timeLabel.addStyleName("notification-time");
+//            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
+//            listLayout.addComponent(vLayout);
+//            vLayout.addStyleName("switchbutton");
+//            vLayout.addLayoutClickListener(e -> {
+//            	notificationsWindow.close();
+//            	String openWith = matedataMap.get("openwith");
+//            	Callback callback = new Callback() {
+//
+//					@Override
+//					public void onSuccessful() {
+//						//更改已读状态
+//						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
+//						CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
+//					}
+//        		};
+//            	
+//            	if(openWith.equals(Openwith.MESSAGE)) {
+//            		MessageView.open(m, callback);
+//            	}
+//            });
+//            
+//        }
+//        scrollPane.setContent(listLayout);
+//        mainVLayout.addComponent(scrollPane);
+//        mainVLayout.setExpandRatio(scrollPane, 0.9f);
+//        
+//        HorizontalLayout footer = new HorizontalLayout();
+//        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
+//        footer.setWidth("100%");
+//        footer.setSpacing(false);
+//        Button showAll = new Button("查看全部事件");
+//        showAll.addClickListener(e->{
+//        	showAll(allMessages, 0);
+//        	notificationsWindow.close();
+//        });
+//        
+//        showAll.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+//        showAll.addStyleName(ValoTheme.BUTTON_SMALL);
+//        footer.addComponent(showAll);
+//        footer.setComponentAlignment(showAll, Alignment.TOP_CENTER);
+//        mainVLayout.addComponent(footer);
+//        mainVLayout.setExpandRatio(footer, 0.1f);
+//        
+//        if (notificationsWindow == null) {
+//            notificationsWindow = new Window();
+//            notificationsWindow.setWidth(300.0f, Unit.PIXELS);
+//            notificationsWindow.addStyleName("notifications");
+//            notificationsWindow.setClosable(false);
+//            notificationsWindow.setResizable(false);
+//            notificationsWindow.setDraggable(false);
+//            notificationsWindow.setCloseShortcut(KeyCode.ESCAPE, null);
+//            notificationsWindow.setContent(mainVLayout);
+//        } else {
+//        	notificationsWindow.setContent(mainVLayout);
+//        }
+//
+//        if (!notificationsWindow.isAttached()) {
+//            notificationsWindow.setPositionY(event.getClientY()
+//                    - event.getRelativeY() + 40);
+//            getUI().addWindow(notificationsWindow);
+//            notificationsWindow.focus();
+//        } else {
+//            notificationsWindow.close();
+//        }
+//    }
 
     @Override
     public void enter(final ViewChangeEvent event) {
-//    	updateUnreadCount();
-    }
-
-    /**
-     * 
-     * @param allMessages
-     * @param selectedMessageUniqueId
-     */
-    private void showAll(List<Map<String, Object>> allMessages, int selectedMessageUniqueId) {
-    	Callback2 event = new Callback2() {
-			@Override
-			public void onSuccessful(Object... objects) {
-//				getUnreadCount();
-			}
-    	};
-    	MessageInboxWindow.open(allMessages, event, selectedMessageUniqueId);
+    	updateUnreadCount();
     }
     
     /**
@@ -378,7 +363,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
     	notificationsButton.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(final ClickEvent event) {
-                openNotificationsPopup(event);
+                popup.open(event);
             }
         });
     }
@@ -432,7 +417,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
      */
     private void accept(String comments) {
     	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
-    	// 不需要审档直接退回前台
+    	// 不需要审档的直接退回前台
     	if (StringUtils.isEmpty(business.getCheckLevel())) {
     		//1.删除锁定队列
     		int serial = 1; //1:质检 2:审档 3:确认审档
@@ -458,12 +443,16 @@ public class QCView extends Panel implements View, FrontendViewIF{
         	editableTrans.setDateModified(new Date());
     		ui.transactionService.update(editableTrans);
     		//3.记录跟踪
-    		int transitionUniqueId = track(Activity.APPROVED, comments);
+    		track(Activity.APPROVED, comments);
+    		
     		//4.发信给前台
-    		String matedata = "{\"openwith\":\""+Openwith.PRINT+"\",\"uuid\":\""+editableTrans.getUuid()+"\",\"vin\":\""+editableTrans.getVin()+"\"}";
+    		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
     		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
-    		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-    		Message newMessage = messageSystem.createNewMessage(receiver, editableTrans.getPlateNumber()+",质检合格",comments,matedata);
+    		String subject = loggedInUser.getUserName()+"通过了质检";
+    		String content = editableTrans.getPlateNumber()+","+comments;
+    		Message newMessage = messageSystem.createNewMessage(receiver,subject,content,matedata);
+    		
+    		
     		Set<Name> names = new HashSet<Name>();
     		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
     		names.add(target);
@@ -473,7 +462,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
     		// 5.清空
     		cleanStage();
     		// 6.提示信息
-    		Notifications.bottomWarning("操作成功。已退回到前台。");
+    		Notifications.bottomWarning("提交成功！已发送至前台用户"+editableTrans.getCreator()+"。");
     		
     	}
     	// 需要审档则继续提交
@@ -504,7 +493,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
     		
     		// 清空舞台
         	cleanStage();
-        	Notifications.bottomWarning("操作成功。本次业务已添加到审档队列中，等待审档。");
+        	Notifications.bottomWarning("提交成功！已提交到队列中等待审档。");
     	}
     }
     
@@ -527,12 +516,15 @@ public class QCView extends Panel implements View, FrontendViewIF{
     	editableTrans.setDateModified(new Date());
 		ui.transactionService.update(editableTrans);
 		//3.记录跟踪
-		int transitionUniqueId = track(Activity.REJECTED,comments);
+		track(Activity.REJECTED,comments);
+		
 		//4.发信给前台
-		String matedata = "{\"openwith\":\""+Openwith.TRANSACTION+"\",\"uuid\":\""+editableTrans.getUuid()+"\",\"vin\":\""+editableTrans.getVin()+"\"}";
+		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\"\"}";
 		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
-		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-		Message newMessage = messageSystem.createNewMessage(receiver,editableTrans.getPlateNumber()+",质检不合格",comments,matedata);
+		String subject = loggedInUser.getUserName()+"退回了一笔业务";
+		String content = editableTrans.getPlateNumber()+",质检不合格,"+comments;
+		Message newMessage = messageSystem.createNewMessage(receiver,subject,content,matedata);
+		
 		Set<Name> names = new HashSet<Name>();
 		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 		names.add(target);
@@ -542,7 +534,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
 		// 5.清空
 		cleanStage();
 		// 6.提示信息
-		Notifications.bottomWarning("操作成功。已退回到前台。");
+		Notifications.bottomWarning("提交成功！已退回到前台更正。");
     }
     
     /**
@@ -552,16 +544,6 @@ public class QCView extends Panel implements View, FrontendViewIF{
      * @return
      */
     private int track(Activity act, String comments) {
-//    	Map<String, String> details = new HashMap<String, String>();
-//    	details.put("1", editableTrans.getStatus());//STATUS
-//		details.put("2", editableTrans.getBarcode());//BARCODE
-//		details.put("3", editableTrans.getPlateType());//PLATETYPE
-//		details.put("4", editableTrans.getPlateNumber());//PLATENUMBER
-//		details.put("5", editableTrans.getVin());//VIN
-//		details.put("6", editableTrans.getBusinessName());//BUSINESSTYPE
-//		details.put("7", editableTrans.getUuid());//UUID
-//		String json = jsonHelper.map2Json(details);
-    	
     	// 插入移行表
 		Transition transition = new Transition();
 		transition.setTransactionUUID(editableTrans.getUuid());
@@ -640,4 +622,6 @@ public class QCView extends Panel implements View, FrontendViewIF{
     private NotificationsButton fatchButton;
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
+    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.QUALITY.getViewName());
+    private TB4MessagingSystem messageSystem = new TB4MessagingSystem();
 }

@@ -36,7 +36,7 @@ public class TB4MessagingSystem {
 		newMessage.setCreatorUniqueId(creator.getUserUniqueId());
 		newMessage.setSubject(subject);
 		newMessage.setContent(content);
-		newMessage.setMatedata(matedata);
+		newMessage.setMatedata(matedata);// matedata{UUID,VIN,STATE,CHECKLEVEL}
 		newMessage.setSentTimes(1);
 		newMessage.setReminderFrequencyId(0);
 		newMessage.setDateCreated(new Date());

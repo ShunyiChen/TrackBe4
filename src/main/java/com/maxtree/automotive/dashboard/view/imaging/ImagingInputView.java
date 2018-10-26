@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,13 +17,12 @@ import com.maxtree.automotive.dashboard.Activity;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.Openwith;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.NotificationsButton;
+import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
-import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Company;
@@ -41,11 +39,9 @@ import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.InputViewIF;
-import com.maxtree.automotive.dashboard.view.MessageView;
 import com.maxtree.automotive.dashboard.view.front.BasicInfoPane;
 import com.maxtree.automotive.dashboard.view.front.BusinessTypePane;
 import com.maxtree.automotive.dashboard.view.front.CapturePane;
-import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.automotive.dashboard.view.front.ThumbnailGrid;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.messagingsystem.Name;
@@ -53,7 +49,6 @@ import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.data.Binder;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
-import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
@@ -199,129 +194,129 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         return header;
     }
 
-    private void openNotificationsPopup(final ClickEvent event) {
-    	VerticalLayout mainVLayout = new VerticalLayout();
-    	mainVLayout.setSpacing(false);
-        Label title = new Label("事件提醒");
-        title.addStyleName(ValoTheme.LABEL_H3);
-        title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
-        mainVLayout.addComponent(title);
-        Panel scrollPane = new Panel();
-    	scrollPane.addStyleName("reminder-scrollpane");
-    	scrollPane.setHeight("220px");
-    	scrollPane.setWidth("100%");
-        VerticalLayout listLayout = new VerticalLayout();
-        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.IMAGING_INPUT.getViewName());
-        for (Map<String, Object> m : allMessages) {
-        	VerticalLayout vLayout = new VerticalLayout();
-        	vLayout.setMargin(false);
-        	vLayout.setSpacing(false);
-        	vLayout.addStyleName("notification-item");
-            Label timeLabel = new Label();
-            Label subjectLabel = new Label();
-            subjectLabel.addStyleName("notification-title");
-            int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-            creatoruniqueid = Integer.parseInt(m.get("creatoruniqueid").toString());
-            String subject = m.get("subject").toString();
-            subjectLabel.setValue(subject);
-            String content = m.get("content").toString();
-            Label contentLabel = new Label(content);
-            String matedata = m.get("matedata").toString();
-            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
-            contentLabel.addStyleName("notification-content");
-            Date dateCreated = (Date) m.get("datecreated");
-            long duration = new Date().getTime() - dateCreated.getTime();
-            timeLabel.setValue(new TimeAgo().toDuration(duration));
-            timeLabel.addStyleName("notification-time");
-            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
-            listLayout.addComponent(vLayout);
-            vLayout.addStyleName("switchbutton");
-
-            removeMessage = new Callback() {
-				@Override
-				public void onSuccessful() {
-					String openWith = matedataMap.get("openwith");
-					// 如果发的是print和transaction打开方式，则有权彻底删除Messages表,因为一个消息只发一个人，即接收人可以永久删除message
-					int deleteType = TB4MessagingSystem.ONLYDELETERECIPIENT;
-					if(openWith.equals(Openwith.PRINT) || openWith.equals(Openwith.TRANSACTION)) {
-						deleteType = TB4MessagingSystem.PERMANENTLYDELETE;
-					}
-					new TB4MessagingSystem().deleteMessage(messageUniqueId, loggedInUser.getUserUniqueId(), deleteType);
-				}
-            };
-            
-            vLayout.addLayoutClickListener(e -> {
-            	notificationsWindow.close();
-            	Callback callback = new Callback() {
-
-					@Override
-					public void onSuccessful() {
-						//更改已读状态
-						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
-						CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
-					}
-        		};
-            	String openWith = matedataMap.get("openwith");
-            	if(openWith.equals(Openwith.TRANSACTION)) {
-            		String uuid = matedataMap.get("uuid");
-            		String vin = matedataMap.get("vin");
-            		if(editableTrans == null) {
-            			editMode = 1;//进入更新模式
-            			openTransaction(uuid,vin,callback);
-            		}
-            		else {
-            			Notifications.warning("请确保完成当前任务，再执行下一操作。");
-            		}
-            	}
-            	else if(openWith.equals(Openwith.PRINT)) {
-            		
-            	}
-            	else if(openWith.equals(Openwith.MESSAGE)) {
-            		MessageView.open(m, callback);
-            	}
-            	
-            });
-        }
-        
-        scrollPane.setContent(listLayout);
-        mainVLayout.addComponent(scrollPane);
-        mainVLayout.setExpandRatio(scrollPane, 0.9f);
-        HorizontalLayout footer = new HorizontalLayout();
-        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
-        footer.setWidth("100%");
-        footer.setSpacing(false);
-        Button showAll = new Button("查看全部事件");
-        showAll.addClickListener(e->{
-        	notificationsWindow.close();
-        	showAll(allMessages, 0);
-        });
-        
-        showAll.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
-        showAll.addStyleName(ValoTheme.BUTTON_SMALL);
-        footer.addComponent(showAll);
-        footer.setComponentAlignment(showAll, Alignment.TOP_CENTER);
-        mainVLayout.addComponent(footer);
-        mainVLayout.setExpandRatio(footer, 0.1f);
-        if (notificationsWindow == null) {
-            notificationsWindow = new Window();
-            notificationsWindow.setWidth(300.0f, Unit.PIXELS);
-            notificationsWindow.addStyleName("notifications");
-            notificationsWindow.setClosable(false);
-            notificationsWindow.setResizable(false);
-            notificationsWindow.setDraggable(false);
-            notificationsWindow.setCloseShortcut(KeyCode.ESCAPE, null);
-            notificationsWindow.setContent(mainVLayout);
-        } else {
-        	notificationsWindow.setContent(mainVLayout);
-        }
-        if (!notificationsWindow.isAttached()) {
-            notificationsWindow.setPositionY(event.getClientY() - event.getRelativeY() + 40);
-            getUI().addWindow(notificationsWindow);
-            notificationsWindow.focus();
-        } else {
-            notificationsWindow.close();
-        }
-    }
+//    private void openNotificationsPopup(final ClickEvent event) {
+//    	VerticalLayout mainVLayout = new VerticalLayout();
+//    	mainVLayout.setSpacing(false);
+//        Label title = new Label("事件提醒");
+//        title.addStyleName(ValoTheme.LABEL_H3);
+//        title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
+//        mainVLayout.addComponent(title);
+//        Panel scrollPane = new Panel();
+//    	scrollPane.addStyleName("reminder-scrollpane");
+//    	scrollPane.setHeight("220px");
+//    	scrollPane.setWidth("100%");
+//        VerticalLayout listLayout = new VerticalLayout();
+//        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.IMAGING_INPUT.getViewName());
+//        for (Map<String, Object> m : allMessages) {
+//        	VerticalLayout vLayout = new VerticalLayout();
+//        	vLayout.setMargin(false);
+//        	vLayout.setSpacing(false);
+//        	vLayout.addStyleName("notification-item");
+//            Label timeLabel = new Label();
+//            Label subjectLabel = new Label();
+//            subjectLabel.addStyleName("notification-title");
+//            int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
+//            creatoruniqueid = Integer.parseInt(m.get("creatoruniqueid").toString());
+//            String subject = m.get("subject").toString();
+//            subjectLabel.setValue(subject);
+//            String content = m.get("content").toString();
+//            Label contentLabel = new Label(content);
+//            String matedata = m.get("matedata").toString();
+//            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
+//            contentLabel.addStyleName("notification-content");
+//            Date dateCreated = (Date) m.get("datecreated");
+//            long duration = new Date().getTime() - dateCreated.getTime();
+//            timeLabel.setValue(new TimeAgo().toDuration(duration));
+//            timeLabel.addStyleName("notification-time");
+//            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
+//            listLayout.addComponent(vLayout);
+//            vLayout.addStyleName("switchbutton");
+//
+//            removeMessage = new Callback() {
+//				@Override
+//				public void onSuccessful() {
+//					String openWith = matedataMap.get("openwith");
+//					// 如果发的是print和transaction打开方式，则有权彻底删除Messages表,因为一个消息只发一个人，即接收人可以永久删除message
+//					int deleteType = TB4MessagingSystem.ONLYDELETERECIPIENT;
+//					if(openWith.equals(Openwith.PRINT) || openWith.equals(Openwith.TRANSACTION)) {
+//						deleteType = TB4MessagingSystem.PERMANENTLYDELETE;
+//					}
+//					new TB4MessagingSystem().deleteMessage(messageUniqueId, loggedInUser.getUserUniqueId(), deleteType);
+//				}
+//            };
+//            
+//            vLayout.addLayoutClickListener(e -> {
+//            	notificationsWindow.close();
+//            	Callback callback = new Callback() {
+//
+//					@Override
+//					public void onSuccessful() {
+//						//更改已读状态
+//						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
+//						CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
+//					}
+//        		};
+//            	String openWith = matedataMap.get("openwith");
+//            	if(openWith.equals(Openwith.TRANSACTION)) {
+//            		String uuid = matedataMap.get("uuid");
+//            		String vin = matedataMap.get("vin");
+//            		if(editableTrans == null) {
+//            			editMode = 1;//进入更新模式
+//            			openTransaction(uuid,vin,callback);
+//            		}
+//            		else {
+//            			Notifications.warning("请确保完成当前任务，再执行下一操作。");
+//            		}
+//            	}
+//            	else if(openWith.equals(Openwith.PRINT)) {
+//            		
+//            	}
+//            	else if(openWith.equals(Openwith.MESSAGE)) {
+//            		MessageView.open(m, callback);
+//            	}
+//            	
+//            });
+//        }
+//        
+//        scrollPane.setContent(listLayout);
+//        mainVLayout.addComponent(scrollPane);
+//        mainVLayout.setExpandRatio(scrollPane, 0.9f);
+//        HorizontalLayout footer = new HorizontalLayout();
+//        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
+//        footer.setWidth("100%");
+//        footer.setSpacing(false);
+//        Button showAll = new Button("查看全部事件");
+//        showAll.addClickListener(e->{
+//        	notificationsWindow.close();
+//        	showAll(allMessages, 0);
+//        });
+//        
+//        showAll.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+//        showAll.addStyleName(ValoTheme.BUTTON_SMALL);
+//        footer.addComponent(showAll);
+//        footer.setComponentAlignment(showAll, Alignment.TOP_CENTER);
+//        mainVLayout.addComponent(footer);
+//        mainVLayout.setExpandRatio(footer, 0.1f);
+//        if (notificationsWindow == null) {
+//            notificationsWindow = new Window();
+//            notificationsWindow.setWidth(300.0f, Unit.PIXELS);
+//            notificationsWindow.addStyleName("notifications");
+//            notificationsWindow.setClosable(false);
+//            notificationsWindow.setResizable(false);
+//            notificationsWindow.setDraggable(false);
+//            notificationsWindow.setCloseShortcut(KeyCode.ESCAPE, null);
+//            notificationsWindow.setContent(mainVLayout);
+//        } else {
+//        	notificationsWindow.setContent(mainVLayout);
+//        }
+//        if (!notificationsWindow.isAttached()) {
+//            notificationsWindow.setPositionY(event.getClientY() - event.getRelativeY() + 40);
+//            getUI().addWindow(notificationsWindow);
+//            notificationsWindow.focus();
+//        } else {
+//            notificationsWindow.close();
+//        }
+//    }
 
     @Override
     public void enter(final ViewChangeEvent event) {
@@ -407,24 +402,9 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	notificationsButton.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(final ClickEvent event) {
-                openNotificationsPopup(event);
+            	popup.open(event);
             }
         });
-    }
-    
-    /**
-     * 
-     * @param allMessages
-     * @param selectedMessageUniqueId
-     */
-    private void showAll(List<Map<String, Object>> allMessages, int selectedMessageUniqueId) {
-    	Callback2 event = new Callback2() {
-			@Override
-			public void onSuccessful(Object... objects) {
-//				updateUnreadCount();
-			}
-    	};
-    	MessageInboxWindow.open(allMessages, event, selectedMessageUniqueId);
     }
     
     /**
@@ -673,9 +653,12 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 			Notifications.warning("没有找到消息接收者");
 			return;
 		}
-		String matedata = "{\"openwith\":\""+Openwith.TRANSACTION+"\",\"uuid\":\""+editableTrans.getUuid()+"\",\"vin\":\""+editableTrans.getVin()+"\"}";
-		TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-		Message newMessage = messageSystem.createNewMessage(loggedInUser,editableTrans.getPlateNumber()+",已修改完成","修改完成",matedata);
+		
+		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\"\"}";
+		String subject = loggedInUser.getUserName()+"修改了一笔业务";
+		String content = editableTrans.getPlateNumber()+",已完成修改";
+		Message newMessage = messageSystem.createNewMessage(loggedInUser,subject,content,matedata);
+		
 		Set<Name> names = new HashSet<Name>();
 		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
 		names.add(target);
@@ -690,16 +673,6 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
      * @return
      */
     private int track(Activity act) {
-//    	Map<String, String> details = new HashMap<String, String>();
-//    	details.put("1", editableTrans.getStatus());//STATUS
-//		details.put("2", basicInfoPane.getBarCode());//BARCODE
-//		details.put("3", basicInfoPane.getPlateType());//PLATETYPE
-//		details.put("4", basicInfoPane.getPlateNumber());//PLATENUMBER
-//		details.put("5", basicInfoPane.getVIN());//VIN
-//		details.put("6", businessTypePane.getSelected().getName());//BUSINESSTYPE
-//		details.put("7", editableTrans.getUuid());//UUID
-//		String json = jsonHelper.map2Json(details);
-    	
     	// 插入移行表
 		Transition transition = new Transition();
 		transition.setTransactionUUID(uuid);
@@ -823,5 +796,6 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
     private HorizontalLayout spliterNorth = new HorizontalLayout();
     private HorizontalLayout spliterSouth = new HorizontalLayout();
-	
+    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.IMAGING_INPUT.getViewName());
+    private TB4MessagingSystem messageSystem = new TB4MessagingSystem();
 }
