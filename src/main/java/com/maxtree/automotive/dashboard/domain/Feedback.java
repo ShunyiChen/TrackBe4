@@ -1,19 +1,19 @@
 package com.maxtree.automotive.dashboard.domain;
 
 /**
- * 批改建议
+ * 批改意见
  * 
  * @author Chen
  *
  */
-public class CorrectingSuggestions {
+public class Feedback {
 
-	public Integer getSuggestionUniqueId() {
-		return suggestionUniqueId;
+	public Integer getFeedbackUniqueId() {
+		return feedbackUniqueId;
 	}
 
-	public void setSuggestionUniqueId(Integer suggestionUniqueId) {
-		this.suggestionUniqueId = suggestionUniqueId;
+	public void setFeedbackUniqueId(Integer feedbackUniqueId) {
+		this.feedbackUniqueId = feedbackUniqueId;
 	}
 
 	public String getUserName() {
@@ -42,12 +42,13 @@ public class CorrectingSuggestions {
 
 	@Override
 	public String toString() {
-		return String.format("CorrectingSuggestions[problemUniqueId=%d, userName='%s', problem='%s'， frequency=%d]",
-				suggestionUniqueId, userName, suggestion);
+//		return String.format("Feedback[feedbackUniqueId=%d, userName='%s', suggestion='%s',frequency=%d]",
+//				feedbackUniqueId, userName, suggestion,frequency);
+		return suggestion;
 	}
 
-	private Integer suggestionUniqueId = 0; // UniqueID
+	private Integer feedbackUniqueId = 0; // UniqueID
 	private String userName;// 用户名
-	private String suggestion;// 批改建议
+	private String suggestion;// 批改意见
 	private Integer frequency = 0;// 使用频率
 }

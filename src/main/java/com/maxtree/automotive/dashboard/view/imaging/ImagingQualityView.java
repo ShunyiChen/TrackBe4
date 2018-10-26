@@ -43,7 +43,7 @@ import com.maxtree.automotive.dashboard.view.MessageView;
 import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.automotive.dashboard.view.front.SearchAndPrintWindow;
 import com.maxtree.automotive.dashboard.view.quality.ConfirmInformationGrid;
-import com.maxtree.automotive.dashboard.view.quality.RouterWindow;
+import com.maxtree.automotive.dashboard.view.quality.FeedbackWindow;
 import com.maxtree.automotive.dashboard.view.quality.SplitPanel;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.messagingsystem.Name;
@@ -438,7 +438,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 				reject(objects[0].toString());
 			}
 		};
-		RouterWindow.open(accept, reject);
+		FeedbackWindow.open(accept, reject);
     }
     
     /**

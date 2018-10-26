@@ -305,7 +305,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	notificationsButton.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(final ClickEvent event) {
-            	NotificationsPopup.open(event);
+            	popup.open(event);
             }
         });
     }
@@ -426,7 +426,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
 			Notifications.warning("有效性验证失败。");
 			return;
     	}
-    	if (fileGrid.emptyChecks()) {
+    	if (!fileGrid.emptyChecks()) {
 			Notifications.warning("请将业务材料上传完整。");
 			return;
     	}
@@ -1058,4 +1058,5 @@ public final class FrontView extends Panel implements View,InputViewIF {
     private HorizontalLayout spliterNorth = new HorizontalLayout();
     private HorizontalLayout spliterSouth = new HorizontalLayout();
     private Callback removeMessage;
+    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.INPUT.getViewName());
 }

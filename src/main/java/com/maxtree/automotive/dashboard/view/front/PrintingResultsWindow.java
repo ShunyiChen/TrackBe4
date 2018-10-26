@@ -136,6 +136,7 @@ public class PrintingResultsWindow extends Window {
 		bean.setVerifier(transition.getOperator());
 		bean.setVerifytime(format.format(transition.getDateCreated()));
 		bean.setBusName(trans.getBusinessName());
+		bean.setWrongContent("");
 		list.add(bean);
 		
 		Callback callback = new Callback() {
@@ -150,12 +151,25 @@ public class PrintingResultsWindow extends Window {
 				btnReady.setEnabled(true);
 			}
 		};
-		try {
-			new TB4Reports().jasperToHtml(list, loggedInUser.getUserUniqueId(), "影像化档案审核合格证明书.jasper", callback);
-			
-		} catch (ReportException e1) {
-			e1.printStackTrace();
+		
+		if(trans.getStatus().equals(ui.state().getName("B16"))
+				|| trans.getStatus().equals(ui.state().getName("B17"))) {
+			try {
+				new TB4Reports().jasperToHtml(list, loggedInUser.getUserUniqueId(), "影像化档案审核退办单.jasper", callback);
+				
+			} catch (ReportException e1) {
+				e1.printStackTrace();
+			}
 		}
+		else {
+			try {
+				new TB4Reports().jasperToHtml(list, loggedInUser.getUserUniqueId(), "影像化档案审核合格证明书.jasper", callback);
+				
+			} catch (ReportException e1) {
+				e1.printStackTrace();
+			}
+		}
+		
 	}
 	
 	/**

@@ -421,6 +421,14 @@ public class CustomGrid extends VerticalLayout {
 		this.addEvent = addEvent;
 	}
 	
+	/**
+	 * 
+	 * @param height
+	 */
+	public void setScrollPaneHeight(int height) {
+		scrollPanel.setHeight(height+"px");
+	}
+	
 	private String title;
 	private GridColumn[] columns;
 	private List<CustomGridRow> data;

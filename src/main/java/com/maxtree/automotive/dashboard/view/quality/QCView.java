@@ -594,7 +594,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
 				reject(objects[0].toString());
 			}
 		};
-		RouterWindow.open(accept, reject);
+		FeedbackWindow.open(accept, reject);
     }
     
     @Override

@@ -38,7 +38,7 @@ import com.maxtree.automotive.dashboard.view.FrontendViewIF;
 import com.maxtree.automotive.dashboard.view.MessageView;
 import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.automotive.dashboard.view.quality.ConfirmInformationGrid;
-import com.maxtree.automotive.dashboard.view.quality.RouterWindow;
+import com.maxtree.automotive.dashboard.view.quality.FeedbackWindow;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.messagingsystem.Name;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
@@ -387,7 +387,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 				reject(objects[0].toString());
 			}
 		};
-		RouterWindow.open(accept, reject);
+		FeedbackWindow.open(accept, reject);
     }
 	
     /**
@@ -543,7 +543,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		// 5.清空
 		cleanStage();
 		// 6.提示信息
-		Notifications.bottomWarning("操作成功。");
+		Notifications.bottomWarning("不合格业务已经退回到前台。");
     }
     
     /**

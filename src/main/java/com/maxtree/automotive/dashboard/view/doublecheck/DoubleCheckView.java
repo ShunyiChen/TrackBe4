@@ -39,7 +39,7 @@ import com.maxtree.automotive.dashboard.view.MessageView;
 import com.maxtree.automotive.dashboard.view.check.Manual;
 import com.maxtree.automotive.dashboard.view.front.MessageInboxWindow;
 import com.maxtree.automotive.dashboard.view.quality.ConfirmInformationGrid;
-import com.maxtree.automotive.dashboard.view.quality.RouterWindow;
+import com.maxtree.automotive.dashboard.view.quality.FeedbackWindow;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.messagingsystem.Name;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
@@ -391,7 +391,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 				reject(objects[0].toString());
 			}
 		};
-		RouterWindow.open(accept, reject);
+		FeedbackWindow.open(accept, reject);
     }
 	
     /**

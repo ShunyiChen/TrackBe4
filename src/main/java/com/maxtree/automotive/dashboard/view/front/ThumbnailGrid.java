@@ -169,8 +169,8 @@ public class ThumbnailGrid extends Panel{
 		Iterator<String> iter = mapRows.keySet().iterator();
 		while(iter.hasNext()) {
 			String key = iter.next();
-			ThumbnailRow value = mapRows.get(key);
-			if(!value.hasThumbnailUploaded()) {
+			ThumbnailRow row = mapRows.get(key);
+			if(!row.hasThumbnailUploaded()) {
 				return false;
 			}
 		}

@@ -1,5 +1,11 @@
 package com.maxtree.automotive.dashboard.component;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.admin.NotificationsManagementWindow;
@@ -11,6 +17,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
@@ -28,7 +35,12 @@ public class NotificationsPopup extends Window{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public NotificationsPopup() {
+	/**
+	 * 
+	 * @param viewName
+	 */
+	public NotificationsPopup(String viewName) {
+		this.viewName = viewName;
 		initComponents();
 	}
 	
@@ -54,6 +66,32 @@ public class NotificationsPopup extends Window{
     	scrollPane.setWidth("100%");
         VerticalLayout listLayout = new VerticalLayout();
         
+        List<Notification> list = ui.messagingService.findAllNotifications(loggedInUser.getUserUniqueId(), true, viewName);
+        for(Notification n : list) {
+         	
+         	Label subjectLabel = new Label();
+         	subjectLabel.addStyleName("notification-title");
+         	subjectLabel.setValue(n.getSubject());
+         	
+         	Label timeLabel = new Label();
+         	Date dateCreated = n.getSendTime();
+         	long duration = new Date().getTime() - dateCreated.getTime();
+         	timeLabel.setValue(new TimeAgo().toDuration(duration));
+         	timeLabel.addStyleName("notification-time");
+         	
+         	Label contentLabel = new Label();
+         	
+         	
+         	VerticalLayout item = new VerticalLayout();
+         	item.setMargin(false);
+         	item.setSpacing(false);
+         	item.addStyleName("notification-item");
+            item.addComponents(subjectLabel,timeLabel,contentLabel);
+            item.addStyleName("switchbutton");
+            item.addStyleName("NotificationsPopup_item");
+            listLayout.addComponent(item);
+        }
+        
         scrollPane.setContent(listLayout);
         main.addComponent(scrollPane);
         main.setExpandRatio(scrollPane, 0.9f);
@@ -63,7 +101,7 @@ public class NotificationsPopup extends Window{
         footer.setSpacing(false);
         Button showAll = new Button("查看全部事件");
         showAll.addClickListener(e->{
-//        	notificationsWindow.close();
+        	close();
         	NotificationsManagementWindow.open(DashboardViewType.INPUT.getViewName());
         });
         
@@ -79,17 +117,18 @@ public class NotificationsPopup extends Window{
 	 * 
 	 * @param event
 	 */
-	public static void open(ClickEvent event) {
-		NotificationsPopup popup = new NotificationsPopup();
-		if(popup.isAttached()) {
-			popup.setPositionY(event.getClientY() - event.getRelativeY() + 40);
-			popup.focus();
+	public void open(ClickEvent event) {
+		if(!isAttached()) {
+			setPositionY(event.getClientY() - event.getRelativeY() + 40);
+			ui.addWindow(this);
+			focus();
 		}
 		else {
-			popup.close();
+			close();
 		}
 	}
-	
+	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private VerticalLayout main = new VerticalLayout();
 	private User loggedInUser;
+	private String viewName;
 }
