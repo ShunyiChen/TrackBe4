@@ -14,30 +14,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Activity;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.Openwith;
-import com.maxtree.automotive.dashboard.StateHelper;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
+import com.maxtree.automotive.dashboard.component.NotificationsButton;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
-import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.maxtree.automotive.dashboard.domain.Message;
+import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
-import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
@@ -330,37 +328,6 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 //    	getUnreadCount();
     }
 
-    public static final class NotificationsButton extends Button {
-        private static final String STYLE_UNREAD = "unread";
-        public static final String ID = "dashboard-notifications";
-
-        public NotificationsButton() {
-            setIcon(VaadinIcons.BELL);
-            setId(ID);
-            addStyleName("notifications");
-            addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-            DashboardEventBus.register(this);
-        }
-
-        @Subscribe
-        public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-        	DashboardMenu.getInstance().imagingInputCount(event.getCount());
-        	setUnreadCount(event.getCount());
-        }
-
-        public void setUnreadCount(final int count) {
-            setCaption(String.valueOf(count));
-            String description = "事件提醒";
-            if (count > 0) {
-                addStyleName(STYLE_UNREAD);
-                description += " (" + count + " 未执行)";
-            } else {
-                removeStyleName(STYLE_UNREAD);
-            }
-            setDescription(description);
-        }
-    }
-    
     /**
      * 
      */
@@ -766,17 +733,18 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 
 	@Override
 	public void updateUnreadCount() {
-//		List<SendDetails> sendDetailsList = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
-//		int unreadCount = 0;
-//		for (SendDetails sd : sendDetailsList) {
-//			if (sd.getViewName().equals(DashboardViewType.IMAGING_INPUT.getViewName())
-//					|| sd.getViewName().equals("")) {
-//				unreadCount++;
-//			}
-//		}
-//		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
-//		event.setCount(unreadCount);
-//		notificationsButton.updateNotificationsCount(event);
+		List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
+		int unreadCount = 0;
+		for (Notification n : notifications) {
+			if (n.getViewName().equals(DashboardViewType.IMAGING_INPUT.getViewName())
+					|| n.getViewName().equals("")) {
+				unreadCount++;
+			}
+		}
+		
+		
+		DashboardMenu.getInstance().imagingInputCount(unreadCount);
+		notificationsButton.setUnreadCount(unreadCount);
 	}
     
 	@Override
@@ -804,11 +772,6 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 		return editableSite;
 	}
 
-	@Override
-	public void stoppedAtAnException(boolean stop) {
-		stoppedAtAnException = stop;
-	}
-	
 	@Override
 	public BasicInfoPane basicInfoPane() {
 		return basicInfoPane;

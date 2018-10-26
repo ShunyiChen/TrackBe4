@@ -156,9 +156,6 @@ public class TransactionService {
 	 * @return
 	 */
 	public String findTransactionCode(String vin) {
-		
-		System.out.println("vin="+vin);
-		
 		try {
 			int index = getTableIndex(vin);
 			String sql = "SELECT CODE FROM TRANSACTION_"+index+" WHERE VIN=? AND CODE IS NOT NULL LIMIT ?";
@@ -198,7 +195,6 @@ public class TransactionService {
 		for (String name : communityNames){
 			keyword = "%"+keyword+"%";
 			sql = "SELECT * FROM SEARCH_BY_KEYWORD(?,?,?,?)";
-			System.out.println(limit+","+offset+","+keyword+","+name);
 			List<Transaction> lst = jdbcTemplate.query(sql, new Object[] {limit, offset, keyword, name}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
 			all.addAll(lst);
 		}

@@ -75,7 +75,7 @@ public class SearchToolBar extends AbsoluteLayout {
         notificationLayout.setSizeUndefined();
         notificationLayout.addComponents(notificationButton);
         notificationButton.addClickListener(e->{
-        	NotificationsManagementWindow.open();
+        	NotificationsManagementWindow.open("");
         });
         
         // text field

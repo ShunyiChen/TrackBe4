@@ -21,6 +21,7 @@ import com.maxtree.automotive.dashboard.StateHelper;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
+import com.maxtree.automotive.dashboard.component.NotificationsButton;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
@@ -28,6 +29,7 @@ import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.maxtree.automotive.dashboard.domain.Message;
+import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
@@ -316,41 +318,6 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 //    	getUnreadCount();
     }
 
-    public static final class NotificationsButton extends Button {
-        /**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private static final String STYLE_UNREAD = "unread";
-        public static final String ID = "dashboard-notifications";
-
-        public NotificationsButton() {
-            setIcon(VaadinIcons.BELL);
-            setId(ID);
-            addStyleName("notifications");
-            addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-            DashboardEventBus.register(this);
-        }
-
-        @Subscribe
-        public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-        	DashboardMenu.getInstance().imagingQualityCount(event.getCount());
-        	setUnreadCount(event.getCount());
-        }
-
-        public void setUnreadCount(final int count) {
-            setCaption(String.valueOf(count));
-            String description = "事件提醒";
-            if (count > 0) {
-                addStyleName(STYLE_UNREAD);
-                description += " (" + count + " 未执行)";
-            } else {
-                removeStyleName(STYLE_UNREAD);
-            }
-            setDescription(description);
-        }
-    }
-    
     /**
      * 
      * @param allMessages
@@ -532,7 +499,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
      */
     private void reject(String comments) {
     	//1.更改状态
-    	editableTrans.setStatus(ui.state().getName("B1"));
+    	editableTrans.setStatus(ui.state().getName("B15"));//质检不合格
     	editableTrans.setDateModified(new Date());
 		ui.transactionService.update(editableTrans);
 		//2.记录跟踪
@@ -590,17 +557,17 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     
     @Override
 	public void updateUnreadCount() {
-//		List<SendDetails> sendDetailsList = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
-//		int unreadCount = 0;
-//		for (SendDetails sd : sendDetailsList) {
-//			if (sd.getViewName().equals(DashboardViewType.IMAGING_QUALITY.getViewName())
-//					|| sd.getViewName().equals("")) {
-//				unreadCount++;
-//			}
-//		}
-//		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
-//		event.setCount(unreadCount);
-//		notificationsButton.updateNotificationsCount(event);
+		List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
+		int unreadCount = 0;
+		for (Notification n : notifications) {
+			if (n.getViewName().equals(DashboardViewType.IMAGING_QUALITY.getViewName())
+					|| n.getViewName().equals("")) {
+				unreadCount++;
+			}
+		}
+		
+		notificationsButton.setUnreadCount(unreadCount);
+		DashboardMenu.getInstance().imagingQualityCount(unreadCount);
 	}
     
    	@Override

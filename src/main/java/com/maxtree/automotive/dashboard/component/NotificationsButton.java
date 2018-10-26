@@ -1,10 +1,6 @@
 package com.maxtree.automotive.dashboard.component;
 
-import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
-import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
-import com.maxtree.automotive.dashboard.view.DashboardMenu;
-import com.maxtree.automotive.dashboard.view.admin.NotificationsManagementWindow;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.themes.ValoTheme;
@@ -32,11 +28,11 @@ public class NotificationsButton extends Button {
         DashboardEventBus.register(this);
     }
 
-    @Subscribe
-    public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-    	DashboardMenu.getInstance().updateNotificationsCount(event.getCount());
-    	setUnreadCount(event.getCount());
-    }
+//    @Subscribe
+//    public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
+//    	DashboardMenu.getInstance().updateNotificationsCount(event.getCount());
+//    	setUnreadCount(event.getCount());
+//    }
 
     /**
      * 
@@ -53,10 +49,15 @@ public class NotificationsButton extends Button {
         }
         setDescription(description);
     }
-
-//	@Override
-//	public void buttonClick(ClickEvent event) {
-//		NotificationsManagementWindow.open();
-//	}
     
+    /**
+     * 
+     */
+    public void changeFriendlyColor() {
+    	addStyleName(ValoTheme.BUTTON_FRIENDLY);
+    }
+    
+    public void restoreColor() {
+    	this.removeStyleName(ValoTheme.BUTTON_FRIENDLY);
+    }
 }

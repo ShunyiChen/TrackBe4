@@ -63,9 +63,9 @@ public class TransitionService {
 				ps.setString(3, transition.getActivity());
 				ps.setString(4, transition.getComments());
 				ps.setString(5, transition.getOperator());
-				long millis = transition.getDateCreated().getTime();
-				java.sql.Date date = new java.sql.Date(millis);
-				ps.setDate(6,date);
+				long millis = System.currentTimeMillis();
+				java.sql.Timestamp date = new java.sql.Timestamp(millis);
+				ps.setTimestamp(6, date);
 				return ps;
 			}
 			

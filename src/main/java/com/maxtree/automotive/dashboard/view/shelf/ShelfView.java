@@ -7,7 +7,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Activity;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
@@ -17,16 +16,16 @@ import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
+import com.maxtree.automotive.dashboard.component.NotificationsButton;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
-import com.maxtree.automotive.dashboard.domain.Queue;
+import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
-import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
@@ -64,6 +63,11 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import de.schlichtherle.license.LicenseContent;
 
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class ShelfView extends Panel implements View, FrontendViewIF{
 
 	/**
@@ -86,7 +90,6 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
         Responsive.makeResponsive(root);
         root.addComponent(buildHeader());
         root.addComponent(buildSparklines());
-       
         main.addSelectedTabChangeListener(e->{
         	// Find the tabsheet
             TabSheet tabsheet = e.getTabSheet();
@@ -443,41 +446,6 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
 //    	updateUnreadCount();
     }
 
-    public static final class NotificationsButton extends Button {
-        /**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private static final String STYLE_UNREAD = "unread";
-        public static final String ID = "dashboard-notifications";
-
-        public NotificationsButton() {
-            setIcon(VaadinIcons.BELL);
-            setId(ID);
-            addStyleName("notifications");
-            addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-            DashboardEventBus.register(this);
-        }
-
-        @Subscribe
-        public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-        	DashboardMenu.getInstance().shelfCount(event.getCount());
-        	setUnreadCount(event.getCount());
-        }
-
-        public void setUnreadCount(final int count) {
-            setCaption(String.valueOf(count));
-            String description = "事件提醒";
-            if (count > 0) {
-                addStyleName(STYLE_UNREAD);
-                description += " (" + count + " 未执行)";
-            } else {
-                removeStyleName(STYLE_UNREAD);
-            }
-            setDescription(description);
-        }
-    }
-    
     /**
      * 
      * @param allMessages
@@ -510,31 +478,18 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
   
     @Override
    	public void updateUnreadCount() {
-//   		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-//   		List<SendDetails> sendDetailsList = CacheManager.getInstance().getNotificationsCache().get(loginUser.getUserUniqueId());
-//    	int unreadCount = 0;
-//		for (SendDetails sd : sendDetailsList) {
-//			if (sd.getViewName().equals(DashboardViewType.SHELF.getViewName())
-//					|| sd.getViewName().equals("")) {
-//				unreadCount++;
-//			}
-//		}
-//   		
-//   		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
-//   		event.setCount(unreadCount);
-//   		notificationsButton.updateNotificationsCount(event);
-//   		
-//   		seeAvailableQueueSize();
+   		List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
+    	int unreadCount = 0;
+		for (Notification n : notifications) {
+			if (n.getViewName().equals(DashboardViewType.SHELF.getViewName())
+					|| n.getViewName().equals("")) {
+				unreadCount++;
+			}
+		}
+   		
+   		notificationsButton.setUnreadCount(unreadCount);
+   		DashboardMenu.getInstance().shelfCount(unreadCount);
    	}
-    
-    /**
-     * 查看可用的队列记录数
-     */
-    private void seeAvailableQueueSize() {
-    	List<Queue> listQue = ui.queueService.findAvaliable(1);
-    	NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
-   		event.setCount(listQue.size());
-    }
 
    	@Override
    	public void cleanStage() {
@@ -557,5 +512,4 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     private UpGrid upgrid = new UpGrid();
     private DownGrid downgrid = new DownGrid();
     private MessageBodyParser jsonHelper = new MessageBodyParser();
-//    private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
 }

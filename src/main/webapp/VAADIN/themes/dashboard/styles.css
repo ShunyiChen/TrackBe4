@@ -14996,6 +14996,10 @@ div.v-layout.v-horizontal.v-widget {
 	background-color: lightgray;
 }
 
+.dashboard .PrintingFiletagsWindow_bf {
+	text-align: center;
+}
+
 .dashboard .schedule .v-calendar-event-content {
 	background-repeat: repeat-x, no-repeat;
 	background-size: auto, cover;

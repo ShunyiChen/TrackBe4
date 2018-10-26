@@ -9,28 +9,27 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Activity;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.Openwith;
-import com.maxtree.automotive.dashboard.StateHelper;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
+import com.maxtree.automotive.dashboard.component.NotificationsButton;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Message;
+import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
-import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.exception.DataException;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
@@ -62,8 +61,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -195,7 +192,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
         buildFetchButton();
         buildCommitButton();
         buildNotificationsButton();
-        HorizontalLayout tools = new HorizontalLayout(btnFetch,btnCommit,notificationsButton);
+        HorizontalLayout tools = new HorizontalLayout(fetchButton,btnCommit,notificationsButton);
         tools.addStyleName("toolbar");
         header.addComponent(tools);
         return header;
@@ -304,77 +301,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 
     @Override
     public void enter(final ViewChangeEvent event) {
-//    	updateUnreadCount();
-    }
-
-    public static final class NotificationsButton extends Button {
-        /**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private static final String STYLE_UNREAD = "unread";
-        public static final String ID = "dashboard-notifications";
-
-        public NotificationsButton() {
-            setIcon(VaadinIcons.BELL);
-            setId(ID);
-            addStyleName("notifications");
-            addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-            DashboardEventBus.register(this);
-        }
-
-        @Subscribe
-        public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-        	DashboardMenu.getInstance().checkerCount(event.getCount());
-        	setUnreadCount(event.getCount());
-        }
-
-        public void setUnreadCount(final int count) {
-            setCaption(String.valueOf(count));
-            String description = "事件提醒";
-            if (count > 0) {
-                addStyleName(STYLE_UNREAD);
-                description += " (" + count + " 未执行)";
-            } else {
-                removeStyleName(STYLE_UNREAD);
-            }
-            setDescription(description);
-        }
-    }
-    
-    public static final class FetchButton extends Button {
-        /**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private static final String STYLE_UNREAD = "unread";
-        public static final String ID = "dashboard-notifications";
-
-        public FetchButton() {
-            setIcon(VaadinIcons.BELL);
-            setId(ID);
-            addStyleName("notifications");
-            addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-            DashboardEventBus.register(this);
-        }
-
-        @Subscribe
-        public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-        	DashboardMenu.getInstance().checkerCount(event.getCount());
-        	setUnreadCount(event.getCount());
-        }
-
-        public void setUnreadCount(final int count) {
-            setCaption(String.valueOf(count));
-            String description = "可用队列";
-            if (count > 0) {
-                addStyleName(STYLE_UNREAD);
-                description += " (" + count + " 未取)";
-            } else {
-                removeStyleName(STYLE_UNREAD);
-            }
-            setDescription(description);
-        }
+    	updateUnreadCount();
     }
     
     /**
@@ -386,7 +313,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     	Callback2 event = new Callback2() {
 			@Override
 			public void onSuccessful(Object... objects) {
-//				updateUnreadCount();
+				updateUnreadCount();
 			}
     	};
     	MessageInboxWindow.open(allMessages, event, selectedMessageUniqueId);
@@ -411,13 +338,14 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
      * @return
      */
     private void buildFetchButton() {
-    	btnFetch.setEnabled(true);
-    	btnFetch.setId(EDIT_ID);
-    	btnFetch.setIcon(VaadinIcons.RANDOM);
-    	btnFetch.addStyleName("icon-edit");
-    	btnFetch.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-    	btnFetch.setDescription("从队列取一条记录审核");
-    	btnFetch.addClickListener(e -> {
+    	fetchButton = new NotificationsButton();
+    	fetchButton.setEnabled(true);
+    	fetchButton.setId(EDIT_ID);
+    	fetchButton.setIcon(VaadinIcons.RANDOM);
+    	fetchButton.addStyleName("icon-edit");
+    	fetchButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	fetchButton.setDescription("从队列取一条记录审核");
+    	fetchButton.addClickListener(e -> {
     		if(editableTrans == null) {
     			fetchTransaction();
     		}
@@ -484,7 +412,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     private void fetchTransaction() {
     	Queue lockedQueue = ui.queueService.getLockedQueue(2, loggedInUser.getUserUniqueId());
     	if (lockedQueue.getQueueUniqueId() > 0) {
-			Notification notification = new Notification("提示：", "正在导入上次业务。", Type.WARNING_MESSAGE);
+    		com.vaadin.ui.Notification notification = new com.vaadin.ui.Notification("提示：", "正在导入上次业务。", com.vaadin.ui.Notification.Type.WARNING_MESSAGE);
 			notification.setDelayMsec(1000);
 			notification.show(Page.getCurrent());
 			notification.addCloseListener(e -> {
@@ -542,6 +470,9 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.INPUT.getViewName());
     		// 更新消息轮询的缓存
     		CacheManager.getInstance().getNotificationsCache().refresh(receiver.getUserUniqueId());
+    		
+    		System.out.println(new Date()+"----"+receiver.getUserUniqueId());
+    		
     		// 5.清空
     		cleanStage();
     		// 6.提示信息
@@ -593,7 +524,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 			e.printStackTrace();
 		}
     	// 2.更改状态
-    	editableTrans.setStatus(ui.state().getName("B1"));
+    	editableTrans.setStatus(ui.state().getName("B16")); //审档不合格
 		editableTrans.setDateModified(new Date());
 		ui.transactionService.update(editableTrans);
 		//3.记录跟踪
@@ -647,19 +578,29 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     
     @Override
 	public void updateUnreadCount() {
-//    	List<SendDetails> sendDetailsList = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
-//    	int unreadCount = 0;
-//		for (SendDetails sd : sendDetailsList) {
-//			if (sd.getViewName().equals(DashboardViewType.CHECK.getViewName())
-//					|| sd.getViewName().equals("")) {
-//				unreadCount++;
-//			}
-//		}
-//   		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
-//   		event.setCount(unreadCount);
-//   		notificationsButton.updateNotificationsCount(event);
-//   		
-//   		updateQueueSize();
+    	List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
+    	int unreadCount = 0;
+		for (Notification n : notifications) {
+			if (n.getViewName().equals(DashboardViewType.CHECK.getViewName())
+					|| n.getViewName().equals("")) {
+				unreadCount++;
+			}
+		}
+		// 更新通知未读数
+   		notificationsButton.setUnreadCount(unreadCount);
+   		DashboardMenu.getInstance().checkerCount(unreadCount);
+   		// 更新队列可取数
+    	List<Queue> listQue = ui.queueService.findAvaliable(2);
+   		fetchButton.setUnreadCount(listQue.size());
+   		
+   		// 变更取队列按钮背景颜色
+   		Queue lockedQ = ui.queueService.getLockedQueue(2, loggedInUser.getUserUniqueId());
+   		if(lockedQ.getQueueUniqueId() != 0) {
+   			fetchButton.changeFriendlyColor();
+   		}
+   		else {
+   			fetchButton.restoreColor();
+   		}
 	}
 
 	@Override
@@ -672,16 +613,6 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		editableTrans = null;
 	}
 
-	 /**
-     * 查看可用的队列记录数
-     */
-    private void updateQueueSize() {
-    	List<Queue> listQue = ui.queueService.findAvaliable(2);
-    	NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
-   		event.setCount(listQue.size());
-   		btnFetch.updateNotificationsCount(event);
-    }
-    
     private Manual manualPane;
     private MessageBodyParser jsonHelper = new MessageBodyParser();
    	private Transaction editableTrans = null; 	//可编辑的编辑transaction
@@ -694,8 +625,8 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     private VerticalLayout main = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private ConfirmInformationGrid confirmInformationGrid;
-    private FetchButton btnFetch = new FetchButton();
     private Button btnCommit = new Button();//提交给确认审档
+    private NotificationsButton fetchButton;
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
 }

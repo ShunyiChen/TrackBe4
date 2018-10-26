@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.MessageRecipient;
@@ -236,22 +237,27 @@ public class MessagingService {
 	/**
 	 * 
 	 * @param userUniqueId
+	 * @param onlyUnread
 	 * @param viewName
-	 * @param onlyUnread true:查找未读的通知
 	 * @return
 	 */
-	public List<Notification> findAllNotifications(int userUniqueId, String viewName, boolean onlyUnread) {
-		String condition = "";
+	public List<Notification> findAllNotifications(int userUniqueId, boolean onlyUnread,String viewName) {
+		String condition1 = "";
 		if(onlyUnread) {
-			condition = "A.MARKEDASREAD=FALSE AND ";
+			condition1 = " A.MARKEDASREAD=FALSE AND ";
 		}
+		String condition2 = "";
+		if(!StringUtils.isEmpty(viewName)) {
+			condition2 = " A.VIEWNAME='"+viewName+"' AND ";
+		}
+		
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT A.*,B.SUBJECT AS SUBJECT,C.USERNAME AS USERNAME,D.PICTURE");
 		sql.append(" FROM NOTIFICATIONS AS A ");
 		sql.append("  LEFT JOIN MESSAGES AS B ON A.MESSAGEUNIQUEID=B.MESSAGEUNIQUEID ");
 		sql.append("  LEFT JOIN USERS AS C ON C.USERUNIQUEID=B.CREATORUNIQUEID ");
-		sql.append("  LEFT JOIN USERPROFILES AS D ON D.USERUNIQUEID=C.USERUNIQUEID WHERE "+condition+" A.USERUNIQUEID=? AND A.VIEWNAME IN('',?)ORDER BY B.MESSAGEUNIQUEID DESC ");
-		List<Notification> results = jdbcTemplate.query(sql.toString(), new Object[] {userUniqueId,viewName}, new BeanPropertyRowMapper<Notification>(Notification.class));
+		sql.append("  LEFT JOIN USERPROFILES AS D ON D.USERUNIQUEID=C.USERUNIQUEID WHERE "+condition1+condition2+" A.USERUNIQUEID=? ORDER BY B.MESSAGEUNIQUEID DESC ");
+		List<Notification> results = jdbcTemplate.query(sql.toString(), new Object[] {userUniqueId}, new BeanPropertyRowMapper<Notification>(Notification.class));
 		return results;
 	}
 	

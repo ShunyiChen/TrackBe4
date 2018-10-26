@@ -1,6 +1,9 @@
 package com.maxtree.automotive.dashboard.view.front;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,10 +27,14 @@ import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.reports.TB4Reports;
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.FileResource;
+import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -57,8 +64,7 @@ public class PrintingResultsWindow extends Window {
 	private void initComponents() {
 		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		this.setCaption(caption);
-		this.setWidthUndefined();
-		this.setHeight("150px");
+		this.setSizeFull();
 		this.setModal(true);
 		this.setClosable(true);
 		this.setResizable(false);
@@ -70,37 +76,42 @@ public class PrintingResultsWindow extends Window {
 		radios = new RadioButtonGroup<>(null, options);
 		radios.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
 		
-		btnOk.addStyleName(ValoTheme.BUTTON_PRIMARY);
-		btnOk.setEnabled(false);
+		btnReady.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		btnReady.setEnabled(false);
 		HorizontalLayout optionsLayout = new HorizontalLayout();
 		optionsLayout.addComponents(Box.createHorizontalBox(10), radios);
 		optionsLayout.setComponentAlignment(radios, Alignment.MIDDLE_LEFT);
 		
-    	buttonLayout.setSpacing(false);
-    	buttonLayout.setMargin(false);
-    	buttonLayout.setWidthUndefined();
-    	buttonLayout.setHeight("40px");
-    	buttonLayout.addComponents(btnCancel, Box.createHorizontalBox(5), btnOk, Box.createHorizontalBox(5));
-    	buttonLayout.setComponentAlignment(btnCancel, Alignment.MIDDLE_LEFT);
-    	buttonLayout.setComponentAlignment(btnOk, Alignment.MIDDLE_LEFT);
+		previewPane.setSizeFull();
+		
+    	footer.setSpacing(false);
+    	footer.setMargin(false);
+    	footer.setWidthUndefined();
+    	footer.setHeight("40px");
+    	footer.addComponents(btnCancel, Box.createHorizontalBox(5), btnReady, Box.createHorizontalBox(5));
+    	footer.setComponentAlignment(btnCancel, Alignment.MIDDLE_LEFT);
+    	footer.setComponentAlignment(btnReady, Alignment.MIDDLE_LEFT);
     	
-    	VerticalLayout vlayout = new VerticalLayout();
-		vlayout.setSpacing(false);
-		vlayout.setMargin(false);
-		vlayout.setWidth("100%");
-		vlayout.setHeightUndefined();
-    	vlayout.addComponents(optionsLayout, Box.createVerticalBox(5), buttonLayout);
-    	vlayout.setComponentAlignment(optionsLayout, Alignment.MIDDLE_CENTER);
-    	vlayout.setComponentAlignment(buttonLayout, Alignment.TOP_RIGHT);
-        
-    	this.setContent(vlayout);
+		main.setSpacing(false);
+		main.setMargin(false);
+		main.setSizeFull();
+    	main.addComponents(optionsLayout,previewPane,footer);
+    	main.setComponentAlignment(optionsLayout, Alignment.MIDDLE_CENTER);
+    	main.setComponentAlignment(previewPane, Alignment.TOP_CENTER);
+    	main.setComponentAlignment(footer, Alignment.TOP_RIGHT);
+    	
+    	main.setExpandRatio(optionsLayout, 0.1f);
+    	main.setExpandRatio(previewPane, 0.8f);
+    	main.setExpandRatio(footer, 0.1f);
+    	this.setContent(main);
+    	
     	btnCancel.addClickListener(e->{
     		close();
     	});
     	radios.addValueChangeListener(e->{
     		generateReport();
     	});
-    	
+    	// 窗体关闭后自动删除报表文件
     	this.addCloseListener(e -> {
     		deleteReportFiles();
     	});
@@ -124,24 +135,61 @@ public class PrintingResultsWindow extends Window {
 		bean.setShelvesNum(trans.getCode());
 		bean.setVerifier(transition.getOperator());
 		bean.setVerifytime(format.format(transition.getDateCreated()));
+		bean.setBusName(trans.getBusinessName());
 		list.add(bean);
 		
 		Callback callback = new Callback() {
 			@Override
 			public void onSuccessful() {
+				generatePreview("reports/generates/"+loggedInUser.getUserUniqueId()+"/report.html","report.html");
+				
 				opener = new BrowserWindowOpener(PrintUI.class);
 				opener.setFeatures("height=595,width=842,resizable");
-				opener.extend(btnOk);
+				opener.extend(btnReady);
 				opener.setParameter("htmlFilePath", "reports/generates/"+loggedInUser.getUserUniqueId()+"/report.html");
-				btnOk.setEnabled(true);
+				btnReady.setEnabled(true);
 			}
 		};
 		try {
-			new TB4Reports().jasperToHtml(list, trans.getTransactionUniqueId(), "影像化档案审核合格证明书.jasper", callback);
+			new TB4Reports().jasperToHtml(list, loggedInUser.getUserUniqueId(), "影像化档案审核合格证明书.jasper", callback);
 			
 		} catch (ReportException e1) {
 			e1.printStackTrace();
 		}
+	}
+	
+	/**
+	 * 
+	 * @param filePath
+	 * @param fileName
+	 */
+	private void generatePreview(String filePath, String fileName) {
+		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
+ 			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+ 			public InputStream getStream() {
+ 				FileInputStream inputStream = null;
+				try {
+					inputStream = new FileInputStream(filePath);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+				return inputStream;
+ 			}
+ 		}; 
+ 		StreamResource streamResource = new StreamResource(streamSource, fileName);
+ 		streamResource.setCacheTime(0);
+
+ 		if(fileName.endsWith("html")) {
+ 			BrowserFrame bf = new BrowserFrame(null);
+ 			bf.setSource(streamResource);
+ 			bf.setSizeFull();
+ 			previewPane.setContent(bf);
+ 		}
 	}
 	
 	/**
@@ -157,7 +205,7 @@ public class PrintingResultsWindow extends Window {
 	 * @param trans
 	 */
 	public static void open(String caption, Transaction trans, Callback closableEvent) {
-        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
+//        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         PrintingResultsWindow w = new PrintingResultsWindow(caption, trans);
         w.closableEvent = closableEvent;
         UI.getCurrent().addWindow(w);
@@ -168,13 +216,14 @@ public class PrintingResultsWindow extends Window {
 	private SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private Button btnCancel = new Button("取消");
-	private Button btnOk = new Button("确定");
+	private Button btnReady = new Button("准备打印");
 	private RadioButtonGroup<String> radios;
 	private String caption;
 	private BrowserWindowOpener opener;
-	private HorizontalLayout buttonLayout = new HorizontalLayout();
 	private Transaction trans;
 	private Callback closableEvent;
-	private MessageBodyParser jsonHelper = new MessageBodyParser();
-//	private InterF interF = new InterF();
+	private HorizontalLayout footer = new HorizontalLayout();
+	private VerticalLayout main = new VerticalLayout();
+	private Panel previewPane = new Panel();
+	
 }

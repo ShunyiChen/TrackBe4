@@ -1,8 +1,9 @@
 package com.maxtree.automotive.dashboard.view.front;
 
-import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.maxtree.automotive.dashboard.Callback;
@@ -11,17 +12,18 @@ import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
-import com.maxtree.automotive.dashboard.event.DashboardEvent;
-import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.exception.ReportException;
 import com.maxtree.tb4beans.PrintableBean;
 import com.maxtree.trackbe4.reports.TB4Reports;
 import com.vaadin.server.BrowserWindowOpener;
-import com.vaadin.server.FileResource;
+import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -44,22 +46,22 @@ public class PrintingFiletagsWindow extends Window {
 	 * 
 	 * @param caption
 	 * @param trans
+	 * @param options
 	 */
-	public PrintingFiletagsWindow(String caption, Transaction trans) {
+	public PrintingFiletagsWindow(String caption, Transaction trans, List<String> options) {
 		this.caption = caption;
 		this.trans = trans;
+		this.options = options;
 		initComponents();
 	}
 	
 	private void initComponents() {
 		this.setCaption(caption);
-		this.setWidthUndefined();
-		this.setHeight("150px");
+		this.setSizeFull();
 		this.setModal(true);
 		this.setClosable(true);
-		this.setResizable(true);
+		this.setResizable(false);
 		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		List<String> options = Arrays.asList("车辆标签", "文件标签");
 		radios = new RadioButtonGroup<>(null, options);
 		radios.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
 		
@@ -68,25 +70,28 @@ public class PrintingFiletagsWindow extends Window {
 		optionsLayout.addComponents(Box.createHorizontalBox(10), radios);
 		optionsLayout.setComponentAlignment(radios, Alignment.MIDDLE_LEFT);
 		
+		previewPane.setSizeFull();
 		
-    	buttonLayout.setSpacing(false);
-    	buttonLayout.setMargin(false);
-    	buttonLayout.setWidthUndefined();
-    	buttonLayout.setHeight("40px");
-    	buttonLayout.addComponents(btnCancel, Box.createHorizontalBox(5), btnOk, Box.createHorizontalBox(5));
-    	buttonLayout.setComponentAlignment(btnCancel, Alignment.MIDDLE_LEFT);
-    	buttonLayout.setComponentAlignment(btnOk, Alignment.MIDDLE_LEFT);
+    	footer.setSpacing(false);
+    	footer.setMargin(false);
+    	footer.setWidthUndefined();
+    	footer.setHeight("40px");
+    	footer.addComponents(btnCancel, Box.createHorizontalBox(5), btnOk, Box.createHorizontalBox(5));
+    	footer.setComponentAlignment(btnCancel, Alignment.MIDDLE_LEFT);
+    	footer.setComponentAlignment(btnOk, Alignment.MIDDLE_LEFT);
     	
-    	VerticalLayout vlayout = new VerticalLayout();
-		vlayout.setSpacing(false);
-		vlayout.setMargin(false);
-		vlayout.setWidth("100%");
-		vlayout.setHeightUndefined();
-    	vlayout.addComponents(optionsLayout, Box.createVerticalBox(5), buttonLayout);
-    	vlayout.setComponentAlignment(optionsLayout, Alignment.MIDDLE_CENTER);
-    	vlayout.setComponentAlignment(buttonLayout, Alignment.TOP_RIGHT);
-        
-    	this.setContent(vlayout);
+		main.setSpacing(false);
+		main.setMargin(false);
+		main.setSizeFull();
+    	main.addComponents(optionsLayout,previewPane,footer);
+    	main.setComponentAlignment(optionsLayout, Alignment.MIDDLE_CENTER);
+    	main.setComponentAlignment(previewPane, Alignment.TOP_CENTER);
+    	main.setComponentAlignment(footer, Alignment.TOP_RIGHT);
+    	
+    	main.setExpandRatio(optionsLayout, 0.1f);
+    	main.setExpandRatio(previewPane, 0.8f);
+    	main.setExpandRatio(footer, 0.1f);
+    	this.setContent(main);
     	
     	
     	radios.addValueChangeListener(e->{
@@ -95,13 +100,13 @@ public class PrintingFiletagsWindow extends Window {
     		if (opener != null) {
     			opener.remove();
     			
-    			buttonLayout.removeComponent(btnOk);
+    			footer.removeComponent(btnOk);
     			// re-add button
-    			btnOk = new Button("确定");
+    			btnOk = new Button("准备打印");
     			btnOk.setEnabled(false);
     			btnOk.addStyleName(ValoTheme.BUTTON_PRIMARY);
-    			buttonLayout.addComponent(btnOk, 2);
-    			buttonLayout.setComponentAlignment(btnOk, Alignment.MIDDLE_LEFT);
+    			footer.addComponent(btnOk, 2);
+    			footer.setComponentAlignment(btnOk, Alignment.MIDDLE_LEFT);
     		}
     		
     		if(e.getValue().equals("车辆标签")) {
@@ -116,6 +121,9 @@ public class PrintingFiletagsWindow extends Window {
     			Callback callback = new Callback() {
 					@Override
 					public void onSuccessful() {
+						
+						generatePreview("reports/generates/"+loggedInUser.getUserUniqueId()+"/report.html","report.html");
+						
 						btnOk.setEnabled(true);
 						opener = new BrowserWindowOpener(PrintUI.class);
 						opener.setFeatures("height=595,width=842,resizable");
@@ -144,6 +152,9 @@ public class PrintingFiletagsWindow extends Window {
     			Callback callback = new Callback() {
 					@Override
 					public void onSuccessful() {
+						
+						generatePreview("reports/generates/"+loggedInUser.getUserUniqueId()+"/report.png","report.png");
+						
 						btnOk.setEnabled(true);
 						opener = new BrowserWindowOpener(PrintUI.class);
 						opener.setFeatures("height=595,width=842,resizable");
@@ -157,28 +168,6 @@ public class PrintingFiletagsWindow extends Window {
 				} catch (ReportException e1) {
 					e1.printStackTrace();
 				}
-    			
-//    			Callback callback = new Callback() {
-//					@Override
-//					public void onSuccessful() {
-//						
-//						btnOk.setEnabled(true);
-//						
-//						// 打印PDF
-//						FileResource resource = new FileResource(new File("reports/generates/"+loggedInUser.getUserUniqueId()+"/report.pdf"));
-//						// Extend the print button with an opener
-//			            // for the PDF resource
-//			            opener = new BrowserWindowOpener(resource);
-//			            opener.extend(btnOk);
-//					}
-//    			};
-//    			try {
-//					new TB4Reports().jasperToPDF(list, trans.getTransactionUniqueId(), "上架标签.jasper", callback);
-//				} catch (ReportException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-    			
     		}
     		
     	});
@@ -187,11 +176,56 @@ public class PrintingFiletagsWindow extends Window {
     		
     		close();
     	});
+    	// 窗体关闭后自动删除报表文件
     	this.addCloseListener(e -> {
     		deleteReportFiles();
     	});
     	
     	radios.setSelectedItem(options.get(0));
+	}
+	
+	/**
+	 * 
+	 * @param filePath
+	 * @param fileName
+	 */
+	private void generatePreview(String filePath, String fileName) {
+		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
+ 			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+ 			public InputStream getStream() {
+ 				FileInputStream inputStream = null;
+				try {
+					inputStream = new FileInputStream(filePath);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+				return inputStream;
+ 			}
+ 		}; 
+ 		StreamResource streamResource = new StreamResource(streamSource, fileName);
+ 		streamResource.setCacheTime(0);
+
+ 		if(fileName.endsWith("png")) {
+ 			Image image = new Image(null,streamResource);
+ 			VerticalLayout viewPort = new VerticalLayout();
+ 			viewPort.setSpacing(false);
+ 			viewPort.setMargin(false);
+ 			viewPort.setSizeFull();
+ 			viewPort.addComponents(image);
+ 			viewPort.setComponentAlignment(image, Alignment.TOP_CENTER);
+ 			previewPane.setContent(viewPort);
+ 		}
+ 		else if(fileName.endsWith("html")) {
+ 			BrowserFrame bf = new BrowserFrame(null);
+ 			bf.setSource(streamResource);
+ 			bf.setSizeFull();
+ 			previewPane.setContent(bf);
+ 		}
 	}
 	
 	/**
@@ -205,9 +239,10 @@ public class PrintingFiletagsWindow extends Window {
 	 * 
 	 * @param caption
 	 */
-	public static void open(String caption, Transaction trans) {
-        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        PrintingFiletagsWindow w = new PrintingFiletagsWindow(caption, trans);
+	public static void open(String caption, Transaction trans, List<String> options) {
+//		List<String> options = Arrays.asList("车辆标签", "文件标签");
+//      DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
+        PrintingFiletagsWindow w = new PrintingFiletagsWindow(caption, trans, options);
         UI.getCurrent().addWindow(w);
         w.center();
     }
@@ -215,10 +250,13 @@ public class PrintingFiletagsWindow extends Window {
 	private User loggedInUser;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private Button btnCancel = new Button("取消");
-	private Button btnOk = new Button("确定");
+	private Button btnOk = new Button("准备打印");
 	private RadioButtonGroup<String> radios;
 	private String caption;
 	private Transaction trans;
+	private List<String> options;
 	private BrowserWindowOpener opener;
-	private HorizontalLayout buttonLayout = new HorizontalLayout();
+	private HorizontalLayout footer = new HorizontalLayout();
+	private VerticalLayout main = new VerticalLayout();
+	private Panel previewPane = new Panel();
 }

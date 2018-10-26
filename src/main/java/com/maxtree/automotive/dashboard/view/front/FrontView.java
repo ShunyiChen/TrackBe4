@@ -12,36 +12,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Activity;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.Openwith;
-import com.maxtree.automotive.dashboard.StateHelper;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.NotificationsButton;
+import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.FrameNumber;
+import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
-import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.maxtree.automotive.dashboard.view.MessageView;
+import com.maxtree.automotive.dashboard.view.admin.NotificationsManagementWindow;
 import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.data.Binder;
@@ -196,169 +196,11 @@ public final class FrontView extends Panel implements View,InputViewIF {
         return header;
     }
 
-    private void openNotificationsPopup(final ClickEvent event) {
-    	VerticalLayout mainVLayout = new VerticalLayout();
-    	mainVLayout.setSpacing(false);
-        
-        Label title = new Label("事件提醒");
-        title.addStyleName(ValoTheme.LABEL_H3);
-        title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
-        mainVLayout.addComponent(title);
-
-        Panel scrollPane = new Panel();
-    	scrollPane.addStyleName("reminder-scrollpane");
-    	scrollPane.setHeight("220px");
-    	scrollPane.setWidth("100%");
-        VerticalLayout listLayout = new VerticalLayout();
-        
-        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.INPUT.getViewName());
-        for (Map<String, Object> m : allMessages) {
-        	VerticalLayout vLayout = new VerticalLayout();
-        	vLayout.setMargin(false);
-        	vLayout.setSpacing(false);
-        	vLayout.addStyleName("notification-item");
-            Label timeLabel = new Label();
-            Label subjectLabel = new Label();
-            subjectLabel.addStyleName("notification-title");
-            int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-            String subject = m.get("subject").toString();
-            subjectLabel.setValue(subject);
-            String content = m.get("content").toString();
-            Label contentLabel = new Label(content);
-            String matedata = m.get("matedata").toString();
-            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
-            contentLabel.addStyleName("notification-content");
-            Date dateCreated = (Date) m.get("datecreated");
-            long duration = new Date().getTime() - dateCreated.getTime();
-            timeLabel.setValue(new TimeAgo().toDuration(duration));
-            timeLabel.addStyleName("notification-time");
-            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
-            listLayout.addComponent(vLayout);
-            vLayout.addStyleName("switchbutton");
-            
-            vLayout.addLayoutClickListener(e -> {
-            	notificationsWindow.close();
-            	
-            	String openWith = matedataMap.get("openwith");
-            	removeMessage = new Callback() {
-					@Override
-					public void onSuccessful() {
- 
-						String openWith = matedataMap.get("openwith");
-						// 如果发的是print和transaction打开方式，则有权彻底删除Messages表,因为一个消息只发一个人，即接收人可以永久删除message
-						int deleteType = TB4MessagingSystem.ONLYDELETERECIPIENT;
-						if(openWith.equals(Openwith.PRINT) || openWith.equals(Openwith.TRANSACTION)) {
-							deleteType = TB4MessagingSystem.PERMANENTLYDELETE;
-						}
-						new TB4MessagingSystem().deleteMessage(messageUniqueId, loggedInUser.getUserUniqueId(), deleteType);
-					}
-            	};
-            	Callback callback = new Callback() {
-
-					@Override
-					public void onSuccessful() {
-						//更改已读状态
-						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
-						CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
-					}
-        		};
-        		String uuid = matedataMap.get("uuid");
-        		String vin = matedataMap.get("vin");
-            	// 如果是用form打开，则进入打开并编辑界面
-            	if(openWith.equals(Openwith.TRANSACTION)) {
-            		
-            		if(editableTrans == null) {
-            			editMode = 1;//进入更新模式
-            			openTransaction(uuid,vin,callback);
-            		}
-            		else {
-            			Notifications.warning("请确保完成当前任务，再执行下一操作。");
-            		}
-            	}
-            	// 如何是用print打开，则进入打印界面
-            	else if(openWith.equals(Openwith.PRINT)) {
-            		if(editableTrans == null) {
-            			editableTrans = ui.transactionService.findByUUID(uuid, vin);
-            			Callback closableEvent = new Callback() {
-							@Override
-							public void onSuccessful() {
-								cleanStage();
-								//更改已读状态
-								callback.onSuccessful();
-							}
-            			};
-                		// 打印审核结果单
-          	    		PrintingResultsWindow.open("打印确认",editableTrans,closableEvent);
-            		}
-            		else {
-            			Notifications.warning("请确保完成当前任务，再执行下一操作。");
-            		}
-            	}
-            	else if(openWith.equals(Openwith.MESSAGE)) {
-            		// 显示消息
-            		MessageView.open(m,callback);
-            	}
-            });
-        }
-        scrollPane.setContent(listLayout);
-        mainVLayout.addComponent(scrollPane);
-        mainVLayout.setExpandRatio(scrollPane, 0.9f);
-        HorizontalLayout footer = new HorizontalLayout();
-        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
-        footer.setWidth("100%");
-        footer.setSpacing(false);
-        Button showAll = new Button("查看全部事件");
-        showAll.addClickListener(e->{
-        	notificationsWindow.close();
-        	showAll(allMessages, 0);
-        });
-        
-        showAll.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
-        showAll.addStyleName(ValoTheme.BUTTON_SMALL);
-        footer.addComponent(showAll);
-        footer.setComponentAlignment(showAll, Alignment.TOP_CENTER);
-        mainVLayout.addComponent(footer);
-        mainVLayout.setExpandRatio(footer, 0.1f);
-        if (notificationsWindow == null) {
-            notificationsWindow = new Window();
-            notificationsWindow.setWidth(300.0f, Unit.PIXELS);
-            notificationsWindow.addStyleName("notifications");
-            notificationsWindow.setClosable(false);
-            notificationsWindow.setResizable(false);
-            notificationsWindow.setDraggable(false);
-            notificationsWindow.setCloseShortcut(KeyCode.ESCAPE, null);
-            notificationsWindow.setContent(mainVLayout);
-        } else {
-        	notificationsWindow.setContent(mainVLayout);
-        }
-        if (!notificationsWindow.isAttached()) {
-            notificationsWindow.setPositionY(event.getClientY() - event.getRelativeY() + 40);
-            getUI().addWindow(notificationsWindow);
-            notificationsWindow.focus();
-        } else {
-            notificationsWindow.close();
-        }
-    }
+    
 
     @Override
     public void enter(final ViewChangeEvent event) {
-//    	updateUnreadCount();
-    }
-
-    
-    /**
-     * 
-     * @param allMessages
-     * @param selectedMessageUniqueId
-     */
-    private void showAll(List<Map<String, Object>> allMessages, int selectedMessageUniqueId) {
-    	Callback2 event = new Callback2() {
-			@Override
-			public void onSuccessful(Object... objects) {
-//				getUnreadCount();
-			}
-    	};
-    	MessageInboxWindow.open(allMessages, event, selectedMessageUniqueId);
+    	updateUnreadCount();
     }
     
     /**
@@ -463,7 +305,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	notificationsButton.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(final ClickEvent event) {
-                openNotificationsPopup(event);
+            	NotificationsPopup.open(event);
             }
         });
     }
@@ -540,7 +382,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	uuid = editableTrans.getUuid();
     	batch = editableTrans.getBatch();
     	vin = editableTrans.getVin();
-    	stoppedAtAnException = false;
     	
     	int companyUniqueId = loggedInUser.getCompanyUniqueId();
     	int communityUniqueId = loggedInUser.getCommunityUniqueId();
@@ -724,7 +565,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	// 需要审档（一级）流程
     	else if (businessTypePane.getSelected().getCheckLevel().equals("一级审档")) {
-    		System.out.println("进入一级审档");
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -1132,17 +972,16 @@ public final class FrontView extends Panel implements View,InputViewIF {
 
 	@Override
 	public void updateUnreadCount() {
-//		List<SendDetails> sendDetailsList = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
-//		int unreadCount = 0;
-//		for (SendDetails sd : sendDetailsList) {
-//			if (sd.getViewName().equals(DashboardViewType.INPUT.getViewName())
-//					|| sd.getViewName().equals("")) {
-//				unreadCount++;
-//			}
-//		}
-//		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
-//		event.setCount(unreadCount);
-//		notificationsButton.updateNotificationsCount(event);
+		List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
+		int unreadCount = 0;
+		for (Notification n : notifications) {
+			if (n.getViewName().equals(DashboardViewType.INPUT.getViewName())) {
+				unreadCount++;
+			}
+		}
+		
+		DashboardMenu.getInstance().updateNotificationsCount(unreadCount);
+		notificationsButton.setUnreadCount(unreadCount);
 	}
 	
 	@Override
@@ -1168,11 +1007,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
 	@Override
 	public Site editableSite() {
 		return editableSite;
-	}
-	
-	@Override
-	public void stoppedAtAnException(boolean stop) {
-		this.stoppedAtAnException = stop;
 	}
 	
 	@Override
@@ -1206,9 +1040,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
 	private String uuid;			//UUID业务与原文关联号
 	private int batch;			//业务批次号。默认最大1000个批次，每批次最多放5000文件夹。
 	private String vin;// = "LGB12YEA9DY001226";			//车辆识别代码。用于分表。
-	private boolean stoppedAtAnException = false;// true：异常停止 false:继续正常录入。
     private Label titleLabel;
-    private Window notificationsWindow;
     private VerticalLayout root;
     private VerticalLayout main = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();

@@ -19,8 +19,6 @@ public interface InputViewIF extends FrontendViewIF {
 
 	public Site editableSite();
 
-	public void stoppedAtAnException(boolean stop);
-	
 	public BasicInfoPane basicInfoPane();
 	
 	public BusinessTypePane businessTypePane();

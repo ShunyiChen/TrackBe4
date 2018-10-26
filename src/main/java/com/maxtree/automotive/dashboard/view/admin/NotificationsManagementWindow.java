@@ -33,8 +33,10 @@ public class NotificationsManagementWindow extends Window {
 
 	/**
 	 * 
+	 * @param viewName
 	 */
-	public NotificationsManagementWindow() {
+	public NotificationsManagementWindow(String viewName) {
+		this.viewName = viewName;
 		initComponents();
 	}
 	
@@ -104,9 +106,6 @@ public class NotificationsManagementWindow extends Window {
 		main.addComponent(markAllAsRead,"top:10px; right:10px;");
 		this.setContent(main);
 		
-		// 初始化
-//		unread.select();
-//		loadUnreaded();
 		ui.access(new Runnable() {
 
 			@Override
@@ -225,12 +224,12 @@ public class NotificationsManagementWindow extends Window {
 	 */
 	private void loadNotifications(boolean onlyShowingUnread, Callback callback) {
 		if (onlyShowingUnread) {
-			List<Notification> notificationList = ui.messagingService.findAllNotifications(loggedInUser.getUserUniqueId(), "", true);
+			List<Notification> notificationList = ui.messagingService.findAllNotifications(loggedInUser.getUserUniqueId(),true,viewName);
 			table.setItems(notificationList);
 			unread.setUnreadCount(notificationList.size());
 			callback.onSuccessful();
 		} else {
-			List<Notification> notificationList = ui.messagingService.findAllNotifications(loggedInUser.getUserUniqueId(), "", false);
+			List<Notification> notificationList = ui.messagingService.findAllNotifications(loggedInUser.getUserUniqueId(),false,viewName);
 			table.setItems(notificationList);
 			all.setUnreadCount(notificationList.size());
 			callback.onSuccessful();
@@ -242,9 +241,9 @@ public class NotificationsManagementWindow extends Window {
 	 * @param frame
 	 * @param callback
 	 */
-	public static void open() {
+	public static void open(String viewName) {
 		// DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-		NotificationsManagementWindow w = new NotificationsManagementWindow();
+		NotificationsManagementWindow w = new NotificationsManagementWindow(viewName);
 		UI.getCurrent().addWindow(w);
 		w.center();
 	}
@@ -257,8 +256,8 @@ public class NotificationsManagementWindow extends Window {
 	private List<NavigationButton> buttonGroup = new ArrayList<>();
 	private NotificationTable table = new NotificationTable("通知列表");
 	private AbsoluteLayout main = new AbsoluteLayout();
-	private static DashboardUI ui = (DashboardUI) UI.getCurrent();
-	
+	private DashboardUI ui = (DashboardUI) UI.getCurrent();
+	private String viewName = "";
 }
 
 /**

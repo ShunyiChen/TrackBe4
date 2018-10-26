@@ -291,6 +291,13 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 		dict.setCode("$$$$"); // $$$$为辅助材料code
 		row.setDataDictionary(dict);
 		view.thumbnailGrid().addRow(row);
+		if (i == 1) {
+			row.selected();
+			
+			UploadInDTO inDto = new UploadInDTO(view.loggedInUser().getUserUniqueId(), view.vin(), view.batch()+"", view.editableSite().getSiteUniqueId(),view.uuid(),dict.getCode());
+			UploadFileServlet.IN_DTOs.put(view.loggedInUser().getUserUniqueId(), inDto);
+		}
+		
 		view.thumbnailGrid().focus();
 		// 加载拍照影像
 		view.capturePane().displayImage(view.uuid());
@@ -398,8 +405,6 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 		loadMaterials(businessCode);
 		/// 为每个Row添加缩略图
 		List<Document> documentList1 = ui.documentService.findAllDocument1(view.vin(), view.uuid());
-		
-		System.out.println("shunyi--"+view.vin() +"," +view.uuid()+"  "+documentList1.size());
 		
 		int i = 1;
 		for (Document doc : documentList1) {

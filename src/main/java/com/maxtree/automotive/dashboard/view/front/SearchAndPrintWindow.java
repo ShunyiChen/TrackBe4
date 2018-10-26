@@ -1,6 +1,7 @@
 package com.maxtree.automotive.dashboard.view.front;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -117,8 +118,8 @@ public class SearchAndPrintWindow extends Window {
       	grid.addColumn(Transaction::getCreator).setCaption("录入者");
       	grid.addColumn(Transaction::getDateCreated).setCaption("录入时间");
       	
-      	btnPrint.addStyleName(ValoTheme.BUTTON_PRIMARY);
-      	btnPrint.setClickShortcut(KeyCode.ENTER);
+      	btnChoose.addStyleName(ValoTheme.BUTTON_PRIMARY);
+      	btnChoose.setClickShortcut(KeyCode.ENTER);
         HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setWidth("100%");
 		buttonPane.setHeight("30px");
@@ -127,7 +128,7 @@ public class SearchAndPrintWindow extends Window {
 		subButtonPane.setMargin(false);
 		subButtonPane.setWidthUndefined();
 		subButtonPane.setHeight("23px");
-		subButtonPane.addComponents(btnPrint, Box.createHorizontalBox(5), btnQuit);
+		subButtonPane.addComponents(btnChoose, Box.createHorizontalBox(5), btnQuit);
 		buttonPane.addComponent(subButtonPane);
 		buttonPane.setComponentAlignment(subButtonPane, Alignment.TOP_RIGHT);
         
@@ -141,19 +142,23 @@ public class SearchAndPrintWindow extends Window {
         	close();
         });
         
-        btnPrint.addClickListener(e->{
+        btnChoose.addClickListener(e->{
         	Set<Transaction> selected = grid.getSelectedItems();
       	    if (selected.size() > 0) {
       	    	
       	    	List<Transaction> list = new ArrayList<>(selected);
       	    	Transaction trans = list.get(0);
+      	    	// 注册登记业务
       	    	if(trans.getBusinessName().contains("注册登记")) {
-      	    		PrintingFiletagsWindow.open("打印标签", trans);
+      	    		List<String> options = Arrays.asList("车辆标签", "文件标签");
+      	    		PrintingFiletagsWindow.open("车辆和文件标签-打印预览",trans,options);
       	    	}
       	    	else {
       	    		Business bus = ui.businessService.findByCode(trans.getBusinessCode());
-      	    		if(bus.getCheckLevel().equals("无")) {//非审档业务
-      	    			PrintingFileTagOnlyWindow.open("只打印文件标签", trans);
+      	    		if(bus.getCheckLevel().equals("无")) {
+      	    			// 非审档业务
+      	    			List<String> options = Arrays.asList("文件标签");
+      	    			PrintingFiletagsWindow.open("文件标签-打印预览",trans,options);
       	    		}
       	    		else if(bus.getCheckLevel().equals("一级审档")
       	    				|| bus.getCheckLevel().equals("二级审档")) {//一级审档
@@ -162,31 +167,9 @@ public class SearchAndPrintWindow extends Window {
     						public void onSuccessful() {
     						}
     					};
-      	    			PrintingResultsWindow.open("打印审核结果单", trans, callback);
+      	    			PrintingResultsWindow.open("审核结果单-打印预览", trans, callback);
       	    		}
       	    	}
-      	    	
-      	    	
-      	    	
-//      	    	if (selectedTransaction.getStatus().equals(BusinessState.B2.name)) {
-//      	    		
-//      	    		// 打印文件标签和车辆标签
-//      	    		PrintingFiletagsWindow.open("打印确认", selectedTransaction); 
-//      	    		
-//      	    	} else if (selectedTransaction.getStatus().equals(BusinessState.B1.name) 
-//      	    			|| selectedTransaction.getStatus().equals(BusinessState.B14.name)) {
-//      	    		// 打印审核结果单
-//      	    		Callback callback = new Callback() {
-//						@Override
-//						public void onSuccessful() {
-//						}
-//					};
-//      	    		PrintingResultsWindow.open("打印确认", selectedTransaction,callback); 
-//      	    	}
-//      	    	else {
-//      	    		
-//      	    		Notifications.warning("不存在打印。");
-//      	    	}
       	    } else {
       	    	Notifications.warning("请至少选择一条记录。");
       	    }
@@ -209,6 +192,6 @@ public class SearchAndPrintWindow extends Window {
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private Grid<Transaction> grid = new Grid<>(Transaction.class);
 	private Button btnSearch = new Button();
-	private Button btnPrint = new Button("打印");
+	private Button btnChoose = new Button("打印预览");
 	private Button btnQuit = new Button("关闭");
 }

@@ -154,7 +154,7 @@ public class TB4Reports {
 			File file = new File(destFileName2);
 			ouputStream = new FileOutputStream(file);
 	        BufferedImage rendered_image = null;      
-	        rendered_image = (BufferedImage)JasperPrintManager.printPageToImage(jasperPrint, 0, 1.6f); 
+	        rendered_image = (BufferedImage)JasperPrintManager.printPageToImage(jasperPrint, 0, 1.0f); 
 	        ImageIO.write(rendered_image, "png", ouputStream);     
 			log.info("Generated a report.");
 			callback.onSuccessful();

@@ -19,12 +19,14 @@ import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
+import com.maxtree.automotive.dashboard.component.NotificationsButton;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Community;
+import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
@@ -419,38 +421,6 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 //        notificationsButton.updateNotificationsCount(null);
     }
 
-    public static final class NotificationsButton extends Button {
-		private static final long serialVersionUID = 1L;
-		private static final String STYLE_UNREAD = "unread";
-        public static final String ID = "dashboard-notifications";
-
-        public NotificationsButton() {
-            setIcon(VaadinIcons.BELL);
-            setId(ID);
-            addStyleName("notifications");
-            addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-            DashboardEventBus.register(this);
-        }
-
-        @Subscribe
-        public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-        	DashboardMenu.getInstance().searchCount(event.getCount());
-        	setUnreadCount(event.getCount());
-        }
-
-        public void setUnreadCount(final int count) {
-            setCaption(String.valueOf(count));
-            String description = "事件提醒";
-            if (count > 0) {
-                addStyleName(STYLE_UNREAD);
-                description += " (" + count + " 未执行)";
-            } else {
-                removeStyleName(STYLE_UNREAD);
-            }
-            setDescription(description);
-        }
-    }
-    
     /**
      * 
      * @param allMessages
@@ -483,17 +453,17 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     
     @Override
 	public void updateUnreadCount() {
-//    	List<SendDetails> sendDetailsList = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
-//		int unreadCount = 0;
-//		for (SendDetails sd : sendDetailsList) {
-//			if (sd.getViewName().equals(DashboardViewType.SEARCH.getViewName())
-//					|| sd.getViewName().equals("")) {
-//				unreadCount++;
-//			}
-//		}
-//		NotificationsCountUpdatedEvent event = new DashboardEvent.NotificationsCountUpdatedEvent();
-//		event.setCount(unreadCount);
-//		notificationsButton.updateNotificationsCount(event);
+    	List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
+		int unreadCount = 0;
+		for (Notification n : notifications) {
+			if (n.getViewName().equals(DashboardViewType.SEARCH.getViewName())
+					|| n.getViewName().equals("")) {
+				unreadCount++;
+			}
+		}
+		
+		DashboardMenu.getInstance().searchCount(unreadCount);
+		notificationsButton.setUnreadCount(unreadCount);
 	}
 
 	@Override

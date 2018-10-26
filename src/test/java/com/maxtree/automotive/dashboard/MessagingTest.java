@@ -24,7 +24,7 @@ public class MessagingTest {
 	
 	 @Test
 	 public void findById() {
-		 List<Notification> notifications = service.findAllNotifications(2,"",true);
+		 List<Notification> notifications = service.findAllNotifications(2,true,"");
 		 
 	 }
 }
