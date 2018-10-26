@@ -40,7 +40,7 @@ public class MessagingService {
 	 */
 	public int insertMessage(Message message) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		String sql = "INSERT INTO MESSAGES(SUBJECT,CONTENT,MATEDATA,CREATORUNIQUEID,DATECREATED,SENTTIMES,REMINDERFREQUENCYID,DELETED) VALUES(?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO MESSAGES(SUBJECT,CONTENT,MATEDATA,CREATORUNIQUEID,DATECREATED,SENTTIMES,REMINDERFREQUENCYID,DELETED,POPUPAUTO) VALUES(?,?,?,?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -56,6 +56,7 @@ public class MessagingService {
 				ps.setInt(6, message.getSentTimes());
 				ps.setInt(7, message.getReminderFrequencyId());
 				ps.setInt(8, message.getDeleted());
+				ps.setBoolean(9, message.getPopupAuto());
 				return ps;
 			}
 			

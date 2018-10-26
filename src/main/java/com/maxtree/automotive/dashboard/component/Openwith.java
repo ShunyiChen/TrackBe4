@@ -32,14 +32,12 @@ public class Openwith extends Window {
 	}
 	
 	private void initComponents() {
-		this.setCaption("选择打开方式");
-		this.setWidth("400px");
-		this.setHeight("350px");
+		this.setCaption("打开通知");
+		this.setWidth("300px");
+		this.setHeight("150px");
 		this.setResizable(false);
 		this.setModal(true);
-		this.addStyleName("edit-window");
 		
- 
 		HorizontalLayout headerLayout = new HorizontalLayout();
 		Label title = new Label("请选择一种打开方式：");
 		headerLayout.setWidth("100%");
@@ -48,15 +46,17 @@ public class Openwith extends Window {
 		headerLayout.addComponent(title);
 		headerLayout.setComponentAlignment(title, Alignment.MIDDLE_LEFT);
 		
-		
 		HorizontalLayout footerLayout = new HorizontalLayout();
 		view.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+		edit.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+		print.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 		footerLayout.setWidth("100%");
 		footerLayout.setSpacing(false);
 		footerLayout.addComponents(view,edit,print);
+		footerLayout.setComponentAlignment(view, Alignment.MIDDLE_CENTER);
+		footerLayout.setComponentAlignment(edit, Alignment.MIDDLE_CENTER);
+		footerLayout.setComponentAlignment(print, Alignment.MIDDLE_CENTER);
 		
-		main.setSpacing(true);
-		main.setMargin(false);
 		main.addComponents(headerLayout,footerLayout);
 		
 		this.setContent(main);

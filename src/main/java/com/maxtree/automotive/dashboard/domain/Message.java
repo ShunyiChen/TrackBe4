@@ -115,6 +115,6 @@ public class Message {
 	private Integer sentTimes = 0; // 已发送次数
 	private Integer reminderFrequencyId = 0; // 发送频率ID
 	private Integer deleted = 0; // 删除标识，1-删除 0-未删除(如果群发邮件，管理员删除邮件其他接收者将看不到内容，所以用delete标识)
-    private Boolean popupAuto;//true:当收到通知时自动弹出，然后改成false,确保只弹出一次
+    private Boolean popupAuto = false;//true:当收到通知时自动弹出，然后改成false,确保只弹出一次
 	private Integer readRate = 0; // 读取率(非数据库字段)
 }

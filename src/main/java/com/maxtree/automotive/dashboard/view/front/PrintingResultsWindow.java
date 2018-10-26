@@ -1,39 +1,29 @@
 package com.maxtree.automotive.dashboard.view.front;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
-import com.maxtree.automotive.dashboard.data.SystemConfiguration;
-import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
-import com.maxtree.automotive.dashboard.event.DashboardEvent;
-import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.exception.ReportException;
 import com.maxtree.tb4beans.PrintableBean;
-import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.reports.TB4Reports;
 import com.vaadin.server.BrowserWindowOpener;
-import com.vaadin.server.FileResource;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.UI;
@@ -41,8 +31,11 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-import Tmri.InterF;
-
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class PrintingResultsWindow extends Window {
 
 	/**
@@ -136,7 +129,7 @@ public class PrintingResultsWindow extends Window {
 		bean.setVerifier(transition.getOperator());
 		bean.setVerifytime(format.format(transition.getDateCreated()));
 		bean.setBusName(trans.getBusinessName());
-		bean.setWrongContent("");
+		bean.setWrongContent(transition.getComments());
 		list.add(bean);
 		
 		Callback callback = new Callback() {
