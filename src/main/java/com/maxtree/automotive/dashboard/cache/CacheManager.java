@@ -132,10 +132,8 @@ public class CacheManager {
 	 * @return
 	 */
 	private List<Notification> createNotification(Integer userUniqueId) {
+		// geting only read data
 		List<Notification> unreadNotifications = ui.messagingService.findAllNotifications(userUniqueId,true,"");
-		
-		System.out.println(new Date()+"----"+userUniqueId+"  count="+unreadNotifications.size());
-		
 		return unreadNotifications;
 	}
 }

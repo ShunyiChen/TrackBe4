@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.maxtree.automotive.dashboard.Callback;
+import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Alignment;
@@ -34,9 +36,11 @@ public class NotificationsManagementWindow extends Window {
 	/**
 	 * 
 	 * @param viewName
+	 * @param inputView
 	 */
-	public NotificationsManagementWindow(String viewName) {
+	public NotificationsManagementWindow(String viewName, InputViewIF inputView) {
 		this.viewName = viewName;
+		this.inputView = inputView;
 		initComponents();
 	}
 	
@@ -47,8 +51,15 @@ public class NotificationsManagementWindow extends Window {
 		this.setWidth("980px");
 		this.setHeight("525px");
 		this.addStyleName("NotificationsManagementWindow");
+		Callback closeBySelf = new Callback() {
+
+			@Override
+			public void onSuccessful() {
+				close();
+			}
+		};
+		table = new NotificationTable("通知列表", inputView, closeBySelf, changeQueryRanges);
 		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		
 		progressBar.setIndeterminate(true);
 		Button markAllAsRead = new Button("全部标记已读");
 		markAllAsRead.addClickListener(e->{
@@ -58,7 +69,7 @@ public class NotificationsManagementWindow extends Window {
 
 					@Override
 					public void run() {
-						loadUnreaded();
+						loadUnreaded(10, 1);
 					}
 				});
 			}
@@ -67,7 +78,7 @@ public class NotificationsManagementWindow extends Window {
 
 					@Override
 					public void run() {
-						loadAll();
+						loadAll(10, 1);
 					}
 				});
 			}
@@ -75,22 +86,17 @@ public class NotificationsManagementWindow extends Window {
 		TabSheet tabSheet = new TabSheet();
 		tabSheet.setWidth(100.0f, Unit.PERCENTAGE);
         tabSheet.setHeight(100.0f, Unit.PERCENTAGE);
-        
         VerticalLayout navigationBar = new VerticalLayout();
 		navigationBar.setWidth("220px");
 		navigationBar.setHeightUndefined();
 		navigationBar.setSpacing(false);
 		navigationBar.setMargin(false);
 		navigationBar.addStyleName("NotificationsManagementWindow_navigationBar");
-		
-		
 		buttonGroup.add(unread);
 		buttonGroup.add(all);
-		
 		navigationBar.addComponents(unread,all);
 		navigationBar.setComponentAlignment(unread, Alignment.TOP_CENTER);
 		navigationBar.setComponentAlignment(all, Alignment.TOP_CENTER);
-		
 		HorizontalLayout hlayout = new HorizontalLayout();
 		hlayout.setWidth("100%");
 		hlayout.setHeight("100%");
@@ -100,7 +106,6 @@ public class NotificationsManagementWindow extends Window {
 		hlayout.setComponentAlignment(navigationBar, Alignment.TOP_LEFT);
 		hlayout.setComponentAlignment(table, Alignment.TOP_RIGHT);
 		hlayout.setExpandRatio(table, 1);
-		
         tabSheet.addTab(hlayout, "通知");
 		main.addComponent(tabSheet,"top:15px; left:10px;");
 		main.addComponent(markAllAsRead,"top:10px; right:10px;");
@@ -110,31 +115,29 @@ public class NotificationsManagementWindow extends Window {
 
 			@Override
 			public void run() {
-				loadUnreaded();
+				loadUnreaded(10, 1);
 			}
 		});
 		unread.addLayoutClickListener(e->{
 			if(unread.isSelected()) {
 				return;
 			}
-			loadUnreaded();
+			loadUnreaded(10, 1);
 			
 		});
 		all.addLayoutClickListener(e->{
 			if(all.isSelected()) {
 				return;
 			}
-			loadAll();
+			loadAll(10, 1);
 		});
 	}
 	
 	/**
 	 * 
 	 */
-	private void loadUnreaded() {
-		
+	private void loadUnreaded(int limit, int offset) {
 		showProgressBar();
-		
 		Thread t = new Thread() {
 			@Override
 			public void run() {
@@ -156,7 +159,7 @@ public class NotificationsManagementWindow extends Window {
 								ui.push();
 							}
 						};
-						loadNotifications(true, callback);
+						loadNotifications(true, callback,limit,offset);
 					}
 				});
 			}
@@ -167,11 +170,8 @@ public class NotificationsManagementWindow extends Window {
 	/**
 	 * 
 	 */
-	private void loadAll() {
-		
-		
+	private void loadAll(int limit, int offset) {
 		showProgressBar();
-		
 		Thread t = new Thread() {
 			@Override
 			public void run() {
@@ -193,7 +193,7 @@ public class NotificationsManagementWindow extends Window {
 								ui.push();
 							}
 						};
-						loadNotifications(false, callback);
+						loadNotifications(false, callback,limit,offset);
 						
 					}
 				});
@@ -217,47 +217,74 @@ public class NotificationsManagementWindow extends Window {
 		main.removeComponent(progressBar);
 	}
 	
+	
 	/**
 	 * 
 	 * @param onlyShowingUnread
-	 * @param callback
+	 * @param hideProgressbar
+	 * @param limit
+	 * @param offset
 	 */
-	private void loadNotifications(boolean onlyShowingUnread, Callback callback) {
+	private void loadNotifications(boolean onlyShowingUnread, Callback hideProgressbar, int limit, int offset) {
 		if (onlyShowingUnread) {
-			List<Notification> notificationList = ui.messagingService.findAllNotifications(loggedInUser.getUserUniqueId(),true,viewName);
+			List<Notification> notificationList = ui.messagingService.findAllNotificationsByPaging(loggedInUser.getUserUniqueId(),true,viewName,limit,offset);
 			table.setItems(notificationList);
 			unread.setUnreadCount(notificationList.size());
-			callback.onSuccessful();
+			hideProgressbar.onSuccessful();
 		} else {
-			List<Notification> notificationList = ui.messagingService.findAllNotifications(loggedInUser.getUserUniqueId(),false,viewName);
+			List<Notification> notificationList = ui.messagingService.findAllNotificationsByPaging(loggedInUser.getUserUniqueId(),false,viewName,limit,offset);
 			table.setItems(notificationList);
 			all.setUnreadCount(notificationList.size());
-			callback.onSuccessful();
+			hideProgressbar.onSuccessful();
 		}
 	}
 	
 	/**
 	 * 
-	 * @param frame
-	 * @param callback
 	 */
-	public static void open(String viewName) {
+	private Callback2 changeQueryRanges = new Callback2() {
+
+		@Override
+		public void onSuccessful(Object...objects) {
+			
+			int limit = Integer.parseInt(objects[0].toString());
+			int offset = Integer.parseInt(objects[1].toString());
+			
+			Callback callback = new Callback() {
+
+				@Override
+				public void onSuccessful() {
+					
+					hideProgressBar();
+					ui.push();
+				}
+			};
+			loadNotifications(false, callback,limit,offset);
+		}
+	};
+	
+	/**
+	 * 
+	 * @param viewName
+	 * @param inputView
+	 */
+	public static void open(String viewName,InputViewIF inputView) {
 		// DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-		NotificationsManagementWindow w = new NotificationsManagementWindow(viewName);
+		NotificationsManagementWindow w = new NotificationsManagementWindow(viewName, inputView);
 		UI.getCurrent().addWindow(w);
 		w.center();
 	}
-	
 	
 	private NavigationButton unread = new NavigationButton("未读",0);
 	private NavigationButton all = new NavigationButton("全部消息",0);
 	private User loggedInUser;
 	private ProgressBar progressBar = new ProgressBar(0.0f);
 	private List<NavigationButton> buttonGroup = new ArrayList<>();
-	private NotificationTable table = new NotificationTable("通知列表");
+	private NotificationTable table;
 	private AbsoluteLayout main = new AbsoluteLayout();
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private String viewName = "";
+	private InputViewIF inputView;
 }
 
 /**

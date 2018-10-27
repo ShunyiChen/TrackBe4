@@ -33,6 +33,11 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class QuickQueryWindow extends Window {
 
 	/**
@@ -58,9 +63,8 @@ public class QuickQueryWindow extends Window {
 		toolbar.setHeight("30px");
 		btnSearch.setStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		btnSearch.setIcon(VaadinIcons.SEARCH);
-		Address addr = Yaml.readAddress();
 		plateField.setPlaceholder("请输入车牌号");
-		plateField.setValue(addr.getLicenseplate());
+		plateField.setValue("");
 		plateField.focus();
 		ShortcutListener keyListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER, null) {
 			/**/
@@ -73,7 +77,7 @@ public class QuickQueryWindow extends Window {
 		};
 		plateField.addShortcutListener(keyListener);
 		
-		Label fieldName = new Label(VaadinIcons.CAR.getHtml()+"车牌号:");
+		Label fieldName = new Label(VaadinIcons.CAR.getHtml()+"车牌号:  "+Yaml.readAddress().getLicenseplate()+"  ");
 		fieldName.setContentMode(ContentMode.HTML);
 		toolbar.addComponents(fieldName,plateField,btnSearch);
 		toolbar.setComponentAlignment(fieldName, Alignment.MIDDLE_LEFT);
@@ -98,7 +102,6 @@ public class QuickQueryWindow extends Window {
         });
 		
 		// 按钮
-		buttonPane = new HorizontalLayout();
 		HorizontalLayout subButtonPane = new HorizontalLayout();
 		subButtonPane.setSpacing(false);
 		subButtonPane.setMargin(false);
@@ -107,12 +110,13 @@ public class QuickQueryWindow extends Window {
 		subButtonPane.addComponents(btnCancel, Box.createHorizontalBox(5), btnOK);
 		subButtonPane.setComponentAlignment(btnCancel, Alignment.BOTTOM_CENTER);
 		subButtonPane.setComponentAlignment(btnOK, Alignment.BOTTOM_CENTER);
-		buttonPane.addComponent(subButtonPane);
-		buttonPane.setComponentAlignment(subButtonPane, Alignment.BOTTOM_RIGHT);
-		mainLayout.addComponents(toolbar,grid,buttonPane);
+		btnOK.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+		
+		mainLayout.addComponents(toolbar,grid,subButtonPane);
 		mainLayout.setExpandRatio(toolbar, 0);
 		mainLayout.setExpandRatio(grid, 1);
-		mainLayout.setExpandRatio(buttonPane, 0);
+		mainLayout.setExpandRatio(subButtonPane, 0);
+		mainLayout.setComponentAlignment(subButtonPane, Alignment.BOTTOM_RIGHT);
 		
 		this.setContent(mainLayout);
 		
@@ -167,10 +171,9 @@ public class QuickQueryWindow extends Window {
 	private ResultCallback callback;
 	private Grid<Transaction> grid = new Grid<>();
 	private TextField plateField = new TextField();
-	private HorizontalLayout buttonPane = null;
 	private VerticalLayout mainLayout =null;
 	private Button btnSearch = new Button();
-	private Button btnOK = new Button("确定");
+	private Button btnOK = new Button("编辑");
 	private Button btnCancel = new Button("取消");
 	private static DashboardUI ui = (DashboardUI) UI.getCurrent();
 }

@@ -30,9 +30,8 @@ import com.maxtree.automotive.dashboard.servlet.UploadInDTO;
 import com.maxtree.automotive.dashboard.servlet.UploadOutDTO;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.InputViewIF;
-import com.maxtree.automotive.dashboard.view.imaging.ImagingInputView;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
-import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
+import com.maxtree.trackbe4.messagingsystem.MatedataJsonParser;
 import com.maxtree.trackbe4.messagingsystem.Name;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.event.UIEvents;
@@ -196,10 +195,10 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 			//2.发信给影像化管理员
 			User receiver = ui.userService.findImagingAdmin(view.loggedInUser().getCommunityUniqueId());
 			if (receiver.getUserUniqueId() == 0) {
-				Notifications.warning("无法找到影像化管理员，请联系系统管理员进行设置。");
+				Notifications.warning("该社区不存在影像化管理员，请联系系统管理员进行设置。");
 				return;
 			}
-			String matedata = "{\"UUID\":\""+view.uuid()+"\",\"VIN\":\""+imaging.getVin()+"\",\"STATE\":\""+imaging.getStatus()+"\",\"CHECKLEVEL\":\"\"}";
+			String matedata = "{\"UUID\":\""+view.uuid()+"\",\"VIN\":\""+imaging.getVin()+"\",\"STATE\":\""+imaging.getStatus()+"\",\"CHECKLEVEL\":\"\",\"POPUPAUTOMATICALLY\":\"TRUE\"}";
 			String subject = loggedinUser.getUserName()+"提交了影像化申请";
 			String content = "请补充车牌号"+imaging.getPlateNumber()+"的全部历史影像化记录。";
 			Message newMessage = messageSystem.createNewMessage(loggedinUser,subject, content, matedata);
@@ -233,15 +232,18 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 	    	 影像化录入，单独角色单独界面，根据纸质录入车辆信息，上传原文，提交给质检。
 	    	 影响化质检，单独角色单独界面，根据纸质录入车辆信息，查看原文，退回质检或完成后将纸质档案放回。
     	 */
-    	if("无".equals(view.businessTypePane().getSelected().getCheckLevel())) {
+    	
+    	System.out.println(view.businessTypePane().getSelected().getCheckLevel()+"----------");
+    	
+//    	if("无".equals(view.businessTypePane().getSelected().getCheckLevel())) {
+//    		return true;
+//    	}
+    	if(view.businessTypePane().getSelected().getName().contains("注册登记")) {
     		return true;
     	}
-    	else if(view.businessTypePane().getSelected().getName().contains("注册登记")) {
-    		return true;
-    	}
-    	else if (view instanceof ImagingInputView){
-    		return true;
-    	}
+//    	else if (view instanceof ImagingInputView){
+//    		return true;
+//    	}
     	else {
     		List<Transaction> result = ui.transactionService.findForList(view.vin(),0);
     		return (result.size() != 0);
@@ -330,6 +332,11 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 							// 右键菜单
 							com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(thumbnail, true);
 							menu.addItem("查看", new com.vaadin.contextmenu.Menu.Command() {
+								/**
+								 * 
+								 */
+								private static final long serialVersionUID = 1L;
+
 								@Override
 								public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
 									ImageViewerWindow.open(view, ufq.getDocumentUniqueId());
@@ -337,6 +344,11 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 							});
 							menu.addSeparator();
 							menu.addItem("删除", new com.vaadin.contextmenu.Menu.Command() {
+								/**
+								 * 
+								 */
+								private static final long serialVersionUID = 1L;
+
 								@Override
 								public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
 									//从文件系统删除
@@ -412,6 +424,11 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 			// 右键菜单
 			com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(thumbnail, true);
 			menu.addItem("查看", new com.vaadin.contextmenu.Menu.Command() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
 				@Override
 				public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
 					ImageViewerWindow.open(view, doc.getDocumentUniqueId());
@@ -419,6 +436,11 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 			});
 			menu.addSeparator();
 			menu.addItem("删除", new com.vaadin.contextmenu.Menu.Command() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
 				@Override
 				public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
 					//从文件系统删除
@@ -448,6 +470,11 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 			// 右键菜单
 			com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(thumbnail, true);
 			menu.addItem("查看", new com.vaadin.contextmenu.Menu.Command() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
 				@Override
 				public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
 					ImageViewerWindow.open(view, doc.getDocumentUniqueId());
@@ -455,6 +482,11 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 			});
 			menu.addSeparator();
 			menu.addItem("删除", new com.vaadin.contextmenu.Menu.Command() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
 				@Override
 				public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
 					//从文件系统删除
@@ -484,7 +516,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private TB4FileSystem fileSystem = new TB4FileSystem();
 	private UIEvents.PollListener pollListener;
-	private MessageBodyParser jsonHelper = new MessageBodyParser();
+	private MatedataJsonParser jsonHelper = new MatedataJsonParser();
 	private User loggedinUser = null;
 	private TB4MessagingSystem messageSystem = new TB4MessagingSystem();
 }

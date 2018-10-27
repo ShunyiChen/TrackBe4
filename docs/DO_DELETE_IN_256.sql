@@ -24,5 +24,6 @@ BEGIN
 	DELETE FROM QUEUE_2;
 	DELETE FROM QUEUE_1;
 	DELETE FROM QUEUE_1;
+	delete from imaging;
 END
 $DO$;

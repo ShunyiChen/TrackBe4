@@ -1,24 +1,26 @@
 package com.maxtree.automotive.dashboard.view.imaging;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
+import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.cache.CacheManager;
-import com.maxtree.automotive.dashboard.domain.Community;
+import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.Menu.Command;
-import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.contextmenu.MenuItem;
+import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.Grid.GridContextClickEvent;
 import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class TodoListGrid extends VerticalLayout {
 	
 	/**
@@ -44,7 +46,10 @@ public class TodoListGrid extends VerticalLayout {
         grid.addContextClickListener(e->{
         	GridContextClickEvent<Imaging> event = (GridContextClickEvent<Imaging>) e;
         	selectedItem = event.getItem();
-        	grid.select(selectedItem);
+        	if(selectedItem != null) {
+        		grid.select(selectedItem);
+        	}
+        	
         });
         this.addComponents(grid, controls);
         this.setExpandRatio(grid, 1);
@@ -76,12 +81,25 @@ public class TodoListGrid extends VerticalLayout {
 	 * @param newStatus
 	 */
 	public void updateStatus(String newStatus) {
-		ui.imagingService.updateImaging(selectedItem.getImagingUniqueId(), newStatus);
 		
-		selectedItem.setStatus(newStatus);
-		grid.getSelectionModel().deselectAll();
-		grid.select(selectedItem);
-		
+		Callback onOk = new Callback() {
+
+			@Override
+			public void onSuccessful() {
+				ui.imagingService.updateImaging(selectedItem.getImagingUniqueId(), newStatus);
+				selectedItem.setStatus(newStatus);
+				grid.getSelectionModel().deselectAll();
+				grid.select(selectedItem);
+			}
+		};
+		Callback onCancel = new Callback() {
+
+			@Override
+			public void onSuccessful() {
+				
+			}
+		};
+		MessageBox.showMessage("确认", "请确认是否要更改状态为"+newStatus+"?", MessageBox.WARNING, onOk, onCancel, "确定", "取消");
 	}
 	
 	/**
@@ -104,7 +122,6 @@ public class TodoListGrid extends VerticalLayout {
 				break;
 			}
 		}
-		
 	}
 	
 

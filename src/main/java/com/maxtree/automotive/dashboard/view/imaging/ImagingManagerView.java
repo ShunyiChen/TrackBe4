@@ -1,28 +1,32 @@
 package com.maxtree.automotive.dashboard.view.imaging;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
-import com.google.common.eventbus.Subscribe;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
+import com.maxtree.automotive.dashboard.component.NotificationsButton;
 import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
-import com.maxtree.automotive.dashboard.domain.Imaging;
+import com.maxtree.automotive.dashboard.domain.Message;
+import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
-import com.maxtree.automotive.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
-import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
+import com.maxtree.trackbe4.messagingsystem.MatedataJsonParser;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.UIEvents;
@@ -42,11 +46,15 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.schlichtherle.license.LicenseContent;
 
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 
 	/**
@@ -295,41 +303,6 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
     	grid.controls.first();
     }
 
-    public static final class NotificationsButton extends Button {
-        /**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private static final String STYLE_UNREAD = "unread";
-        public static final String ID = "dashboard-notifications";
-
-        public NotificationsButton() {
-            setIcon(VaadinIcons.BELL);
-            setId(ID);
-            addStyleName("notifications");
-            addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-            DashboardEventBus.register(this);
-        }
-
-        @Subscribe
-        public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-        	DashboardMenu.getInstance().imagingAdminCount(event.getCount());
-        	setUnreadCount(event.getCount());
-        }
-
-        public void setUnreadCount(final int count) {
-            setCaption(String.valueOf(count));
-            String description = "事件提醒";
-            if (count > 0) {
-                addStyleName(STYLE_UNREAD);
-                description += " (" + count + " 未执行)";
-            } else {
-                removeStyleName(STYLE_UNREAD);
-            }
-            setDescription(description);
-        }
-    }
-    
     /**
      * 基本查询按钮
      */
@@ -354,7 +327,12 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
     private void buildNotificationsButton() {
         notificationsButton = new NotificationsButton();
     	notificationsButton.addClickListener(new ClickListener() {
-            @Override
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void buttonClick(final ClickEvent event) {
                 popup.open(event);
             }
@@ -370,6 +348,44 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
     
     @Override
 	public void updateUnreadCount() {
+    	List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
+		int unreadCount = 0;
+		for (Notification n : notifications) {
+			if (n.getViewName().equals(DashboardViewType.IMAGING_MANAGER.getViewName())) {
+				unreadCount++;
+				
+				Message message = ui.messagingService.findById(n.getMessageUniqueId());
+				if(!StringUtils.isEmpty(message.getMatedata())) {
+					Map<String, String> matedata = parser.json2Map(message.getMatedata());
+					String uuid = matedata.get("UUID");
+					String vin = matedata.get("VIN");
+					String state = matedata.get("STATE");
+					String checkLevel = matedata.get("CHECKLEVEL");
+					String popupAutomatically = matedata.get("POPUPAUTOMATICALLY");
+					if(!StringUtils.isEmpty(popupAutomatically)
+							&& popupAutomatically.equals("TRUE")) {
+						
+						Callback markAsRead = new Callback() {
+
+							@Override
+							public void onSuccessful() {
+								ui.messagingService.markAsRead(n.getNotificationUniqueId());
+								
+								CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
+							}
+						};
+						dia.showDialog(message.getSubject(), message.getContent(), markAsRead);
+					}
+				}
+				
+				
+			}
+		}
+		
+		DashboardMenu.getInstance().imagingAdminCount(unreadCount);
+		notificationsButton.setUnreadCount(unreadCount);
+    	
+    	
 //    	// 显示未读消息数
 //		List<SendDetails> sendDetailsList = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
 //		int unreadCount = 0;
@@ -410,11 +426,9 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 	}
 	
 	
-	private Imaging editableImaging;
-	private MessageBodyParser jsonHelper = new MessageBodyParser();
+	private MatedataJsonParser jsonHelper = new MatedataJsonParser();
     private TodoListGrid grid = new TodoListGrid();
     private Label titleLabel;
-    private Window notificationsWindow;
     public static final String EDIT_ID = "dashboard-edit";
     public static final String TITLE_ID = "dashboard-title";
     private VerticalLayout root;
@@ -423,4 +437,6 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
     private NotificationsButton notificationsButton;
     private User loggedInUser;
     private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.IMAGING_MANAGER.getViewName());
+    private MatedataJsonParser parser = new MatedataJsonParser();
+    private PopupAutomatically dia = new PopupAutomatically();
 }

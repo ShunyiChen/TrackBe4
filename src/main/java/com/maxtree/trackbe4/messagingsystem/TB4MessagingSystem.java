@@ -36,7 +36,7 @@ public class TB4MessagingSystem {
 		newMessage.setCreatorUniqueId(creator.getUserUniqueId());
 		newMessage.setSubject(subject);
 		newMessage.setContent(content);
-		newMessage.setMatedata(matedata);// matedata{UUID,VIN,STATE,CHECKLEVEL}
+		newMessage.setMatedata(matedata);// matedata{UUID,VIN,STATE,CHECKLEVEL,POPUPAUTOMATICALLY}
 		newMessage.setSentTimes(1);
 		newMessage.setReminderFrequencyId(0);
 		newMessage.setDateCreated(new Date());
@@ -212,6 +212,7 @@ public class TB4MessagingSystem {
 	
 	// 定时发送消息
     public static Map<Integer, Timer> SCHEDULED = new HashMap<Integer, Timer>();
+    // 删除策略
 	public static final int MARKASDELETED = 1;
 	public static final int PERMANENTLYDELETE = 2;
 	public static final int ONLYDELETERECIPIENT = 3;

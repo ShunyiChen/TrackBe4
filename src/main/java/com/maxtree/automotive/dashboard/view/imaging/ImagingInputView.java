@@ -25,6 +25,7 @@ import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
+import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.maxtree.automotive.dashboard.domain.Message;
@@ -43,7 +44,6 @@ import com.maxtree.automotive.dashboard.view.front.BasicInfoPane;
 import com.maxtree.automotive.dashboard.view.front.BusinessTypePane;
 import com.maxtree.automotive.dashboard.view.front.CapturePane;
 import com.maxtree.automotive.dashboard.view.front.ThumbnailGrid;
-import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
 import com.maxtree.trackbe4.messagingsystem.Name;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.data.Binder;
@@ -361,7 +361,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	btnAdd.setDescription("创建或补充流水号");
     	btnAdd.addClickListener(e -> {
     		if(editableTrans == null) {
-    			editMode = 0;//进入新建模式
+    			commitMode = "INSERT";
     			startTransaction();
     		}
     		else {
@@ -382,12 +382,10 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         btnCommit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         btnCommit.setDescription("保存并提交给质检");
         btnCommit.addClickListener(e -> {
-        	if (editMode == 0) {
+        	if (commitMode.equals("INSERT")) {
         		newTransaction();
-        		
-        	} else if(editMode == 1){
+        	} else if(commitMode.equals("UPDATE")){
         		updateTransaction();
-        	
         	}
         });
     }
@@ -459,17 +457,15 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     
     /**
      * 
-     * @param transUUID
-     * @param transVIN
-     * @param callback 更改消息为已读
      */
-    private void openTransaction(String transUUID, String transVIN, Callback callback) {
-    	editableTrans = ui.transactionService.findByUUID(transUUID, transVIN);
+   	public void openTransaction(Transaction transaction,int deletableMessageUniqueId, Callback callback) {
+   		commitMode = "UPDATE";
+    	editableTrans = transaction;
+    	this.deletableMessageUniqueId = deletableMessageUniqueId;
     	editableSite = ui.siteService.findByCode(editableTrans.getSiteCode());
     	uuid = editableTrans.getUuid();
     	batch = editableTrans.getBatch();
     	vin = editableTrans.getVin();
-    	stoppedAtAnException = false;
     	
     	int companyUniqueId = loggedInUser.getCompanyUniqueId();
     	int communityUniqueId = loggedInUser.getCommunityUniqueId();
@@ -557,13 +553,13 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     		track(Activity.INPUT);
     		// 清空舞台
         	cleanStage();
-        	Notifications.bottomWarning("操作成功。记录已提交,等待质检检验。");
+        	Notifications.bottomWarning("提交成功！等待质检检查。");
     	}
     	else {
     		// 取新车注册上架号
     		String code = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
     		if(StringUtils.isEmpty(code)) {
-    			Notifications.warning("上架号不存在，请先录入注册登记业务。");
+    			Notifications.warning("上架号不存在！请录入注册登记业务,确保先生成上架号。");
     			return;
     		}
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
@@ -588,7 +584,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     		// 清空舞台
         	cleanStage();
         	
-        	Notifications.bottomWarning("操作成功。记录已提交,等待质检检验。");
+        	Notifications.bottomWarning("提交成功！等待质检检查。");
     	}
     }
     
@@ -616,14 +612,12 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	editableTrans.setStatus(ui.state().getName("B7"));
     		ui.transactionService.update(editableTrans);
     		//操作记录
-    		int transitionUniqueId = track(Activity.RE_ENTRY);
-    		//删除消息提醒
-    		removeMessage.onSuccessful();
+    		track(Activity.RE_ENTRY);
     		//回复消息
-    		replyMessage(transitionUniqueId);
+    		replyMessage(deletableMessageUniqueId);
     		//清空舞台
         	cleanStage();
-        	Notifications.bottomWarning("操作成功。记录已提交,等待质检检验。");
+        	Notifications.bottomWarning("提交成功!等待质检检查。");
     	}
     	else {
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
@@ -631,32 +625,35 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	editableTrans.setStatus(ui.state().getName("B7"));
     		ui.transactionService.update(editableTrans);
     		//操作记录
-    		int transitionUniqueId= track(Activity.RE_ENTRY);
-    		//删除消息提醒
-    		removeMessage.onSuccessful();
+    		track(Activity.RE_ENTRY);
     		//回复消息
-    		replyMessage(transitionUniqueId);
+    		replyMessage(deletableMessageUniqueId);
     		// 清空舞台
         	cleanStage();
-        	Notifications.bottomWarning("操作成功。记录已提交,等待质检检验。");
+        	Notifications.bottomWarning("提交成功！等待质检检查。");
     	}
+    	
+    	messageSys.deleteMessage(deletableMessageUniqueId, loggedInUser.getUserUniqueId(), TB4MessagingSystem.PERMANENTLYDELETE);
     }
     
     /**
      * 
      * @param transitionUniqueId
+     * @param receiverUniqueId
      */
-    private void replyMessage(int transitionUniqueId) {
+    private void replyMessage(int deletableMessageUniqueId) {
+    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
+    	Message msg = ui.messagingService.findById(deletableMessageUniqueId);
     	//发消息给影像化质检
-		User receiver = ui.userService.findById(creatoruniqueid);
+		User receiver = ui.userService.findById(msg.getCreatorUniqueId());
 		if (receiver.getUserUniqueId() == 0) {
 			Notifications.warning("没有找到消息接收者");
 			return;
 		}
 		
-		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\"\"}";
+		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
 		String subject = loggedInUser.getUserName()+"修改了一笔业务";
-		String content = editableTrans.getPlateNumber()+",已完成修改";
+		String content = Yaml.readAddress().getLicenseplate()+" "+editableTrans.getPlateNumber()+",已完成修改，请再检查一遍。";
 		Message newMessage = messageSystem.createNewMessage(loggedInUser,subject,content,matedata);
 		
 		Set<Name> names = new HashSet<Name>();
@@ -765,10 +762,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 		return capturePane;
 	}
 	
-	private int editMode;//0-新建 1:修改
-	private Callback removeMessage;
-	private int creatoruniqueid;
-	private MessageBodyParser jsonHelper = new MessageBodyParser();
+	private String commitMode = "INSERT";
 	public static final String EDIT_ID = "dashboard-edit";
 	public static final String TITLE_ID = "dashboard-title";
 	private Transaction editableTrans = null; 	//可编辑的编辑transaction
@@ -778,9 +772,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 	private String uuid;	//UUID业务与原文关联号
 	private int batch;	//业务批次号。默认最大1000个批次，每批次最多放5000文件夹。
 	private String vin;// = "LGB12YEA9DY001226";	//车辆识别代码。用于分表。
-	private boolean stoppedAtAnException = false;// true：异常停止 false:继续正常录入。
     private Label titleLabel;
-    private Window notificationsWindow;
     private VerticalLayout root;
     private VerticalLayout main = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
@@ -796,6 +788,8 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
     private HorizontalLayout spliterNorth = new HorizontalLayout();
     private HorizontalLayout spliterSouth = new HorizontalLayout();
-    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.IMAGING_INPUT.getViewName());
+    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.IMAGING_INPUT.getViewName(), this);
     private TB4MessagingSystem messageSystem = new TB4MessagingSystem();
+    private int deletableMessageUniqueId;
+    private TB4MessagingSystem messageSys = new TB4MessagingSystem();
 }

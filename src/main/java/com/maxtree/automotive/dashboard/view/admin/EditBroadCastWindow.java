@@ -23,7 +23,7 @@ import com.maxtree.automotive.dashboard.domain.MessageRecipient;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
-import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
+import com.maxtree.trackbe4.messagingsystem.MatedataJsonParser;
 import com.maxtree.trackbe4.messagingsystem.Name;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.data.Binder;
@@ -358,7 +358,7 @@ public class EditBroadCastWindow extends Window {
         w.center();
     }
  
-	private MessageBodyParser jsonHelper = new MessageBodyParser();
+	private MatedataJsonParser jsonHelper = new MatedataJsonParser();
 	private LinkedHashSet<Name> nameSets = new LinkedHashSet<Name>();
 	private List<Name> list = new ArrayList<Name>();
 	private TextField toField;

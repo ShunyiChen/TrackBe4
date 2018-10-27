@@ -29,7 +29,7 @@ import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
 import com.maxtree.automotive.dashboard.view.quality.QCView;
-import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
+import com.maxtree.trackbe4.messagingsystem.MatedataJsonParser;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.ShortcutListener;
@@ -490,6 +490,6 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     private TabSheet main = new TabSheet();
     private UpGrid upgrid = new UpGrid();
     private DownGrid downgrid = new DownGrid();
-    private MessageBodyParser jsonHelper = new MessageBodyParser();
+    private MatedataJsonParser jsonHelper = new MatedataJsonParser();
     private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.SHELF.getViewName());
 }

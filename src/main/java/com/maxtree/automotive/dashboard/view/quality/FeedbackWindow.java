@@ -91,13 +91,13 @@ public class FeedbackWindow extends Window {
 			close();
 		});
 		combobox.addValueChangeListener(e -> {
-			
-			ui.feedbackService.up(e.getValue());
-			
-			StringBuilder sb = new StringBuilder(content.getValue());
-			sb.append(e.getValue().getSuggestion());
-			sb.append("\n");
-			content.setValue(sb.toString());
+			if(e.getValue() != null) {
+				ui.feedbackService.up(e.getValue());
+				StringBuilder sb = new StringBuilder(content.getValue());
+				sb.append(e.getValue().getSuggestion());
+				sb.append("\n");
+				content.setValue(sb.toString());
+			}
 		});
 		btnManage.addClickListener(e->{
 			Callback callback = new Callback() {

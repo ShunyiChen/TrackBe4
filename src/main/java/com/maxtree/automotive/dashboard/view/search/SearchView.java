@@ -31,7 +31,7 @@ import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
-import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
+import com.maxtree.trackbe4.messagingsystem.MatedataJsonParser;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.ShortcutListener;
@@ -462,7 +462,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     private TextField keywordField = new TextField();
     
     private Address addr = Yaml.readAddress();
-    private MessageBodyParser jsonHelper = new MessageBodyParser();
+    private MatedataJsonParser jsonHelper = new MatedataJsonParser();
     private User loggedInUser;	//登录用户
     private Label titleLabel;
     private Window notificationsWindow;

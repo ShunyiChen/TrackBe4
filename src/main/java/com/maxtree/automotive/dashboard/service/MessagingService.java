@@ -40,7 +40,7 @@ public class MessagingService {
 	 */
 	public int insertMessage(Message message) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		String sql = "INSERT INTO MESSAGES(SUBJECT,CONTENT,MATEDATA,CREATORUNIQUEID,DATECREATED,SENTTIMES,REMINDERFREQUENCYID,DELETED,POPUPAUTO) VALUES(?,?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO MESSAGES(SUBJECT,CONTENT,MATEDATA,CREATORUNIQUEID,DATECREATED,SENTTIMES,REMINDERFREQUENCYID,DELETED) VALUES(?,?,?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -56,7 +56,6 @@ public class MessagingService {
 				ps.setInt(6, message.getSentTimes());
 				ps.setInt(7, message.getReminderFrequencyId());
 				ps.setInt(8, message.getDeleted());
-				ps.setBoolean(9, message.getPopupAuto());
 				return ps;
 			}
 			
@@ -148,12 +147,11 @@ public class MessagingService {
 	
 	/**
 	 * 
-	 * @param messageUniqueId
-	 * @param userUniqueId
+	 * @param notificationUniqueId
 	 */
-	public void markAsRead(int messageUniqueId, int userUniqueId) {
-		String sql = "UPDATE NOTIFICATIONS SET MARKEDASREAD=? WHERE MESSAGEUNIQUEID=? AND USERUNIQUEID=?";
-		jdbcTemplate.update(sql, new Object[] {true, messageUniqueId, userUniqueId});
+	public void markAsRead(int notificationUniqueId) {
+		String sql = "UPDATE NOTIFICATIONS SET MARKEDASREAD=? WHERE NOTIFICATIONUNIQUEID=?";
+		jdbcTemplate.update(sql, new Object[] {true, notificationUniqueId});
 	}
 	
 	/**
@@ -240,6 +238,34 @@ public class MessagingService {
 	 * @param userUniqueId
 	 * @param onlyUnread
 	 * @param viewName
+	 * @param limit
+	 * @param offset
+	 * @return
+	 */
+	public List<Notification> findAllNotificationsByPaging(int userUniqueId, boolean onlyUnread,String viewName,int limit, int offset) {
+		String condition1 = "";
+		if(onlyUnread) {
+			condition1 = " A.MARKEDASREAD=FALSE AND ";
+		}
+		String condition2 = "";
+		if(!StringUtils.isEmpty(viewName)) {
+			condition2 = " A.VIEWNAME='"+viewName+"' AND ";
+		}
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT A.*,B.SUBJECT AS SUBJECT,C.USERNAME AS USERNAME,D.PICTURE");
+		sql.append(" FROM NOTIFICATIONS AS A ");
+		sql.append("  LEFT JOIN MESSAGES AS B ON A.MESSAGEUNIQUEID=B.MESSAGEUNIQUEID ");
+		sql.append("  LEFT JOIN USERS AS C ON C.USERUNIQUEID=B.CREATORUNIQUEID ");
+		sql.append("  LEFT JOIN USERPROFILES AS D ON D.USERUNIQUEID=C.USERUNIQUEID WHERE "+condition1+condition2+" A.USERUNIQUEID=? ORDER BY B.MESSAGEUNIQUEID DESC LIMIT ? OFFSET ? ");
+		List<Notification> results = jdbcTemplate.query(sql.toString(), new Object[] {userUniqueId,limit,offset-1}, new BeanPropertyRowMapper<Notification>(Notification.class));
+		return results;
+	}
+	
+	/**
+	 * 
+	 * @param userUniqueId
+	 * @param onlyUnread
+	 * @param viewName
 	 * @return
 	 */
 	public List<Notification> findAllNotifications(int userUniqueId, boolean onlyUnread,String viewName) {
@@ -251,7 +277,6 @@ public class MessagingService {
 		if(!StringUtils.isEmpty(viewName)) {
 			condition2 = " A.VIEWNAME='"+viewName+"' AND ";
 		}
-		
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT A.*,B.SUBJECT AS SUBJECT,C.USERNAME AS USERNAME,D.PICTURE");
 		sql.append(" FROM NOTIFICATIONS AS A ");

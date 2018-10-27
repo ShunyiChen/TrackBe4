@@ -63,6 +63,11 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import de.schlichtherle.license.LicenseContent;
 
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 
 	/**
@@ -304,7 +309,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 
     @Override
     public void enter(final ViewChangeEvent event) {
-//    	getUnreadCount();
+    	updateUnreadCount();
     }
 
     /**
@@ -432,7 +437,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     	if (business.getName().contains("注册登记")) {
     		editableTrans.setStatus(ui.state().getName("B2"));
     	}
-    	else if(StringUtils.isEmpty(business.getCheckLevel())) {
+    	else if("无".equals(business.getCheckLevel())) {
     		editableTrans.setStatus(ui.state().getName("B2"));
     	}
     	else if(business.getCheckLevel().equals("一级审档")) {
@@ -474,6 +479,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
      * @param comments
      */
     private void reject(String comments) {
+    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
     	//1.更改状态
     	editableTrans.setStatus(ui.state().getName("B15"));//质检不合格
     	editableTrans.setDateModified(new Date());
@@ -484,10 +490,10 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		if(removeMessage != null)
 			removeMessage.onSuccessful();
 		//3.发信给前台
-		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\"\"}";
+		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
 		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
 		String subject = loggedInUser.getUserName()+"退回了一笔业务";
-		String content = editableTrans.getPlateNumber()+",质检不合格,"+comments;
+		String content = Yaml.readAddress().getLicenseplate()+" "+ editableTrans.getPlateNumber()+",质检不合格,"+comments;
 		
 		Message newMessage = messageSystem.createNewMessage(loggedInUser, subject, content, matedata);
 		Set<Name> names = new HashSet<Name>();
@@ -499,7 +505,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		// 5.清空
 		cleanStage();
 		// 6.提示信息
-		Notifications.bottomWarning("操作成功。已退回到前台。");
+		Notifications.bottomWarning("提交成功！已退回到前台更正。");
     }
     
     /**

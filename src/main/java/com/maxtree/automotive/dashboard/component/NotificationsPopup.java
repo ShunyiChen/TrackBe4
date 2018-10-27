@@ -2,26 +2,25 @@ package com.maxtree.automotive.dashboard.component;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
+import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.maxtree.automotive.dashboard.view.admin.NotificationsManagementWindow;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -41,7 +40,16 @@ public class NotificationsPopup extends Window{
 	 * @param viewName
 	 */
 	public NotificationsPopup(String viewName) {
+		this(viewName, null);
+	}
+	
+	/**
+	 * 
+	 * @param viewName
+	 */
+	public NotificationsPopup(String viewName, InputViewIF inputView) {
 		this.viewName = viewName;
+		this.inputView = inputView;
 		initComponents();
 	}
 	
@@ -56,7 +64,7 @@ public class NotificationsPopup extends Window{
     	main.setSpacing(false);
     	setContent(main);
         
-        Label title = new Label("事件提醒");
+        Label title = new Label("未读通知");
         title.addStyleName(ValoTheme.LABEL_H3);
         title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         main.addComponent(title);
@@ -65,9 +73,36 @@ public class NotificationsPopup extends Window{
     	scrollPane.addStyleName("reminder-scrollpane");
     	scrollPane.setHeight("220px");
     	scrollPane.setWidth("100%");
-        VerticalLayout listLayout = new VerticalLayout();
         
-        List<Notification> list = ui.messagingService.findAllNotifications(loggedInUser.getUserUniqueId(), true, viewName);
+        scrollPane.setContent(listLayout);
+        main.addComponent(scrollPane);
+        main.setExpandRatio(scrollPane, 0.9f);
+        HorizontalLayout footer = new HorizontalLayout();
+        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
+        footer.setWidth("100%");
+        footer.setSpacing(false);
+        Button showAll = new Button("查看全部事件");
+        showAll.addClickListener(e->{
+        	close();
+        	NotificationsManagementWindow.open(viewName, inputView);
+        });
+        
+        showAll.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+        showAll.addStyleName(ValoTheme.BUTTON_SMALL);
+        footer.addComponent(showAll);
+        footer.setComponentAlignment(showAll, Alignment.TOP_CENTER);
+        main.addComponent(footer);
+        main.setExpandRatio(footer, 0.1f);
+	}
+
+	/**
+	 * 
+	 */
+	private void loadItems() {
+		
+		listLayout.removeAllComponents();
+		
+		List<Notification> list = ui.messagingService.findAllNotifications(loggedInUser.getUserUniqueId(), true, viewName);
         for(Notification n : list) {
          	Label subjectLabel = new Label();
          	subjectLabel.addStyleName("notification-title");
@@ -91,30 +126,14 @@ public class NotificationsPopup extends Window{
             listLayout.addComponent(item);
             
             item.addLayoutClickListener(e->{
+            	// 通知标记已读
+            	ui.messagingService.markAsRead(n.getNotificationUniqueId());
+            	
             	Message message = ui.messagingService.findById(n.getMessageUniqueId());
-            	Openwith.open(message);
+            	Openwith.open(message, inputView);
+            	close();
             });
         }
-        
-        scrollPane.setContent(listLayout);
-        main.addComponent(scrollPane);
-        main.setExpandRatio(scrollPane, 0.9f);
-        HorizontalLayout footer = new HorizontalLayout();
-        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
-        footer.setWidth("100%");
-        footer.setSpacing(false);
-        Button showAll = new Button("查看全部事件");
-        showAll.addClickListener(e->{
-        	close();
-        	NotificationsManagementWindow.open(DashboardViewType.INPUT.getViewName());
-        });
-        
-        showAll.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
-        showAll.addStyleName(ValoTheme.BUTTON_SMALL);
-        footer.addComponent(showAll);
-        footer.setComponentAlignment(showAll, Alignment.TOP_CENTER);
-        main.addComponent(footer);
-        main.setExpandRatio(footer, 0.1f);
 	}
 	
 	/**
@@ -123,6 +142,13 @@ public class NotificationsPopup extends Window{
 	 */
 	public void open(ClickEvent event) {
 		if(!isAttached()) {
+			ui.access(new Runnable() {
+
+				@Override
+				public void run() {
+					loadItems();
+				}
+			});
 			setPositionY(event.getClientY() - event.getRelativeY() + 40);
 			ui.addWindow(this);
 			focus();
@@ -131,8 +157,11 @@ public class NotificationsPopup extends Window{
 			close();
 		}
 	}
+	
+	private VerticalLayout listLayout = new VerticalLayout();
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private VerticalLayout main = new VerticalLayout();
 	private User loggedInUser;
 	private String viewName;
+	private InputViewIF inputView;
 }

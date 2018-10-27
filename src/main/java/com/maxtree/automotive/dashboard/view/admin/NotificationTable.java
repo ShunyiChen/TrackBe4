@@ -4,13 +4,15 @@ import java.util.Date;
 import java.util.List;
 
 import com.maxtree.automotive.dashboard.Callback;
+import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
-import com.maxtree.automotive.dashboard.component.MessageBox;
+import com.maxtree.automotive.dashboard.component.Openwith;
 import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
@@ -36,9 +38,15 @@ public class NotificationTable extends VerticalLayout {
 	/**
 	 * 
 	 * @param title
+	 * @param inputView
+	 * @param closeNotificationsManagementWindow
+	 * @param changeQueryRanges
 	 */
-	public NotificationTable(String title) {
+	public NotificationTable(String title,InputViewIF inputView, Callback closeNotificationsManagementWindow,Callback2 changeQueryRanges) {
 		this.title = title;
+		this.inputView = inputView;
+		this.closeNotificationsManagementWindow = closeNotificationsManagementWindow;
+		this.changeQueryRanges = changeQueryRanges;
 		initComponents();
 	}
 
@@ -53,18 +61,36 @@ public class NotificationTable extends VerticalLayout {
 		header.setHeight("37px");
 		Label titleLabel = new Label(title);
 		
+		Label range = new Label(rangeFrom+"~"+rangeTo);
 		Image left = new Image(null, new ThemeResource("img/adminmenu/chevron-left.png"));
 		Image right = new Image(null, new ThemeResource("img/adminmenu/chevron-right.png"));
 		left.addStyleName("NotificationTable_left");
 		right.addStyleName("NotificationTable_left");
+		left.addClickListener(e->{
+			if(rangeFrom > 10) {
+				rangeFrom -= 10;
+				rangeTo -= 10;
+				range.setValue(rangeFrom+"~"+rangeTo);
+				changeQueryRanges.onSuccessful(10,rangeFrom);
+			}
+			
+		});
+		right.addClickListener(e->{
+			rangeFrom += 10;
+			rangeTo += 10;
+			range.setValue(rangeFrom+"~"+rangeTo);
+			changeQueryRanges.onSuccessful(10, rangeFrom);
+		});
+		
 		HorizontalLayout paging = new HorizontalLayout();
 		paging.setSpacing(false);
 		paging.setMargin(false);
 		paging.setHeight("37px");
 		paging.setWidthUndefined();
-		paging.addComponents(left,Box.createHorizontalBox(5),right);
-		paging.setComponentAlignment(left, Alignment.TOP_CENTER);
+		paging.addComponents(range,Box.createHorizontalBox(5),left,Box.createHorizontalBox(5),right);
+		paging.setComponentAlignment(range, Alignment.MIDDLE_CENTER);
 		paging.setComponentAlignment(right, Alignment.TOP_CENTER);
+		paging.setComponentAlignment(left, Alignment.TOP_CENTER);
 		
 		titleLabel.setWidth("100%");
 		header.addComponents(titleLabel,paging);
@@ -115,9 +141,6 @@ public class NotificationTable extends VerticalLayout {
 		Label contentLabel = new Label(notification.getSubject());
 		Label relativeTimeLabel = new Label(new TimeAgo().toDuration(duration));
 		Image checkedImg = new Image(null, new ThemeResource("img/adminmenu/check.png"));
-//		checkedImg.addClickListener(e->{
-//			ui.messagingService.markAsRead(notification.getMessageUniqueId(), loggedInUser.getUserUniqueId());
-//		});
 		checkedImg.addStyleName("NotificationTable_checkedImg");
 		contentLabel.addStyleName("NotificationTable_contentLabel");
 		relativeTimeLabel.addStyleName("NotificationTable_contentLabel");
@@ -125,7 +148,6 @@ public class NotificationTable extends VerticalLayout {
 		if(notification.isMarkedAsRead()) {
 			checkedImg.setVisible(true);
 		}
-		
 		VerticalLayout cell = new VerticalLayout();
 		cell.setSpacing(false);
 		cell.setMargin(false);
@@ -134,11 +156,9 @@ public class NotificationTable extends VerticalLayout {
 		cell.addComponent(contentLabel);
 		cell.setComponentAlignment(contentLabel, Alignment.MIDDLE_LEFT);
 		contentLabel.setWidth("100%");
-		
 		Image infoImg = new Image(null, new ThemeResource("img/adminmenu/info-circle-o.png"));
 		Image waringImg = new Image(null, new ThemeResource("img/adminmenu/warning.png"));
 		Image img = notification.isWarning()?waringImg:infoImg;
-		
 		row.addComponents(img,cell, relativeTimeLabel, checkedImg);
 		row.setComponentAlignment(img, Alignment.MIDDLE_LEFT);
 		row.setComponentAlignment(cell, Alignment.MIDDLE_LEFT);
@@ -150,23 +170,20 @@ public class NotificationTable extends VerticalLayout {
 		row.addStyleName("NotificationTable_row");
 		row.addLayoutClickListener(e->{
 			if(e.getMouseEventDetails().isDoubleClick()) {
-				Callback onOK = new Callback() {
-
-					@Override
-					public void onSuccessful() {
-					}
-				};
-				
 				Message msg = ui.messagingService.findById(notification.getMessageUniqueId());
-				
-				MessageBox.showMessage("消息内容", msg.getContent(), onOK);
+				Openwith.open(msg, inputView, closeNotificationsManagementWindow);
 			}
 		});
 		return row;
 	}
 	
-	private String title;
 	private VerticalLayout body = new VerticalLayout();
 	private static DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private User loggedInUser;
+	private String title;
+	private InputViewIF inputView;
+	private Callback closeNotificationsManagementWindow;
+	private int rangeFrom = 1;
+	private int rangeTo = 10;
+	private Callback2 changeQueryRanges;
 }

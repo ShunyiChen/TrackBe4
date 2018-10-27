@@ -433,17 +433,18 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     			log.info(e.getMessage());
     		}
         	//2.更改状态
-        	editableTrans.setStatus(ui.state().getName("B2"));
+        	editableTrans.setStatus(ui.state().getName("B14"));
         	editableTrans.setDateModified(new Date());
     		ui.transactionService.update(editableTrans);
     		//3.记录跟踪
     		track(Activity.VERIFIED,comments);
     		
     		//4.发信给前台
+    		String location = Yaml.readAddress().getLicenseplate();
     		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
     		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
     		String subject = loggedInUser.getUserName()+"通过了审档";
-    		String content = editableTrans.getPlateNumber()+","+comments;
+    		String content = location+" "+editableTrans.getPlateNumber()+","+comments;
     		Message newMessage = messageSystem.createNewMessage(loggedInUser,subject,content,matedata);
 
     		Set<Name> names = new HashSet<Name>();
@@ -456,7 +457,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     		// 5.清空
     		cleanStage();
     		// 6.提示信息
-    		Notifications.bottomWarning("提交成功！已完成了逻辑上架。");
+    		Notifications.bottomWarning("提交成功！已完成审档待补充。");
     	}
     	else if (business.getCheckLevel().equals("二级审档")) {
     		//1.删除锁定队列
@@ -491,9 +492,10 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     
     /**
      * 
-     * @param suggestions
+     * @param comments
      */
     private void reject(String comments) {
+    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
     	// 1.删除锁定队列
     	User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		int serial = 2; //1:质检 2:审档 3:确认审档
@@ -511,10 +513,11 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		track(Activity.REJECTED,comments);
 		
 		//4.发信给前台
-		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\"\"}";
+		String location = Yaml.readAddress().getLicenseplate();
+		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
 		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
 		String subject = loggedInUser.getUserName()+"退回了一笔业务";
-		String content = editableTrans.getPlateNumber()+",审档不合格,"+comments;
+		String content = location+" "+editableTrans.getPlateNumber()+",审档不合格,"+comments;
 		Message newMessage = messageSystem.createNewMessage(loggedInUser,subject,content,matedata);
 
 		Set<Name> names = new HashSet<Name>();

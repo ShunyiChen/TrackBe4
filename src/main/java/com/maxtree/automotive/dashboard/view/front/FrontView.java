@@ -37,7 +37,7 @@ import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.InputViewIF;
-import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
+import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.data.Binder;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
@@ -255,7 +255,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	btnAdd.setDescription("创建或补充流水号");
     	btnAdd.addClickListener(e -> {
     		if(editableTrans == null) {
-    			editMode = 0;//进入录入模式
+    			commitMode = "INSERT";
     			startTransaction();
     		}
     		else {
@@ -277,11 +277,11 @@ public final class FrontView extends Panel implements View,InputViewIF {
         btnCommit.setDescription("保存并提交给质检");
         btnCommit.addClickListener(e -> {
         	// 新建
-        	if (editMode == 0) {
+        	if (commitMode.equals("INSERT")) {
         		newTransaction();
         	} 
         	// 更改
-        	else if(editMode == 1){
+        	else if(commitMode.equals("UPDATE")){
         		updateTransaction();
         	}
         });
@@ -364,12 +364,14 @@ public final class FrontView extends Panel implements View,InputViewIF {
     
     /**
      * 
-     * @param transUUID
-     * @param transVIN
-     * @param callback 更改消息为已读
+     * @param transaction
+     * @param deletableMessageUniqueId
+     * @param callback
      */
-    private void openTransaction(String transUUID, String transVIN, Callback callback) {
-    	editableTrans = ui.transactionService.findByUUID(transUUID, transVIN);
+    public void openTransaction(Transaction transaction,int deletableMessageUniqueId, Callback callback) {
+    	commitMode = "UPDATE";
+    	editableTrans = transaction;
+    	this.deletableMessageUniqueId = deletableMessageUniqueId;//删除提醒用
     	editableSite = ui.siteService.findByCode(editableTrans.getSiteCode());
     	uuid = editableTrans.getUuid();
     	batch = editableTrans.getBatch();
@@ -726,13 +728,10 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//操作记录
         		track(Activity.INPUT);
-        		//自动删除消息
-        		if(removeMessage != null)
-        			removeMessage.onSuccessful();
         		
         		//清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("操作成功。已完成逻辑上架。");
+            	Notifications.bottomWarning("提交成功！已完成逻辑上架。");
     			
     		}
     		else {
@@ -751,13 +750,10 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//操作记录
         		track(Activity.INPUT);
-        		//自动删除消息
-        		if(removeMessage != null)
-        			removeMessage.onSuccessful();
         		
         		// 清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("操作成功。记录已提交到质检队列等待质检。");
+            	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
     		}
     		
     	}
@@ -772,12 +768,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//操作记录
         		track(Activity.INPUT);
-        		//自动删除消息
-        		if(removeMessage != null)
-        			removeMessage.onSuccessful();
         		//清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("操作成功。已完成逻辑上架。");
+            	Notifications.bottomWarning("提交成功！已完成逻辑上架。");
     		}
     		else {
     			editableTrans.setStatus(ui.state().getName("B7"));
@@ -795,12 +788,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//操作记录
         		track(Activity.INPUT);
-        		//自动删除消息
-        		if(removeMessage != null)
-        			removeMessage.onSuccessful();
         		// 清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("操作成功。记录已提交到质检队列等待质检。");
+            	Notifications.bottomWarning("提交成功！已提交到队列等待质检。");
     		}
     		
     	}
@@ -827,13 +817,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//操作记录
         		track(Activity.INPUT);
-        		//自动删除消息
-        		if(removeMessage != null)
-        			removeMessage.onSuccessful();
-        		
         		//清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("操作成功。本次业务已添加到待审档队列中，等待审档。");
+            	Notifications.bottomWarning("提交成功！已添加到队列中等待审档。");
         	}
         	// 提交给质检队列
         	else {
@@ -852,13 +838,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//操作记录
         		track(Activity.INPUT);
-        		//自动删除消息
-        		if(removeMessage != null)
-        			removeMessage.onSuccessful();
-        		
         		// 清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("操作成功。本次业务已提交到质检队列中，等待质检。");
+            	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
         	}
     	}
     	
@@ -883,12 +865,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//操作记录
         		track(Activity.INPUT);
-        		//自动删除消息
-        		if(removeMessage != null)
-        			removeMessage.onSuccessful();
         		//清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("操作成功。本次业务已添加到审档队列中，等待审档。");
+            	Notifications.bottomWarning("提交成功！已添加到队列中等待审档。");
         	}
         	// 提交给质检队列
         	else {
@@ -907,14 +886,13 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		//操作记录
         		track(Activity.INPUT);
-        		//自动删除消息
-        		if(removeMessage != null)
-        			removeMessage.onSuccessful();
         		// 清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("操作成功。本次业务已添加到质检队列中，等待质检。");
+            	Notifications.bottomWarning("提交成功！已添加到队列中等待质检。");
         	}
     	}
+    	System.out.println(deletableMessageUniqueId+","+loggedInUser.getUserUniqueId());
+    	messageSys.deleteMessage(deletableMessageUniqueId,loggedInUser.getUserUniqueId(),TB4MessagingSystem.PERMANENTLYDELETE);
     }
     
     /**
@@ -922,16 +900,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
      * @param act
      */
     private void track(Activity act) {
-//    	Map<String, String> details = new HashMap<String, String>();
-//    	details.put("1", editableTrans.getStatus());//STATUS
-//		details.put("2", basicInfoPane.getBarCode());//BARCODE
-//		details.put("3", basicInfoPane.getPlateType());//PLATETYPE
-//		details.put("4", basicInfoPane.getPlateNumber());//PLATENUMBER
-//		details.put("5", basicInfoPane.getVIN());//VIN
-//		details.put("6", businessTypePane.getSelected().getName());//BUSINESSTYPE
-//		details.put("7", editableTrans.getUuid());//UUID
-//		String json = jsonHelper.map2Json(details);
-    	
     	// 插入移行表
 		Transition transition = new Transition();
 		transition.setTransactionUUID(uuid);
@@ -940,7 +908,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
 		transition.setComments(null);
 		transition.setOperator(loggedInUser.getUserName());
 		transition.setDateCreated(new Date());
-		int transitionUniqueId = ui.transitionService.insert(transition, basicInfoPane.getVIN());
+		ui.transitionService.insert(transition, basicInfoPane.getVIN());
     }
     
 	@Override
@@ -1022,8 +990,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
 	
 	public static final String EDIT_ID = "dashboard-edit";
 	public static final String TITLE_ID = "dashboard-title";
-	private int editMode;//0-新建 1:修改
-	private MessageBodyParser jsonHelper = new MessageBodyParser();
+	private String commitMode = "INSERT";
 	private Transaction editableTrans; 	//可编辑的编辑transaction
 	private Company editableCompany = null;	 	//前台所在机构
 	private User loggedInUser;	//登录用户
@@ -1048,6 +1015,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
     private HorizontalLayout spliterNorth = new HorizontalLayout();
     private HorizontalLayout spliterSouth = new HorizontalLayout();
-    private Callback removeMessage;
-    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.INPUT.getViewName());
+    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.INPUT.getViewName(), this);
+    private int deletableMessageUniqueId;
+    private TB4MessagingSystem messageSys = new TB4MessagingSystem();
 }

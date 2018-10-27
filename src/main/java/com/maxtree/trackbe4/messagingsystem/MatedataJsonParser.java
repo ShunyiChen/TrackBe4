@@ -10,7 +10,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class MessageBodyParser {
+/**
+ * 
+ * @author Chen
+ *
+ */
+public class MatedataJsonParser {
 
 	/**
 	 * 

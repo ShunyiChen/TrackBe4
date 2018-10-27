@@ -51,13 +51,13 @@ public class ImagingService {
 	public List<Imaging> findAll(int limit, int offset, String keyword) {
 		String sql = "";
 		if(StringUtils.isEmpty(keyword)) {
-			sql = "SELECT * FROM IMAGING ORDER BY DATECREATED  LIMIT ? OFFSET ? ";
+			sql = "SELECT * FROM IMAGING ORDER BY DATECREATED DESC  LIMIT ? OFFSET ? ";
 			List<Imaging> results = jdbcTemplate.query(sql, new Object[] {limit, offset}, new BeanPropertyRowMapper<Imaging>(Imaging.class));
 			return results;
 		}
 		else {
 			keyword = "%"+keyword+"%";
-			sql = "SELECT * FROM IMAGING WHERE PLATENUMBER LIKE ? ORDER BY DATECREATED  LIMIT ? OFFSET ? ";
+			sql = "SELECT * FROM IMAGING WHERE PLATENUMBER LIKE ? ORDER BY DATECREATED DESC LIMIT ? OFFSET ? ";
 			List<Imaging> results = jdbcTemplate.query(sql, new Object[] {keyword,limit, offset}, new BeanPropertyRowMapper<Imaging>(Imaging.class));
 			return results;
 		}

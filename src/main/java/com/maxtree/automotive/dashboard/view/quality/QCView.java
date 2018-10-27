@@ -34,7 +34,7 @@ import com.maxtree.automotive.dashboard.exception.DataException;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
-import com.maxtree.trackbe4.messagingsystem.MessageBodyParser;
+import com.maxtree.trackbe4.messagingsystem.MatedataJsonParser;
 import com.maxtree.trackbe4.messagingsystem.Name;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
@@ -431,7 +431,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
         	if (business.getName().contains("注册登记")) {
         		editableTrans.setStatus(ui.state().getName("B2"));
         	}
-        	else if(StringUtils.isEmpty(business.getCheckLevel())) {
+        	else if("无".equals(business.getCheckLevel())) {
         		editableTrans.setStatus(ui.state().getName("B2"));
         	}
         	else if(business.getCheckLevel().equals("一级审档")) {
@@ -503,6 +503,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
      * @param comments
      */
     private void reject(String comments) {
+    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
     	//1.删除锁定队列
 		int serial = 1; //1:质检 2:审档 3:确认审档
 		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());
@@ -519,7 +520,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
 		track(Activity.REJECTED,comments);
 		
 		//4.发信给前台
-		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\"\"}";
+		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
 		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
 		String subject = loggedInUser.getUserName()+"退回了一笔业务";
 		String content = editableTrans.getPlateNumber()+",质检不合格,"+comments;
@@ -606,7 +607,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
 		editableTrans = null;
    	}
     
-   	private MessageBodyParser jsonHelper = new MessageBodyParser();
+   	private MatedataJsonParser jsonHelper = new MatedataJsonParser();
    	private Transaction editableTrans = null; 	//可编辑的编辑transaction
    	public User loggedInUser;	//登录用户
     private Label titleLabel;
