@@ -3,18 +3,26 @@ package com.maxtree.automotive.dashboard.view.shelf;
 import java.util.List;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class DownGrid extends VerticalLayout {
 	
 	/**
@@ -32,18 +40,25 @@ public class DownGrid extends VerticalLayout {
 		this.setSpacing(false);
 		this.setMargin(false);
 		this.setSizeFull();
-		FormLayout form = new FormLayout();
-		form.setSpacing(false);
-		form.setMargin(false);
 		plateType.setReadOnly(true);
 		plateNumber.setReadOnly(true);
 		plateVIN.setReadOnly(true);
 		
-		plateType.setWidth("400px");
-		plateNumber.setWidth("400px");
-		plateVIN.setWidth("400px");
+		HorizontalLayout info = new HorizontalLayout();
+		info.setWidthUndefined();
+		info.setSpacing(false);
+		info.setMargin(false);
+		Label plateTypeLabel = new Label("号牌种类:");
+		Label plateNumberLabel = new Label("号码号牌:");
+		Label plateVINLabel = new Label("车辆识别代号:");
+		info.addComponents(Box.createHorizontalBox(15),plateTypeLabel,plateType,Box.createHorizontalBox(15),plateNumberLabel,plateNumber,Box.createHorizontalBox(15),plateVINLabel,plateVIN);
+		info.setComponentAlignment(plateTypeLabel, Alignment.MIDDLE_LEFT);
+		info.setComponentAlignment(plateNumberLabel, Alignment.MIDDLE_LEFT);
+		info.setComponentAlignment(plateVINLabel, Alignment.MIDDLE_LEFT);
+		info.setComponentAlignment(plateType, Alignment.MIDDLE_LEFT);
+		info.setComponentAlignment(plateNumber, Alignment.MIDDLE_LEFT);
+		info.setComponentAlignment(plateVIN, Alignment.MIDDLE_LEFT);
 		
-		form.addComponents(plateType, plateNumber, plateVIN);
 		
 		grid.setSizeFull();
 		grid.addColumn(Transaction::getCode).setCaption("上架号");
@@ -59,10 +74,9 @@ public class DownGrid extends VerticalLayout {
         	plateNumber.setValue(editableTrans.getPlateNumber());
         	plateVIN.setValue(editableTrans.getVin());
         });
-        this.addComponents(form, grid);
-        this.setExpandRatio(form, 0);
+        this.addComponents(info, grid);
+        this.setExpandRatio(info, 0);
         this.setExpandRatio(grid, 1);
-        
 	}
 	
 	public void setItems(List<Transaction> data) {
@@ -94,7 +108,7 @@ public class DownGrid extends VerticalLayout {
 			 List<Transaction> rs = ui.transactionService.search_by_keyword(-1, 0, keyword, community.getCommunityName());
 			 grid.setItems(rs);
 		} else {
-			Notifications.warning("关键字长度应该在7~8位。");
+			Notifications.warning("关键字长度应该在5~6位。");
 		}
 	}
 	
@@ -111,8 +125,8 @@ public class DownGrid extends VerticalLayout {
 	private List<Transaction> allData;
 	private Grid<Transaction> grid = new Grid<>();
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
-	private TextField plateType = new TextField("号牌种类:");
-	private TextField plateNumber = new TextField("号码号牌:");
-	private TextField plateVIN = new TextField("车辆识别代码:");
+	private TextField plateType = new TextField();
+	private TextField plateNumber = new TextField();
+	private TextField plateVIN = new TextField();
 	public Transaction editableTrans = null;
 }

@@ -23,6 +23,13 @@ public class AboutSystemRow extends FlexTableRow {
 	
 	private void initComponents() {
 		this.addComponents(aboutTB4Sys,help,log,developTool);
+		aboutTB4Sys.addLayoutClickListener(e->{
+			AboutTB4.open();
+		});
+		developTool.addLayoutClickListener(e->{
+//			rootView.forward(new PeopleView("管理用户", rootView));
+			DEV.open();
+		});
 	}
 
 	@Override

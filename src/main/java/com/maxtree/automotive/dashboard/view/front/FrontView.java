@@ -177,11 +177,12 @@ public final class FrontView extends Panel implements View,InputViewIF {
         titleLabel.addStyleName(ValoTheme.LABEL_H1);
         titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         header.addComponent(titleLabel);
+        buildFillButton();
         buildPrintButton();
         buildNotificationsButton();
         buildAddButton();
         buildCommitButton();
-        HorizontalLayout tools = new HorizontalLayout(btnPrint, btnAdd, btnCommit, notificationsButton);
+        HorizontalLayout tools = new HorizontalLayout(btnFill,btnPrint, btnAdd, btnCommit,notificationsButton);
         tools.addStyleName("toolbar");
         header.addComponent(tools);
 
@@ -216,6 +217,23 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	main.setExpandRatio(spliterNorth, 1);
     	main.setExpandRatio(spliterSouth, 9);
+    }
+    
+    /**
+     * 补充业务流水号
+     * 
+     * @return
+     */
+    private void buildFillButton() {
+    	btnFill.setEnabled(true);
+    	btnFill.setId(EDIT_ID);
+    	btnFill.setIcon(VaadinIcons.BARCODE);
+    	btnFill.addStyleName("icon-edit");
+    	btnFill.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	btnFill.setDescription("补充业务流水号");
+    	btnFill.addClickListener(e -> {
+    		FillBarcodeWindow.open();
+        });
     }
     
     /**
@@ -1008,6 +1026,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     private BusinessTypePane businessTypePane = new BusinessTypePane(this);
     private ThumbnailGrid fileGrid = new ThumbnailGrid(this);
     private CapturePane capturePane = new CapturePane();
+    private Button btnFill = new Button();
     private Button btnPrint = new Button();
     private Button btnAdd = new Button();
     private Button btnCommit = new Button();

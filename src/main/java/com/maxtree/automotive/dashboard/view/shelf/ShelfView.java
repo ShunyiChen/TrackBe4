@@ -11,6 +11,7 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
+import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -29,7 +30,6 @@ import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
 import com.maxtree.automotive.dashboard.view.quality.QCView;
-import com.maxtree.trackbe4.messagingsystem.MatedataJsonParser;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.ShortcutListener;
@@ -39,6 +39,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -52,7 +53,6 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.schlichtherle.license.LicenseContent;
@@ -190,9 +190,11 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
         searchbar.setSpacing(false);
         searchbar.setMargin(false);
         searchbar.setWidthUndefined();
+        
+        Label location = new Label(Yaml.readAddress().getLicenseplate());
         TextField searchField = new TextField();
         searchField.setWidth("400px");
-        searchField.setPlaceholder("请输入车牌号,例如:辽B12345");
+        searchField.setPlaceholder("请输入车牌号后5位或后6位。 例如:B8K57");
         ShortcutListener enter = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER, null) {
 			@Override
 			public void handleAction(Object sender, Object target) {
@@ -227,7 +229,9 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
         });
         searchButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         searchButton.setIcon(VaadinIcons.SEARCH);
-        searchbar.addComponents(searchField,searchButton);
+        searchbar.addComponents(location,Box.createHorizontalBox(5),searchField,searchButton);
+        searchbar.setComponentAlignment(location, Alignment.MIDDLE_LEFT);
+        
         header.addComponents(titleLabel, searchbar);
         
         buildNotificationsButton();
@@ -315,16 +319,6 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
      * @param act
      */
     private void track(Activity act, Transaction trans) {
-//    	Map<String, String> details = new HashMap<String, String>();
-//    	details.put("1", trans.getStatus());//STATUS
-//		details.put("2", trans.getBarcode());//BARCODE
-//		details.put("3", trans.getPlateType());//PLATETYPE
-//		details.put("4", trans.getPlateNumber());//PLATENUMBER
-//		details.put("5", trans.getVin());//VIN
-//		details.put("6", trans.getBusinessCode());//BUSINESSCODE
-//		details.put("7", trans.getUuid());//UUID
-//		String json = jsonHelper.map2Json(details);
-    	
     	// 插入移行表
 		Transition transition = new Transition();
 		transition.setTransactionUUID(trans.getUuid());
@@ -480,7 +474,6 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     private static final String TAB2_TITLE = "下架";
    	private User loggedInUser;
     private Label titleLabel;
-    private Window notificationsWindow;
     private VerticalLayout root;
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private NotificationsButton notificationsButton;
@@ -490,6 +483,5 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     private TabSheet main = new TabSheet();
     private UpGrid upgrid = new UpGrid();
     private DownGrid downgrid = new DownGrid();
-    private MatedataJsonParser jsonHelper = new MatedataJsonParser();
     private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.SHELF.getViewName());
 }

@@ -73,7 +73,7 @@ public class UpGrid extends VerticalLayout {
 			 List<Transaction> rs = ui.transactionService.search_by_keyword(-1, 0, keyword, community.getCommunityName());
 			 grid.setItems(rs);
 		} else {
-			Notifications.warning("关键字长度应该在7~8位。");
+			Notifications.warning("关键字长度应该在5~6位。");
 		}
 	}
 

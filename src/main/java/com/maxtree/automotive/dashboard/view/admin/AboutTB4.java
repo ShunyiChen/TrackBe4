@@ -1,61 +1,71 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
-import com.maxtree.automotive.dashboard.component.Box;
-import com.vaadin.server.Page;
-import com.vaadin.server.ThemeResource;
+import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.TB4Application;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
-public class AboutTB4 extends VerticalLayout {
+/**
+ * 
+ * @author Chen
+ *
+ */
+public class AboutTB4 extends Window {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public AboutTB4(AdminMainView mainView) {
-		setMargin(false);
-	    setSpacing(false);
-	    setWidth("678px");
-	    setHeight((Page.getCurrent().getBrowserWindowHeight()-58)+"px");
-	 	addStyleName("detail-pane-with-padding20");
-	 	// 必须有一个VerticalLayout，否则上下各50%显示
-	 	VerticalLayout content = new VerticalLayout();
-	 	content.setSpacing(false);
-	 	content.setMargin(false);
-	 	content.setWidth("100%");
-	 	content.setHeightUndefined();
-		// 标题布局
-		HorizontalLayout searchHLayout = new HorizontalLayout();
-		searchHLayout.setMargin(false);
-		searchHLayout.setSpacing(false);
-		searchHLayout.setWidthUndefined();
-		searchHLayout.setHeight("88px");
-		Image leftarrowImg = new Image(null, new ThemeResource("img/adminmenu/leftarrow.png"));
-		leftarrowImg.addStyleName("left-arrow-image");
-		leftarrowImg.addClickListener(e -> {
-	 		mainView.getContent().removeComponent(this);
-	 		mainView.showPanes();
-        });
-		Label parentTitle = new Label("关于TB4系统");
-		parentTitle.setWidth("420px");
-		parentTitle.addStyleName("parent-title");
+	public AboutTB4() {
+		this.setModal(true);
+		this.setClosable(true);
+		this.setResizable(false);
+		this.setWidth("400px");
+		this.setHeight("200px");
 		
-		searchHLayout.addComponents(leftarrowImg, Box.createHorizontalBox(20), parentTitle);
-		searchHLayout.setComponentAlignment(leftarrowImg, Alignment.TOP_LEFT);
-		searchHLayout.setComponentAlignment(parentTitle, Alignment.TOP_LEFT);
-		// 业务类型标题
-		Label gridTitle = new Label("TB4系统信息");
-		gridTitle.addStyleName("grid-title");
-		// 表格
-		AboutTB4Grid grid = new AboutTB4Grid();
-		content.addComponents(searchHLayout, gridTitle, grid);
-		content.setComponentAlignment(grid, Alignment.TOP_CENTER);
-		addComponents(content);
-		setComponentAlignment(content, Alignment.TOP_CENTER);
+		HorizontalLayout info = new HorizontalLayout();
+		Label infoLabel = new Label(TB4Application.NAME+" "+TB4Application.VERSION);
+		info.setWidth("100%");
+		info.addComponent(infoLabel);
+		info.setComponentAlignment(infoLabel, Alignment.TOP_LEFT);
+		
+		HorizontalLayout date = new HorizontalLayout();
+		Label buildInLabel = new Label(TB4Application.BUILD_ID);
+		info.setWidth("100%");
+		info.addComponent(buildInLabel);
+		info.setComponentAlignment(buildInLabel, Alignment.TOP_LEFT);
+		
+		HorizontalLayout buttons = new HorizontalLayout();
+		buttons.setWidth("100%");
+		buttons.setHeight("30px");
+		buttons.addComponent(okButton);
+		buttons.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER);
+		
+		main.addComponents(info,date,buttons);
+		main.setComponentAlignment(info, Alignment.TOP_LEFT);
+		main.setComponentAlignment(date, Alignment.TOP_LEFT);
+		main.setComponentAlignment(buttons, Alignment.BOTTOM_RIGHT);
+		this.setContent(main);
+		
+		okButton.addClickListener(e->{
+			close();
+		});
 	}
 	
+	
+	public static void open() {
+		AboutTB4 AboutTB4 = new AboutTB4();
+		UI.getCurrent().addWindow(AboutTB4);
+		AboutTB4.center();
+	}
+	
+	private DashboardUI ui = (DashboardUI) UI.getCurrent();
+	private Button okButton = new Button("确定");
+	private VerticalLayout main = new VerticalLayout();
 }

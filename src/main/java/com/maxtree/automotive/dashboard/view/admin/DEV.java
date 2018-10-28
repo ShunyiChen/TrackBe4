@@ -5,29 +5,39 @@ import java.sql.SQLException;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-public class DEV extends VerticalLayout {
+/**
+ * 
+ * @author Chen
+ *
+ */
+public class DEV extends Window {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public DEV(AdminMainView mainView) {
-		setMargin(false);
-	    setSpacing(false);
-	    setWidth("678px");
-	    setHeight((Page.getCurrent().getBrowserWindowHeight()-58)+"px");
-	 	addStyleName("detail-pane-with-padding20");
+	public DEV() {
+		this.setSizeFull();
+		this.setClosable(true);
+		this.setResizable(true);
+		this.setCaption("SQL工具");
+		
+		main.setSizeFull();
+		main.setSpacing(false);
+		main.setMargin(false);
+		
 	 	// 必须有一个VerticalLayout，否则上下各50%显示
 	 	VerticalLayout content = new VerticalLayout();
 	 	content.setSpacing(false);
@@ -75,26 +85,33 @@ public class DEV extends VerticalLayout {
 		});
 		toolbar.addComponents(add,Box.createHorizontalBox(5),run);
 		
-		Image leftarrowImg = new Image(null, new ThemeResource("img/adminmenu/leftarrow.png"));
-		leftarrowImg.addStyleName("left-arrow-image");
-		leftarrowImg.addClickListener(e -> {
-	 		mainView.getContent().removeComponent(this);
-	 		mainView.showPanes();
-        });
-		Label parentTitle = new Label("开发");
-		parentTitle.setWidth("420px");
+		Image leftarrowImg = new Image(null, new ThemeResource("img/adminmenu/info-circle-o.png"));
+		Label parentTitle = new Label("点击下面添加按钮创建SQL查询");
+		parentTitle.setWidthUndefined();
 		parentTitle.addStyleName("parent-title");
 		
 		searchHLayout.addComponents(leftarrowImg, Box.createHorizontalBox(20), parentTitle);
-		searchHLayout.setComponentAlignment(leftarrowImg, Alignment.TOP_LEFT);
-		searchHLayout.setComponentAlignment(parentTitle, Alignment.TOP_LEFT);
+		searchHLayout.setComponentAlignment(leftarrowImg, Alignment.MIDDLE_LEFT);
+		searchHLayout.setComponentAlignment(parentTitle, Alignment.MIDDLE_LEFT);
 		 
 		// 表格
 		content.addComponents(searchHLayout, toolbar, bench);
 		content.setComponentAlignment(bench, Alignment.TOP_CENTER);
-		addComponents(content);
-		setComponentAlignment(content, Alignment.TOP_CENTER);
+		main.addComponents(content);
+		main.setComponentAlignment(content, Alignment.TOP_CENTER);
+		
+		this.setContent(main);
 	}
 	
+	/**
+	 * 
+	 */
+	public static void open() {
+		DEV dev = new DEV();
+		UI.getCurrent().addWindow(dev);
+		dev.center();
+	}
+	
+	private VerticalLayout main = new VerticalLayout();
 	private DEVWorkbench bench = new DEVWorkbench();
 }

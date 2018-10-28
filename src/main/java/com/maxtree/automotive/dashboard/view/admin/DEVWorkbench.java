@@ -105,7 +105,10 @@ public class DEVWorkbench extends VerticalLayout {
 		VerticalLayout comp = createTabComponent();
 //    	Resource icon = new ThemeResource("img/gear.png");
 		tabNum++;
-    	tabSheet.addTab(comp, "SQL脚本"+tabNum, VaadinIcons.COG_O).setClosable(true);
+    	Tab tab = tabSheet.addTab(comp, "SQL脚本"+tabNum, VaadinIcons.COG_O);
+    	tab.setClosable(true);
+    	
+    	tabSheet.setSelectedTab(tab);
 	}
 	
 	public void run(Callback callback) throws SQLException {
@@ -179,6 +182,10 @@ public class DEVWorkbench extends VerticalLayout {
 						}
 						// ps.setBinaryStream(4, new ByteArrayInputStream(document.getThumbnail()),
 						// document.getThumbnail().length);
+					}
+					else {
+						int val = res.getInt(rsmd.getColumnName(j));
+						row.add(val+"");
 					}
 				}
 				data.add(row);
@@ -302,7 +309,7 @@ class TabComponent extends VerticalLayout {
 	public TabSheet logSheet = new TabSheet();
 }
 
-class ResultsTable extends VerticalLayout{
+class ResultsTable extends Panel{
 	
 	/**
 	 * 
@@ -310,29 +317,30 @@ class ResultsTable extends VerticalLayout{
 	private static final long serialVersionUID = 1L;
 	
 	public ResultsTable() {
-		this.setMargin(false);
-		this.setSpacing(false);
 		this.setSizeFull();
 		main.setSizeUndefined();
-		main.setSpacing(false);
 		main.setMargin(false);
+		main.setSpacing(false);
 		body.setSizeUndefined();
 		body.setSpacing(false);
 		body.setMargin(false);
 		header.setSpacing(false);
 		header.setMargin(false);
-		header.setWidth("100%");
+		header.setWidthUndefined();
 		header.setHeight("23px");
 		main.addComponents(header, body);
 		main.setExpandRatio(body, 1);
 		main.setExpandRatio(header, 0);
+//		main
+//		Panel scroll = new Panel();
+//		scroll.setWidth("1024px");
+//		scroll.setHeight("100%");
+//		scroll.setContent(main);
+//		this.addComponents(scroll);
+//		this.setExpandRatio(scroll, 1);
 		
-		Panel scroll = new Panel();
-		scroll.setWidth("100%");
-		scroll.setHeight("100%");
-		scroll.setContent(main);
-		this.addComponents(scroll);
-		this.setExpandRatio(scroll, 1);
+		
+		this.setContent(main);
 	}
 	
 	/**
@@ -354,6 +362,8 @@ class ResultsTable extends VerticalLayout{
 	public void setItems(List<List<String>> data) {
 		for(List<String> list : data) {
 			HorizontalLayout row = new HorizontalLayout();
+			row.setSpacing(false);
+			row.setMargin(false);
 			row.setWidthUndefined();
 			row.setHeightUndefined();
 			for(String v : list) {
