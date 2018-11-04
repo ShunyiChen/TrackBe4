@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.maxtree.automotive.dashboard.Callback;
@@ -16,6 +17,7 @@ import com.maxtree.automotive.dashboard.exception.ReportException;
 import com.maxtree.tb4beans.PrintableBean;
 import com.maxtree.trackbe4.reports.TB4Reports;
 import com.vaadin.server.BrowserWindowOpener;
+import com.vaadin.server.Extension;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
@@ -98,7 +100,10 @@ public class PrintingFiletagsWindow extends Window {
     		btnOk.setEnabled(false);
     		
     		if (opener != null) {
-    			opener.remove();
+    			Collection<Extension> con = opener.getParent().getExtensions();
+    			if(con.contains(opener)) {
+    				opener.remove();
+    			}
     			
     			footer.removeComponent(btnOk);
     			// re-add button
@@ -122,21 +127,28 @@ public class PrintingFiletagsWindow extends Window {
 					@Override
 					public void onSuccessful() {
 						
-						generatePreview("reports/generates/"+loggedInUser.getUserUniqueId()+"/report.html","report.html");
+						generatePreview("reports/generates/"+loggedInUser.getUserUniqueId()+"/report.png","report.png");
 						
 						btnOk.setEnabled(true);
 						opener = new BrowserWindowOpener(PrintUI.class);
-						opener.setFeatures("height=595,width=842,resizable");
+						opener.setFeatures("height=306,width=422,x=0,y=0,resizable");
 						opener.extend(btnOk);
-						opener.setParameter("htmlFilePath", "reports/generates/"+loggedInUser.getUserUniqueId()+"/report.html");
+						opener.setParameter("htmlFilePath", "reports/generates/"+loggedInUser.getUserUniqueId()+"/report.png");
 					}
     			};
+//    			try {
+//					new TB4Reports().jasperToHtml(list, loggedInUser.getUserUniqueId(), "上架标签-车.jasper", callback);
+//					
+//				} catch (ReportException e1) {
+//					e1.printStackTrace();
+//				}
     			try {
-					new TB4Reports().jasperToHtml(list, loggedInUser.getUserUniqueId(), "上架标签-车.jasper", callback);
+					new TB4Reports().jasperToPNG(list, loggedInUser.getUserUniqueId(), "上架标签-车.jasper", callback);
 					
 				} catch (ReportException e1) {
 					e1.printStackTrace();
 				}
+    			
     		} else {
     			List<PrintableBean> list = new ArrayList<PrintableBean>();
     			PrintableBean bean = new PrintableBean();
@@ -144,9 +156,9 @@ public class PrintingFiletagsWindow extends Window {
     			bean.setPlateNum(trans.getPlateNumber());//号牌号码
     			Business business = ui.businessService.findByCode(trans.getBusinessCode());
     			bean.setBusType(business.getName());//业务类型
-    			bean.setShelvesNum(trans.getCode()); // 上架号
-    			bean.setIndex(trans.getIndexNumber()); // 索引号
-    			bean.setCode(Integer.parseInt(trans.getBarcode())); // 流水号
+    			bean.setShelvesNum(trans.getCode()); //上架号
+    			bean.setIndex(trans.getIndexNumber()); //索引号
+    			bean.setCode(trans.getBarcode()); //流水号
     			list.add(bean);
     			
     			Callback callback = new Callback() {
@@ -157,7 +169,7 @@ public class PrintingFiletagsWindow extends Window {
 						
 						btnOk.setEnabled(true);
 						opener = new BrowserWindowOpener(PrintUI.class);
-						opener.setFeatures("height=595,width=842,resizable");
+						opener.setFeatures("height=306,width=422,x=0,y=0,resizable");
 						opener.extend(btnOk);
 						opener.setParameter("htmlFilePath", "reports/generates/"+loggedInUser.getUserUniqueId()+"/report.png");
 					}

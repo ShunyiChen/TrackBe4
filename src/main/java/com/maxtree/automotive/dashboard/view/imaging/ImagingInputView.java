@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import com.maxtree.automotive.dashboard.Activity;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
@@ -550,7 +549,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     		}
     		ui.transactionService.insert(editableTrans);
     		//操作记录
-    		track(Activity.INPUT);
+    		track(ui.state().getName("B7"));
     		// 清空舞台
         	cleanStage();
         	Notifications.bottomWarning("提交成功！等待质检检查。");
@@ -579,7 +578,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	editableTrans.setStatus(ui.state().getName("B7"));
     		ui.transactionService.insert(editableTrans);
     		//操作记录
-    		track(Activity.INPUT);
+    		track(ui.state().getName("B7"));
     		
     		// 清空舞台
         	cleanStage();
@@ -612,7 +611,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	editableTrans.setStatus(ui.state().getName("B7"));
     		ui.transactionService.update(editableTrans);
     		//操作记录
-    		track(Activity.RE_ENTRY);
+    		track(ui.state().getName("B7"));
     		//回复消息
     		replyMessage(deletableMessageUniqueId);
     		//清空舞台
@@ -625,7 +624,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	editableTrans.setStatus(ui.state().getName("B7"));
     		ui.transactionService.update(editableTrans);
     		//操作记录
-    		track(Activity.RE_ENTRY);
+    		track(ui.state().getName("B7"));
     		//回复消息
     		replyMessage(deletableMessageUniqueId);
     		// 清空舞台
@@ -666,20 +665,19 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     
     /**
      * 
-     * @param act
+     * @param status
      * @return
      */
-    private int track(Activity act) {
+    private int track(String status) {
     	// 插入移行表
 		Transition transition = new Transition();
 		transition.setTransactionUUID(uuid);
 		transition.setVin(basicInfoPane.getVIN());
-		transition.setActivity(act.name);
+		transition.setActivity(status);
 		transition.setComments(null);
 		transition.setOperator(loggedInUser.getUserName());
 		transition.setDateCreated(new Date());
 		int transitionUniqueId = ui.transitionService.insert(transition,basicInfoPane.getVIN());
-		
 		return transitionUniqueId;
     }
     

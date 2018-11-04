@@ -8,7 +8,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.maxtree.automotive.dashboard.Activity;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
@@ -433,11 +432,41 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     			log.info(e.getMessage());
     		}
         	//2.更改状态
+        	editableTrans.setStatus(ui.state().getName("B5"));
+        	editableTrans.setDateModified(new Date());
+    		ui.transactionService.update(editableTrans);
+    		//3.记录跟踪
+    		track(ui.state().getName("B5"),comments);//form意思是打开并编辑
+    		//4.提交确认审档队列
+    		Queue newQueue = new Queue();
+    		newQueue.setUuid(editableTrans.getUuid());
+    		newQueue.setVin(editableTrans.getVin());
+    		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+    		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+    		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+    	    serial = 3;// 1:质检队列，2：审档队列 3：确认审档队列
+    		ui.queueService.create(newQueue, serial);
+    		// 5.清空舞台
+        	cleanStage();
+        	// 6.提示信息
+        	Notifications.bottomWarning("提交成功！已添加到队列中等待复审。");
+    	}
+    	else if (business.getCheckLevel().equals("二级审档")) {
+        	
+        	//1.删除锁定队列
+    		int serial = 2; //1:质检 2:审档 3:确认审档
+    		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());
+        	try {
+    			ui.queueService.delete(queue.getQueueUniqueId(), serial);
+    		} catch (DataException e) {
+    			log.info(e.getMessage());
+    		}
+        	//2.更改状态
         	editableTrans.setStatus(ui.state().getName("B14"));
         	editableTrans.setDateModified(new Date());
     		ui.transactionService.update(editableTrans);
     		//3.记录跟踪
-    		track(Activity.VERIFIED,comments);
+    		track(ui.state().getName("B14"),comments);
     		
     		//4.发信给前台
     		String location = Yaml.readAddress().getLicenseplate();
@@ -458,35 +487,6 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     		cleanStage();
     		// 6.提示信息
     		Notifications.bottomWarning("提交成功！已完成审档待补充。");
-    	}
-    	else if (business.getCheckLevel().equals("二级审档")) {
-    		//1.删除锁定队列
-    		int serial = 2; //1:质检 2:审档 3:确认审档
-    		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());
-        	try {
-    			ui.queueService.delete(queue.getQueueUniqueId(), serial);
-    		} catch (DataException e) {
-    			log.info(e.getMessage());
-    		}
-        	//2.更改状态
-        	editableTrans.setStatus(ui.state().getName("B5"));
-        	editableTrans.setDateModified(new Date());
-    		ui.transactionService.update(editableTrans);
-    		//3.记录跟踪
-    		track(Activity.SUBMIT2,comments);//form意思是打开并编辑
-    		//4.提交确认审档队列
-    		Queue newQueue = new Queue();
-    		newQueue.setUuid(editableTrans.getUuid());
-    		newQueue.setVin(editableTrans.getVin());
-    		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-    		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-    		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-    	    serial = 3;// 1:质检队列，2：审档队列 3：确认审档队列
-    		ui.queueService.create(newQueue, serial);
-    		// 5.清空舞台
-        	cleanStage();
-        	// 6.提示信息
-        	Notifications.bottomWarning("提交成功！已添加到队列中等待复审。");
     	}
     }
     
@@ -510,7 +510,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		editableTrans.setDateModified(new Date());
 		ui.transactionService.update(editableTrans);
 		//3.记录跟踪
-		track(Activity.REJECTED,comments);
+		track(ui.state().getName("B16"),comments);
 		
 		//4.发信给前台
 		String location = Yaml.readAddress().getLicenseplate();
@@ -534,17 +534,16 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     
     /**
      * 
-     * @param act
+     * @param status
      * @param comments
-     * @param openWith
      * @return
      */
-    private int track(Activity act, String comments) {
+    private int track(String status, String comments) {
     	// 插入记录转换表
 		Transition transition = new Transition();
 		transition.setTransactionUUID(editableTrans.getUuid());
 		transition.setVin(editableTrans.getVin());
-		transition.setActivity(act.name);
+		transition.setActivity(status);
 		transition.setComments(comments);
 		transition.setOperator(loggedInUser.getUserName());
 		transition.setDateCreated(new Date());

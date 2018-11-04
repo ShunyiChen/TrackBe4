@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import com.maxtree.automotive.dashboard.Activity;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
@@ -245,7 +244,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	btnPrint.setIcon(VaadinIcons.PRINT);
     	btnPrint.addStyleName("icon-edit");
     	btnPrint.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-    	btnPrint.setDescription("查询待补充的记录");
+    	btnPrint.setDescription("打印标签");
     	btnPrint.addClickListener(e -> {
     		if (!validate()) {
     			return;
@@ -442,6 +441,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
 			Notifications.warning("请将业务材料上传完整。");
 			return;
     	}
+    	
+    	System.out.println(businessTypePane.getSelected().getCheckLevel()+"---------------");
+    	
     	//4大流程
     	//新车注册流程
     	if (businessTypePane.getSelected().getName().contains("注册登记")) {
@@ -483,7 +485,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.transactionService.insert(editableTrans);
         		
         		//操作记录
-        		track(Activity.INPUT);
+        		track(ui.state().getName("B2"));
         		
         		//清空舞台
             	cleanStage();
@@ -505,14 +507,13 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Activity.INPUT);
+        		track(ui.state().getName("B7"));
         		
         		// 清空舞台
             	cleanStage();
             	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
         	}
     	}
-    	
     	
     	// 非审档流程
     	else if ("无".equals(businessTypePane.getSelected().getCheckLevel())) {
@@ -545,7 +546,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.transactionService.insert(editableTrans);
         		
         		//操作记录
-        		track(Activity.INPUT);
+        		track(ui.state().getName("B2"));
         		
         		//清空舞台
             	cleanStage();
@@ -567,7 +568,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Activity.INPUT);
+        		track(ui.state().getName("B7"));
         		
         		// 清空舞台
             	cleanStage();
@@ -616,11 +617,11 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Activity.INPUT);
+        		track(ui.state().getName("B4"));
         		
         		//清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("提交成功！已完成逻辑上架。");
+            	Notifications.bottomWarning("提交成功！已提交到队列中等待审档。");
         	}
         	// 提交给质检队列
         	else {
@@ -638,7 +639,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Activity.INPUT);
+        		track(ui.state().getName("B7"));
         		
         		// 清空舞台
             	cleanStage();
@@ -687,11 +688,11 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Activity.INPUT);
+        		track(ui.state().getName("B4"));
         		
         		//清空舞台
             	cleanStage();
-            	Notifications.bottomWarning("提交成功！已完成逻辑上架。");
+            	Notifications.bottomWarning("提交成功！已提交到队列中等待审档。");
         	}
         	// 提交给质检队列
         	else {
@@ -709,7 +710,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Activity.INPUT);
+        		track(ui.state().getName("B7"));
         		
         		// 清空舞台
             	cleanStage();
@@ -745,7 +746,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.transactionService.update(editableTrans);
         		
         		//操作记录
-        		track(Activity.INPUT);
+        		track(ui.state().getName("B2"));
         		
         		//清空舞台
             	cleanStage();
@@ -767,7 +768,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Activity.INPUT);
+        		track(ui.state().getName("B7"));
         		
         		// 清空舞台
             	cleanStage();
@@ -785,7 +786,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.transactionService.update(editableTrans);
         		
         		//操作记录
-        		track(Activity.INPUT);
+        		track(ui.state().getName("B2"));
         		//清空舞台
             	cleanStage();
             	Notifications.bottomWarning("提交成功！已完成逻辑上架。");
@@ -805,7 +806,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Activity.INPUT);
+        		track(ui.state().getName("B7"));
         		// 清空舞台
             	cleanStage();
             	Notifications.bottomWarning("提交成功！已提交到队列等待质检。");
@@ -834,7 +835,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Activity.INPUT);
+        		track(ui.state().getName("B4"));
         		//清空舞台
             	cleanStage();
             	Notifications.bottomWarning("提交成功！已添加到队列中等待审档。");
@@ -855,7 +856,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Activity.INPUT);
+        		track(ui.state().getName("B7"));
         		// 清空舞台
             	cleanStage();
             	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
@@ -882,7 +883,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Activity.INPUT);
+        		track(ui.state().getName("B4"));
         		//清空舞台
             	cleanStage();
             	Notifications.bottomWarning("提交成功！已添加到队列中等待审档。");
@@ -903,7 +904,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		ui.queueService.create(newQueue, serial);
         		
         		//操作记录
-        		track(Activity.INPUT);
+        		track(ui.state().getName("B7"));
         		// 清空舞台
             	cleanStage();
             	Notifications.bottomWarning("提交成功！已添加到队列中等待质检。");
@@ -915,14 +916,14 @@ public final class FrontView extends Panel implements View,InputViewIF {
     
     /**
      * 
-     * @param act
+     * @param status
      */
-    private void track(Activity act) {
+    private void track(String status) {
     	// 插入移行表
 		Transition transition = new Transition();
 		transition.setTransactionUUID(uuid);
 		transition.setVin(basicInfoPane.getVIN());
-		transition.setActivity(act.name);
+		transition.setActivity(status);
 		transition.setComments(null);
 		transition.setOperator(loggedInUser.getUserName());
 		transition.setDateCreated(new Date());

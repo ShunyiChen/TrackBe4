@@ -8,7 +8,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.maxtree.automotive.dashboard.Activity;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
@@ -448,7 +447,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
         	editableTrans.setDateModified(new Date());
     		ui.transactionService.update(editableTrans);
     		//3.记录跟踪
-    		track(Activity.SUBMIT2,comments);
+    		track(ui.state().getName("B14"),comments);
     		//4.发信给前台
     		String location = Yaml.readAddress().getLicenseplate();
     		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
@@ -491,7 +490,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 		ui.transactionService.update(editableTrans);
 		
 		//3.记录跟踪
-		track(Activity.REJECTED,comments);
+		track(ui.state().getName("B17"),comments);
 		
 		//4.发信给前台
 		String location = Yaml.readAddress().getLicenseplate();
@@ -515,16 +514,16 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
     
     /**
      * 
-     * @param act
+     * @param status
      * @param comments
      * @return
      */
-    private int track(Activity act, String comments) {
+    private int track(String status, String comments) {
     	// 插入移行表
 		Transition transition = new Transition();
 		transition.setTransactionUUID(editableTrans.getUuid());
 		transition.setVin(editableTrans.getVin());
-		transition.setActivity(act.name);
+		transition.setActivity(status);
 		transition.setComments(comments);
 		transition.setOperator(loggedInUser.getUserName());
 		transition.setDateCreated(new Date());

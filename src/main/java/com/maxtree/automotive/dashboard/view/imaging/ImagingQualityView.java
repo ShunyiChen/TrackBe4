@@ -7,9 +7,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
-import com.maxtree.automotive.dashboard.Activity;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
@@ -450,7 +448,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		ui.transactionService.update(editableTrans);
     	
 		//4.记录跟踪
-		track(Activity.APPROVED, comments);
+		track(editableTrans.getStatus(), comments);
 		// 自动删除消息
 		if(removeMessage != null)
 			removeMessage.onSuccessful();
@@ -485,7 +483,7 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     	editableTrans.setDateModified(new Date());
 		ui.transactionService.update(editableTrans);
 		//2.记录跟踪
-		track(Activity.REJECTED,comments);
+		track(ui.state().getName("B15"),comments);
 		// 自动删除消息
 		if(removeMessage != null)
 			removeMessage.onSuccessful();
@@ -510,16 +508,16 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     
     /**
      * 
-     * @param act
+     * @param status
      * @param comments
      * @return
      */
-    private int track(Activity act, String comments) {
+    private int track(String status, String comments) {
     	// 插入移行表
 		Transition transition = new Transition();
 		transition.setTransactionUUID(editableTrans.getUuid());
 		transition.setVin(editableTrans.getVin());
-		transition.setActivity(act.name);
+		transition.setActivity(status);
 		transition.setComments(comments);
 		transition.setOperator(loggedInUser.getUserName());
 		transition.setDateCreated(new Date());

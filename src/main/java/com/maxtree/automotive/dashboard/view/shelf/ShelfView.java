@@ -6,7 +6,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.maxtree.automotive.dashboard.Activity;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
@@ -281,7 +280,7 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     		upgrid.editableTrans.setStatus(ui.state().getName("B3"));
     		upgrid.editableTrans.setDateModified(new Date());
     		ui.transactionService.update(upgrid.editableTrans);
-    		track(Activity.PUTAWAY, upgrid.editableTrans);
+    		track(ui.state().getName("B3"), upgrid.editableTrans);
     		upgrid.clearSortOrder();
     		Notifications.bottomWarning("操作成功。");
     	}
@@ -305,7 +304,7 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
 		    		downgrid.editableTrans.setDateModified(new Date());
 		    		downgrid.editableTrans.setCode(null);
 		    		ui.transactionService.update(downgrid.editableTrans);
-		    		track(Activity.REMOVEOFF, downgrid.editableTrans);
+		    		track(ui.state().getName("B12"),downgrid.editableTrans);
 		    		downgrid.clearSortOrder();
 		    		Notifications.bottomWarning("操作成功。");
 				}
@@ -316,14 +315,15 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     
     /**
      * 
-     * @param act
+     * @param status
+     * @param trans
      */
-    private void track(Activity act, Transaction trans) {
+    private void track(String status, Transaction trans) {
     	// 插入移行表
 		Transition transition = new Transition();
 		transition.setTransactionUUID(trans.getUuid());
 		transition.setVin(trans.getVin());
-		transition.setActivity(act.name);
+		transition.setActivity(status);
 		transition.setComments(null);
 		transition.setOperator(loggedInUser.getUserName());
 		transition.setDateCreated(new Date());

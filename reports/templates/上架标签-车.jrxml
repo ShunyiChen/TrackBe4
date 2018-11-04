@@ -29,7 +29,7 @@
 	<field name="class" class="java.lang.Class">
 		<fieldDescription><![CDATA[class]]></fieldDescription>
 	</field>
-	<field name="code" class="java.lang.Integer">
+	<field name="code" class="java.lang.String">
 		<fieldDescription><![CDATA[code]]></fieldDescription>
 	</field>
 	<field name="color" class="java.lang.String">
@@ -72,55 +72,55 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="161" splitType="Stretch">
+		<band height="163" splitType="Stretch">
 			<staticText>
-				<reportElement key="staticText-1" x="7" y="9" width="85" height="35" uuid="0f85785c-15e3-4651-838a-04936866d4d5"/>
+				<reportElement key="staticText-1" x="-1" y="-1" width="85" height="28" uuid="0f85785c-15e3-4651-838a-04936866d4d5"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="黑体" size="14"/>
+					<font fontName="SansSerif" size="14"/>
 				</textElement>
 				<text><![CDATA[号牌种类：]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-2" x="7" y="44" width="85" height="35" uuid="f4128131-9bac-41aa-8fca-2914b333a0d9"/>
+				<reportElement key="staticText-2" x="-1" y="27" width="85" height="28" uuid="f4128131-9bac-41aa-8fca-2914b333a0d9"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="黑体" size="14"/>
+					<font fontName="SansSerif" size="14"/>
 				</textElement>
 				<text><![CDATA[号牌号码：]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-4" x="7" y="114" width="85" height="35" uuid="6e515105-5096-4135-a024-23528799e451"/>
+				<reportElement key="staticText-4" x="-1" y="84" width="85" height="28" uuid="6e515105-5096-4135-a024-23528799e451"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="黑体" size="14"/>
+					<font fontName="SansSerif" size="14"/>
 				</textElement>
 				<text><![CDATA[上架编号：]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-1" x="92" y="9" width="181" height="35" uuid="897b48da-3953-4fb8-a5a7-9b418e524c74"/>
+				<reportElement key="textField-1" x="84" y="-1" width="195" height="28" uuid="897b48da-3953-4fb8-a5a7-9b418e524c74"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="黑体" size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font fontName="SansSerif" size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{plateType}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-2" x="92" y="44" width="181" height="35" uuid="9b7ac3f8-5ffe-42ee-a7a6-0127a18beb6b"/>
+				<reportElement key="textField-2" x="84" y="27" width="195" height="28" uuid="9b7ac3f8-5ffe-42ee-a7a6-0127a18beb6b"/>
 				<box leftPadding="5">
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -129,12 +129,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="黑体" size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font fontName="SansSerif" size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{plateNum}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-4" x="92" y="114" width="181" height="35" uuid="a7763452-7f06-4708-9854-d08feb6203ab"/>
+				<reportElement key="textField-4" x="84" y="84" width="195" height="28" uuid="a7763452-7f06-4708-9854-d08feb6203ab"/>
 				<box leftPadding="5">
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -143,12 +143,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="黑体" size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font fontName="SansSerif" size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{shelvesNum}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-5" x="7" y="79" width="85" height="35" uuid="caea3f13-189e-4a36-b464-ad782eed88a8"/>
+				<reportElement key="staticText-5" x="-1" y="55" width="85" height="28" uuid="caea3f13-189e-4a36-b464-ad782eed88a8"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid"/>
@@ -156,12 +156,12 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="黑体" size="14"/>
+					<font fontName="SansSerif" size="14"/>
 				</textElement>
 				<text><![CDATA[识别代号：]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-5" x="92" y="79" width="181" height="35" uuid="6a409d1c-cd09-45ee-a2e5-a12cae1f881b"/>
+				<reportElement key="textField-5" x="84" y="55" width="195" height="28" uuid="6a409d1c-cd09-45ee-a2e5-a12cae1f881b"/>
 				<box leftPadding="5">
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid"/>
@@ -169,10 +169,21 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="黑体" size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font fontName="SansSerif" size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{CLSBDH}]]></textFieldExpression>
 			</textField>
+			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+				<reportElement key="barcode-1" mode="Opaque" x="-1" y="113" width="280" height="47" forecolor="#000000" backcolor="#FFFFFF" uuid="cab0d659-5377-45ee-9953-baa9add41081"/>
+				<box topPadding="5" bottomPadding="5">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<graphicElement fill="Solid"/>
+				<imageExpression><![CDATA[it.businesslogic.ireport.barcode.BcImage.getBarcodeImage(5,$F{CLSBDH},false,false,null,0,0)]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>

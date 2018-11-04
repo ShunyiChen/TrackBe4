@@ -233,8 +233,8 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 	    	 影响化质检，单独角色单独界面，根据纸质录入车辆信息，查看原文，退回质检或完成后将纸质档案放回。
     	 */
     	
-    	System.out.println(view.businessTypePane().getSelected().getCheckLevel()+"----------");
-    	
+//    	System.out.println(view.businessTypePane().getSelected().getCheckLevel()+"----------");
+    	// 
 //    	if("无".equals(view.businessTypePane().getSelected().getCheckLevel())) {
 //    		return true;
 //    	}

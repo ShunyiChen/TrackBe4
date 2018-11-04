@@ -73,7 +73,7 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 		this.setWidth("100%");
 		this.setHeight(height+"px");
 		settings = ui.settingsService.findByName("高拍仪");
-		if("选择上传".equals(settings.getItemSettings())) {
+		if("无".equals(settings.getItemSettings())) {
 			Upload upload = new Upload(null, this);
 			upload.setButtonCaption("选择文件");
 			upload.setButtonStyleName("upload-button");
