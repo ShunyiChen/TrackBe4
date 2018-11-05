@@ -16,6 +16,7 @@ import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.security.PasswordSecurity;
 import com.maxtree.automotive.dashboard.service.BusinessService;
 import com.maxtree.automotive.dashboard.service.BusinessStateService;
+import com.maxtree.automotive.dashboard.service.CarService;
 import com.maxtree.automotive.dashboard.service.CommunityService;
 import com.maxtree.automotive.dashboard.service.CompanyService;
 import com.maxtree.automotive.dashboard.service.FeedbackService;
@@ -110,6 +111,10 @@ public final class DashboardUI extends UI {
 	public BusinessStateService businessStateService;
 	@Autowired
 	public EmbeddedServerService embeddedServerService;
+	@Autowired
+	public CarService carService;
+	
+	
 	
 	private StateHelper state = null;
 	/*

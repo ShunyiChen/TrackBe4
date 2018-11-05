@@ -155,6 +155,10 @@ public class PrintingResultsWindow extends Window {
 			}
 		}
 		else {
+			
+			// Update status
+			ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(),ui.state().getName("B18"));
+			
 			try {
 				new TB4Reports().jasperToHtml(list, loggedInUser.getUserUniqueId(), "影像化档案审核合格证明书.jasper", callback);
 				

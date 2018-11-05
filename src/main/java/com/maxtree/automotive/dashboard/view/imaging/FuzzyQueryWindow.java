@@ -34,11 +34,11 @@ public class FuzzyQueryWindow extends Window {
 	 */
 	public FuzzyQueryWindow(TodoListGrid grid) {
 		this.grid = grid;
-		this.setWidth("360px");
+		this.setWidth("420px");
 		this.setHeight("100px");
 		this.setModal(false);
 		this.setResizable(false);
-		this.setCaption("查询");
+		this.setCaption("车牌号查询");
 		mainLayout = new VerticalLayout(); 
 		mainLayout.setSizeFull();
 		HorizontalLayout toolbar = new HorizontalLayout();
@@ -47,9 +47,10 @@ public class FuzzyQueryWindow extends Window {
 		btnSearch.setStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		btnSearch.setIcon(VaadinIcons.SEARCH);
 		Address addr = Yaml.readAddress();
-		plateField.setWidth("");
-		plateField.setPlaceholder("请输入车牌号");
-		plateField.setValue(addr.getLicenseplate());
+		plateField.setWidth("240px");
+		plateField.setPlaceholder("请输入车牌号后5位或后6位");
+		plateField.setHeight("28px");
+//		plateField.setValue(addr.getLicenseplate());
 		plateField.focus();
 		ShortcutListener keyListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER, null) {
 			/**/
@@ -62,10 +63,12 @@ public class FuzzyQueryWindow extends Window {
 		};
 		plateField.addShortcutListener(keyListener);
 		
-		Label fieldName = new Label(VaadinIcons.CAR.getHtml()+"车牌号:");
+		Label fieldName = new Label(VaadinIcons.CAR.getHtml()+"车牌号: ");
+		Label location = new Label(addr.getLicenseplate());
 		fieldName.setContentMode(ContentMode.HTML);
-		toolbar.addComponents(fieldName,plateField,btnSearch);
+		toolbar.addComponents(fieldName,location,plateField,btnSearch);
 		toolbar.setComponentAlignment(fieldName, Alignment.MIDDLE_LEFT);
+		toolbar.setComponentAlignment(location, Alignment.MIDDLE_LEFT);
 		toolbar.setComponentAlignment(plateField, Alignment.MIDDLE_LEFT);
 		toolbar.setComponentAlignment(btnSearch, Alignment.MIDDLE_LEFT);
 		mainLayout.addComponents(toolbar);
@@ -80,7 +83,6 @@ public class FuzzyQueryWindow extends Window {
 	 * 
 	 */
 	private void doSearch() {
-
 		grid.keyword = plateField.getValue();
 		grid.controls.recount();
 		

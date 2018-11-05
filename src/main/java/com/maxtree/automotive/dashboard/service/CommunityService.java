@@ -198,4 +198,21 @@ private static final Logger log = LoggerFactory.getLogger(CommunityService.class
 		return results;
 	}
 	
+	
+	/**
+	 * 
+	 * @param communityUniqueId
+	 * @return
+	 */
+	public Company findDMVByCommunityUniqueId(int communityUniqueId) {
+		List<Company> companies = findAllCompanies(communityUniqueId);
+		Company com = null;
+		for(int i = 0; i < companies.size(); i++) {
+			com = companies.get(i);
+			if (com.getCategory().trim().equals("车管所")) {
+				return com;
+			}
+		}
+		return null;
+	}
 }

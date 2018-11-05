@@ -68,7 +68,29 @@ public class EditBusinessTypesWindow extends Window {
 		checkLevelBox.setTextInputAllowed(false);
 		checkLevelBox.setSelectedItem("一级审档");
 		
-		form.addComponents(nameField,codeField,checkLevelBox);
+		List<String> updatePlateNumberItems = new ArrayList<>();
+		updatePlateNumberItems.add("否");
+		updatePlateNumberItems.add("是");
+		updatePlateNumberBox = new ComboBox<String>("更新号牌:", updatePlateNumberItems);
+		updatePlateNumberBox.setEmptySelectionAllowed(false);
+		updatePlateNumberBox.setTextInputAllowed(false);
+		updatePlateNumberBox.setSelectedItem(updatePlateNumberItems.get(0));
+		updatePlateNumberBox.setIcon(VaadinIcons.DATABASE);
+		updatePlateNumberBox.setWidth("350px");
+		updatePlateNumberBox.setHeight("27px");
+		
+		List<String> uploadPictureItems = new ArrayList<>();
+		uploadPictureItems.add("否");
+		uploadPictureItems.add("是");
+		uploadPictureBox = new ComboBox<String>("上传照片:", uploadPictureItems);
+		uploadPictureBox.setEmptySelectionAllowed(false);
+		uploadPictureBox.setTextInputAllowed(false);
+		uploadPictureBox.setSelectedItem(uploadPictureItems.get(0));
+		uploadPictureBox.setIcon(VaadinIcons.UPLOAD);
+		uploadPictureBox.setWidth("350px");
+		uploadPictureBox.setHeight("27px");
+		
+		form.addComponents(nameField,codeField,checkLevelBox,updatePlateNumberBox,uploadPictureBox);
 		
 		HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setSizeFull();
@@ -95,8 +117,12 @@ public class EditBusinessTypesWindow extends Window {
 		});
 	}
 	
+	/**
+	 * 
+	 * @param callback
+	 */
 	public static void open(Callback2 callback) {
-        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
+//        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditBusinessTypesWindow w = new EditBusinessTypesWindow();
         w.btnAdd.addClickListener(e -> {
         	if (StringUtils.isEmpty(w.codeField.getValue())
@@ -109,6 +135,9 @@ public class EditBusinessTypesWindow extends Window {
 			newInstance.setName(w.nameField.getValue());
 			newInstance.setCode(w.codeField.getValue());
 			newInstance.setCheckLevel(w.checkLevelBox.getValue());
+			newInstance.setUpdatePlateNumber(w.updatePlateNumberBox.getValue().equals("是")?true:false);
+			newInstance.setUploadPicture(w.uploadPictureBox.getValue().equals("是")?true:false);
+			
 			int businessuniqueid = ui.businessService.insert(newInstance);
 			w.close();
 			callback.onSuccessful(businessuniqueid);
@@ -117,13 +146,21 @@ public class EditBusinessTypesWindow extends Window {
         w.center();
     }
 	
+	/**
+	 * 
+	 * @param business
+	 * @param callback
+	 */
 	public static void edit(Business business, Callback callback) {
-        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
+//        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditBusinessTypesWindow w = new EditBusinessTypesWindow();
         w.nameField.setValue(business.getName());
         w.nameField.focus();
         w.codeField.setValue(business.getCode());
         w.checkLevelBox.setValue(business.getCheckLevel());
+        w.updatePlateNumberBox.setValue(business.getUpdatePlateNumber()?"是":"否");
+        w.uploadPictureBox.setValue(business.getUploadPicture()?"是":"否");
+        
         w.btnAdd.setCaption("保存");
         w.setCaption("编辑业务类型");
         w.btnAdd.addClickListener(e -> {
@@ -137,6 +174,9 @@ public class EditBusinessTypesWindow extends Window {
         	business.setName(w.nameField.getValue());
         	business.setCheckLevel(w.checkLevelBox.getValue());
         	business.setCode(w.codeField.getValue());
+        	business.setUpdatePlateNumber(w.updatePlateNumberBox.getValue().equals("是")?true:false);
+        	business.setUploadPicture(w.uploadPictureBox.getValue().equals("是")?true:false);
+        	
         	ui.businessService.update(business);
 			w.close();
 			callback.onSuccessful();
@@ -148,6 +188,8 @@ public class EditBusinessTypesWindow extends Window {
 	private TextField nameField; // 业务类型名
 	private TextField codeField; // 业务类型快捷编码
 	private ComboBox<String> checkLevelBox;//“”/一级审档/二级审档 ，“”表示非审档；一级审档标识本机构内部审档；二级审档指车管所审档
+	private ComboBox<String> updatePlateNumberBox;//上架时是否更新号牌
+	private ComboBox<String> uploadPictureBox;//上架时是否上传照片
 	private Button btnAdd;
 	private static DashboardUI ui = (DashboardUI) UI.getCurrent();
 }

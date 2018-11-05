@@ -480,16 +480,27 @@ public class QCView extends Panel implements View, FrontendViewIF{
     		ui.transactionService.update(editableTrans);
     		//3.记录跟踪
     		track(ui.state().getName("B4"), comments);
-    		// 4.提交审档队列
-    		Queue newQueue = new Queue();
-    		newQueue.setUuid(editableTrans.getUuid());
-    		newQueue.setVin(editableTrans.getVin());
-    		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-    		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-    		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-    	    serial = 2;// 1:代表质检取队列，2：代表审档取队列
-    		ui.queueService.create(newQueue, serial);
-    		
+    		//4.提交审档队列
+    		if(business.getCheckLevel().equals("二级审档")) {
+    			Queue newQueue = new Queue();
+        		newQueue.setUuid(editableTrans.getUuid());
+        		newQueue.setVin(editableTrans.getVin());
+        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+        		newQueue.setCompanyUniqueId(queue.getCompanyUniqueId()); // 二级审档由车管所负责审档
+        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        	    serial = 2;// 1:代表质检取队列，2：代表审档取队列
+        		ui.queueService.create(newQueue, serial);
+        	}
+    		else {
+    			Queue newQueue = new Queue();
+        		newQueue.setUuid(editableTrans.getUuid());
+        		newQueue.setVin(editableTrans.getVin());
+        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        	    serial = 2;// 1:代表质检取队列，2：代表审档取队列
+        		ui.queueService.create(newQueue, serial);
+    		}
     		// 清空舞台
         	cleanStage();
         	Notifications.bottomWarning("提交成功！已提交到队列中等待审档。");

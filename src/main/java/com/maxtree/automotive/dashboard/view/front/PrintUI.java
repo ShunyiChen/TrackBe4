@@ -13,8 +13,11 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.JavaScript;
+import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
+
+import elemental.json.JsonArray;
 
 public class PrintUI extends UI {
 	
@@ -61,6 +64,20 @@ public class PrintUI extends UI {
 		
 		setContent(bf);
 
+		
+//		JavaScript.getCurrent().addFunction("printFinish", new JavaScriptFunction() {
+//			/**
+//			 * 
+//			 */
+//			private static final long serialVersionUID = 1L;
+//
+//			@Override
+//			public void call(JsonArray arguments) {
+////				 System.out.println("dddddd");
+//				 //TODO
+//			}
+//		});
+		
         // Print automatically when the window opens
         JavaScript.getCurrent().execute(
             "setTimeout(function() {" +

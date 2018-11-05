@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -81,6 +82,19 @@ public class TransactionService {
 		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {vin,exceptUniqueId}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
 		return result;
 	}
+	
+//	/**
+//	 * 
+//	 * @param vin
+//	 * @param businessCode
+//	 * @return
+//	 */
+//	public List<Transaction> findForList(String vin, String businessCode) {
+//		int index = getTableIndex(vin);
+//		String sql = "SELECT A.*,B.NAME AS BUSINESSNAME FROM TRANSACTION_"+index+" AS A LEFT JOIN BUSINESS AS B ON A.BUSINESSCODE=B.CODE WHERE A.VIN=? AND A.BUSINESSCODE=? ORDER BY A.TRANSACTIONUNIQUEID";
+//		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {vin,businessCode}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
+//		return result;
+//	}
 	
 	/**
 	 * 
@@ -276,4 +290,28 @@ public class TransactionService {
 		jdbcTemplate.update(sql, new Object[] {transactionUniqueId});
 	}
 	
+	/**
+	 * 
+	 * @param vin
+	 * @param plateNumber
+	 */
+	public void batchUpdate(String vin, String plateNumber) {
+		int index = getTableIndex(vin);
+		String sql = "UPDATE TRANSACTION_"+index+" SET PLATENUMBER=?,DATEMODIFIED=? WHERE VIN=?";
+	 	int affected = jdbcTemplate.update(sql, new Object[] {plateNumber,new Date(), vin});
+	 	log.info("Updated.Affected row = "+affected);
+	}
+	
+	/**
+	 * 
+	 * @param vin
+	 * @param uuid
+	 * @param status
+	 */
+	public void updateStatus(String vin, String uuid, String status) {
+		int index = getTableIndex(vin);
+		String sql = "UPDATE TRANSACTION_"+index+" SET STATUS=?,DATEMODIFIED=? WHERE UUID=?";
+	 	int affected = jdbcTemplate.update(sql, new Object[] {status, new Date(),uuid});
+	 	log.info("Updated.Affected row = "+affected);
+	}
 }

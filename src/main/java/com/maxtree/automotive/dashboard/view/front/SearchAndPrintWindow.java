@@ -12,7 +12,10 @@ import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
+import com.maxtree.automotive.dashboard.data.SystemConfiguration;
+import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
+import com.maxtree.automotive.dashboard.domain.Car;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
@@ -64,6 +67,13 @@ public class SearchAndPrintWindow extends Window {
         TextField barCodeField = new TextField();
         barCodeField.setPlaceholder("请输入条形码");
         barCodeField.focus();
+        barCodeField.addFocusListener(e->{
+        	ui.setPollInterval(-1);
+        });
+        this.addCloseListener(e->{
+        	SystemConfiguration sc = Yaml.readSystemConfiguration();
+    		ui.setPollInterval(sc.getInterval());
+        });
         btnSearch.setIcon(VaadinIcons.SEARCH);
         btnSearch.addStyleName("icon-edit");
         btnSearch.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
@@ -75,8 +85,16 @@ public class SearchAndPrintWindow extends Window {
         		return;
         	}
         	
-        	List<Transaction> items = ui.transactionService.search_by_keyword(-1, 0, barCodeField.getValue(), community.getCommunityName());
-        	grid.setItems(items);
+        	Car car = ui.carService.findByBarcode(barCodeField.getValue());
+        	if(car == null) {
+        		List<Transaction> items = ui.transactionService.search_by_keyword(-1, 0, barCodeField.getValue(), community.getCommunityName());
+            	grid.setItems(items);
+        	}
+        	else {
+        		List<Transaction> items = ui.transactionService.findForList(car.getVin(), 0);
+            	grid.setItems(items);
+        	}
+        	
         });
         ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER,
 				null) {

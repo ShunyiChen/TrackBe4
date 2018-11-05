@@ -25,6 +25,7 @@ import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
+import com.maxtree.automotive.dashboard.domain.Car;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.maxtree.automotive.dashboard.domain.Message;
@@ -42,6 +43,7 @@ import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.maxtree.automotive.dashboard.view.front.BasicInfoPane;
 import com.maxtree.automotive.dashboard.view.front.BusinessTypePane;
 import com.maxtree.automotive.dashboard.view.front.CapturePane;
+import com.maxtree.automotive.dashboard.view.front.SearchAndPrintWindow;
 import com.maxtree.automotive.dashboard.view.front.ThumbnailGrid;
 import com.maxtree.trackbe4.messagingsystem.Name;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
@@ -187,7 +189,8 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         buildNotificationsButton();
         buildAddButton();
         buildCommitButton();
-        HorizontalLayout tools = new HorizontalLayout(btnAdd, btnCommit, notificationsButton);
+        buildPrintButton();
+        HorizontalLayout tools = new HorizontalLayout(btnPrint,btnAdd, btnCommit, notificationsButton);
         tools.addStyleName("toolbar");
         header.addComponent(tools);
         return header;
@@ -347,6 +350,58 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     }
     
     /**
+     * 
+     */
+    private void buildPrintButton() {
+    	btnPrint.setEnabled(true);
+    	btnPrint.setId(EDIT_ID);
+    	btnPrint.setIcon(VaadinIcons.PRINT);
+    	btnPrint.addStyleName("icon-edit");
+    	btnPrint.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	btnPrint.setDescription("打印标签");
+    	btnPrint.addClickListener(e -> {
+    		if (!validate()) {
+    			return;
+    		}
+    		Callback2 callback = new Callback2() {
+				@Override
+				public void onSuccessful(Object... objects) {
+				}
+    		};
+    		SearchAndPrintWindow.open("", callback);
+        });
+    }
+    
+    /**
+     * 对当前用户做有效性验证
+     */
+    private boolean validate() {
+		int companyUniqueId = loggedInUser.getCompanyUniqueId();
+    	int communityUniqueId = loggedInUser.getCommunityUniqueId();
+    	if (companyUniqueId == 0) {
+    		Notifications.warning("当前用户没有加入任何机构，请联系管理员进行分配。");
+    		return false;
+    	}
+    	if (communityUniqueId == 0) {
+    		Notifications.warning("当前用户没有加入任何社区，请联系管理员进行分配。");
+    		return false;
+    	}
+    	editableCompany = ui.companyService.findById(companyUniqueId);
+    	List<Site> allSites = ui.siteService.getSites(communityUniqueId);
+    	for (int i = 0; i < allSites.size(); i++) {
+    		if (allSites.get(i).getRunningStatus() == 1) {
+    			editableSite = allSites.get(i);
+    			break;
+    		}
+    	}
+    	if (editableSite == null) {
+    		Notifications.warning("当前用户所在的社区不存在文件站点，或站点已关闭。请联系管理员进行设置。");
+    		return false;
+    	}
+    	return true;
+    }
+    
+    /**
      * 添加按钮
      * 
      * @return
@@ -456,6 +511,21 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     
     /**
      * 
+     * @param trans
+     */
+    private void updateCar(Transaction trans) {
+    	ui.carService.delete(trans.getVin());
+    	
+    	Car car = new Car();
+		car.setBarcode(trans.getBarcode());
+		car.setPlateType(trans.getPlateType());
+		car.setPlateNumber(trans.getPlateNumber());
+		car.setVin(trans.getVin());
+		ui.carService.insert(car);
+    }
+    
+    /**
+     * 
      */
    	public void openTransaction(Transaction transaction,int deletableMessageUniqueId, Callback callback) {
    		commitMode = "UPDATE";
@@ -548,6 +618,8 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     			ui.frameService.updateVIN(basicInfoPane.getVIN(), frame.getCode());
     		}
     		ui.transactionService.insert(editableTrans);
+    		//更改车辆信息
+    		updateCar(editableTrans);
     		//操作记录
     		track(ui.state().getName("B7"));
     		// 清空舞台
@@ -577,6 +649,10 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	
         	editableTrans.setStatus(ui.state().getName("B7"));
     		ui.transactionService.insert(editableTrans);
+    		
+    		//更改车辆信息
+    		updateCar(editableTrans);
+    		
     		//操作记录
     		track(ui.state().getName("B7"));
     		
@@ -790,4 +866,5 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     private TB4MessagingSystem messageSystem = new TB4MessagingSystem();
     private int deletableMessageUniqueId;
     private TB4MessagingSystem messageSys = new TB4MessagingSystem();
+    private Button btnPrint = new Button();
 }

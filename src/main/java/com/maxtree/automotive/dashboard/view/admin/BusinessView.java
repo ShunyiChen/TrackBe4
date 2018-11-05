@@ -51,7 +51,7 @@ public class BusinessView extends ContentView {
 		main.setSpacing(false);
 		main.setMargin(false);
 		
-		GridColumn[] columns = {new GridColumn("业务名称"), new GridColumn("审档级别",100), new GridColumn("业务材料",270), new GridColumn("", 20)}; 
+		GridColumn[] columns = {new GridColumn("业务名称"), new GridColumn("审档级别",100), new GridColumn("业务材料"),new GridColumn("更新号牌",35),new GridColumn("上传照片",35), new GridColumn("", 20)}; 
 		List<CustomGridRow> data = new ArrayList<>();
 		List<Business> lstBusiness = ui.businessService.findAll();
 		for (Business business : lstBusiness) {
@@ -199,7 +199,9 @@ public class BusinessView extends ContentView {
 			materialStr.delete(materialStr.length() - 1, materialStr.length());
 		}
 		
-		return new Object[] {business.getName(),business.getCheckLevel(),materialStr.toString(),img,business.getBusinessUniqueId()};
+		String updatePlateNumber = business.getUpdatePlateNumber()?"是":"否";
+		String uploadPicture = business.getUploadPicture()?"是":"否";
+		return new Object[] {business.getName(),business.getCheckLevel(),materialStr.toString(),updatePlateNumber,uploadPicture,img,business.getBusinessUniqueId()};
 	}
 	
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();

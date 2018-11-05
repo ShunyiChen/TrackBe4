@@ -173,11 +173,11 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
         titleLabel.addStyleName(ValoTheme.LABEL_H1);
         titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         header.addComponent(titleLabel);
-        buildPrintButton();
+//        buildPrintButton();
         buildNotificationsButton();
         buildQueryButton();
         buildCommitButton();
-        HorizontalLayout tools = new HorizontalLayout(btnPrint,btnQuery, btnCommit, notificationsButton);
+        HorizontalLayout tools = new HorizontalLayout(btnQuery, btnCommit, notificationsButton);
         tools.addStyleName("toolbar");
         header.addComponent(tools);
         return header;
@@ -365,25 +365,25 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     }
     
     
-    /**
-     * 
-     */
-    private void buildPrintButton() {
-    	btnPrint.setEnabled(true);
-    	btnPrint.setId(EDIT_ID);
-    	btnPrint.setIcon(VaadinIcons.PRINT);
-    	btnPrint.addStyleName("icon-edit");
-    	btnPrint.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-    	btnPrint.setDescription("查询待补充的记录");
-    	btnPrint.addClickListener(e -> {
-    		Callback2 callback = new Callback2() {
-				@Override
-				public void onSuccessful(Object... objects) {
-				}
-    		};
-    		SearchAndPrintWindow.open("", callback);
-        });
-    }
+//    /**
+//     * 
+//     */
+//    private void buildPrintButton() {
+//    	btnPrint.setEnabled(true);
+//    	btnPrint.setId(EDIT_ID);
+//    	btnPrint.setIcon(VaadinIcons.PRINT);
+//    	btnPrint.addStyleName("icon-edit");
+//    	btnPrint.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+//    	btnPrint.setDescription("查询待补充的记录");
+//    	btnPrint.addClickListener(e -> {
+//    		Callback2 callback = new Callback2() {
+//				@Override
+//				public void onSuccessful(Object... objects) {
+//				}
+//    		};
+//    		SearchAndPrintWindow.open("", callback);
+//        });
+//    }
     
     
     /**
@@ -563,7 +563,6 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private ConfirmInformationGrid confirmInformationGrid;
     private SplitPanel splitPanel;
-    private Button btnPrint = new Button();
     private Button btnQuery = new Button();
     private Button btnCommit = new Button();
     private NotificationsButton notificationsButton;

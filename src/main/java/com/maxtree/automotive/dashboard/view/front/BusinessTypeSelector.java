@@ -101,14 +101,23 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 		}
 		// 支持影像化检测
 		if (view instanceof FrontView) {
+			Optional<Business> opt = e.getSelectedItem();
+			if(!opt.isPresent()) {
+				return;
+			}
+			//注册检查
+			if(registrationCheck(view.vin(), opt.get().getCode())) {
+				Notifications.warning("注册业务已经存在，不能重复录入相同业务。");
+				return;
+			}
+			//处理中检查
+			if(!beingProcessedCheck(view.vin())) {
+				Notifications.warning("当前车辆存在尚未办结的业务，无法继续。");
+				return;
+			}
+			
 			// 影像化检测
-			if (imagingCheck()) {
-				Optional<Business> opt = e.getSelectedItem();
-				if (opt.isPresent() && existCheck(view.vin(), opt.get().getCode())) {
-					view.thumbnailGrid().removeAllRows();
-					Notifications.warning("此业务已经办理过了。");
-					return;
-				}
+			if (imaginationCheck()) {
 				
 				if (opt.isPresent() && opt.get() != e.getOldValue()) {
 					//删除旧原文1
@@ -144,8 +153,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 		// 不支持影像化检查
 		else {
 			Optional<Business> opt = e.getSelectedItem();
-			if (opt.isPresent() && existCheck(view.vin(), opt.get().getCode())) {
-				Notifications.warning("此业务已经办理过。");
+			if(!opt.isPresent()) {
 				return;
 			}
 			if (opt.isPresent() && opt.get() != e.getOldValue()) {
@@ -178,6 +186,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 	}
 	
 	/**
+	 * 插入影像化记录
 	 * 
 	 */
 	private void insertImaging() {
@@ -220,48 +229,58 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 		MessageBox.showMessage("提示","缺少历史影像化记录，已提交申请。等待补充完整后再重新开始本次业务登记。",callback);
 	}
 	
-	/**
-     * 影像化检测
-     * 
-     * @return
-     */
-    private boolean imagingCheck() {
-    	/*
-    	 需求：
-	    	 设立一个影响化管理人，有单独角色单独界面，界面有列表，一行一个车牌号。全程自己手动更改业务状态（待查看，待提档，待归档，完成）
-	    	 影像化录入，单独角色单独界面，根据纸质录入车辆信息，上传原文，提交给质检。
-	    	 影响化质检，单独角色单独界面，根据纸质录入车辆信息，查看原文，退回质检或完成后将纸质档案放回。
-    	 */
-    	
-//    	System.out.println(view.businessTypePane().getSelected().getCheckLevel()+"----------");
-    	// 
-//    	if("无".equals(view.businessTypePane().getSelected().getCheckLevel())) {
-//    		return true;
-//    	}
-    	if(view.businessTypePane().getSelected().getName().contains("注册登记")) {
-    		return true;
-    	}
-//    	else if (view instanceof ImagingInputView){
-//    		return true;
-//    	}
-    	else {
-    		List<Transaction> result = ui.transactionService.findForList(view.vin(),0);
-    		return (result.size() != 0);
-    	}
-    }
 	
     /**
+     * 注册检查
      * 
      * @param vin
      * @param businessCode
      * @return
      */
-	private boolean existCheck(String vin, String businessCode) {
+	private boolean registrationCheck(String vin, String businessCode) {
 		int count = ui.transactionService.getCount(vin, businessCode);
 		return (count > 0);
 	}
+	
+	/**
+     * 影像化检测
+     * 
+     * @return
+     */
+    private boolean imaginationCheck() {
+    	//没有历史档暂停采集，不是注册，没有任何记录（走印象化检测流程）
+    	if(!selector.getSelectedItem().get().getName().contains("注册登记")) {
+    		List<Transaction> result = ui.transactionService.findForList(view.vin(),0);
+    		if(result.size() == 0) {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
     
-    
+    /**
+     * 处理中检查
+     * 
+     * @param vin
+     * @return
+     */
+    private boolean beingProcessedCheck(String vin) {
+    	if(!selector.getSelectedItem().get().getName().contains("注册登记")) {
+    		List<Transaction> lst = ui.transactionService.findForList(vin, 0);
+        	for(Transaction trans : lst) {
+        		
+        		if(trans.getStatus().equals("待上架")
+        				|| trans.getStatus().equals("待补充")
+        				|| trans.getStatus().equals("待复审")
+        				|| trans.getStatus().equals("待审核")
+        				|| trans.getStatus().equals("待质检")) {
+        			return false;
+        		}
+        	}
+    	}
+    	return true;
+    }
+	
 	/**
 	 * 根据业务类型加载材料
 	 * 

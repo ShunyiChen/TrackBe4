@@ -22,6 +22,7 @@ import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
+import com.maxtree.automotive.dashboard.domain.Car;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.maxtree.automotive.dashboard.domain.Notification;
@@ -269,7 +270,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	btnAdd.setIcon(VaadinIcons.FILE_ADD);
     	btnAdd.addStyleName("icon-edit");
     	btnAdd.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-    	btnAdd.setDescription("创建或补充流水号");
+    	btnAdd.setDescription("创建新业务");
     	btnAdd.addClickListener(e -> {
     		if(editableTrans == null) {
     			commitMode = "INSERT";
@@ -291,7 +292,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         btnCommit.setIcon(VaadinIcons.CLOUD_UPLOAD);
         btnCommit.addStyleName("icon-edit");
         btnCommit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-        btnCommit.setDescription("保存并提交给质检");
+        btnCommit.setDescription("提交业务");
         btnCommit.addClickListener(e -> {
         	// 新建
         	if (commitMode.equals("INSERT")) {
@@ -437,13 +438,10 @@ public final class FrontView extends Panel implements View,InputViewIF {
 			Notifications.warning("有效性验证失败。");
 			return;
     	}
-    	if (fileGrid.emptyChecks()) {
-			Notifications.warning("请将业务材料上传完整。");
-			return;
-    	}
-    	
-    	System.out.println(businessTypePane.getSelected().getCheckLevel()+"---------------");
-    	
+//    	if (fileGrid.emptyChecks()) {
+//			Notifications.warning("请将业务材料上传完整。");
+//			return;
+//    	}
     	//4大流程
     	//新车注册流程
     	if (businessTypePane.getSelected().getName().contains("注册登记")) {
@@ -459,18 +457,15 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	editableTrans.setIndexNumber(1);
-        	
         	// 是否跳过质检
         	if(editableCompany.getIgnoreChecker() == 1) {
-        		// 获得社区内的全部机构
-        		List<Company> companies = ui.communityService.findAllCompanies(loggedInUser.getCommunityUniqueId());
-        		Company com = null;
-        		for(int i = 0; i < companies.size(); i++) {
-        			com = companies.get(i);
-        			if (com.getCategory().trim().equals("车管所")) {
-        				break;
-        			}
+        		// 获取社区内的车管所
+        		Company com = ui.communityService.findDMVByCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        		if(com == null) {
+        			Notifications.warning("当前社区不存在车管所，请联系管理员进行设置。");
+        			return;
         		}
+        		
         		FrameNumber frame = ui.frameService.getNewCode(com.getStorehouseName());
         		if(StringUtils.isEmpty(frame.getCode())) {
         			Notifications.warning("没有可用的上架号，请联系管理员设置库房（注册登记）。");
@@ -483,6 +478,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		editableTrans.setStatus(ui.state().getName("B2"));
         		ui.transactionService.insert(editableTrans);
+        		//更新车辆信息
+        		updateCar(editableTrans);
         		
         		//操作记录
         		track(ui.state().getName("B2"));
@@ -495,6 +492,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	else {
         		editableTrans.setStatus(ui.state().getName("B7"));
         		ui.transactionService.insert(editableTrans);
+        		
+        		//更新车辆信息
+        		updateCar(editableTrans);
         		
         		// 添加到质检队列
         		Queue newQueue = new Queue();
@@ -545,6 +545,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		editableTrans.setStatus(ui.state().getName("B2"));
         		ui.transactionService.insert(editableTrans);
         		
+        		//更新车辆信息
+        		updateCar(editableTrans);
+        		
         		//操作记录
         		track(ui.state().getName("B2"));
         		
@@ -556,6 +559,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	else {
         		editableTrans.setStatus(ui.state().getName("B7"));
         		ui.transactionService.insert(editableTrans);
+        		
+        		//更新车辆信息
+        		updateCar(editableTrans);
         		
         		// 添加到质检队列
         		Queue newQueue = new Queue();
@@ -606,6 +612,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		editableTrans.setStatus(ui.state().getName("B4"));
         		ui.transactionService.insert(editableTrans);
         		
+        		//更新车辆信息
+        		updateCar(editableTrans);
+        		
         		// 插入待审档队列
         		Queue newQueue = new Queue();
         		newQueue.setUuid(editableTrans.getUuid());
@@ -627,6 +636,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	else {
         		editableTrans.setStatus(ui.state().getName("B7"));
         		ui.transactionService.insert(editableTrans);
+        		
+        		//更新车辆信息
+        		updateCar(editableTrans);
         		
         		// 添加到质检队列
         		Queue newQueue = new Queue();
@@ -677,15 +689,39 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		editableTrans.setStatus(ui.state().getName("B4"));
         		ui.transactionService.insert(editableTrans);
         		
-        		// 插入待审档队列
-        		Queue newQueue = new Queue();
-        		newQueue.setUuid(editableTrans.getUuid());
-        		newQueue.setVin(editableTrans.getVin());
-        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-        		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
-        		ui.queueService.create(newQueue, serial);
+        		//更新车辆信息
+        		updateCar(editableTrans);
+        		
+        		// 判断是不是车管所用户
+            	boolean belongsToDMV = ui.companyService.isDMV(loggedInUser.getCompanyUniqueId());
+            	// 如果是车管所录入的，则需要车管所审档
+            	if(belongsToDMV) {
+            		// 插入待审档队列
+            		Queue newQueue = new Queue();
+            		newQueue.setUuid(editableTrans.getUuid());
+            		newQueue.setVin(editableTrans.getVin());
+            		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+            		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+            		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+            		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
+            		ui.queueService.create(newQueue, serial);
+            	}
+            	else {
+            		Company com = ui.communityService.findDMVByCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+            		if(com == null) {
+            			Notifications.warning("当前社区不存在车管所，请联系管理员进行设置。");
+            			return;
+            		}
+            		// 插入待审档队列
+            		Queue newQueue = new Queue();
+            		newQueue.setUuid(editableTrans.getUuid());
+            		newQueue.setVin(editableTrans.getVin());
+            		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+            		newQueue.setCompanyUniqueId(com.getCompanyUniqueId());
+            		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+            		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
+            		ui.queueService.create(newQueue, serial);
+            	}
         		
         		//操作记录
         		track(ui.state().getName("B4"));
@@ -698,6 +734,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	else {
         		editableTrans.setStatus(ui.state().getName("B7"));
         		ui.transactionService.insert(editableTrans);
+        		
+        		//更新车辆信息
+        		updateCar(editableTrans);
         		
         		// 添加到质检队列
         		Queue newQueue = new Queue();
@@ -717,6 +756,21 @@ public final class FrontView extends Panel implements View,InputViewIF {
             	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
         	}
     	}
+    }
+    
+    /**
+     * 
+     * @param trans
+     */
+    private void updateCar(Transaction trans) {
+    	ui.carService.delete(trans.getVin());
+    	
+    	Car car = new Car();
+		car.setBarcode(trans.getBarcode());
+		car.setPlateType(trans.getPlateType());
+		car.setPlateNumber(trans.getPlateNumber());
+		car.setVin(trans.getVin());
+		ui.carService.insert(car);
     }
     
     /**

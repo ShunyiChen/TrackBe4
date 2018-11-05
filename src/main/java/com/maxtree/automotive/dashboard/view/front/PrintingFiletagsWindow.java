@@ -134,14 +134,11 @@ public class PrintingFiletagsWindow extends Window {
 						opener.setFeatures("height=306,width=422,x=0,y=0,resizable");
 						opener.extend(btnOk);
 						opener.setParameter("htmlFilePath", "reports/generates/"+loggedInUser.getUserUniqueId()+"/report.png");
+						
+						// Update status
+						ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(),ui.state().getName("B18"));
 					}
     			};
-//    			try {
-//					new TB4Reports().jasperToHtml(list, loggedInUser.getUserUniqueId(), "上架标签-车.jasper", callback);
-//					
-//				} catch (ReportException e1) {
-//					e1.printStackTrace();
-//				}
     			try {
 					new TB4Reports().jasperToPNG(list, loggedInUser.getUserUniqueId(), "上架标签-车.jasper", callback);
 					
@@ -172,6 +169,9 @@ public class PrintingFiletagsWindow extends Window {
 						opener.setFeatures("height=306,width=422,x=0,y=0,resizable");
 						opener.extend(btnOk);
 						opener.setParameter("htmlFilePath", "reports/generates/"+loggedInUser.getUserUniqueId()+"/report.png");
+						
+						// Update status
+						ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), ui.state().getName("B18"));
 					}
     			};
     			try {

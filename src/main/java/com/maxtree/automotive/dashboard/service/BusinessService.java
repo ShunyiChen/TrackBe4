@@ -110,7 +110,7 @@ public class BusinessService {
 	 */
 	public int insert(Business business) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		String sql = "INSERT INTO BUSINESS(NAME,CHECKLEVEL,CODE) VALUES(?,?,?)";
+		String sql = "INSERT INTO BUSINESS(NAME,CHECKLEVEL,CODE,UPDATEPLATENUMBER,UPLOADPICTURE) VALUES(?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
@@ -119,6 +119,8 @@ public class BusinessService {
 				ps.setString(1, business.getName());
 				ps.setString(2, business.getCheckLevel());
 				ps.setString(3, business.getCode());
+				ps.setBoolean(4, business.getUpdatePlateNumber());
+				ps.setBoolean(5, business.getUploadPicture());
 				return ps;
 			}
 			
@@ -133,12 +135,14 @@ public class BusinessService {
 	 * @return
 	 */
 	public Business update(Business business) {
-		String sql = "UPDATE BUSINESS SET NAME=?,CHECKLEVEL=?,CODE=? WHERE BUSINESSUNIQUEID=?";
+		String sql = "UPDATE BUSINESS SET NAME=?,CHECKLEVEL=?,CODE=?,UPDATEPLATENUMBER=?,UPLOADPICTURE=? WHERE BUSINESSUNIQUEID=?";
 		jdbcTemplate.update(sql,
 				new Object[] {
 						business.getName(),
 						business.getCheckLevel(),//审档级别
 						business.getCode(), // 业务类型编号
+						business.getUpdatePlateNumber(),
+						business.getUploadPicture(),
 						business.getBusinessUniqueId()
 						});
 		return business;

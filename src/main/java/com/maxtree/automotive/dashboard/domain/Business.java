@@ -51,6 +51,22 @@ public class Business {
 	public void setItems(List<DataDictionary> items) {
 		this.items = items;
 	}
+	
+	public Boolean getUpdatePlateNumber() {
+		return updatePlateNumber;
+	}
+
+	public void setUpdatePlateNumber(Boolean updatePlateNumber) {
+		this.updatePlateNumber = updatePlateNumber;
+	}
+
+	public Boolean getUploadPicture() {
+		return uploadPicture;
+	}
+
+	public void setUploadPicture(Boolean uploadPicture) {
+		this.uploadPicture = uploadPicture;
+	}
 
 	@Override
 	public String toString() {
@@ -65,4 +81,6 @@ public class Business {
 	private String code; // 4位代码
 	private String checkLevel;// ""/一级审档/二级审档,例如“”表示不需要审档；一级审档标识本机构内部审档；二级审档指同社区内车管所审档
 	private List<DataDictionary> items;
+	private Boolean updatePlateNumber = false;
+	private Boolean uploadPicture = false;
 }

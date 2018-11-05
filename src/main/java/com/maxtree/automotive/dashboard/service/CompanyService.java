@@ -259,5 +259,16 @@ public class CompanyService {
 		return new FrameNumber();
 	}
 	
-	
+	/**
+	 * 
+	 * @param companyUniqueId
+	 * @return
+	 */
+	public boolean isDMV(int companyUniqueId) {
+		Company com = findById(companyUniqueId);
+		if(com.getCategory().equals("车管所")) {
+			return true;
+		}
+		return false;
+	}
 }
