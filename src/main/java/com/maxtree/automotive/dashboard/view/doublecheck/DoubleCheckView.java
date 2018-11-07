@@ -497,7 +497,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
 		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
 		String subject = loggedInUser.getUserName()+"退回了一笔业务";
-		String content = location+" "+editableTrans.getPlateNumber()+",确认审档不合格,"+comments;
+		String content = location+" "+editableTrans.getPlateNumber()+","+comments;
 		Message newMessage = messageSystem.createNewMessage(loggedInUser, subject,content,matedata);
 		
 		Set<Name> names = new HashSet<Name>();
@@ -547,7 +547,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 		DashboardMenu.getInstance().doubleCheckCount(unreadCount);
 		
 		// 更新队列可取数
-		List<Queue> listQue = ui.queueService.findAvaliable(3);
+		List<Queue> listQue = ui.queueService.findAvaliable(3,loggedInUser.getCommunityUniqueId(), loggedInUser.getCompanyUniqueId());
    		fetchButton.setUnreadCount(listQue.size());
    		
    		// 变更取队列按钮背景颜色

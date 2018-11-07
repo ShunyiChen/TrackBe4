@@ -250,7 +250,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
     private boolean imaginationCheck() {
     	//没有历史档暂停采集，不是注册，没有任何记录（走印象化检测流程）
     	if(!selector.getSelectedItem().get().getName().contains("注册登记")) {
-    		List<Transaction> result = ui.transactionService.findForList(view.vin(),0);
+    		List<Transaction> result = ui.transactionService.findForList(view.vin(),null,0);
     		if(result.size() == 0) {
     			return false;
     		}
@@ -266,7 +266,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
      */
     private boolean beingProcessedCheck(String vin) {
     	if(!selector.getSelectedItem().get().getName().contains("注册登记")) {
-    		List<Transaction> lst = ui.transactionService.findForList(vin, 0);
+    		List<Transaction> lst = ui.transactionService.findForList(vin,null,0);
         	for(Transaction trans : lst) {
         		
         		if(trans.getStatus().equals("待上架")

@@ -119,6 +119,7 @@ public class Openwith extends Window {
 			String checkLevel = matedata.get("CHECKLEVEL");
 			String popupAutomatically = matedata.get("POPUPAUTOMATICALLY");
 			trans = ui.transactionService.findByUUID(uuid, vin);
+			
 			if(checkLevel.contains("注册登记")) {
 				if(state.equals(ui.state().getName("B15"))) {
 					edit.setVisible(true);
@@ -144,6 +145,10 @@ public class Openwith extends Window {
 					print.setVisible(true);
 				}
 				else if(state.equals(ui.state().getName("B14"))) {
+					print.setVisible(true);
+				}
+				else if(state.equals(ui.state().getName("B17"))) {
+					edit.setVisible(true);
 					print.setVisible(true);
 				}
 			}

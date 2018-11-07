@@ -73,13 +73,21 @@ public class TransactionService {
 	/**
 	 * 
 	 * @param vin
+	 * @param barcode
 	 * @param exceptUniqueId (ID Which is not included)
 	 * @return
 	 */
-	public List<Transaction> findForList(String vin, int exceptUniqueId) {
+	public List<Transaction> findForList(String vin, String barcode, int exceptUniqueId) {
+		String ext = "";
+		Object[] param = new Object[] {vin,exceptUniqueId};
+		if(barcode != null) {
+			ext = " AND A.BARCODE=? ";
+			param = new Object[] {vin,exceptUniqueId,barcode};
+		}
+		
 		int index = getTableIndex(vin);
-		String sql = "SELECT A.*,B.NAME AS BUSINESSNAME FROM TRANSACTION_"+index+" AS A LEFT JOIN BUSINESS AS B ON A.BUSINESSCODE=B.CODE WHERE A.VIN=? AND A.TRANSACTIONUNIQUEID<>? ORDER BY A.TRANSACTIONUNIQUEID";
-		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {vin,exceptUniqueId}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
+		String sql = "SELECT A.*,B.NAME AS BUSINESSNAME FROM TRANSACTION_"+index+" AS A LEFT JOIN BUSINESS AS B ON A.BUSINESSCODE=B.CODE WHERE A.VIN=? AND A.TRANSACTIONUNIQUEID<>? "+ext+" ORDER BY A.TRANSACTIONUNIQUEID";
+		List<Transaction> result = jdbcTemplate.query(sql,param,new BeanPropertyRowMapper<Transaction>(Transaction.class));
 		return result;
 	}
 	

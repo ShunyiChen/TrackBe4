@@ -78,13 +78,16 @@ private static final Logger log = LoggerFactory.getLogger(QueueService.class);
 	}
 	
 	/**
+	 * 1-队列（质检取） 2队列（审档取）,3-确认审档队列
 	 * 
-	 * @param serial -队列（质检取） 2队列（审档取）,3-确认审档队列
+	 * @param serial
+	 * @param communityUniqueId
+	 * @param companyUniqueId
 	 * @return
 	 */
-	public List<Queue> findAvaliable(int serial) {
-		String sql = "SELECT * FROM QUEUE_"+serial+" WHERE LOCKEDBYUSER=?";
-		List<Queue> results = jdbcTemplate.query(sql, new Object[] {0}, new BeanPropertyRowMapper<Queue>(Queue.class));
+	public List<Queue> findAvaliable(int serial, int communityUniqueId, int companyUniqueId) {
+		String sql = "SELECT * FROM QUEUE_"+serial+" WHERE LOCKEDBYUSER=? AND COMMUNITYUNIQUEID=? AND COMPANYUNIQUEID=?";
+		List<Queue> results = jdbcTemplate.query(sql, new Object[] {0,communityUniqueId,companyUniqueId}, new BeanPropertyRowMapper<Queue>(Queue.class));
 		return results;
 	}
 	

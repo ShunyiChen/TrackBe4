@@ -488,6 +488,9 @@ public class QCView extends Panel implements View, FrontendViewIF{
         		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
         		newQueue.setCompanyUniqueId(queue.getCompanyUniqueId()); // 二级审档由车管所负责审档
         		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+        		
+        		System.out.println("dd="+queue.getCompanyUniqueId()+","+loggedInUser.getCommunityUniqueId());
+        		
         	    serial = 2;// 1:代表质检取队列，2：代表审档取队列
         		ui.queueService.create(newQueue, serial);
         	}
@@ -604,7 +607,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
 		notificationsButton.setUnreadCount(unreadCount);
 		DashboardMenu.getInstance().qcCount(unreadCount);
 		// 更新取队列按钮可用数
-		List<Queue> listQue = ui.queueService.findAvaliable(1);
+		List<Queue> listQue = ui.queueService.findAvaliable(1,loggedInUser.getCommunityUniqueId(), loggedInUser.getCompanyUniqueId());
     	fatchButton.setUnreadCount(listQue.size());
    	}
     

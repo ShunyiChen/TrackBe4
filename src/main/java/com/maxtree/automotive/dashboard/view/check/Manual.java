@@ -179,7 +179,7 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 		
 		rightTree.setSizeFull();
 		rightTreeData.addItem(null, rightRoot);
-		List<Transaction> list = ui.transactionService.findForList(transaction.getVin(),transaction.getTransactionUniqueId());
+		List<Transaction> list = ui.transactionService.findForList(transaction.getVin(),null,transaction.getTransactionUniqueId());
 		for(Transaction trans : list) {
 			Document businessDoc = new Document();
 			businessDoc.setAlias(trans.getBusinessName());

@@ -94,7 +94,7 @@ public class FillBarcodeWindow extends Window {
 			//标识是否存在需要补充的流水号
 			boolean flag = false;
 			//通过车辆识别代号找到车最后一笔业务，补识别代号
-			List<Transaction> lst = ui.transactionService.findForList(plateVIN.getValue(), 0);
+			List<Transaction> lst = ui.transactionService.findForList(plateVIN.getValue(),null,0);
 			
 			for(Transaction trans : lst) {
 				if(StringUtils.isEmpty(trans.getBarcode())) {

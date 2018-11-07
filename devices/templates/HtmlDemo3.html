@@ -4,6 +4,13 @@
 <title>OCX控件测试程序JavaScript</title>
 
 <script language="JavaScript1.2">
+
+  window.onload=function(){
+	  Start1_onclick();
+   // console.log("初始化页面触发js函数:我是页面加载完打印的");
+   // funName()
+  }
+
   function Start1_onclick()
   {
         var str=captrue.bStopPlay(); 
@@ -21,6 +28,16 @@
   function Stop_onclick()
   {
   	var str=captrue.bStopPlay();
+  }
+  //放大
+  function myZoomOut()
+  {
+	  captrue.vZoomOut();
+  }
+  //缩小
+  function myZoomIn()
+  {
+	  captrue.vZoomIn();
   }
 
 	function SaveJPG_onclick()
@@ -170,10 +187,10 @@
 
 </p>
 <form method="POST" action="--WEBBOT-SELF--" name="form1">
-  <input type="button" value="启动主" name="StartBtn" onClick="Start1_onclick()">
-  <input type="button" value="启动副" name="StopBtn" onClick="Start2_onclick()">
-  <input type="button" value="停止" name="StopBtn" onClick="Stop_onclick()">
+   
   <input type="button" value="拍照" name="SaveJPGBtn" onClick="SaveJPG_onclick()">
+  <input type="button" value="放大" name="SaveJPGBtn" onClick="myZoomOut()">
+  <input type="button" value="缩小" name="SaveJPGBtn" onClick="myZoomIn()">
  
     <select style="height:25px;width:160px;">
         <option onclick="vSetResolution(0)" selected>默认值</option>
@@ -232,6 +249,7 @@
   <input type="radio" value="0" name="mode" id="defaultMode" onClick="selectDefaultMode(this)"/><label for="autoMode">默认</label>
   <input type="radio" value="4" name="mode" id="sfzMode" onClick="selectSfzMode(this)"/><label for="autoMode">证件</label>
   <input type="radio" value="1" name="mode" id="customMode" onClick="selectSfzMode(this)"/><label for="autoMode">自定义</label>
+  
   <!-- 
 <p>
 -->

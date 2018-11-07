@@ -91,7 +91,7 @@ public class SearchAndPrintWindow extends Window {
             	grid.setItems(items);
         	}
         	else {
-        		List<Transaction> items = ui.transactionService.findForList(car.getVin(), 0);
+        		List<Transaction> items = ui.transactionService.findForList(car.getVin(),barCodeField.getValue(),0);
             	grid.setItems(items);
         	}
         	

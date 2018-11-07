@@ -565,7 +565,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
    		notificationsButton.setUnreadCount(unreadCount);
    		DashboardMenu.getInstance().checkerCount(unreadCount);
    		// 更新队列可取数
-    	List<Queue> listQue = ui.queueService.findAvaliable(2);
+    	List<Queue> listQue = ui.queueService.findAvaliable(2, loggedInUser.getCommunityUniqueId(), loggedInUser.getCompanyUniqueId());
    		fetchButton.setUnreadCount(listQue.size());
    		
    		// 变更取队列按钮背景颜色
