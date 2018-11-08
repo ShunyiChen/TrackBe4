@@ -48,9 +48,9 @@ public class ImageViewerWindow extends Window implements ImageViewIF {
 			ui.setPollInterval(config.getInterval());
 		});
 		List<Document> list1 = ui.documentService.findAllDocument1(view.vin(), view.uuid());
-		List<Document> list2 = ui.documentService.findAllDocument2(view.vin(), view.uuid());
+//		List<Document> list2 = ui.documentService.findAllDocument2(view.vin(), view.uuid());
 		allDocuments.addAll(list1);
-		allDocuments.addAll(list2);
+//		allDocuments.addAll(list2);
 		for(Document doc : allDocuments) {
 			if (doc.getDocumentUniqueId()==selectDocumentId) {
 				

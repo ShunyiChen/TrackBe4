@@ -105,9 +105,10 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 			if(!opt.isPresent()) {
 				return;
 			}
+			
 			//注册检查
-			if(registrationCheck(view.vin(), opt.get().getCode())) {
-				Notifications.warning("注册业务已经存在，不能重复录入相同业务。");
+			if(registrationCheck(view.vin(), e.getSelectedItem().get())) {
+				Notifications.warning(e.getSelectedItem().get().getName()+"业务已经存在，不能重复录入相同业务。");
 				return;
 			}
 			//处理中检查
@@ -129,15 +130,15 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 							fe.printStackTrace();
 						}
 					}
-					//删除旧原文2
-					List<Document> document2List = ui.documentService.findAllDocument2(view.vin(), view.uuid());
-					for(Document doc : document2List) {
-						try {
-							fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
-						} catch (FileException fe) {
-							fe.printStackTrace();
-						}
-					}
+//					//删除旧原文2
+//					List<Document> document2List = ui.documentService.findAllDocument2(view.vin(), view.uuid());
+//					for(Document doc : document2List) {
+//						try {
+//							fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
+//						} catch (FileException fe) {
+//							fe.printStackTrace();
+//						}
+//					}
 					//删除数据库记录
 					ui.documentService.deleteByUUID(view.uuid(), view.vin());
 					loadMaterials(opt.get().getCode());
@@ -166,15 +167,15 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 						fe.printStackTrace();
 					}
 				}
-				//删除旧原文2
-				List<Document> document2List = ui.documentService.findAllDocument2(view.vin(), view.uuid());
-				for(Document doc : document2List) {
-					try {
-						fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
-					} catch (FileException fe) {
-						fe.printStackTrace();
-					}
-				}
+//				//删除旧原文2
+//				List<Document> document2List = ui.documentService.findAllDocument2(view.vin(), view.uuid());
+//				for(Document doc : document2List) {
+//					try {
+//						fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
+//					} catch (FileException fe) {
+//						fe.printStackTrace();
+//					}
+//				}
 				//删除数据库记录
 				ui.documentService.deleteByUUID(view.uuid(), view.vin());
 				loadMaterials(opt.get().getCode());
@@ -237,9 +238,12 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
      * @param businessCode
      * @return
      */
-	private boolean registrationCheck(String vin, String businessCode) {
-		int count = ui.transactionService.getCount(vin, businessCode);
-		return (count > 0);
+	private boolean registrationCheck(String vin, Business business) {
+		if(business.getName().contains("注册登记")) {
+			int count = ui.transactionService.getCount(vin, business.getCode());
+			return (count > 0);
+		}
+		return false;
 	}
 	
 	/**
@@ -482,51 +486,51 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 			ThumbnailRow row = view.thumbnailGrid().mapRows.get(doc.getDictionarycode());
 			row.addThumbnail(thumbnail);
 		}
-		List<Document> documentList2 = ui.documentService.findAllDocument2(view.vin(), view.uuid());
-		for (Document doc : documentList2) {
-			
-			Thumbnail thumbnail = new Thumbnail(new ByteArrayInputStream(doc.getThumbnail()));
-			// 右键菜单
-			com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(thumbnail, true);
-			menu.addItem("查看", new com.vaadin.contextmenu.Menu.Command() {
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
-					ImageViewerWindow.open(view, doc.getDocumentUniqueId());
-				}
-			});
-			menu.addSeparator();
-			menu.addItem("删除", new com.vaadin.contextmenu.Menu.Command() {
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
-					//从文件系统删除
-					try {
-						fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
-					} catch (FileException e) {
-						e.printStackTrace();
-					}
-					
-					//从数据库删除
-					ui.documentService.deleteById(doc.getDocumentUniqueId(),2,view.vin());
-					
-					//从UI删除
-					ThumbnailRow row = view.thumbnailGrid().mapRows.get(doc.getDictionarycode());
-					row.removeThumbnail(thumbnail);
-				}
-			});
-			
-			ThumbnailRow row = view.thumbnailGrid().mapRows.get("$$$$");// $$$$为辅助材料code
-			row.addThumbnail(thumbnail);
-		}
+//		List<Document> documentList2 = ui.documentService.findAllDocument2(view.vin(), view.uuid());
+//		for (Document doc : documentList2) {
+//			
+//			Thumbnail thumbnail = new Thumbnail(new ByteArrayInputStream(doc.getThumbnail()));
+//			// 右键菜单
+//			com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(thumbnail, true);
+//			menu.addItem("查看", new com.vaadin.contextmenu.Menu.Command() {
+//				/**
+//				 * 
+//				 */
+//				private static final long serialVersionUID = 1L;
+//
+//				@Override
+//				public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+//					ImageViewerWindow.open(view, doc.getDocumentUniqueId());
+//				}
+//			});
+//			menu.addSeparator();
+//			menu.addItem("删除", new com.vaadin.contextmenu.Menu.Command() {
+//				/**
+//				 * 
+//				 */
+//				private static final long serialVersionUID = 1L;
+//
+//				@Override
+//				public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+//					//从文件系统删除
+//					try {
+//						fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
+//					} catch (FileException e) {
+//						e.printStackTrace();
+//					}
+//					
+//					//从数据库删除
+//					ui.documentService.deleteById(doc.getDocumentUniqueId(),2,view.vin());
+//					
+//					//从UI删除
+//					ThumbnailRow row = view.thumbnailGrid().mapRows.get(doc.getDictionarycode());
+//					row.removeThumbnail(thumbnail);
+//				}
+//			});
+//			
+//			ThumbnailRow row = view.thumbnailGrid().mapRows.get("$$$$");// $$$$为辅助材料code
+//			row.addThumbnail(thumbnail);
+//		}
 	}
 
 	private InputViewIF view;

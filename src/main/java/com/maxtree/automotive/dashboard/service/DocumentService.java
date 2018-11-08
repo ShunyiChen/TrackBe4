@@ -44,26 +44,26 @@ public class DocumentService {
 		return result;
 	}
 	
-	/**
-	 * 获取辅助文件列表
-	 * 
-	 * @param vin
-	 * @param uuid
-	 * @return
-	 */
-	public List<Document> findAllDocument2(String vin, String uuid) {
-		int index = getTableIndex(vin);
-		String sql = "SELECT * FROM DOCUMENTS_2_"+index+" WHERE UUID=? ORDER BY DOCUMENTUNIQUEID";
-		List<Document> result = jdbcTemplate.query(sql, new Object[] {uuid}, new BeanPropertyRowMapper<Document>(Document.class));
-		// decode
-		int i = 1;
-		for (Document doc : result) {
-			doc.setFileFullPath(EncryptionUtils.decryptString(doc.getFileFullPath()));
-			doc.setAlias("其他材料_"+i);
-			i++;
-		}
-		return result;
-	}
+//	/**
+//	 * 获取辅助文件列表
+//	 * 
+//	 * @param vin
+//	 * @param uuid
+//	 * @return
+//	 */
+//	public List<Document> findAllDocument2(String vin, String uuid) {
+//		int index = getTableIndex(vin);
+//		String sql = "SELECT * FROM DOCUMENTS_2_"+index+" WHERE UUID=? ORDER BY DOCUMENTUNIQUEID";
+//		List<Document> result = jdbcTemplate.query(sql, new Object[] {uuid}, new BeanPropertyRowMapper<Document>(Document.class));
+//		// decode
+//		int i = 1;
+//		for (Document doc : result) {
+//			doc.setFileFullPath(EncryptionUtils.decryptString(doc.getFileFullPath()));
+//			doc.setAlias("其他材料_"+i);
+//			i++;
+//		}
+//		return result;
+//	}
 	
 	/**
 	 * 创建一个文件
@@ -80,7 +80,7 @@ public class DocumentService {
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 				String SQL = "";
-				if (document.location == 1) {
+//				if (document.location == 1) {
 					SQL = "INSERT INTO DOCUMENTS_1_"+index+"(UUID,DICTIONARYCODE,FILEFULLPATH,THUMBNAIL) VALUES(?,?,?,?)";
 					PreparedStatement ps = con.prepareStatement(
 							SQL, new String[] {"documentuniqueid"});
@@ -89,16 +89,16 @@ public class DocumentService {
 					ps.setString(3, EncryptionUtils.encryptString(document.getFileFullPath()));
 					ps.setBinaryStream(4, new ByteArrayInputStream(document.getThumbnail()), document.getThumbnail().length);
 					return ps;
-				}
-				else {
-					SQL = "INSERT INTO DOCUMENTS_2_"+index+"(UUID,FILEFULLPATH,THUMBNAIL) VALUES(?,?,?)";
-					PreparedStatement ps = con.prepareStatement(
-							SQL, new String[] {"documentuniqueid"});
-					ps.setString(1, document.getUuid());
-					ps.setString(2, EncryptionUtils.encryptString(document.getFileFullPath()));
-					ps.setBinaryStream(3, new ByteArrayInputStream(document.getThumbnail()), document.getThumbnail().length);
-					return ps;
-				}
+//				}
+//				else {
+//					SQL = "INSERT INTO DOCUMENTS_2_"+index+"(UUID,FILEFULLPATH,THUMBNAIL) VALUES(?,?,?)";
+//					PreparedStatement ps = con.prepareStatement(
+//							SQL, new String[] {"documentuniqueid"});
+//					ps.setString(1, document.getUuid());
+//					ps.setString(2, EncryptionUtils.encryptString(document.getFileFullPath()));
+//					ps.setBinaryStream(3, new ByteArrayInputStream(document.getThumbnail()), document.getThumbnail().length);
+//					return ps;
+//				}
 				
 			}
 		}, keyHolder);
@@ -117,11 +117,12 @@ public class DocumentService {
 		String vin = document.vin;
 		int index = getTableIndex(vin);
 		String SQL = "";
-		if (document.location == 1) {
+//		if (document.location == 1) {
 			SQL = "UPDATE DOCUMENTS_1_"+index+" SET FILEFULLPATH=?,THUMBNAIL=? WHERE DOCUMENTUNIQUEID=?";
-		} else {
-			SQL = "UPDATE DOCUMENTS_2_"+index+" SET FILEFULLPATH=?,THUMBNAIL=? WHERE DOCUMENTUNIQUEID=?";
-		}
+//		}
+//		else {
+//			SQL = "UPDATE DOCUMENTS_2_"+index+" SET FILEFULLPATH=?,THUMBNAIL=? WHERE DOCUMENTUNIQUEID=?";
+//		}
 	 	int opt = jdbcTemplate.update(SQL, new Object[] {
 	 			EncryptionUtils.encryptString(document.getFileFullPath()),
 	 			document.getThumbnail(),
@@ -153,9 +154,9 @@ public class DocumentService {
 		int affected = jdbcTemplate.update(sql, new Object[] {uuid});
 		log.info("Affected row "+affected);
 		
-	    sql = "DELETE FROM DOCUMENTS_"+2+"_"+index+" WHERE UUID=?";
-		affected = jdbcTemplate.update(sql, new Object[] {uuid});
-		log.info("Affected row "+affected);
+//	    sql = "DELETE FROM DOCUMENTS_"+2+"_"+index+" WHERE UUID=?";
+//		affected = jdbcTemplate.update(sql, new Object[] {uuid});
+//		log.info("Affected row "+affected);
 	}
 	
 	/**

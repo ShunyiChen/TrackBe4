@@ -1,7 +1,10 @@
 package com.maxtree.automotive.dashboard.view.check;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -12,6 +15,7 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
+import com.maxtree.automotive.dashboard.component.FetchButton;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.NotificationsButton;
@@ -316,13 +320,12 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
      * @return
      */
     private void buildFetchButton() {
-    	fetchButton = new NotificationsButton();
+    	fetchButton = new FetchButton();
     	fetchButton.setEnabled(true);
     	fetchButton.setId(EDIT_ID);
     	fetchButton.setIcon(VaadinIcons.RANDOM);
     	fetchButton.addStyleName("icon-edit");
     	fetchButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-    	fetchButton.setDescription("从队列取一条记录审核");
     	fetchButton.addClickListener(e -> {
     		if(editableTrans == null) {
     			fetchTransaction();
@@ -450,6 +453,8 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
         	cleanStage();
         	// 6.提示信息
         	Notifications.bottomWarning("提交成功！已添加到队列中等待复审。");
+        	
+        	removeImageWindows();
     	}
     	else if (business.getCheckLevel().equals("二级审档")) {
         	
@@ -487,6 +492,26 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     		cleanStage();
     		// 6.提示信息
     		Notifications.bottomWarning("提交成功！已完成审档待补充。");
+    		
+    		removeImageWindows();
+    	}
+    }
+    
+    /**
+     * 清除图像对比窗口
+     */
+    private void removeImageWindows() {
+    	List<Window> removable = new ArrayList<Window>();
+    	//清除ImageWindow
+    	Collection<Window> windows = UI.getCurrent().getWindows();
+    	for(Window w : windows) {
+    		if (w instanceof ImageWindow) {
+    			removable.add(w);
+    		}
+    	}
+    	
+    	for(int i = removable.size() - 1; i >= 0; i--) {
+    		removable.get(i).close();
     	}
     }
     
@@ -530,6 +555,8 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		cleanStage();
 		// 6.提示信息
 		Notifications.bottomWarning("提交成功！已经退回到前台更改。");
+		
+		removeImageWindows();
     }
     
     /**
@@ -600,7 +627,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private ConfirmInformationGrid confirmInformationGrid;
     private Button btnCommit = new Button();//提交给确认审档
-    private NotificationsButton fetchButton;
+    private FetchButton fetchButton;
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
     private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.CHECK.getViewName());

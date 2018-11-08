@@ -10,7 +10,7 @@
 
 // Optimize the CSS output，如果有问题则注释掉
 $v-included-components: remove($v-included-components, accordion);
-$v-included-components: remove($v-included-components, colorpicker);
+//$v-included-components: remove($v-included-components, colorpicker);
 $v-included-components: remove($v-included-components, popupview);
 //$v-included-components: remove($v-included-components, progressbar);
 //$v-included-components: remove($v-included-components, slider);

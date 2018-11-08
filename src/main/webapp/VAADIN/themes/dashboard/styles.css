@@ -11959,6 +11959,130 @@ div.v-layout.v-horizontal.v-widget {
 	visibility: visible;
 }
 
+.dashboard .v-colorpicker-popup.v-window {
+	min-width: 220px !important;
+}
+
+.dashboard .v-colorpicker-popup .v-tabsheet-tabs {
+	padding: 0 9px;
+}
+
+.dashboard .v-colorpicker-popup [class$="sliders"] {
+	padding: 12px;
+}
+
+.dashboard .v-colorpicker-popup [class$="sliders"] .v-widget {
+	width: 100% !important;
+	vertical-align: middle;
+}
+
+.dashboard .v-colorpicker-popup [class$="sliders"] .v-has-caption {
+	white-space: nowrap;
+	padding-left: 48px;
+}
+
+.dashboard .v-colorpicker-popup [class$="sliders"] .v-caption {
+	display: inline-block;
+	margin-left: -48px;
+	width: 48px;
+}
+
+.dashboard .v-colorpicker-popup [class$="sliders"] .v-slot-hue-slider + .v-slot .v-has-caption {
+	padding-left: 80px;
+}
+
+.dashboard .v-colorpicker-popup [class$="sliders"] .v-slot-hue-slider + .v-slot .v-caption {
+	margin-left: -80px;
+	width: 80px;
+}
+
+.dashboard .v-colorpicker-popup .v-slider-red .v-slider-base:after {
+	background: red;
+	border: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.dashboard .v-colorpicker-popup .v-slider-green .v-slider-base:after {
+	background: green;
+	border: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.dashboard .v-colorpicker-popup .v-slider-blue .v-slider-base:after {
+	background: blue;
+	border: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.dashboard .v-colorpicker-popup .v-margin-bottom {
+	padding-bottom: 0;
+}
+
+.dashboard .v-colorpicker-popup .resize-button {
+	width: 100% !important;
+	height: auto !important;
+	text-align: center;
+	outline: none;
+}
+
+.dashboard .v-colorpicker-popup .resize-button:before {
+	font-family: ThemeIcons;
+	content: "\f141";
+}
+
+.dashboard .v-colorpicker-popup .resize-button-caption {
+	display: none;
+}
+
+.dashboard .v-colorpicker-popup .v-horizontallayout {
+	height: auto !important;
+	padding: 9px 0;
+	background-color: #fafafa;
+	border-top: 1px solid #ededed;
+}
+
+.dashboard .v-colorpicker-popup .v-horizontallayout .v-expand {
+	overflow: visible;
+}
+
+.dashboard .v-colorpicker-popup .v-horizontallayout .v-button {
+	width: 80% !important;
+}
+
+.dashboard .v-colorpicker-preview {
+	width: 100% !important;
+	height: auto !important;
+	padding: 9px;
+}
+
+.dashboard .v-colorpicker-preview-textfield {
+	height: auto !important;
+	text-align: center;
+	border: none;
+}
+
+.dashboard .v-colorpicker {
+	width: auto;
+}
+
+.dashboard .v-colorpicker-button-color {
+	position: absolute;
+	top: 6px;
+	right: 6px;
+	bottom: 6px;
+	left: 6px;
+	border-radius: 3px;
+	border: 1px solid rgba(0, 0, 0, 0.5);
+	max-width: 23px;
+}
+
+.dashboard .v-colorpicker-button-color  + .v-button-caption:not(:empty) {
+	margin-left: 19px;
+}
+
 .dashboard .v-panel {
 	background: white;
 	color: #474747;

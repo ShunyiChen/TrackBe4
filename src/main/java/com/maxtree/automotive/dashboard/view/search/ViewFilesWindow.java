@@ -88,18 +88,15 @@ public class ViewFilesWindow extends Window implements ImageViewIF{
 			public void run() {
 				allDocs.clear();
 				List<Document> list1 = ui.documentService.findAllDocument1(trans.getVin(), trans.getUuid());
-				List<Document> list2 = ui.documentService.findAllDocument2(trans.getVin(), trans.getUuid());
+//				List<Document> list2 = ui.documentService.findAllDocument2(trans.getVin(), trans.getUuid());
 				allDocs.addAll(list1);
-				allDocs.addAll(list2);
+//				allDocs.addAll(list2);
 				if(list1.size() > 0) {
 					Site site = ui.siteService.findByCode(trans.getSiteCode());
 					imgStage.display(site, list1.get(index));
 					ViewFilesWindow.this.setCaption("查看原文-"+list1.get(index).getAlias());
 				}
 				
-				/**
-				 * 
-				 */
 				for(Document d : allDocs) {
 					ByteArrayInputStream bis = new ByteArrayInputStream(d.getThumbnail());
 					Thumbnail thumbnail = new Thumbnail(bis);

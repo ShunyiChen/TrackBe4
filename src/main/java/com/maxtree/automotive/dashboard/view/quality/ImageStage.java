@@ -19,18 +19,23 @@ import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.automotive.dashboard.view.ImageViewIF;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
+import com.vaadin.server.Page.Styles;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.ColorPicker;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import elemental.json.JsonArray;
@@ -148,6 +153,8 @@ public class ImageStage extends VerticalLayout implements ClickListener {
 //		 UI.getCurrent().addClickListener(e->{
 //			 System.out.println(e.getClientX()+","+e.getClientY()+","+e.getRelativeX()+","+e.getRelativeY());
 //		 });
+		
+		initBackground();
 	}
 	
 	/**
@@ -365,6 +372,62 @@ public class ImageStage extends VerticalLayout implements ClickListener {
 		}
 	}
 	
+	/**
+	 * 
+	 */
+	private void initBackground() {
+		ColorPicker picker = new ColorPicker();
+		picker.setSwatchesVisibility(false);
+        picker.setHistoryVisibility(false);
+        picker.setTextfieldVisibility(false);
+        picker.setHSVVisibility(false);
+        picker.addValueChangeListener(event ->{
+        	
+//        	String str = event.getValue().getCSS();
+        	
+        	Styles styles = Page.getCurrent().getStyles();
+        	String css = ".ImageStage_background { background-color:rgb("+event.getValue().getRed()+","+event.getValue().getGreen()+","+event.getValue().getBlue()+") !important; }";
+    		styles.add(css);
+        });
+		
+		background.setSizeFull();
+		background.setSpacing(false);
+		background.addStyleName("ImageStage_background");
+//		Button btn = new Button("");
+//		btn.setIcon(VaadinIcons.FILL);
+//		btn.addClickListener(e->{
+//			Window subWindow = new Window("Your Application");
+//			ColorPicker picker = new ColorPicker();
+//			picker.setSwatchesVisibility(false);
+//	        picker.setHistoryVisibility(false);
+//	        picker.setTextfieldVisibility(false);
+//	        picker.setHSVVisibility(false);
+//	        subWindow.setContent(picker);
+//	        picker.addValueChangeListener(event ->{
+//	        	
+////	        	String str = event.getValue().getCSS();
+//	        	
+//	        	Styles styles = Page.getCurrent().getStyles();
+//	        	String css = ".ImageStage_background { background-color:rgb("+event.getValue().getRed()+","+event.getValue().getGreen()+","+event.getValue().getBlue()+") !important; }";
+//	    		styles.add(css);
+//	        });
+////	        mainWindow.setc
+//	        UI.getCurrent().addWindow(subWindow);
+//	        subWindow.center();
+//	        
+//		});
+//		btn.addStyleName(ValoTheme.BUTTON_TINY);
+		background.addComponent(picker);
+		background.setComponentAlignment(picker, Alignment.TOP_RIGHT);
+	}
+	
+	/**
+	 * 
+	 */
+	public void setBackground() {
+		scroll.setContent(background);
+	}
+	
 	private boolean isHeaderHidden;
 	private Panel scroll = new Panel();
 	private VerticalLayout pictureFrame = new VerticalLayout();
@@ -377,4 +440,5 @@ public class ImageStage extends VerticalLayout implements ClickListener {
 	private double pictureActualWidth = 0;
 	private double pictureActualHeight = 1;
 	private Map<Integer, int[]> pictureSizes = new HashMap<Integer, int[]>();//key-documentId, value-picture width and height
+	private VerticalLayout background = new VerticalLayout();
 }

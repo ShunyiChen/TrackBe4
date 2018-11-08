@@ -185,13 +185,13 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 			businessDoc.setAlias(trans.getBusinessName());
 			rightTreeData.addItem(rightRoot, businessDoc);
 			List<Document> primaryDocs = ui.documentService.findAllDocument1(trans.getVin(),trans.getUuid());
-	    	List<Document> secondaryDocs = ui.documentService.findAllDocument2(trans.getVin(),trans.getUuid());
+//	    	List<Document> secondaryDocs = ui.documentService.findAllDocument2(trans.getVin(),trans.getUuid());
 	        for (Document d : primaryDocs) {
 	        	rightTreeData.addItem(businessDoc, d);
 	        }
-	        for (Document d : secondaryDocs) {
-	        	rightTreeData.addItem(businessDoc, d);
-	        }
+//	        for (Document d : secondaryDocs) {
+//	        	rightTreeData.addItem(businessDoc, d);
+//	        }
 		}
 		rightTree.setDataProvider(new TreeDataProvider<>(rightTreeData));
 		rightTree.expand(rightRoot);
@@ -239,13 +239,13 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
     	leftRoot.setAlias("当前业务材料");
         leftTreeData.addItem(null, leftRoot);
         List<Document> primaryDocs = ui.documentService.findAllDocument1(transaction.getVin(),transaction.getUuid());
-    	List<Document> secondaryDocs = ui.documentService.findAllDocument2(transaction.getVin(),transaction.getUuid());
+//    	List<Document> secondaryDocs = ui.documentService.findAllDocument2(transaction.getVin(),transaction.getUuid());
         for (Document d : primaryDocs) {
         	leftTreeData.addItem(leftRoot, d);
         }
-        for (Document d : secondaryDocs) {
-        	leftTreeData.addItem(leftRoot, d);
-        }
+//        for (Document d : secondaryDocs) {
+//        	leftTreeData.addItem(leftRoot, d);
+//        }
         leftTree.setDataProvider(new TreeDataProvider<>(leftTreeData));
         // 展开树节点
         leftTree.expand(leftRoot);
@@ -296,6 +296,9 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 
 			@Override
 			public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+				
+				imgStage.setBackground();// 显示背景颜色
+				
 				Set<Document> set = leftTree.getSelectedItems();
 				List<Document> list = new ArrayList<Document>(set);
 				Document selectedDocument = list.get(0);
