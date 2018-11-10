@@ -185,15 +185,41 @@ public class BasicInfoPane extends Panel {
 		.bind(Transaction::getPlateType, Transaction::setPlateType);
 		binder.forField(plateNumberField).withValidator(new StringLengthValidator( "号码号牌长度应为5~6个字符", 5,6))
 		.bind(Transaction::getPlateNumber, Transaction::setPlateNumber);
-//		binder.forField(vinField).withValidator(new StringLengthValidator( "车辆识别码长度是17个字符", 17, 17))
-//		.bind(Transaction::getVin, Transaction::setVin);
+		binder.forField(vinField).withValidator(new StringLengthValidator( "车辆识别代号不能空", 1, 17))
+		.bind(Transaction::getVin, Transaction::setVin);
 	}
 	
 	/**
 	 * 有效性验证
+	 * 
+	 * @param checkBarcode
 	 * @return
 	 */
-	public boolean emptyChecks() {
+	public boolean emptyChecks(boolean checkBarcode) {
+		if(checkBarcode) {
+			if (StringUtils.isEmpty(barCodeField.getValue())) {
+				
+				barCodeField.setComponentError(new ErrorMessage() {
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override 
+					public ErrorLevel getErrorLevel() {
+						return ErrorLevel.ERROR;
+					}
+
+					@Override
+					public String getFormattedHtmlMessage() {
+						return "业务流水号不能为空。";
+					}
+				});
+				return false;
+			}
+		}
+		
+		
 		if (StringUtils.isEmpty(plateTypeField.getSelectedItem())) {
 			
 			plateTypeField.setComponentError(new ErrorMessage() {

@@ -497,7 +497,9 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 			numField.setValue(e.getValue()+"");
 		});
 		slider.setValue(defaultValue);
-//		System.out.println(slider.getMin()+","+slider.getMax()+" "+defaultValue+"   "+function);
+		if(defaultValue == 0) {
+			numField.setValue(0.0d+"");
+		}
 	}
 	
 	public void closeToolWindow() {

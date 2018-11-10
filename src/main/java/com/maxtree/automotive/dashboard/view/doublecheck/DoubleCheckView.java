@@ -436,7 +436,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
      */
     private void accept(String comments) {
     	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
-    	if (business.getCheckLevel().equals("二级审档")) {
+    	if (business.getCheckLevel().equals("一级审档")) {
     		//1.删除锁定队列
     		int serial = 3; //1:质检 2:审档 3:确认审档
     		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());

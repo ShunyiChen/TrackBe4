@@ -382,9 +382,6 @@ public class ImageStage extends VerticalLayout implements ClickListener {
         picker.setTextfieldVisibility(false);
         picker.setHSVVisibility(false);
         picker.addValueChangeListener(event ->{
-        	
-//        	String str = event.getValue().getCSS();
-        	
         	Styles styles = Page.getCurrent().getStyles();
         	String css = ".ImageStage_background { background-color:rgb("+event.getValue().getRed()+","+event.getValue().getGreen()+","+event.getValue().getBlue()+") !important; }";
     		styles.add(css);

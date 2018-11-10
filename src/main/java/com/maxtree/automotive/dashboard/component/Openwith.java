@@ -137,8 +137,12 @@ public class Openwith extends Window {
 				}
 			}
 			else if(checkLevel.equals("一级审档")) {
+				
 				if(state.equals(ui.state().getName("B15"))) {
 					edit.setVisible(true);
+				}
+				else if(state.equals(ui.state().getName("B5"))) {
+					print.setVisible(true);
 				}
 				else if(state.equals(ui.state().getName("B16"))) {
 					edit.setVisible(true);
@@ -156,11 +160,8 @@ public class Openwith extends Window {
 				if(state.equals(ui.state().getName("B15"))) {
 					edit.setVisible(true);
 				}
-				else if(state.equals(ui.state().getName("B17"))) {
+				else if(state.equals(ui.state().getName("B16"))) {
 					edit.setVisible(true);
-					print.setVisible(true);
-				}
-				else if(state.equals(ui.state().getName("B5"))) {
 					print.setVisible(true);
 				}
 				else if(state.equals(ui.state().getName("B14"))) {

@@ -431,17 +431,33 @@ public final class FrontView extends Panel implements View,InputViewIF {
     }
     
     /**
+     * 提交异常
+     */
+    public void throwException(String exception) {
+    	this.exception = exception;
+    }
+    
+    /**
      * 
      */
     public void newTransaction() {
-    	if(!basicInfoPane.emptyChecks()) {
+    	if(!StringUtils.isEmpty(exception)) {
+    		Notifications.warning(exception);
+    		return;
+    	}
+    	if(editableTrans == null) {
+    		Notifications.warning("提交异常。");
+    		return;
+    	}
+    	//如果是新车注册业务，则需验证业务流水号
+    	if(!basicInfoPane.emptyChecks(businessTypePane.getSelected().getName().contains("注册登记"))) {
 			Notifications.warning("有效性验证失败。");
 			return;
     	}
-//    	if (fileGrid.emptyChecks()) {
-//			Notifications.warning("请将业务材料上传完整。");
-//			return;
-//    	}
+    	if (fileGrid.validationFails()) {
+			Notifications.warning("请将必录材料上传完整。");
+			return;
+    	}
     	//4大流程
     	//新车注册流程
     	if (businessTypePane.getSelected().getName().contains("注册登记")) {
@@ -777,16 +793,17 @@ public final class FrontView extends Panel implements View,InputViewIF {
      * 
      */
     private void updateTransaction() {
-		if(editableTrans == null) {
-    		Notifications.warning("请确保完成当前任务，再执行下一操作。");
+    	if(editableTrans == null) {
+    		Notifications.warning("提交异常。");
     		return;
     	}
-    	if(!basicInfoPane.emptyChecks()) {
+    	//如果是新车注册业务，则需录入业务流水好吧
+    	if(!basicInfoPane.emptyChecks(businessTypePane.getSelected().getName().contains("注册登记"))) {
 			Notifications.warning("有效性验证失败。");
 			return;
     	}
-    	if (fileGrid.emptyChecks()) {
-			Notifications.warning("请将业务材料上传完整。");
+    	if (fileGrid.validationFails()) {
+			Notifications.warning("请将必录材料上传完整。");
 			return;
     	}
     	
@@ -1000,6 +1017,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
 		}
 		
 		editableTrans = null;
+		exception = "";
 	}
 
 	@Override
@@ -1091,5 +1109,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
     private HorizontalLayout spliterSouth = new HorizontalLayout();
     private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.INPUT.getViewName(), this);
     private int deletableMessageUniqueId;
+    private String exception;
     private TB4MessagingSystem messageSys = new TB4MessagingSystem();
 }

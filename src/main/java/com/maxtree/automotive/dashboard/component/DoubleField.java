@@ -27,11 +27,20 @@ public class DoubleField extends TextField implements ValueChangeListener<String
 	
 	/**
 	 * 
+	 * @param defaultValue
+	 */
+	public DoubleField(double defaultValue) {
+		this.setValue(defaultValue+"");
+		setValueChangeMode(ValueChangeMode.EAGER);
+		addValueChangeListener(this);
+	}
+	
+	/**
+	 * 
 	 */
 	public DoubleField() {
 		setValueChangeMode(ValueChangeMode.EAGER);
 		addValueChangeListener(this);
-		lastValue = "";
 	}
 
 	@Override
@@ -39,11 +48,9 @@ public class DoubleField extends TextField implements ValueChangeListener<String
 		String text = (String) event.getValue();
 	    try {
 	        new Double(text);
-	        lastValue = text;
 	    } catch (NumberFormatException e) {
 //	        setValue(lastValue);
 	    }
 	}
 	
-	public String lastValue;
 }

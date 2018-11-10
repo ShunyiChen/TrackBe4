@@ -25,7 +25,7 @@ import com.vaadin.ui.Window;
 /**
  * 
  * @author chens
- *
+ * 
  */
 public class ImageWindow extends Window {
 

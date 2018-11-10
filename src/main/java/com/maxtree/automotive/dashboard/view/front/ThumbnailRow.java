@@ -1,8 +1,13 @@
 package com.maxtree.automotive.dashboard.view.front;
 
+import java.util.Iterator;
+
 import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.vaadin.event.MouseEvents.ClickListener;
+import com.vaadin.server.Page;
+import com.vaadin.server.Page.Styles;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 
@@ -18,7 +23,17 @@ public class ThumbnailRow extends Panel {
 	 * @param materialName
 	 */
 	public ThumbnailRow(String materialName) {
+		this(materialName, true);
+	}
+	
+	/**
+	 * 
+	 * @param materialName 材料名称
+	 * @param required   是必录项
+	 */
+	public ThumbnailRow(String materialName, boolean required) {
 		this.materialName = materialName;
+		this.required = required;
 		initComponents();
 	}
 	
@@ -30,7 +45,12 @@ public class ThumbnailRow extends Panel {
 		this.setHeight("130px");
 		this.setCaption(materialName);
 		this.addStyleName("ThumbnailRow-border");
-		
+		if(!required) {
+			this.addStyleName("ThumbnailRow-BGColor-"+this.hashCode());
+			Styles styles = Page.getCurrent().getStyles();
+	    	String css1 = ".ThumbnailRow-BGColor-"+this.hashCode()+" { background-color: rgb(195,195,195) !important; }";
+	    	styles.add(css1);
+		}
 		main.setSpacing(false);
 		main.setMargin(false);
 		main.setWidthUndefined();
@@ -84,7 +104,15 @@ public class ThumbnailRow extends Panel {
 	 * @return
 	 */
 	public boolean hasThumbnailUploaded() {
-		return main.getComponentCount() > 1;
+//		return main.getComponentCount() > 1;
+		Iterator<Component> iter = main.iterator();
+		while(iter.hasNext()) {
+			Component com = iter.next();
+			if(com instanceof Thumbnail) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -102,9 +130,18 @@ public class ThumbnailRow extends Panel {
 	public void setDataDictionary(DataDictionary dataDictionary) {
 		this.dataDictionary = dataDictionary;
 	}
+	
+	/**
+	 * 是否是必录项
+	 * 
+	 * @return
+	 */
+	public boolean isRequired() {
+		return required;
+	}
 
 	private String materialName;
 	private DataDictionary dataDictionary;
 	private HorizontalLayout main = new HorizontalLayout();
-	
+	private boolean required;
 }

@@ -34,7 +34,7 @@ public class AssigningBusinessesToCompanyWindow extends Window {
 	 * @param material
 	 */
 	public AssigningBusinessesToCompanyWindow(Company company) {
-		this.setWidth("613px");
+		this.setWidth("1024px");
 		this.setHeight("513px");
 		this.setModal(true);
 		this.setResizable(false);

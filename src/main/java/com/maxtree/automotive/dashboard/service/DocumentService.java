@@ -35,7 +35,7 @@ public class DocumentService {
 	 */
 	public List<Document> findAllDocument1(String vin, String uuid) {
 		int index = getTableIndex(vin);
-		String sql = "SELECT A.*,B.ITEMNAME AS ALIAS FROM DOCUMENTS_1_"+index+" AS A LEFT JOIN DATADICTIONARY AS B ON A.DICTIONARYCODE=B.CODE AND B.ITEMTYPE=? WHERE A.UUID=? ORDER BY A.DICTIONARYCODE,A.DOCUMENTUNIQUEID";
+		String sql = "SELECT A.*,B.ITEMNAME AS ALIAS FROM DOCUMENTS_1_"+index+" AS A LEFT JOIN DATADICTIONARY AS B ON A.DICTIONARYCODE=B.CODE AND B.ITEMTYPE=? WHERE A.UUID=? ORDER BY A.DOCUMENTUNIQUEID";
 		List<Document> result = jdbcTemplate.query(sql, new Object[] {3,uuid}, new BeanPropertyRowMapper<Document>(Document.class));
 		// decode
 		for (Document doc : result) {

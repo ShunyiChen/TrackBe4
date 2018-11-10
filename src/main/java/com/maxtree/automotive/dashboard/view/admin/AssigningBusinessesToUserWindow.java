@@ -33,7 +33,7 @@ public class AssigningBusinessesToUserWindow extends Window {
 	 * @param material
 	 */
 	public AssigningBusinessesToUserWindow(User user) {
-		this.setWidth("613px");
+		this.setWidth("1024px");
 		this.setHeight("513px");
 		this.setModal(true);
 		this.setResizable(false);
@@ -60,11 +60,11 @@ public class AssigningBusinessesToUserWindow extends Window {
 		hlayout.setMargin(false);
 		List<Business> allBusinesses = ui.businessService.findAllByCompanyUniqueId(user.getCompanyUniqueId());
 		List<Business> assignedBusinesses = ui.userService.findAssignedBusinesses(user.getUserUniqueId());
-		select = new TwinColSelect<>(null, allBusinesses);
-		select.setWidth("100%");
-		select.setRows(14);
-		select.setLeftColumnCaption("未分配的业务");
-		select.setRightColumnCaption("已分配的业务");
+		twinColSelect = new TwinColSelect<>(null, allBusinesses);
+		twinColSelect.setWidth("100%");
+		twinColSelect.setRows(14);
+		twinColSelect.setLeftColumnCaption("未分配的业务");
+		twinColSelect.setRightColumnCaption("已分配的业务");
 		
 		List<Business> selected = new ArrayList<>();
 		for (Business b : allBusinesses) {
@@ -75,10 +75,10 @@ public class AssigningBusinessesToUserWindow extends Window {
 			}
 		}
 		// set select
-		select.select(selected.toArray(new Business[selected.size()]));
+		twinColSelect.select(selected.toArray(new Business[selected.size()]));
 		
-        hlayout.addComponent(select);
-        hlayout.setComponentAlignment(select, Alignment.TOP_CENTER);
+        hlayout.addComponent(twinColSelect);
+        hlayout.setComponentAlignment(twinColSelect, Alignment.TOP_CENTER);
 		
 		HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setSizeFull();
@@ -112,10 +112,8 @@ public class AssigningBusinessesToUserWindow extends Window {
 	 */
 	private void apply(User user) {
 		ui.userService.deleteBusinesses(user.getUserUniqueId());
-		
-		Set<Business> set = select.getSelectedItems();
+		Set<Business> set = twinColSelect.getSelectedItems();
 		List<Business> lstBusiness = new ArrayList<>(set);
-		
 		ui.userService.assignBusinesses(user.getUserUniqueId(), lstBusiness);
 	}
 	
@@ -139,7 +137,6 @@ public class AssigningBusinessesToUserWindow extends Window {
 	
 	private Button btnApply;
 	private Button btnOK;
-	private TwinColSelect<Business> select = null;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
-
+	private TwinColSelect<Business> twinColSelect;
 }

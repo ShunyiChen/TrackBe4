@@ -43,14 +43,6 @@ public class Business {
 	public void setCheckLevel(String checkLevel) {
 		this.checkLevel = checkLevel;
 	}
-
-	public List<DataDictionary> getItems() {
-		return items;
-	}
-
-	public void setItems(List<DataDictionary> items) {
-		this.items = items;
-	}
 	
 	public Boolean getUpdatePlateNumber() {
 		return updatePlateNumber;
@@ -67,6 +59,22 @@ public class Business {
 	public void setUploadPicture(Boolean uploadPicture) {
 		this.uploadPicture = uploadPicture;
 	}
+	
+	public List<DataDictionary> getRequiredItems() {
+		return requiredItems;
+	}
+
+	public void setRequiredItems(List<DataDictionary> requiredItems) {
+		this.requiredItems = requiredItems;
+	}
+
+	public List<DataDictionary> getOptionalItems() {
+		return optionalItems;
+	}
+
+	public void setOptionalItems(List<DataDictionary> optionalItems) {
+		this.optionalItems = optionalItems;
+	}
 
 	@Override
 	public String toString() {
@@ -80,7 +88,8 @@ public class Business {
 	private String name; // 业务类型名称
 	private String code; // 4位代码
 	private String checkLevel;// ""/一级审档/二级审档,例如“”表示不需要审档；一级审档标识本机构内部审档；二级审档指同社区内车管所审档
-	private List<DataDictionary> items;
 	private Boolean updatePlateNumber = false;
 	private Boolean uploadPicture = false;
+	private List<DataDictionary> requiredItems; //比录材料名(非数据库字段)
+	private List<DataDictionary> optionalItems; //选录材料名(非数据库字段)
 }

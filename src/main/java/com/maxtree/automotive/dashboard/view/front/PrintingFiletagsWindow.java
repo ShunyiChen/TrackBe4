@@ -136,7 +136,7 @@ public class PrintingFiletagsWindow extends Window {
 						opener.setParameter("htmlFilePath", "reports/generates/"+loggedInUser.getUserUniqueId()+"/report.png");
 						
 						// Update status
-						ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(),ui.state().getName("B18"));
+						ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(),ui.state().getName("B19"));
 					}
     			};
     			try {
@@ -171,7 +171,7 @@ public class PrintingFiletagsWindow extends Window {
 						opener.setParameter("htmlFilePath", "reports/generates/"+loggedInUser.getUserUniqueId()+"/report.png");
 						
 						// Update status
-						ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), ui.state().getName("B18"));
+						ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), ui.state().getName("B19"));
 					}
     			};
     			try {

@@ -91,29 +91,37 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 	
 	@Override
 	public void selectionChange(SingleSelectionEvent<Business> e) {
+		//没有异常
+		view.throwException(null);
+		
 		// 如果业务类型为null,则直接返回
 		if(StringUtils.isEmpty(view.businessTypePane().getSelected())) {
+			//业务类型为空异常
+			view.throwException("业务类型不能选择空选项");
 			return;
 		}
 		if (StringUtils.isEmpty(view.vin())) {
 			Notifications.warning("车辆识别代码不能空。");
+			view.throwException("车辆识别代码不能空");
 			return;
 		}
 		// 支持影像化检测
 		if (view instanceof FrontView) {
 			Optional<Business> opt = e.getSelectedItem();
 			if(!opt.isPresent()) {
+				view.throwException("业务类型不能空");
 				return;
 			}
-			
 			//注册检查
 			if(registrationCheck(view.vin(), e.getSelectedItem().get())) {
 				Notifications.warning(e.getSelectedItem().get().getName()+"业务已经存在，不能重复录入相同业务。");
+				view.throwException(e.getSelectedItem().get().getName()+"业务已经存在，不能重复录入相同业务");
 				return;
 			}
 			//处理中检查
 			if(!beingProcessedCheck(view.vin())) {
 				Notifications.warning("当前车辆存在尚未办结的业务，无法继续。");
+				view.throwException("当前车辆存在尚未办结的业务，无法继续");
 				return;
 			}
 			
@@ -130,15 +138,6 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 							fe.printStackTrace();
 						}
 					}
-//					//删除旧原文2
-//					List<Document> document2List = ui.documentService.findAllDocument2(view.vin(), view.uuid());
-//					for(Document doc : document2List) {
-//						try {
-//							fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
-//						} catch (FileException fe) {
-//							fe.printStackTrace();
-//						}
-//					}
 					//删除数据库记录
 					ui.documentService.deleteByUUID(view.uuid(), view.vin());
 					loadMaterials(opt.get().getCode());
@@ -167,15 +166,6 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 						fe.printStackTrace();
 					}
 				}
-//				//删除旧原文2
-//				List<Document> document2List = ui.documentService.findAllDocument2(view.vin(), view.uuid());
-//				for(Document doc : document2List) {
-//					try {
-//						fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
-//					} catch (FileException fe) {
-//						fe.printStackTrace();
-//					}
-//				}
 				//删除数据库记录
 				ui.documentService.deleteByUUID(view.uuid(), view.vin());
 				loadMaterials(opt.get().getCode());
@@ -293,34 +283,48 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 	private void loadMaterials(String businessCode) {
 		// 加载文件上传表格
 		view.thumbnailGrid().removeAllRows();
-		List<DataDictionary> list = ui.businessService.getDataDictionaries(businessCode,3);
+		List<DataDictionary> list = ui.businessService.getRequiredDataDictionaries(businessCode);
 		int i = 0;
 		for (DataDictionary dd : list) {
 			i++;
 			ThumbnailRow row = new ThumbnailRow(i+"."+dd.getItemName());
 			row.setDataDictionary(dd);
-			
 			view.thumbnailGrid().addRow(row);
 			// 选中第一个
 			if (i == 1) {
 				row.selected();
-				
 				UploadInDTO inDto = new UploadInDTO(view.loggedInUser().getUserUniqueId(), view.vin(), view.batch()+"", view.editableSite().getSiteUniqueId(),view.uuid(),dd.getCode());
 				UploadFileServlet.IN_DTOs.put(view.loggedInUser().getUserUniqueId(), inDto);
 			}
 		}
-		i++;
-		ThumbnailRow row = new ThumbnailRow(i+"."+"其它材料");
-		DataDictionary dict = new DataDictionary();
-		dict.setCode("$$$$"); // $$$$为辅助材料code
-		row.setDataDictionary(dict);
-		view.thumbnailGrid().addRow(row);
-		if (i == 1) {
-			row.selected();
-			
-			UploadInDTO inDto = new UploadInDTO(view.loggedInUser().getUserUniqueId(), view.vin(), view.batch()+"", view.editableSite().getSiteUniqueId(),view.uuid(),dict.getCode());
-			UploadFileServlet.IN_DTOs.put(view.loggedInUser().getUserUniqueId(), inDto);
+		List<DataDictionary> list2 = ui.businessService.getOptionalDataDictionaries(businessCode);
+		for (DataDictionary dd : list2) {
+			i++;
+			ThumbnailRow row = new ThumbnailRow(i+"."+dd.getItemName()+" (可选项)", false);
+			row.setDataDictionary(dd);
+			view.thumbnailGrid().addRow(row);
+			// 选中第一个
+			if (i == 1) {
+				row.selected();
+				UploadInDTO inDto = new UploadInDTO(view.loggedInUser().getUserUniqueId(), view.vin(), view.batch()+"", view.editableSite().getSiteUniqueId(),view.uuid(),dd.getCode());
+				UploadFileServlet.IN_DTOs.put(view.loggedInUser().getUserUniqueId(), inDto);
+			}
 		}
+		
+		
+		
+//		i++;
+//		ThumbnailRow row = new ThumbnailRow(i+"."+"其它材料");
+//		DataDictionary dict = new DataDictionary();
+//		dict.setCode("$$$$"); // $$$$为辅助材料code
+//		row.setDataDictionary(dict);
+//		view.thumbnailGrid().addRow(row);
+//		if (i == 1) {
+//			row.selected();
+//			
+//			UploadInDTO inDto = new UploadInDTO(view.loggedInUser().getUserUniqueId(), view.vin(), view.batch()+"", view.editableSite().getSiteUniqueId(),view.uuid(),dict.getCode());
+//			UploadFileServlet.IN_DTOs.put(view.loggedInUser().getUserUniqueId(), inDto);
+//		}
 		
 		view.thumbnailGrid().focus();
 		// 加载拍照影像
@@ -440,7 +444,6 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 		/// 为每个Row添加缩略图
 		List<Document> documentList1 = ui.documentService.findAllDocument1(view.vin(), view.uuid());
 		
-		int i = 1;
 		for (Document doc : documentList1) {
 			
 			Thumbnail thumbnail = new Thumbnail(new ByteArrayInputStream(doc.getThumbnail()));

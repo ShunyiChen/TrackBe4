@@ -147,6 +147,7 @@ public class ThumbnailGrid extends Panel{
 	public void removeAllRows() {
 		vLayout.removeAllComponents();
 		mapRows.clear();
+		index = 0;
 	}
 	
 	/**
@@ -162,19 +163,25 @@ public class ThumbnailGrid extends Panel{
 	}
 	
 	/**
+	 * 验证失败返回true,否则返回false
 	 * 
 	 * @return
 	 */
-	public boolean emptyChecks() {
+	public boolean validationFails() {
 		Iterator<String> iter = mapRows.keySet().iterator();
 		while(iter.hasNext()) {
 			String key = iter.next();
 			ThumbnailRow row = mapRows.get(key);
-			if(!row.hasThumbnailUploaded()) {
-				return false;
+			if(row.isRequired()) {
+				if(!row.hasThumbnailUploaded()) {
+					
+					System.out.println("row====="+key);
+					
+					return true;
+				}
 			}
 		}
-		return true;
+		return false;
 	}
 	
 	/**

@@ -190,8 +190,16 @@ public class BusinessView extends ContentView {
 		});
 		
 		// 所需资料
-		StringBuilder materialStr = new StringBuilder("");
-		for (DataDictionary item : business.getItems()) {
+		StringBuilder materialStr = new StringBuilder("必录：\n");
+		for (DataDictionary item : business.getRequiredItems()) {
+			materialStr.append(item.getItemName());
+			materialStr.append(",");
+		}
+		if (materialStr.length() > 0) {
+			materialStr.delete(materialStr.length() - 1, materialStr.length());
+		}
+		materialStr.append("选录：\n");
+		for (DataDictionary item : business.getOptionalItems()) {
 			materialStr.append(item.getItemName());
 			materialStr.append(",");
 		}

@@ -68,7 +68,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.schlichtherle.license.LicenseContent;
@@ -572,15 +571,31 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     }
     
     /**
+     * 提交异常
+     */
+    public void throwException(String exception) {
+    	this.exception = exception;
+    }
+   	
+    /**
      * 
      */
     public void newTransaction() {
-    	if(!basicInfoPane.emptyChecks()) {
+    	if(!StringUtils.isEmpty(exception)) {
+    		Notifications.warning(exception);
+    		return;
+    	}
+    	else if(editableTrans == null) {
+    		Notifications.warning("提交异常。");
+    		return;
+    	}
+    	//如果是新车注册业务则需要验证业务流水号
+    	if(!basicInfoPane.emptyChecks(businessTypePane.getSelected().getName().contains("注册登记"))) {
 			Notifications.warning("有效性验证失败。");
 			return;
     	}
-    	if (fileGrid.emptyChecks()) {
-			Notifications.warning("请将业务材料上传完整。");
+    	if (fileGrid.validationFails()) {
+			Notifications.warning("请将必录材料上传完整。");
 			return;
     	}
     	//新车注册流程
@@ -668,16 +683,16 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
      */
     private void updateTransaction() {
     	if(editableTrans == null) {
-    		Notifications.warning("请确保完成当前任务，再执行下一操作。");
+    		Notifications.warning("提交异常。");
     		return;
     	}
-    	
-    	if(!basicInfoPane.emptyChecks()) {
+    	//如果是新车注册业务则需要验证业务流水号
+    	if(!basicInfoPane.emptyChecks(businessTypePane.getSelected().getName().contains("注册登记"))) {
 			Notifications.warning("有效性验证失败。");
 			return;
     	}
-    	if (fileGrid.emptyChecks()) {
-			Notifications.warning("请将业务材料上传完整。");
+    	if (fileGrid.validationFails()) {
+			Notifications.warning("请将必录材料上传完整。");
 			return;
     	}
     	//新车注册流程
@@ -773,6 +788,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 		}
 		
 		editableTrans = null;
+		exception = "";
 	}
 
 	@Override
@@ -856,6 +872,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     private BusinessTypePane businessTypePane = new BusinessTypePane(this);
     private ThumbnailGrid fileGrid = new ThumbnailGrid(this);
     private CapturePane capturePane = new CapturePane();
+    private Button btnPrint = new Button();
     private Button btnAdd = new Button();
     private Button btnCommit = new Button();
     private NotificationsButton notificationsButton;
@@ -865,6 +882,6 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.IMAGING_INPUT.getViewName(), this);
     private TB4MessagingSystem messageSystem = new TB4MessagingSystem();
     private int deletableMessageUniqueId;
+    private String exception;
     private TB4MessagingSystem messageSys = new TB4MessagingSystem();
-    private Button btnPrint = new Button();
 }

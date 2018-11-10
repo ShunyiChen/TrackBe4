@@ -35,4 +35,6 @@ public interface InputViewIF extends FrontendViewIF {
 	public CapturePane capturePane();
 	
 	public void openTransaction(Transaction transaction,int deletableMessageUniqueId, Callback callback);
+
+	public void throwException(String exception);
 }

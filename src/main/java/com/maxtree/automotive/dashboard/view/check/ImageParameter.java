@@ -51,7 +51,7 @@ public class ImageParameter {
 	}
 
 	private double scale = 100; // 默认值-缩放
-	private double rotate = 0.0d;//旋转角度
+	private double rotate = 0;//旋转角度
 	private double transparency = 100.0d; // 透明度
 	private double brightness = 130; //亮度
 	private double contrast = 130; // 对比度

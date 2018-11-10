@@ -53,9 +53,7 @@ public class ImageViewerWindow extends Window implements ImageViewIF {
 //		allDocuments.addAll(list2);
 		for(Document doc : allDocuments) {
 			if (doc.getDocumentUniqueId()==selectDocumentId) {
-				
-				String alias = StringUtils.isEmpty(doc.getAlias())?"其它材料":doc.getAlias();
-		 		this.setCaption("原文-"+alias);
+		 		this.setCaption("原文-"+doc.getAlias());
 				imgStage.display(view.editableSite(), doc);
 				break;
 			}
@@ -88,6 +86,7 @@ public class ImageViewerWindow extends Window implements ImageViewIF {
 			index = 0;
 		}
 		Document doc = allDocuments.get(index);
+		this.setCaption("原文-"+doc.getAlias());
 		imgStage.display(view.editableSite(), doc);
 	}
 
@@ -100,6 +99,7 @@ public class ImageViewerWindow extends Window implements ImageViewIF {
 			index = 0;
 		}
 		Document doc = allDocuments.get(index);
+		this.setCaption("原文-"+doc.getAlias());
 		imgStage.display(view.editableSite(), doc);
 	}
 	
