@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.prefs.Preferences;
 
 import com.maxtree.automotive.dashboard.Callback2;
+import com.maxtree.automotive.dashboard.data.Txt;
 
 import de.schlichtherle.license.CipherParam;
 import de.schlichtherle.license.KeyStoreParam;
@@ -104,9 +105,11 @@ public class Test {
 			String diskSerial = info.get("DiskSerialNumber");
 			String motherboardSerial = info.get("MotherboardSerialNumber");
 			
+			String ignoreStr = Txt.read("license/ignores");
+			
 			Getinfo getinfo = new Getinfo();
 			if (macAddr.equals(getinfo.getMacAddress())
-					&& ipAddr.equals(getinfo.getLocalHostLANAddress())
+					&& (ipAddr.equals(getinfo.getLocalHostLANAddress()) || ignoreStr.equals("IP address"))
 					&& hostname.equals(getinfo.getComputerName())
 					&& diskSerial.equals(getinfo.getDriveSerialNumber("C"))
 					&& motherboardSerial.equals(getinfo.getMotherboardSN())) {
