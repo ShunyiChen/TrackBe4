@@ -2,6 +2,7 @@ package com.maxtree.automotive.dashboard.view.front;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,11 +22,8 @@ import com.vaadin.server.Extension;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -59,10 +57,11 @@ public class PrintingFiletagsWindow extends Window {
 	
 	private void initComponents() {
 		this.setCaption(caption);
-		this.setSizeFull();
 		this.setModal(true);
 		this.setClosable(true);
 		this.setResizable(false);
+		this.setWidth("300px");
+		this.setHeight("120px");
 		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		radios = new RadioButtonGroup<>(null, options);
 		radios.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
@@ -71,9 +70,6 @@ public class PrintingFiletagsWindow extends Window {
 		HorizontalLayout optionsLayout = new HorizontalLayout();
 		optionsLayout.addComponents(Box.createHorizontalBox(10), radios);
 		optionsLayout.setComponentAlignment(radios, Alignment.MIDDLE_LEFT);
-		
-		previewPane.setSizeFull();
-		
     	footer.setSpacing(false);
     	footer.setMargin(false);
     	footer.setWidthUndefined();
@@ -85,20 +81,15 @@ public class PrintingFiletagsWindow extends Window {
 		main.setSpacing(false);
 		main.setMargin(false);
 		main.setSizeFull();
-    	main.addComponents(optionsLayout,previewPane,footer);
+    	main.addComponents(optionsLayout,footer);
     	main.setComponentAlignment(optionsLayout, Alignment.MIDDLE_CENTER);
-    	main.setComponentAlignment(previewPane, Alignment.TOP_CENTER);
     	main.setComponentAlignment(footer, Alignment.TOP_RIGHT);
-    	
-    	main.setExpandRatio(optionsLayout, 0.1f);
-    	main.setExpandRatio(previewPane, 0.8f);
-    	main.setExpandRatio(footer, 0.1f);
     	this.setContent(main);
-    	
-    	
+    	btnCancel.addClickListener(e->{
+    		close();
+    	});
     	radios.addValueChangeListener(e->{
-    		btnOk.setEnabled(false);
-    		
+//    		btnOk.setEnabled(true);
     		if (opener != null) {
     			Collection<Extension> con = opener.getParent().getExtensions();
     			if(con.contains(opener)) {
@@ -108,7 +99,7 @@ public class PrintingFiletagsWindow extends Window {
     			footer.removeComponent(btnOk);
     			// re-add button
     			btnOk = new Button("准备打印");
-    			btnOk.setEnabled(false);
+//    			btnOk.setEnabled(false);
     			btnOk.addStyleName(ValoTheme.BUTTON_PRIMARY);
     			footer.addComponent(btnOk, 2);
     			footer.setComponentAlignment(btnOk, Alignment.MIDDLE_LEFT);
@@ -122,29 +113,7 @@ public class PrintingFiletagsWindow extends Window {
     			bean.setCLSBDH(trans.getVin());
     			bean.setShelvesNum(trans.getCode());
     			list.add(bean);
-    			
-    			Callback callback = new Callback() {
-					@Override
-					public void onSuccessful() {
-						
-						generatePreview("reports/generates/"+loggedInUser.getUserUniqueId()+"/report.png","report.png");
-						
-						btnOk.setEnabled(true);
-						opener = new BrowserWindowOpener(PrintUI.class);
-						opener.setFeatures("height=306,width=422,x=0,y=0,resizable");
-						opener.extend(btnOk);
-						opener.setParameter("htmlFilePath", "reports/generates/"+loggedInUser.getUserUniqueId()+"/report.png");
-						
-						// Update status
-						ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(),ui.state().getName("B19"));
-					}
-    			};
-    			try {
-					new TB4Reports().jasperToPNG(list, loggedInUser.getUserUniqueId(), "上架标签-车.jasper", callback);
-					
-				} catch (ReportException e1) {
-					e1.printStackTrace();
-				}
+    			printingPDF(list, "上架标签-车.jasper");
     			
     		} else {
     			List<PrintableBean> list = new ArrayList<PrintableBean>();
@@ -157,37 +126,10 @@ public class PrintingFiletagsWindow extends Window {
     			bean.setIndex(trans.getIndexNumber()); //索引号
     			bean.setCode(trans.getBarcode()); //流水号
     			list.add(bean);
-    			
-    			Callback callback = new Callback() {
-					@Override
-					public void onSuccessful() {
-						
-						generatePreview("reports/generates/"+loggedInUser.getUserUniqueId()+"/report.png","report.png");
-						
-						btnOk.setEnabled(true);
-						opener = new BrowserWindowOpener(PrintUI.class);
-						opener.setFeatures("height=306,width=422,x=0,y=0,resizable");
-						opener.extend(btnOk);
-						opener.setParameter("htmlFilePath", "reports/generates/"+loggedInUser.getUserUniqueId()+"/report.png");
-						
-						// Update status
-						ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), ui.state().getName("B19"));
-					}
-    			};
-    			try {
-					new TB4Reports().jasperToPNG(list, loggedInUser.getUserUniqueId(), "上架标签.jasper", callback);
-					
-				} catch (ReportException e1) {
-					e1.printStackTrace();
-				}
+    			printingPDF(list, "上架标签.jasper");
     		}
-    		
     	});
-    	btnCancel.addClickListener(e->{
-    		deleteReportFiles();
-    		
-    		close();
-    	});
+     
     	// 窗体关闭后自动删除报表文件
     	this.addCloseListener(e -> {
     		deleteReportFiles();
@@ -198,48 +140,72 @@ public class PrintingFiletagsWindow extends Window {
 	
 	/**
 	 * 
-	 * @param filePath
-	 * @param fileName
+	 * @param beans
+	 * @param templateFileName
 	 */
-	private void generatePreview(String filePath, String fileName) {
-		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
- 			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
+	private void printingPDF(List<PrintableBean> beans, String templateFileName) {
+		Callback callback = new Callback() {
 			@Override
- 			public InputStream getStream() {
- 				FileInputStream inputStream = null;
+			public void onSuccessful() {
+				com.vaadin.server.StreamResource.StreamSource source = new com.vaadin.server.StreamResource.StreamSource() {
+		 			/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+		 			public InputStream getStream() {
+		 				FileInputStream inputStream = null;
+						try {
+							inputStream = new FileInputStream("reports/generates/"+loggedInUser.getUserUniqueId()+"/report.pdf");
+						} catch (FileNotFoundException e) {
+							e.printStackTrace();
+						}
+//						try {
+//							inputStream.close();
+//						} catch (IOException e) {
+//							e.printStackTrace();
+//						}
+						return inputStream;
+		 			}
+		 		}; 
+				
+		        // Create the stream resource and give it a file name
+		        String filename = "report.pdf";
+		        StreamResource resource = new StreamResource(source, filename);
+
+		        // These settings are not usually necessary. MIME type
+		        // is detected automatically from the file name, but
+		        // setting it explicitly may be necessary if the file
+		        // suffix is not ".pdf".
+		        resource.setMIMEType("application/pdf");
+		        resource.getStream().setParameter(
+		                "Content-Disposition",
+		                "attachment; filename="+filename);
+		        resource.setCacheTime(0);
+		        // Extend the print button with an opener
+		        // for the PDF resource
+		        opener = new BrowserWindowOpener(resource);
+		        opener.extend(btnOk);
+		        
+				// Update status
+				ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), ui.state().getName("B19"));
+				
 				try {
-					inputStream = new FileInputStream(filePath);
-				} catch (FileNotFoundException e) {
+					resource.getStreamSource().getStream().close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				return inputStream;
- 			}
- 		}; 
- 		StreamResource streamResource = new StreamResource(streamSource, fileName);
- 		streamResource.setCacheTime(0);
-
- 		if(fileName.endsWith("png")) {
- 			Image image = new Image(null,streamResource);
- 			VerticalLayout viewPort = new VerticalLayout();
- 			viewPort.setSpacing(false);
- 			viewPort.setMargin(false);
- 			viewPort.setSizeFull();
- 			viewPort.addComponents(image);
- 			viewPort.setComponentAlignment(image, Alignment.TOP_CENTER);
- 			previewPane.setContent(viewPort);
- 		}
- 		else if(fileName.endsWith("html")) {
- 			BrowserFrame bf = new BrowserFrame(null);
- 			bf.setSource(streamResource);
- 			bf.setSizeFull();
- 			previewPane.setContent(bf);
- 		}
+			}
+		};
+		try {
+			new TB4Reports().jasperToPDF(beans, loggedInUser.getUserUniqueId(), templateFileName, callback);
+		} catch (ReportException e1) {
+			e1.printStackTrace();
+		}
 	}
-	
+ 
 	/**
 	 * 
 	 */
@@ -270,5 +236,5 @@ public class PrintingFiletagsWindow extends Window {
 	private BrowserWindowOpener opener;
 	private HorizontalLayout footer = new HorizontalLayout();
 	private VerticalLayout main = new VerticalLayout();
-	private Panel previewPane = new Panel();
+//	private Panel previewPane = new Panel();
 }

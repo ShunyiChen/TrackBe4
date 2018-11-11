@@ -47,6 +47,11 @@ import com.vaadin.ui.Upload.SucceededListener;
 
 import net.coobird.thumbnailator.Thumbnails;
 
+/**
+ * 
+ * @author chens
+ *
+ */
 public class CapturePane extends Panel implements Receiver, SucceededListener, ProgressListener, StartedListener, FailedListener, FinishedListener{
 
 	/**
@@ -64,6 +69,7 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 	
 	private void initComponents() {
 		this.addStyleName("picture-pane");
+		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		UI.getCurrent().getPage().addBrowserWindowResizeListener(e->{
 			int height = UI.getCurrent().getPage().getBrowserWindowHeight() - 173;
 			this.setHeight(height+"px");
@@ -92,8 +98,8 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 	 * 
 	 * @param uuid
 	 */
-	public void displayImage(String uuid) {
-		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+	public void displayImage() {
+		
 		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
  			/**
 			 * 
@@ -103,22 +109,25 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 			@Override
  			public InputStream getStream() {
 				
-				try {
-					generateNewHTML(uuid);
-				} catch (IOException e) {
-					e.printStackTrace();
+				File generatedFile = new File("devices/"+loggedInUser.getUserUniqueId()+".html");
+				System.out.println("generatedFile.exists()="+generatedFile.exists());
+				if(!generatedFile.exists()) {
+					try {
+						generateNewHTML();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
-				
  				FileInputStream inputStream = null;
 				try {
-					inputStream = new FileInputStream("devices/"+user.getUserUniqueId()+".html");
+					inputStream = new FileInputStream("devices/"+loggedInUser.getUserUniqueId()+".html");
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				}
 				return inputStream;
  			}
  		}; 
- 		StreamResource streamResource = new StreamResource(streamSource, user.getUserUniqueId()+".html");
+ 		StreamResource streamResource = new StreamResource(streamSource, loggedInUser.getUserUniqueId()+".html");
  		streamResource.setCacheTime(0);
 		browser.setSource(streamResource);
 	}
@@ -129,7 +138,7 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 	 * @param uuid
 	 * @throws IOException
 	 */
-	private void generateNewHTML(String uuid) throws IOException {
+	private void generateNewHTML() throws IOException {
 		// 读取原来的html模板
 		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		String everything = "";
@@ -244,6 +253,7 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 		return os;
 	}
 	
+	private User loggedInUser;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private BrowserFrame browser = new BrowserFrame(null);
 	private User loggedinUser;

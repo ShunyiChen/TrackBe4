@@ -38,6 +38,9 @@ public class RowItemWithOptions extends FlexTableRowItem {
 			device.setItemSettings(e.getValue());
 			ui.settingsService.update(device);
 		});
+		SystemSettings settings = ui.settingsService.findByName("高拍仪");
+		selector.setSelectedItem(settings.getItemSettings());
+		
 		this.removeAllComponents();
 		this.addComponents(name, selector);
 		this.setComponentAlignment(name, Alignment.MIDDLE_LEFT);

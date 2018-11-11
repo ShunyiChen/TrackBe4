@@ -90,25 +90,34 @@ public class TB4Reports {
 	 * Export Report To Pdf File
 	 * 
 	 * @param beans
-	 * @param tranactionUniqueId
+	 * @param userUniqueId
 	 * @param templateFileName
 	 * @param callback
 	 * @throws ReportException
 	 */
-	public void jasperToPDF(List<PrintableBean> beans, int tranactionUniqueId, String templateFileName, Callback callback) throws ReportException {
+	public void jasperToPDF(List<PrintableBean> beans, int userUniqueId, String templateFileName, Callback callback) throws ReportException {
 		FileInputStream inputStream = null;
+		FileOutputStream outputStream = null;//new FileOutputStream(pdf)
 		try {
 			JRDataSource data= new JRBeanCollectionDataSource(beans);  
 			// Preparing parameters
 			inputStream = new FileInputStream("reports/templates/"+templateFileName);
-			JasperReport jasperReport= (JasperReport)JRLoader.loadObject(inputStream);    
+			JasperReport jasperReport = (JasperReport)JRLoader.loadObject(inputStream);    
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, data);
-			File dir = new File("reports/generates/" + tranactionUniqueId);
+			File dir = new File("reports/generates/" + userUniqueId);
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
-			String destFileName3 = dir.getPath() + "/report.pdf";
-			JasperExportManager.exportReportToPdfFile(jasperPrint, destFileName3);
+			String pdf = dir.getPath() + "/report.pdf";
+			outputStream = new FileOutputStream(pdf);
+			JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+			
+			try {
+				outputStream.close();
+				inputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			log.info("Generated a report.");
 			callback.onSuccessful();
 			
@@ -117,14 +126,6 @@ public class TB4Reports {
 			throw new ReportException(e.getMessage());
 		} catch (FileNotFoundException e1) {
 			throw new ReportException(e1.getMessage());
-		} finally {
-			if(inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 	}
 	

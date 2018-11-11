@@ -3,23 +3,35 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>OCX控件测试程序JavaScript</title>
 
-<script language="JavaScript1.2">
+<script language="JavaScript1.2" >
+ 
 
-  window.onload=function(){
-	  Start1_onclick();
-   // console.log("初始化页面触发js函数:我是页面加载完打印的");
-   // funName()
+  function changeResolution(n) {
+	  var str=captrue.vSetResolution(n);
+	  var str= captrue.bStopPlay();
+	  var str= captrue.bStartPlay();
+	  var str = captrue.bSetMode(0); 
+ }
+  
+  function Pause() {
+	  var str=captrue.bPausePlay();
   }
-
+  
   function Start1_onclick()
   {
-        var str=captrue.bStopPlay(); 
-        var str=captrue.vSetResolution(7);
-		    	
-       var str = captrue.bStartPlay();
-	   var str = captrue.bSetMode(0); 
-	   
+	  
+      // var str=captrue.bStopPlay(); 
+      // var str=captrue.vSetResolution(7);
+      // var str = captrue.bStartPlay();
+	  // var str = captrue.bSetMode(0); 
+	  var str = captrue.bStopPlay();
+	  var str = captrue.bStartPlay();	   
   }
+  
+  function restore_onclick(){
+  	var str = captrue.bStartPlay();	
+  }
+  
   function Start2_onclick()
   {
 	  var str=captrue.bStopPlay();
@@ -31,13 +43,13 @@
   }
   //放大
   function myZoomOut()
-  {
-	  captrue.vZoomOut();
+  { 
+	 captrue.vZoomOut();
   }
   //缩小
   function myZoomIn()
   {
-	  captrue.vZoomIn();
+	  captrue.vZoomIn(); 
   }
 
 	function SaveJPG_onclick()
@@ -48,6 +60,7 @@
 		var createDir=captrue.bCreateDir("C:\\temp");
         var str=captrue.bSaveJPG("C:\\temp\\",userUniqueId+"_JPG"+ms);
  	    var str2=captrue.bUpLoadImageEx("C:\\temp\\"+userUniqueId+"_JPG"+ms+".JPG", "10.80.29.27", 8888, "/dlclms/hello",false,false);
+ 	    //var str2=captrue.bUpLoadImageEx("C:\\temp\\"+userUniqueId+"_JPG"+ms+".JPG", "localhost", 8080, "/hello",false,false);
  	    var str3=captrue.bDeleteFileForever("C:\\temp\\"+userUniqueId+"_JPG"+ms+".JPG");
 	
 		//var str=captrue.bSaveJPG("C:\\temp\\",userUniqueId+"_JPG.JPG");
@@ -174,7 +187,11 @@
 	{
 		captrue.vSetExposure(el.value);
 	}
-
+	
+   window.onload=function(){
+	  setTimeout(function(){ Start1_onclick(); }, 1000);
+  }
+	
 </script>
 
 </head>
@@ -187,20 +204,21 @@
 
 </p>
 <form method="POST" action="--WEBBOT-SELF--" name="form1">
-   
+
+   <!--  <input id="abc" type="button" value="启动" name="SaveJPGBtn" onClick="Pause()">-->
   <input type="button" value="拍照" name="SaveJPGBtn" onClick="SaveJPG_onclick()">
   <input type="button" value="放大" name="SaveJPGBtn" onClick="myZoomOut()">
   <input type="button" value="缩小" name="SaveJPGBtn" onClick="myZoomIn()">
  
     <select style="height:25px;width:160px;">
-        <option onclick="vSetResolution(0)" selected>默认值</option>
-		<option onclick="vSetResolution(1)" >320*240</option>
-		<option onclick="vSetResolution(2)" >640*480</option>
-		<option onclick="vSetResolution(3)" >800*600</option>
-		<option onclick="vSetResolution(4)" >1024*768</option>
-		<option onclick="vSetResolution(5)" >1600*1200</option>
-		<option onclick="vSetResolution(6)" >2048*1536</option>
-		<option onclick="vSetResolution(7)" >2592*1944</option>
+        <option onclick="changeResolution(0)" selected>默认值</option>
+		<option onclick="changeResolution(1)" >320*240</option>
+		<option onclick="changeResolution(2)" >640*480</option>
+		<option onclick="changeResolution(3)" >800*600</option>
+		<option onclick="changeResolution(4)" >1024*768</option>
+		<option onclick="changeResolution(5)" >1600*1200</option>
+		<option onclick="changeResolution(6)" >2048*1536</option>
+		<option onclick="changeResolution(7)" >2592*1944</option>
 	</select>
   
   

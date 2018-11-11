@@ -328,7 +328,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 		
 		view.thumbnailGrid().focus();
 		// 加载拍照影像
-		view.capturePane().displayImage(view.uuid());
+//		view.capturePane().displayImage();
 	}
 	
 	/**

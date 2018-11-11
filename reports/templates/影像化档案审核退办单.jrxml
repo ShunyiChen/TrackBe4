@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="348"/>
+	<property name="ireport.y" value="389"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -76,7 +76,7 @@
 			<staticText>
 				<reportElement key="staticText-1" x="59" y="38" width="396" height="49" uuid="f1055085-c5f6-45b3-87d3-f73f439fef5f"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="宋体" size="28" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font fontName="SansSerif" size="28" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[影像化档案审核退办单]]></text>
 			</staticText>
@@ -96,7 +96,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="16"/>
+					<font fontName="SansSerif" size="16" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[机动车所有人：]]></text>
 			</staticText>
@@ -108,7 +108,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="16"/>
+					<font fontName="SansSerif" size="16" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[号牌种类：]]></text>
 			</staticText>
@@ -120,7 +120,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="16"/>
+					<font fontName="SansSerif" size="16" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[中文品牌：]]></text>
 			</staticText>
@@ -132,7 +132,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="16"/>
+					<font fontName="SansSerif" size="16" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[车身颜色：]]></text>
 			</staticText>
@@ -144,7 +144,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="16"/>
+					<font fontName="SansSerif" size="16" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[车辆识别代号：]]></text>
 			</staticText>
@@ -156,19 +156,19 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="16"/>
+					<font fontName="SansSerif" size="16" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[发动机号码：]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-8" x="10" y="232" width="135" height="35" uuid="3d0e51d9-3e5d-4d7b-b903-8f37baf7f236"/>
+				<reportElement key="staticText-8" x="248" y="127" width="93" height="35" uuid="3d0e51d9-3e5d-4d7b-b903-8f37baf7f236"/>
 				<box leftPadding="10">
 					<leftPen lineWidth="1.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="16"/>
+					<font fontName="SansSerif" size="16" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[使用性质：]]></text>
 			</staticText>
@@ -181,7 +181,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="16"/>
+					<font fontName="SansSerif" size="16" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[证件号码：]]></text>
 			</staticText>
@@ -193,7 +193,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="16"/>
+					<font fontName="SansSerif" size="16" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[号牌号码：]]></text>
 			</staticText>
@@ -205,7 +205,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="16"/>
+					<font fontName="SansSerif" size="16" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[车辆型号：]]></text>
 			</staticText>
@@ -218,7 +218,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="宋体" size="14"/>
+					<font fontName="SansSerif" size="14" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{owner}]]></textFieldExpression>
 			</textField>
@@ -231,7 +231,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="14"/>
+					<font fontName="SansSerif" size="14" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{IDNum}]]></textFieldExpression>
 			</textField>
@@ -243,7 +243,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="宋体" size="14"/>
+					<font fontName="SansSerif" size="14" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{plateType}]]></textFieldExpression>
 			</textField>
@@ -255,7 +255,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="14"/>
+					<font fontName="SansSerif" size="14" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{plateNum}]]></textFieldExpression>
 			</textField>
@@ -267,7 +267,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="宋体" size="14"/>
+					<font fontName="SansSerif" size="14" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{chineseBrand}]]></textFieldExpression>
 			</textField>
@@ -279,19 +279,19 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="14"/>
+					<font fontName="SansSerif" size="14" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{modelOfCar}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-7" x="145" y="127" width="380" height="35" uuid="cb534efe-8bc6-4c98-9c6a-97577752c8c8"/>
+				<reportElement key="textField-7" x="145" y="127" width="103" height="35" uuid="cb534efe-8bc6-4c98-9c6a-97577752c8c8"/>
 				<box leftPadding="5">
 					<leftPen lineWidth="1.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="宋体" size="14"/>
+					<font fontName="SansSerif" size="14" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{color}]]></textFieldExpression>
 			</textField>
@@ -303,7 +303,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="宋体" size="14"/>
+					<font fontName="SansSerif" size="14" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{CLSBDH}]]></textFieldExpression>
 			</textField>
@@ -315,31 +315,31 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="宋体" size="14"/>
+					<font fontName="SansSerif" size="14" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{engineNum}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-10" x="145" y="232" width="380" height="35" uuid="f954e4da-c24e-4de9-8516-44865add9484"/>
+				<reportElement key="textField-10" x="341" y="127" width="184" height="35" uuid="f954e4da-c24e-4de9-8516-44865add9484"/>
 				<box leftPadding="5">
 					<leftPen lineWidth="1.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="14"/>
+					<font fontName="SansSerif" size="14" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{useOfNature}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-11" x="10" y="267" width="515" height="122" uuid="837c3ae1-a3e8-4a8a-a1d1-15d6b2640677"/>
+				<reportElement key="textField-11" x="10" y="232" width="515" height="157" uuid="837c3ae1-a3e8-4a8a-a1d1-15d6b2640677"/>
 				<box leftPadding="10" rightPadding="10">
 					<leftPen lineWidth="1.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="宋体" size="24"/>
+					<font fontName="SansSerif" size="24" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA["    上述车辆办理  "
 +$F{busName}
@@ -352,7 +352,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement>
-					<font fontName="宋体" size="18"/>
+					<font fontName="SansSerif" size="18" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{wrongContent}]]></textFieldExpression>
 			</textField>
@@ -364,7 +364,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="16"/>
+					<font fontName="SansSerif" size="16" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[审核人：]]></text>
 			</staticText>
@@ -376,7 +376,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="16"/>
+					<font fontName="SansSerif" size="16" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[审核时间：]]></text>
 			</staticText>
@@ -387,7 +387,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="14"/>
+					<font fontName="SansSerif" size="14" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{verifier}]]></textFieldExpression>
 			</textField>
@@ -398,7 +398,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="14"/>
+					<font fontName="SansSerif" size="14" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{verifytime}]]></textFieldExpression>
 			</textField>
@@ -410,7 +410,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textElement>
-					<font fontName="宋体" size="24"/>
+					<font fontName="SansSerif" size="24" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[   请您按规定补齐资料后，再到我所办理业务。]]></text>
 			</staticText>

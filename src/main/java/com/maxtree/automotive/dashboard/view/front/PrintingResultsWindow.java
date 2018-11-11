@@ -2,6 +2,7 @@ package com.maxtree.automotive.dashboard.view.front;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,10 +58,11 @@ public class PrintingResultsWindow extends Window {
 	private void initComponents() {
 		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		this.setCaption(caption);
-		this.setSizeFull();
 		this.setModal(true);
 		this.setClosable(true);
 		this.setResizable(false);
+		this.setWidth("300px");
+		this.setHeight("120px");
 		this.addCloseListener(e->{
 			closableEvent.onSuccessful();
 		});
@@ -70,13 +72,10 @@ public class PrintingResultsWindow extends Window {
 		radios.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
 		
 		btnReady.addStyleName(ValoTheme.BUTTON_PRIMARY);
-		btnReady.setEnabled(false);
+//		btnReady.setEnabled(false);
 		HorizontalLayout optionsLayout = new HorizontalLayout();
 		optionsLayout.addComponents(Box.createHorizontalBox(10), radios);
 		optionsLayout.setComponentAlignment(radios, Alignment.MIDDLE_LEFT);
-		
-		previewPane.setSizeFull();
-		
     	footer.setSpacing(false);
     	footer.setMargin(false);
     	footer.setWidthUndefined();
@@ -88,16 +87,10 @@ public class PrintingResultsWindow extends Window {
 		main.setSpacing(false);
 		main.setMargin(false);
 		main.setSizeFull();
-    	main.addComponents(optionsLayout,previewPane,footer);
+    	main.addComponents(optionsLayout,footer);
     	main.setComponentAlignment(optionsLayout, Alignment.MIDDLE_CENTER);
-    	main.setComponentAlignment(previewPane, Alignment.TOP_CENTER);
     	main.setComponentAlignment(footer, Alignment.TOP_RIGHT);
-    	
-    	main.setExpandRatio(optionsLayout, 0.1f);
-    	main.setExpandRatio(previewPane, 0.8f);
-    	main.setExpandRatio(footer, 0.1f);
     	this.setContent(main);
-    	
     	btnCancel.addClickListener(e->{
     		close();
     	});
@@ -108,7 +101,6 @@ public class PrintingResultsWindow extends Window {
     	this.addCloseListener(e -> {
     		deleteReportFiles();
     	});
-    	
     	radios.setSelectedItem(options.get(0));
 	}
 	
@@ -135,72 +127,68 @@ public class PrintingResultsWindow extends Window {
 		Callback callback = new Callback() {
 			@Override
 			public void onSuccessful() {
-				generatePreview("reports/generates/"+loggedInUser.getUserUniqueId()+"/report.html","report.html");
+				com.vaadin.server.StreamResource.StreamSource source = new com.vaadin.server.StreamResource.StreamSource() {
+		 			/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+		 			public InputStream getStream() {
+		 				FileInputStream inputStream = null;
+						try {
+							inputStream = new FileInputStream("reports/generates/"+loggedInUser.getUserUniqueId()+"/report.pdf");
+						} catch (FileNotFoundException e) {
+							e.printStackTrace();
+						}
+						return inputStream;
+		 			}
+		 		};
 				
-				opener = new BrowserWindowOpener(PrintUI.class);
-				opener.setFeatures("height=595,width=842,resizable");
-				opener.extend(btnReady);
-				opener.setParameter("htmlFilePath", "reports/generates/"+loggedInUser.getUserUniqueId()+"/report.html");
-				btnReady.setEnabled(true);
+		        // Create the stream resource and give it a file name
+		        String filename = "report.pdf";
+		        StreamResource resource = new StreamResource(source, filename);
+		        
+		        // These settings are not usually necessary. MIME type
+		        // is detected automatically from the file name, but
+		        // setting it explicitly may be necessary if the file
+		        // suffix is not ".pdf".
+		        resource.setMIMEType("application/pdf");
+		        resource.getStream().setParameter(
+		                "Content-Disposition",
+		                "attachment; filename="+filename);
+
+		        // Extend the print button with an opener
+		        // for the PDF resource
+		        opener =  new BrowserWindowOpener(resource);
+		        opener.extend(btnReady);
+				
+				// Update status
+				ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), ui.state().getName("B19"));
+				
+				try {
+					resource.getStreamSource().getStream().close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		};
-		
 		if(trans.getStatus().equals(ui.state().getName("B16"))
 				|| trans.getStatus().equals(ui.state().getName("B17"))) {
 			try {
-				new TB4Reports().jasperToHtml(list, loggedInUser.getUserUniqueId(), "影像化档案审核退办单.jasper", callback);
-				
+				new TB4Reports().jasperToPDF(list, loggedInUser.getUserUniqueId(), "影像化档案审核退办单.jasper", callback);
 			} catch (ReportException e1) {
 				e1.printStackTrace();
 			}
 		}
 		else {
-			
-			// Update status
-			ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(),ui.state().getName("B19"));
-			
 			try {
-				new TB4Reports().jasperToHtml(list, loggedInUser.getUserUniqueId(), "影像化档案审核合格证明书.jasper", callback);
-				
+				new TB4Reports().jasperToPDF(list, loggedInUser.getUserUniqueId(), "影像化档案审核合格证明书.jasper", callback);
 			} catch (ReportException e1) {
 				e1.printStackTrace();
 			}
 		}
-		
-	}
-	
-	/**
-	 * 
-	 * @param filePath
-	 * @param fileName
-	 */
-	private void generatePreview(String filePath, String fileName) {
-		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
- 			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
- 			public InputStream getStream() {
- 				FileInputStream inputStream = null;
-				try {
-					inputStream = new FileInputStream(filePath);
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
-				return inputStream;
- 			}
- 		}; 
- 		StreamResource streamResource = new StreamResource(streamSource, fileName);
- 		streamResource.setCacheTime(0);
-
- 		if(fileName.endsWith("html")) {
- 			BrowserFrame bf = new BrowserFrame(null);
- 			bf.setSource(streamResource);
- 			bf.setSizeFull();
- 			previewPane.setContent(bf);
- 		}
 	}
 	
 	/**
@@ -235,6 +223,6 @@ public class PrintingResultsWindow extends Window {
 	private Callback closableEvent;
 	private HorizontalLayout footer = new HorizontalLayout();
 	private VerticalLayout main = new VerticalLayout();
-	private Panel previewPane = new Panel();
+//	private Panel previewPane = new Panel();
 	
 }

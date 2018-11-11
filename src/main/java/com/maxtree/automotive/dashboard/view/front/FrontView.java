@@ -349,6 +349,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	binder.setBean(editableTrans);
     	
     	resetComponents();
+    	
+    	capturePane.displayImage();
     }
     
     /**
