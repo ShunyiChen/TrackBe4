@@ -192,9 +192,10 @@ public class PrintingResultsWindow extends Window {
 	}
 	
 	/**
-	 * 
+	 * Deleting report file.
 	 */
 	private void deleteReportFiles() {
+		System.gc();
 		new TB4Reports().deleteReportFiles("reports/generates/" + loggedInUser.getUserUniqueId());
 	}
 	

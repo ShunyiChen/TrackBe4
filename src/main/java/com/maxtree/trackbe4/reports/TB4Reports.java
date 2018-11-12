@@ -185,13 +185,13 @@ public class TB4Reports {
 		}
 	}
 	
-	
 	/**
+	 * Deleting file
 	 * 
 	 * @param path
 	 */
 	public void deleteReportFiles(String path) {
-		File removableDir = new File(path);//File("reports/generates/" + tranactionUniqueId);
+		File removableDir = new File(path);
 		if (removableDir.exists()) {
 			try {
 				FileUtils.deleteDirectory(removableDir);

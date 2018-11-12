@@ -113,6 +113,7 @@ public class PrintingFiletagsWindow extends Window {
     			bean.setCLSBDH(trans.getVin());
     			bean.setShelvesNum(trans.getCode());
     			list.add(bean);
+    			
     			printingPDF(list, "上架标签-车.jasper");
     			
     		} else {
@@ -161,11 +162,6 @@ public class PrintingFiletagsWindow extends Window {
 						} catch (FileNotFoundException e) {
 							e.printStackTrace();
 						}
-//						try {
-//							inputStream.close();
-//						} catch (IOException e) {
-//							e.printStackTrace();
-//						}
 						return inputStream;
 		 			}
 		 		}; 
@@ -183,6 +179,16 @@ public class PrintingFiletagsWindow extends Window {
 		                "Content-Disposition",
 		                "attachment; filename="+filename);
 		        resource.setCacheTime(0);
+		        
+		        try {
+					resource.getStreamSource().getStream().close();
+					  resource.getStream().getStream().close();
+					 
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        
 		        // Extend the print button with an opener
 		        // for the PDF resource
 		        opener = new BrowserWindowOpener(resource);
@@ -190,13 +196,6 @@ public class PrintingFiletagsWindow extends Window {
 		        
 				// Update status
 				ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), ui.state().getName("B19"));
-				
-				try {
-					resource.getStreamSource().getStream().close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
 		};
 		try {
@@ -207,9 +206,10 @@ public class PrintingFiletagsWindow extends Window {
 	}
  
 	/**
-	 * 
+	 * Deleting report file
 	 */
 	private void deleteReportFiles() {
+		System.gc();
 		new TB4Reports().deleteReportFiles("reports/generates/" + loggedInUser.getUserUniqueId());
 	}
 	
