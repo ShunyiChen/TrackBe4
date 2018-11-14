@@ -8,6 +8,7 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.Community;
+import com.maxtree.automotive.dashboard.domain.Tenant;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.data.Binder;
@@ -54,41 +55,21 @@ public class EditCommunityWindow extends Window {
 		form.setMargin(false);
 		form.setSizeFull();
 		
-		List<Community> items = ui.communityService.findAll();
-		parentCommunity.setEmptySelectionAllowed(true);
-		parentCommunity.setTextInputAllowed(false);
-		parentCommunity.setCaption("父级社区");
-		parentCommunity.setIcon(VaadinIcons.GROUP);
-		parentCommunity.setItems(items);
-		parentCommunity.addValueChangeListener(e ->{
-			Community community = e.getValue();
-			if (community != null) {
-				groupField.setValue(community.getGroupId()+"");
-				levelField.setValue((community.getLevel() + 1)+"");
-			
-				groupField.setReadOnly(true);
-				levelField.setReadOnly(true);
-			} else {
-				groupField.setValue("");
-				levelField.setValue("");
-				groupField.setReadOnly(false);
-				levelField.setReadOnly(false);
-			}
-			
-		});
-		groupField = new TextField("组编号:");
-		groupField.setIcon(VaadinIcons.CODE);
-		groupField.setReadOnly(false);
-		levelField = new TextField("级别:");
-		levelField.setIcon(VaadinIcons.LEVEL_UP);
-		levelField.setReadOnly(false);
+ 
 		nameField = new TextField("社区名:");
 		nameField.setIcon(VaadinIcons.EDIT);
-		// 设置焦点
+		//设置焦点
 		nameField.focus();
 		descField = new TextField("描述:");
 		descField.setIcon(VaadinIcons.EDIT);
-		form.addComponents(parentCommunity, groupField, levelField, nameField, descField);
+		//社区
+		List<Tenant> lstTenant = ui.tenantService.findAll();
+		tenantNameBox.setEmptySelectionAllowed(false);
+		tenantNameBox.setTextInputAllowed(false);
+		tenantNameBox.setItems(lstTenant);
+		
+		
+		form.addComponents(nameField,descField,tenantNameBox,provinceBox,cityBox, districtBox);
 		HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setSizeFull();
 		buttonPane.setSpacing(false);
@@ -127,15 +108,17 @@ public class EditCommunityWindow extends Window {
 	}
 	
 	private void setComponentSize(int w, int h) {
-		parentCommunity.setWidth(w+"px");
-		groupField.setWidth(w+"px");
-		levelField.setWidth(w+"px");
+		tenantNameBox.setWidth(w+"px");
+		provinceBox.setWidth(w+"px");
+		cityBox.setWidth(w+"px");
+		districtBox.setWidth(w+"px");
 		nameField.setWidth(w+"px");
 		descField.setWidth(w+"px");
 		
-		parentCommunity.setHeight(h+"px");
-		groupField.setHeight(h+"px");
-		levelField.setHeight(h+"px");
+		tenantNameBox.setHeight(h+"px");
+		provinceBox.setHeight(h+"px");
+		cityBox.setHeight(h+"px");
+		districtBox.setHeight(h+"px");
 		nameField.setHeight(h+"px");
 		descField.setHeight(h+"px");
 	}
@@ -146,16 +129,20 @@ public class EditCommunityWindow extends Window {
 	private void bindFields() {
 		// Bind nameField to the Person.name property
 		// by specifying its getter and setter
-		binder.forField(groupField)
-		  .withConverter(new StringToIntegerConverter("请输入一个数字"))
-		  .bind(Community::getGroupId, Community::setGroupId);
-		
-		binder.forField(levelField)
-		  .withConverter(new StringToIntegerConverter("请输入一个数字"))
-		  .bind(Community::getLevel, Community::setLevel);
+//		binder.forField(groupField)
+//		  .withConverter(new StringToIntegerConverter("请输入一个数字"))
+//		  .bind(Community::getGroupId, Community::setGroupId);
+//		
+//		binder.forField(levelField)
+//		  .withConverter(new StringToIntegerConverter("请输入一个数字"))
+//		  .bind(Community::getLevel, Community::setLevel);
 		
 		binder.bind(nameField, Community::getCommunityName, Community::setCommunityName);
 		binder.bind(descField, Community::getCommunityDescription, Community::setCommunityDescription);
+//		binder.bind(tenantNameBox,Community::getTenantName, Community::setTenantName);
+//		binder.bind(provinceBox, Community::getCommunityDescription, Community::setCommunityDescription);
+//		binder.bind(cityBox, Community::getCommunityDescription, Community::setCommunityDescription);
+//		binder.bind(districtBox, Community::getCommunityDescription, Community::setCommunityDescription);
 	}
 	
 	/**
@@ -191,16 +178,10 @@ public class EditCommunityWindow extends Window {
 		return true;
 	}
 	
-	private void selectItem(int communityUniqueID) {
-		ListDataProvider<Community> listDataProvider = (ListDataProvider<Community>) parentCommunity.getDataProvider();
-		for (Community c : listDataProvider.getItems()) {
-			if (c.getCommunityUniqueId() == communityUniqueID) {
-				parentCommunity.setSelectedItem(c);
-				break;
-			}
-		}
-	}
-	
+	/**
+	 * 
+	 * @param callback
+	 */
 	public static void open(Callback2 callback) {
 //        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditCommunityWindow w = new EditCommunityWindow();
@@ -216,17 +197,28 @@ public class EditCommunityWindow extends Window {
         w.center();
     }
 	
+	/**
+	 * 
+	 * @param community
+	 * @param callback
+	 */
 	public static void edit(Community community, Callback callback) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditCommunityWindow w = new EditCommunityWindow();
-        Community r = ui.communityService.findById(community.getCommunityUniqueId());
-        w.community.setCommunityUniqueId(r.getCommunityUniqueId());
+        Community c = ui.communityService.findById(community.getCommunityUniqueId());
+        List<Tenant> items = ui.tenantService.findAll();
+        w.tenantNameBox.setItems(items);
+        for(Tenant t : items) {
+        	if(t.getName().equals(c.getTenantName())) {
+        		w.tenantNameBox.setSelectedItem(t);
+        	}
+        }
+        w.nameField.setValue(c.getCommunityName());
+        w.descField.setValue(c.getCommunityDescription());
+        w.provinceBox.setSelectedItem(c.getProvince());
+        w.cityBox.setSelectedItem(c.getCity());
+        w.districtBox.setSelectedItem(c.getDistrict());
         
-        w.selectItem(community.getCommunityUniqueId());
-        w.groupField.setValue(r.getGroupId()+"");
-        w.levelField.setValue(r.getLevel()+"");
-        w.nameField.setValue(r.getCommunityName());
-        w.descField.setValue(r.getCommunityDescription());
         w.btnAdd.setCaption("保存");
         w.setCaption("编辑社区");
         w.btnAdd.addClickListener(e -> {
@@ -241,11 +233,24 @@ public class EditCommunityWindow extends Window {
         w.center();
     }
 	
-	private ComboBox<Community> parentCommunity = new ComboBox<>();
 	private TextField nameField;
 	private TextField descField;
-	private TextField groupField;
-	private TextField levelField;
+	private ComboBox<Tenant> tenantNameBox = new ComboBox<>();
+	private ComboBox<String> provinceBox = new ComboBox<>();
+	private ComboBox<String> cityBox = new ComboBox<>();
+	private ComboBox<String> districtBox = new ComboBox<>();
+	
+	/*
+    private String communityName;	//社区名称
+	private String communityDescription;//社区描述
+	private String tenantName;// 租户名
+	private String province; // 车辆所在省份
+	private String city; // 车辆所在地级市
+	private String district; // 车辆所在市、县级市
+	 */
+	
+	
+	
 	private Button btnAdd;
 	private Binder<Community> binder = new Binder<>();
 	private Community community = new Community();

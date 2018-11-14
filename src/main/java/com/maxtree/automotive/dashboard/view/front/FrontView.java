@@ -23,6 +23,7 @@ import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Car;
+import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.maxtree.automotive.dashboard.domain.Notification;
@@ -470,7 +471,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
+//        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
         	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
@@ -542,7 +543,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
+//        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
         	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
@@ -602,6 +603,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	// 需要审档（一级）流程
     	else if (businessTypePane.getSelected().getCheckLevel().equals("一级审档")) {
+    		Community myCommunity = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -609,7 +611,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
+        	editableTrans.setLocationCode(myCommunity.getProvince()+","+myCommunity.getCity()+","+myCommunity.getDistrict());
         	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
@@ -680,6 +682,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	// 需要审档（二级）流程
     	else if (businessTypePane.getSelected().getCheckLevel().equals("二级审档")) {
+    		Community myCommunity = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -687,7 +690,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
+        	editableTrans.setLocationCode(myCommunity.getProvince()+","+myCommunity.getCity()+","+myCommunity.getDistrict());
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());

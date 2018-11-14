@@ -25,7 +25,7 @@ import com.maxtree.automotive.dashboard.exception.DataException;
 @Component
 public class CommunityService {
 
-private static final Logger log = LoggerFactory.getLogger(CommunityService.class);
+	private static final Logger log = LoggerFactory.getLogger(CommunityService.class);
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -88,8 +88,8 @@ private static final Logger log = LoggerFactory.getLogger(CommunityService.class
 	 * @param community
 	 */
 	public void update(Community community) {
-		String sql = "UPDATE COMMUNITIES SET COMMUNITYNAME=?,COMMUNITYDESCRIPTION=?,GROUPID=?,LEVEL=? WHERE COMMUNITYUNIQUEID=?";
-	 	int opt = jdbcTemplate.update(sql, new Object[] { community.getCommunityName(),community.getCommunityDescription(),community.getGroupId(),community.getLevel(),community.getCommunityUniqueId()});
+		String sql = "UPDATE COMMUNITIES SET COMMUNITYNAME=?,COMMUNITYDESCRIPTION=?,TENANTNAME=?,PROVINCE=?,CITY=?,DISTRICT=? WHERE COMMUNITYUNIQUEID=?";
+	 	int opt = jdbcTemplate.update(sql, new Object[] { community.getCommunityName(),community.getCommunityDescription(),community.getTenantName(),community.getProvince(),community.getCity(),community.getDistrict(),community.getCommunityUniqueId()});
 	 	log.info("Updated row "+opt);
 	}
 	
@@ -133,7 +133,7 @@ private static final Logger log = LoggerFactory.getLogger(CommunityService.class
 	 */
 	public int insert(Community community) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		String sql = "INSERT INTO COMMUNITIES(COMMUNITYNAME,COMMUNITYDESCRIPTION,GROUPID,LEVEL) VALUES(?,?,?,?)";
+		String sql = "INSERT INTO COMMUNITIES(COMMUNITYNAME,COMMUNITYDESCRIPTION,TENANTNAME,PROVINCE,CITY,DISTRICT) VALUES(?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
@@ -141,8 +141,10 @@ private static final Logger log = LoggerFactory.getLogger(CommunityService.class
 						sql, new String[] {"communityuniqueid"});
 				ps.setString(1, community.getCommunityName());
 				ps.setString(2, community.getCommunityDescription());
-				ps.setInt(3, community.getGroupId());
-				ps.setInt(4, community.getLevel());
+				ps.setString(3, community.getTenantName());
+				ps.setString(4, community.getProvince());
+				ps.setString(5, community.getCity());
+				ps.setString(6, community.getDistrict());
 				return ps;
 			}
 			

@@ -31,6 +31,7 @@ import com.maxtree.automotive.dashboard.service.PermissionService;
 import com.maxtree.automotive.dashboard.service.QueueService;
 import com.maxtree.automotive.dashboard.service.RoleService;
 import com.maxtree.automotive.dashboard.service.SystemSettingsService;
+import com.maxtree.automotive.dashboard.service.TenantService;
 import com.maxtree.automotive.dashboard.service.SiteService;
 import com.maxtree.automotive.dashboard.service.TransactionService;
 import com.maxtree.automotive.dashboard.service.TransitionService;
@@ -113,7 +114,8 @@ public final class DashboardUI extends UI {
 	public EmbeddedServerService embeddedServerService;
 	@Autowired
 	public CarService carService;
-	
+	@Autowired
+	public TenantService tenantService;
 	
 	
 	private StateHelper state = null;

@@ -26,6 +26,7 @@ import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Car;
+import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.maxtree.automotive.dashboard.domain.Message;
@@ -600,6 +601,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	}
     	//新车注册流程
     	if (businessTypePane.getSelected().getName().contains("注册登记")) {
+    		Community myCommunity = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -607,7 +609,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
+        	editableTrans.setLocationCode(myCommunity.getProvince()+","+myCommunity.getCity()+","+myCommunity.getDistrict());
         	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
@@ -648,6 +650,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     			Notifications.warning("上架号不存在！请录入注册登记业务,确保先生成上架号。");
     			return;
     		}
+    		Community myCommunity = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -655,7 +658,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
+        	editableTrans.setLocationCode(myCommunity.getProvince()+","+myCommunity.getCity()+","+myCommunity.getDistrict());
         	editableTrans.setUuid(uuid);
         	editableTrans.setCode(code);
         	editableTrans.setCreator(loggedInUser.getUserName());

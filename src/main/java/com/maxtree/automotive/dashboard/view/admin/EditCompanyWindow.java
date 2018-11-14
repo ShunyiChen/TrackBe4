@@ -155,9 +155,9 @@ public class EditCompanyWindow extends Window {
 		// by specifying its getter and setter
 		binder.bind(nameField, Company::getCompanyName, Company::setCompanyName);
 		binder.bind(categorySelector, Company::getCategory, Company::setCategory);
-		binder.bind(provinceSelector, Company::getProvince, Company::setProvince);
-		binder.bind(citySelector, Company::getCity, Company::setCity);
-		binder.bind(districtSelector, Company::getDistrict, Company::setDistrict);
+//		binder.bind(provinceSelector, Company::getProvince, Company::setProvince);
+//		binder.bind(citySelector, Company::getCity, Company::setCity);
+//		binder.bind(districtSelector, Company::getDistrict, Company::setDistrict);
 		binder.bind(addrField, Company::getAddress, Company::setAddress);
 	}
 	
@@ -171,15 +171,15 @@ public class EditCompanyWindow extends Window {
 	        2, 20)) .bind(Company::getCompanyName, Company::setCompanyName);
 		
 		
-		binder.forField(provinceSelector).withValidator(new StringLengthValidator(
-		        "省长度范围在2~20个字符",
-		        2, 20)) .bind(Company::getProvince, Company::setProvince);
-		binder.forField(citySelector).withValidator(new StringLengthValidator(
-		        "市长度范围在0~20个字符",
-		        0, 20)) .bind(Company::getCity, Company::setCity);
-		binder.forField(districtSelector).withValidator(new StringLengthValidator(
-		        "区长度范围在0~20个字符",
-		        0, 20)) .bind(Company::getDistrict, Company::setDistrict);
+//		binder.forField(provinceSelector).withValidator(new StringLengthValidator(
+//		        "省长度范围在2~20个字符",
+//		        2, 20)) .bind(Company::getProvince, Company::setProvince);
+//		binder.forField(citySelector).withValidator(new StringLengthValidator(
+//		        "市长度范围在0~20个字符",
+//		        0, 20)) .bind(Company::getCity, Company::setCity);
+//		binder.forField(districtSelector).withValidator(new StringLengthValidator(
+//		        "区长度范围在0~20个字符",
+//		        0, 20)) .bind(Company::getDistrict, Company::setDistrict);
 		
 		
 		// Validating Field Values
@@ -210,12 +210,12 @@ public class EditCompanyWindow extends Window {
 			nameField.setComponentError(nameField.getErrorMessage());
 			return false;
 		}
-		if (StringUtils.isEmpty(company.getProvince())) {
-			Notification notification = new Notification("提示：", "省不能为空", Type.WARNING_MESSAGE);
-			notification.setDelayMsec(2000);
-			notification.show(Page.getCurrent());
-			return false;
-		}
+//		if (StringUtils.isEmpty(company.getProvince())) {
+//			Notification notification = new Notification("提示：", "省不能为空", Type.WARNING_MESSAGE);
+//			notification.setDelayMsec(2000);
+//			notification.show(Page.getCurrent());
+//			return false;
+//		}
 		if (provinceSelector.getErrorMessage() != null) {
 			provinceSelector.setComponentError(provinceSelector.getErrorMessage());
 			return false;
@@ -255,9 +255,9 @@ public class EditCompanyWindow extends Window {
         		String name3 = w.districtSelector.getValue();
         		String code3 = ui.dataItemService.findCodeByName(name3);
         		w.company.setCategory(w.categorySelector.getValue().trim());
-        		w.company.setProvince(code1);
-        		w.company.setCity(code2);
-        		w.company.setDistrict(code3);
+//        		w.company.setProvince(code1);
+//        		w.company.setCity(code2);
+//        		w.company.setDistrict(code3);
         		w.company.setCommunityUniqueId(w.communitySelector.getValue() == null?0:w.communitySelector.getValue().getCommunityUniqueId());
         		w.company.setHasStoreHouse(w.hasStore.getValue().equals("是")?1:0);
         		w.company.setIgnoreChecker(w.hasChecker.getValue().equals("是")?1:0);
@@ -282,17 +282,17 @@ public class EditCompanyWindow extends Window {
         w.selectItem(c.getCommunityUniqueId());
         w.company.setCompanyUniqueId(c.getCompanyUniqueId());
         w.nameField.setValue(c.getCompanyName());
-        String code1 = company.getProvince();
-        String name1 = ui.dataItemService.findNameByCode(code1);
-        String code2 = company.getCity();
-        String name2 = ui.dataItemService.findNameByCode(code2);
-        String code3 = company.getDistrict();
-        String name3 = ui.dataItemService.findNameByCode(code3);
+//        String code1 = company.getProvince();
+//        String name1 = ui.dataItemService.findNameByCode(code1);
+//        String code2 = company.getCity();
+//        String name2 = ui.dataItemService.findNameByCode(code2);
+//        String code3 = company.getDistrict();
+//        String name3 = ui.dataItemService.findNameByCode(code3);
         
         w.categorySelector.setSelectedItem(c.getCategory().trim());
-        w.provinceSelector.setSelectedItem(name1);
-        w.citySelector.setSelectedItem(name2);
-        w.districtSelector.setSelectedItem(name3);
+//        w.provinceSelector.setSelectedItem(name1);
+//        w.citySelector.setSelectedItem(name2);
+//        w.districtSelector.setSelectedItem(name3);
         w.hasStore.setSelectedItem(c.getHasStoreHouse()==1?"是":"否");
         w.hasChecker.setSelectedItem(c.getIgnoreChecker()==1?"是":"否");
         w.addrField.setValue(c.getAddress() == null? "":c.getAddress());
@@ -307,9 +307,9 @@ public class EditCompanyWindow extends Window {
         		String name33 = w.districtSelector.getValue();
         		String code33 = ui.dataItemService.findCodeByName(name33);
         		w.company.setCategory(w.categorySelector.getValue().trim());
-        		w.company.setProvince(code11);
-        		w.company.setCity(code22);
-        		w.company.setDistrict(code33);
+//        		w.company.setProvince(code11);
+//        		w.company.setCity(code22);
+//        		w.company.setDistrict(code33);
         		w.company.setEmployees(c.getEmployees());
         		w.company.setCommunityUniqueId(w.communitySelector.getValue() == null?0:w.communitySelector.getValue().getCommunityUniqueId());
         		w.company.setHasStoreHouse(w.hasStore.getValue().equals("是")?1:0);

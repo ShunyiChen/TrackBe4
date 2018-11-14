@@ -27,7 +27,6 @@ import com.vaadin.ui.VerticalLayout;
 /**
  * 
  * @author chens
- *
  */
 public class CommunityView extends ContentView {
 
@@ -50,7 +49,7 @@ public class CommunityView extends ContentView {
 		main.setSpacing(false);
 		main.setMargin(false);
 		
-		GridColumn[] columns = {new GridColumn("社区名",130), new GridColumn("描述",220), new GridColumn("组",70),new GridColumn("查询级别",80),new GridColumn("机构数",70),new GridColumn("", 20)}; 
+		GridColumn[] columns = {new GridColumn("社区名",130), new GridColumn("描述",220), new GridColumn("租户",70),new GridColumn("省",80),new GridColumn("市",80),new GridColumn("区/县",80),new GridColumn("机构数",70),new GridColumn("", 20)}; 
 		List<CustomGridRow> data = new ArrayList<>();
 		List<Community> list = ui.communityService.findAll();
 		for (Community c : list) {
@@ -183,43 +182,39 @@ public class CommunityView extends ContentView {
 				}
 			});
 			
-			if (community.getLevel() > 1) {
-				menu.addItem("从列表删除", new Command() {
-					/**
-					 * 
-					 */
-					private static final long serialVersionUID = 1L;
+			menu.addItem("从列表删除", new Command() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
 
-					@Override
-					public void menuSelected(MenuItem selectedItem) {
+				@Override
+				public void menuSelected(MenuItem selectedItem) {
+					
+					if (loggedInUser.isPermitted(PermissionCodes.G3)) {
 						
-						if (loggedInUser.isPermitted(PermissionCodes.G3)) {
-							
-							Callback event = new Callback() {
+						Callback event = new Callback() {
 
-								@Override
-								public void onSuccessful() {
-									try {
-										ui.communityService.delete(community.getCommunityUniqueId());
-									} catch (DataException e) {
-										e.printStackTrace();
-									}
-									grid.deleteRow(community.getCommunityUniqueId());
+							@Override
+							public void onSuccessful() {
+								try {
+									ui.communityService.delete(community.getCommunityUniqueId());
+								} catch (DataException e) {
+									e.printStackTrace();
 								}
-							};
-							MessageBox.showMessage("提示", "请确定是否删除该社区。", MessageBox.WARNING, event, "删除");
-							
-						} else {
-							Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
-						}
+								grid.deleteRow(community.getCommunityUniqueId());
+							}
+						};
+						MessageBox.showMessage("提示", "请确定是否删除该社区。", MessageBox.WARNING, event, "删除");
+						
+					} else {
+						Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
 					}
-				});
-			}
-			
+				}
+			});
 			menu.open(e.getClientX(), e.getClientY());
 		});
-		
-		return new Object[] {community.getCommunityName(), community.getCommunityDescription(), community.getGroupId(), community.getLevel(),community.getCompanies().size(),img,community.getCommunityUniqueId()};
+		return new Object[] {community.getCommunityName(),community.getCommunityDescription(),community.getTenantName(),community.getProvince(),community.getCity(),community.getDistrict(),community.getCompanies().size(),img,community.getCommunityUniqueId()};
 	}
 	
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();

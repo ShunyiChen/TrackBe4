@@ -73,8 +73,7 @@ public class CompanyService {
 	 */
 	public int create(Company company) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		String sql = "INSERT INTO COMPANIES(COMMUNITYUNIQUEID,COMPANYNAME,PROVINCE,CITY,DISTRICT,ADDRESS,HASSTOREHOUSE,STOREHOUSENAME,IGNORECHECKER,CATEGORY) VALUES(?,?,?,?,?,?,?,?,?,?)";
-		
+		String sql = "INSERT INTO COMPANIES(COMMUNITYUNIQUEID,COMPANYNAME,ADDRESS,HASSTOREHOUSE,STOREHOUSENAME,IGNORECHECKER,CATEGORY) VALUES(?,?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -83,14 +82,11 @@ public class CompanyService {
 						sql, new String[] {"companyuniqueid"});
 				ps.setInt(1, company.getCommunityUniqueId());
 				ps.setString(2, company.getCompanyName());
-				ps.setString(3, company.getProvince());
-				ps.setString(4, company.getCity());
-				ps.setString(5, company.getDistrict());
-				ps.setString(6, company.getAddress());
-				ps.setInt(7, company.getHasStoreHouse());
-				ps.setString(8, company.getStorehouseName());
-				ps.setInt(9, company.getIgnoreChecker());
-				ps.setString(10, company.getCategory());
+				ps.setString(3, company.getAddress());
+				ps.setInt(4, company.getHasStoreHouse());
+				ps.setString(5, company.getStorehouseName());
+				ps.setInt(6, company.getIgnoreChecker());
+				ps.setString(7, company.getCategory());
 				return ps;
 			}
 			
@@ -114,8 +110,8 @@ public class CompanyService {
 			jdbcTemplate.update(Sql2, new Object[] {u.getCommunityUniqueId(), u.getCompanyUniqueId(), u.getCompanyName(), u.getUserUniqueId()});
 		}
 		
-		String sql = "UPDATE COMPANIES SET COMMUNITYUNIQUEID=?,COMPANYNAME=?,PROVINCE=?,CITY=?,DISTRICT=?,ADDRESS=?,HASSTOREHOUSE=?,STOREHOUSENAME=?,IGNORECHECKER=?,CATEGORY=? WHERE COMPANYUNIQUEID=?";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {company.getCommunityUniqueId(), company.getCompanyName(),company.getProvince(),company.getCity(),company.getDistrict(), company.getAddress(), company.getHasStoreHouse(),company.getStorehouseName(),company.getIgnoreChecker(),company.getCategory(),company.getCompanyUniqueId()});
+		String sql = "UPDATE COMPANIES SET COMMUNITYUNIQUEID=?,COMPANYNAME=?,ADDRESS=?,HASSTOREHOUSE=?,STOREHOUSENAME=?,IGNORECHECKER=?,CATEGORY=? WHERE COMPANYUNIQUEID=?";
+	 	int opt = jdbcTemplate.update(sql, new Object[] {company.getCommunityUniqueId(), company.getCompanyName(),company.getAddress(), company.getHasStoreHouse(),company.getStorehouseName(),company.getIgnoreChecker(),company.getCategory(),company.getCompanyUniqueId()});
 	 	log.info("Updated row "+opt);
 	}
 	

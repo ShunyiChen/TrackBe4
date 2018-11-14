@@ -182,24 +182,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         searchbar.setSpacing(false);
         searchbar.setMargin(false);
         searchbar.setWidthUndefined();
-        communityBox.setWidth("100px");
-        communityBox.setHeight("30px");
-        communityBox.setEmptySelectionAllowed(false);
         Community current = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
-        List<Community> list = ui.communityService.findAll();
-        List<Community> items = new ArrayList<Community>();
-        for(Community c : list) {
-        	if(current.getGroupId() == c.getGroupId()
-        			&& current.getLevel() <= c.getLevel()) {
-        		items.add(c);
-        	}
-        	if(current.getCommunityUniqueId() == c.getCommunityUniqueId()) {
-        		current = c;
-        	}
-        }
-        communityBox.setItems(items);
-        communityBox.setSelectedItem(current);
-        communityBox.setHeight("30px");
         keywordField.setWidth("400px");
         keywordField.setHeight("30px");
         keywordField.setPlaceholder("请输入车牌号\\车架号\\业务流水号");
@@ -246,22 +229,20 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         radio.addValueChangeListener(e ->{
         	if(e.getValue().equals("模糊查询")) {
         		searchbar.removeAllComponents();
-                searchbar.addComponents(radio,textLabel,communityBox,Box.createHorizontalBox(3),keywordField,Box.createHorizontalBox(3),searchButton);
+                searchbar.addComponents(radio,textLabel,Box.createHorizontalBox(3),keywordField,Box.createHorizontalBox(3),searchButton);
                 searchbar.setComponentAlignment(radio, Alignment.MIDDLE_LEFT);
-                searchbar.setComponentAlignment(communityBox, Alignment.MIDDLE_LEFT);
                 searchbar.setComponentAlignment(keywordField, Alignment.MIDDLE_LEFT);
                 searchbar.setComponentAlignment(searchButton, Alignment.MIDDLE_LEFT);
                 searchbar.setComponentAlignment(textLabel, Alignment.MIDDLE_LEFT);
         	} 
         	else {
         		searchbar.removeAllComponents();
-                searchbar.addComponents(radio,textLabel,communityBox,
+                searchbar.addComponents(radio,textLabel,
                 		Box.createHorizontalBox(3),plateTypeLabel,plateTypeField,
                 		Box.createHorizontalBox(3),plateNumberLabel,plateNumberTitle,plateNumberField,
                 		Box.createHorizontalBox(3),vinLabel,vinField,
                 		Box.createHorizontalBox(3),searchButton);
                 searchbar.setComponentAlignment(radio, Alignment.MIDDLE_LEFT);
-                searchbar.setComponentAlignment(communityBox, Alignment.MIDDLE_LEFT);
                 searchbar.setComponentAlignment(textLabel, Alignment.MIDDLE_LEFT);
                 searchbar.setComponentAlignment(plateTypeLabel, Alignment.MIDDLE_LEFT);
                 searchbar.setComponentAlignment(plateTypeField, Alignment.MIDDLE_LEFT);
@@ -289,23 +270,23 @@ public class SearchView extends Panel implements View, FrontendViewIF{
      * 
      */
     private void doSearch() {
-    	String communityName = communityBox.getSelectedItem().get().getCommunityName();
-		if(StringUtils.isEmpty(communityName)) {
-			Notifications.warning("没有可用的社区选项。");
-			return;
-		}
-    	if(radio.getValue().equals("基本查询")) {
-    		grid.setCommunityName(communityName);
-    		grid.setPlateType(plateTypeField.getValue());
-    		grid.setPlateNumber(plateNumberField.getValue());
-    		grid.setVin(vinField.getValue());
-    		grid.executeByPlateNumberOrVIN();
-    	}
-    	else {
-			grid.setCommunityName(communityName);
-        	grid.setKeyword(keywordField.getValue());
-        	grid.executeByKeyword();
-    	}
+//    	String communityName = communityBox.getSelectedItem().get().getCommunityName();
+//		if(StringUtils.isEmpty(communityName)) {
+//			Notifications.warning("没有可用的社区选项。");
+//			return;
+//		}
+//    	if(radio.getValue().equals("基本查询")) {
+//    		grid.setCommunityName(communityName);
+//    		grid.setPlateType(plateTypeField.getValue());
+//    		grid.setPlateNumber(plateNumberField.getValue());
+//    		grid.setVin(vinField.getValue());
+//    		grid.executeByPlateNumberOrVIN();
+//    	}
+//    	else {
+//			grid.setCommunityName(communityName);
+//        	grid.setKeyword(keywordField.getValue());
+//        	grid.executeByKeyword();
+//    	}
     }
     
     /**
@@ -455,7 +436,6 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     
     
     private RadioButtonGroup<String> radio = new RadioButtonGroup<>(null);
-    private ComboBox<Community> communityBox = new ComboBox<Community>();// community box
     private ComboBox<String> plateTypeField = new ComboBox<>(); //号牌种类
     private TextField plateNumberField = new TextField();//号牌号码
     private TextField vinField = new TextField();//车辆识别代号
