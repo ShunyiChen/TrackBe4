@@ -8,14 +8,13 @@ import org.springframework.util.StringUtils;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.data.Address;
-import com.maxtree.automotive.dashboard.data.Yaml;
+import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Company;
+import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.data.Binder;
-import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
@@ -25,12 +24,17 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Notification.Type;
 
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class EditCompanyWindow extends Window {
 
 	/**
@@ -56,33 +60,35 @@ public class EditCompanyWindow extends Window {
 		form.setSpacing(false);
 		form.setMargin(false);
 		form.setSizeFull();
-		List<Community> items = ui.communityService.findAll();
-		communitySelector.setCaption("加入社区:");
+		communities = ui.communityService.findAll();
 		communitySelector.setEmptySelectionAllowed(true);
 		communitySelector.setTextInputAllowed(false);
 		communitySelector.setIcon(VaadinIcons.GROUP);
-		communitySelector.setItems(items);
+		communitySelector.setItems(communities);
 		
-		nameField = new TextField("机构名:");
+		
 		nameField.setIcon(VaadinIcons.EDIT);
 		nameField.focus(); // 设置焦点
-		addrField = new TextField("详细地址:");
-		addrField.setIcon(VaadinIcons.EDIT);
+		addrField.setIcon(VaadinIcons.BUILDING);
 		
-		categorySelector.setItems("车管所","二手车","4S店");
+		List<String> lst = ui.companyCategoryService.findAll();
+		categorySelector.setEmptySelectionAllowed(false);
+		categorySelector.setTextInputAllowed(false);
+		categorySelector.setItems(lst);
+		categorySelector.setIcon(VaadinIcons.TABLE);
 		
-		Address addr = Yaml.readAddress();
-		provinceSelector.setItems(addr.getProvince());
-		citySelector.setItems(addr.getCity());
-		districtSelector.setItems(addr.getDistrict());
+		frameNumbers = ui.frameService.findAllStorehouse();
+		storeSelector.setEmptySelectionAllowed(true);
+		storeSelector.setTextInputAllowed(false);
+		storeSelector.setItems(frameNumbers);
+		storeSelector.setIcon(VaadinIcons.STORAGE);
 		
-		hasStore.setEmptySelectionAllowed(false);
-		hasStore.setTextInputAllowed(false);
-		hasStore.setSelectedItem("是");
-		hasChecker.setEmptySelectionAllowed(false);
-		hasChecker.setTextInputAllowed(false);
-		hasChecker.setSelectedItem("是");
-		form.addComponents(nameField,categorySelector,provinceSelector,citySelector,districtSelector,addrField,communitySelector,hasStore,hasChecker);
+		qcsupportSelector.setEmptySelectionAllowed(false);
+		qcsupportSelector.setTextInputAllowed(false);
+		qcsupportSelector.setSelectedItem("支持");
+		qcsupportSelector.setIcon(VaadinIcons.USER_CHECK);
+		
+		form.addComponents(communitySelector,nameField,addrField,categorySelector,storeSelector,qcsupportSelector);
 		HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setSizeFull();
 		buttonPane.setSpacing(false);
@@ -130,21 +136,15 @@ public class EditCompanyWindow extends Window {
 		addrField.setWidth(w+"px");
 		communitySelector.setWidth(w+"px");
 		categorySelector.setWidth(w+"px");
-		provinceSelector.setWidth(w+"px");
-		citySelector.setWidth(w+"px");
-		districtSelector.setWidth(w+"px");
-		hasStore.setWidth(w+"px");
-		hasChecker.setWidth(w+"px");
+		storeSelector.setWidth(w+"px");
+		qcsupportSelector.setWidth(w+"px");
 		
 		nameField.setHeight(h+"px");
 		addrField.setHeight(h+"px");
 		communitySelector.setHeight(h+"px");
 		categorySelector.setHeight(h+"px");
-		provinceSelector.setHeight(h+"px");
-		citySelector.setHeight(h+"px");
-		districtSelector.setHeight(h+"px");
-		hasStore.setHeight(h+"px");
-		hasChecker.setHeight(h+"px");
+		storeSelector.setHeight(h+"px");
+		qcsupportSelector.setHeight(h+"px");
 	}
 	
 	/**
@@ -154,7 +154,7 @@ public class EditCompanyWindow extends Window {
 		// Bind nameField to the Person.name property
 		// by specifying its getter and setter
 		binder.bind(nameField, Company::getCompanyName, Company::setCompanyName);
-		binder.bind(categorySelector, Company::getCategory, Company::setCategory);
+//		binder.bind(categorySelector, Company::getCategory, Company::setCategory);
 //		binder.bind(provinceSelector, Company::getProvince, Company::setProvince);
 //		binder.bind(citySelector, Company::getCity, Company::setCity);
 //		binder.bind(districtSelector, Company::getDistrict, Company::setDistrict);
@@ -195,15 +195,15 @@ public class EditCompanyWindow extends Window {
 	private boolean checkEmptyValues() {
 		
 		if (StringUtils.isEmpty(company.getCompanyName())) {
-			Notification notification = new Notification("提示：", "机构名不能为空", Type.WARNING_MESSAGE);
-			notification.setDelayMsec(2000);
-			notification.show(Page.getCurrent());
+			Notifications.warning("公司名不能为空");
 			return false;
 		}
-		if (StringUtils.isEmpty(company.getCategory())) {
-			Notification notification = new Notification("提示：", "类别不能为空", Type.WARNING_MESSAGE);
-			notification.setDelayMsec(2000);
-			notification.show(Page.getCurrent());
+		else if (StringUtils.isEmpty(categorySelector.getValue())) {
+			Notifications.warning("类别不能为空");
+			return false;
+		}
+		else if (StringUtils.isEmpty(communitySelector.getValue())) {
+			Notifications.warning("社区不能为空");
 			return false;
 		}
 		if (nameField.getErrorMessage() != null) {
@@ -216,26 +216,7 @@ public class EditCompanyWindow extends Window {
 //			notification.show(Page.getCurrent());
 //			return false;
 //		}
-		if (provinceSelector.getErrorMessage() != null) {
-			provinceSelector.setComponentError(provinceSelector.getErrorMessage());
-			return false;
-		}
 		return true;
-	}
-	
-	/**
-	 * 
-	 * @param communityUniqueID
-	 */
-	private void selectItem(int communityUniqueID) {
-		communitySelector.setSelectedItem(null);
-		ListDataProvider<Community> listDataProvider = (ListDataProvider<Community>) communitySelector.getDataProvider();
-		for (Community c : listDataProvider.getItems()) {
-			if (c.getCommunityUniqueId() == communityUniqueID) {
-				communitySelector.setSelectedItem(c);
-				break;
-			}
-		}
 	}
 	
 	/**
@@ -248,20 +229,11 @@ public class EditCompanyWindow extends Window {
         w.btnAdd.setCaption("添加");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
-        		String name1 = w.provinceSelector.getValue();
-        		String code1 = ui.dataItemService.findCodeByName(name1);
-        		String name2 = w.citySelector.getValue();
-        		String code2 = ui.dataItemService.findCodeByName(name2);
-        		String name3 = w.districtSelector.getValue();
-        		String code3 = ui.dataItemService.findCodeByName(name3);
         		w.company.setCategory(w.categorySelector.getValue().trim());
-//        		w.company.setProvince(code1);
-//        		w.company.setCity(code2);
-//        		w.company.setDistrict(code3);
         		w.company.setCommunityUniqueId(w.communitySelector.getValue() == null?0:w.communitySelector.getValue().getCommunityUniqueId());
-        		w.company.setHasStoreHouse(w.hasStore.getValue().equals("是")?1:0);
-        		w.company.setIgnoreChecker(w.hasChecker.getValue().equals("是")?1:0);
-        		int companyuniqueid = ui.companyService.create(w.company);
+        		w.company.setStorehouseName(w.storeSelector.getValue().getStorehouseName());
+        		w.company.setQcsupport(w.qcsupportSelector.getValue().equals("支持")?true:false);
+        		int companyuniqueid = ui.companyService.insert(w.company);
     			w.close();
     			callback.onSuccessful(companyuniqueid);
         	}
@@ -279,41 +251,30 @@ public class EditCompanyWindow extends Window {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditCompanyWindow w = new EditCompanyWindow();
         Company c = ui.companyService.findById(company.getCompanyUniqueId());
-        w.selectItem(c.getCommunityUniqueId());
         w.company.setCompanyUniqueId(c.getCompanyUniqueId());
         w.nameField.setValue(c.getCompanyName());
-//        String code1 = company.getProvince();
-//        String name1 = ui.dataItemService.findNameByCode(code1);
-//        String code2 = company.getCity();
-//        String name2 = ui.dataItemService.findNameByCode(code2);
-//        String code3 = company.getDistrict();
-//        String name3 = ui.dataItemService.findNameByCode(code3);
-        
-        w.categorySelector.setSelectedItem(c.getCategory().trim());
-//        w.provinceSelector.setSelectedItem(name1);
-//        w.citySelector.setSelectedItem(name2);
-//        w.districtSelector.setSelectedItem(name3);
-        w.hasStore.setSelectedItem(c.getHasStoreHouse()==1?"是":"否");
-        w.hasChecker.setSelectedItem(c.getIgnoreChecker()==1?"是":"否");
         w.addrField.setValue(c.getAddress() == null? "":c.getAddress());
+        for(Community community : w.communities) {
+        	if(c.getCommunityUniqueId() == community.getCommunityUniqueId())
+        		w.communitySelector.setSelectedItem(community);
+        }
+        w.categorySelector.setSelectedItem(c.getCategory());
+        w.qcsupportSelector.setSelectedItem(c.getQcsupport()?"支持":"不支持");
+        for(FrameNumber fn : w.frameNumbers) {
+        	if(fn.getStorehouseName().equals(c.getStorehouseName())) {
+        		 w.storeSelector.setSelectedItem(fn);
+        	}
+        }
         w.btnAdd.setCaption("保存");
         w.setCaption("编辑机构");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
-        		String name11 = w.provinceSelector.getValue();
-        		String code11 = ui.dataItemService.findCodeByName(name11);
-        		String name22 = w.citySelector.getValue();
-        		String code22 = ui.dataItemService.findCodeByName(name22);
-        		String name33 = w.districtSelector.getValue();
-        		String code33 = ui.dataItemService.findCodeByName(name33);
+        		 
         		w.company.setCategory(w.categorySelector.getValue().trim());
-//        		w.company.setProvince(code11);
-//        		w.company.setCity(code22);
-//        		w.company.setDistrict(code33);
         		w.company.setEmployees(c.getEmployees());
         		w.company.setCommunityUniqueId(w.communitySelector.getValue() == null?0:w.communitySelector.getValue().getCommunityUniqueId());
-        		w.company.setHasStoreHouse(w.hasStore.getValue().equals("是")?1:0);
-        		w.company.setIgnoreChecker(w.hasChecker.getValue().equals("是")?1:0);
+        		w.company.setStorehouseName(w.storeSelector.getValue().getStorehouseName());
+        		w.company.setQcsupport(w.qcsupportSelector.getValue().equals("支持")?true:false);
     			ui.companyService.update(w.company);
     			w.close();
     			callback.onSuccessful();
@@ -323,16 +284,16 @@ public class EditCompanyWindow extends Window {
         UI.getCurrent().addWindow(w);
         w.center();
     }
-	
+	//社区
+	private ComboBox<Community> communitySelector = new ComboBox<Community>("选择社区");
+	private TextField nameField = new TextField("机构名:");
+	private TextField addrField = new TextField("详细地址:");
 	private ComboBox<String> categorySelector = new ComboBox<String>("类别:");
-	private ComboBox<String> provinceSelector = new ComboBox<String>("省份:");
-	private ComboBox<String> citySelector = new ComboBox<String>("地级市:");
-	private ComboBox<String> districtSelector = new ComboBox<String>("市、县级市:");
-	private ComboBox<String> hasStore = new ComboBox<String>("是否有库房:", Arrays.asList(new String[] {"是","否"}));
-	private ComboBox<String> hasChecker = new ComboBox<String>("忽略质检:", Arrays.asList(new String[] {"是","否"}));
-	private ComboBox<Community> communitySelector = new ComboBox<Community>();
-	private TextField nameField;
-	private TextField addrField;
+	private ComboBox<FrameNumber> storeSelector = new ComboBox<FrameNumber>("选择库房:");
+	private ComboBox<String> qcsupportSelector = new ComboBox<String>("质检支持:", Arrays.asList(new String[] {"支持","不支持"}));
+	private List<Community> communities;
+	private List<FrameNumber> frameNumbers;
+	
 	private Button btnAdd;
 	private Binder<Company> binder = new Binder<>();
 	private Company company = new Company();

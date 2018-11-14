@@ -37,7 +37,7 @@ public class CompanyService {
 	 * @return
 	 */
 	public Company findById(int companyUniqueId) {
-		String sql = "SELECT * FROM COMPANIES WHERE COMPANYUNIQUEID = ?";
+		String sql = "SELECT A.*,B.COMMUNITYNAME AS COMMUNITYNAME FROM COMPANIES AS A INNER JOIN COMMUNITIES AS B ON A.COMMUNITYUNIQUEID=B.COMMUNITYUNIQUEID WHERE A.COMPANYUNIQUEID=?";
 		List<Company> results = jdbcTemplate.query(sql, new Object[] {companyUniqueId}, new BeanPropertyRowMapper<Company>(Company.class));
 		if (results.size() > 0) {
 			
@@ -55,7 +55,7 @@ public class CompanyService {
 	 * @return
 	 */
 	public List<Company> findAll() {
-		String sql = "SELECT * FROM COMPANIES ORDER BY COMPANYUNIQUEID";
+		String sql = "SELECT A.*,B.COMMUNITYNAME AS COMMUNITYNAME FROM COMPANIES AS A INNER JOIN COMMUNITIES AS B ON A.COMMUNITYUNIQUEID=B.COMMUNITYUNIQUEID ORDER BY A.COMPANYUNIQUEID";
 		List<Company> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<Company>(Company.class));
 		
 		for (Company company : results) {
@@ -71,9 +71,9 @@ public class CompanyService {
 	 * 
 	 * @param company
 	 */
-	public int create(Company company) {
+	public int insert(Company company) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		String sql = "INSERT INTO COMPANIES(COMMUNITYUNIQUEID,COMPANYNAME,ADDRESS,HASSTOREHOUSE,STOREHOUSENAME,IGNORECHECKER,CATEGORY) VALUES(?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO COMPANIES(COMMUNITYUNIQUEID,COMPANYNAME,ADDRESS,STOREHOUSENAME,QCSUPPORT,CATEGORY) VALUES(?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -83,10 +83,9 @@ public class CompanyService {
 				ps.setInt(1, company.getCommunityUniqueId());
 				ps.setString(2, company.getCompanyName());
 				ps.setString(3, company.getAddress());
-				ps.setInt(4, company.getHasStoreHouse());
-				ps.setString(5, company.getStorehouseName());
-				ps.setInt(6, company.getIgnoreChecker());
-				ps.setString(7, company.getCategory());
+				ps.setString(4, company.getStorehouseName());
+				ps.setBoolean(5, company.getQcsupport());
+				ps.setString(6, company.getCategory());
 				return ps;
 			}
 			
@@ -110,8 +109,8 @@ public class CompanyService {
 			jdbcTemplate.update(Sql2, new Object[] {u.getCommunityUniqueId(), u.getCompanyUniqueId(), u.getCompanyName(), u.getUserUniqueId()});
 		}
 		
-		String sql = "UPDATE COMPANIES SET COMMUNITYUNIQUEID=?,COMPANYNAME=?,ADDRESS=?,HASSTOREHOUSE=?,STOREHOUSENAME=?,IGNORECHECKER=?,CATEGORY=? WHERE COMPANYUNIQUEID=?";
-	 	int opt = jdbcTemplate.update(sql, new Object[] {company.getCommunityUniqueId(), company.getCompanyName(),company.getAddress(), company.getHasStoreHouse(),company.getStorehouseName(),company.getIgnoreChecker(),company.getCategory(),company.getCompanyUniqueId()});
+		String sql = "UPDATE COMPANIES SET COMMUNITYUNIQUEID=?,COMPANYNAME=?,ADDRESS=?,STOREHOUSENAME=?,QCSUPPORT=?,CATEGORY=? WHERE COMPANYUNIQUEID=?";
+	 	int opt = jdbcTemplate.update(sql, new Object[] {company.getCommunityUniqueId(), company.getCompanyName(),company.getAddress(),company.getStorehouseName(),company.getQcsupport(),company.getCategory(),company.getCompanyUniqueId()});
 	 	log.info("Updated row "+opt);
 	}
 	

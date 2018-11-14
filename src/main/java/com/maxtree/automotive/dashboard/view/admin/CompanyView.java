@@ -50,7 +50,7 @@ public class CompanyView extends ContentView {
 		main.setSpacing(false);
 		main.setMargin(false);
 		
-		GridColumn[] columns = {new GridColumn("机构名",130), new GridColumn("地址",220), new GridColumn("是否跳过质检",135),new GridColumn("员工数",85),new GridColumn("", 20)}; 
+		GridColumn[] columns = {new GridColumn("机构名",81), new GridColumn("地点",81), new GridColumn("社区",81), new GridColumn("库房名称",81), new GridColumn("质检支持",81),new GridColumn("类别",81),new GridColumn("员工数",82),new GridColumn("", 20)}; 
 		List<CustomGridRow> data = new ArrayList<>();
 		List<Company> list = ui.companyService.findAll();
 		for (Company c : list) {
@@ -126,32 +126,30 @@ public class CompanyView extends ContentView {
 				}
 			});
 			// 判断该机构是否可以有库房1：可以 2：不可以
-			if (company.getHasStoreHouse() == 1) {
-				menu.addItem("分配库房", new Command() {
-					/**
-					 * 
-					 */
-					private static final long serialVersionUID = 1L;
+			menu.addItem("分配库房", new Command() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
 
-					@Override
-					public void menuSelected(MenuItem selectedItem) {
-						if (loggedInUser.isPermitted(PermissionCodes.F5)) {
-							Callback callback = new Callback() {
-								@Override
-								public void onSuccessful() {
-									Company c = ui.companyService.findById(company.getCompanyUniqueId());
-									Object[] rowData = generateOneRow(c);
-									grid.setValueAt(new CustomGridRow(rowData),company.getCompanyUniqueId());
-								}
-							};
-							AssigningStoreToCompanyWindow.open(company, callback);
-						}
-						else {
-			        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
-			        	}
+				@Override
+				public void menuSelected(MenuItem selectedItem) {
+					if (loggedInUser.isPermitted(PermissionCodes.F5)) {
+						Callback callback = new Callback() {
+							@Override
+							public void onSuccessful() {
+								Company c = ui.companyService.findById(company.getCompanyUniqueId());
+								Object[] rowData = generateOneRow(c);
+								grid.setValueAt(new CustomGridRow(rowData),company.getCompanyUniqueId());
+							}
+						};
+						AssigningStoreToCompanyWindow.open(company, callback);
 					}
-				});
-			}
+					else {
+		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
+		        	}
+				}
+			});
 			menu.addSeparator();
 			
 			menu.addItem("设置业务类型", new Command() {
@@ -241,7 +239,7 @@ public class CompanyView extends ContentView {
 			menu.open(e.getClientX(), e.getClientY());
 		});
 		
-		return new Object[] {company.getCompanyName(),company.getAddress(),company.getIgnoreChecker()==1?"是":"否", company.getEmployees().size(),img,company.getCompanyUniqueId()};
+		return new Object[] {company.getCompanyName(),company.getAddress(),company.getCommunityName(),company.getStorehouseName(), company.getQcsupport()?"支持":"不支持", company.getCategory(), company.getEmployees().size(),img,company.getCompanyUniqueId()};
 	}
 	
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();

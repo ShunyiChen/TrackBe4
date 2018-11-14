@@ -163,7 +163,7 @@ public class CustomGrid extends VerticalLayout {
 		countPane.setComponentAlignment(countLabel, Alignment.BOTTOM_LEFT);
 		
 		Button btnAdd = new Button();
-		btnAdd.setDescription("添加新用户");
+		btnAdd.setDescription("添加新对象");
 		btnAdd.setIcon(VaadinIcons.PLUS_CIRCLE);
 		btnAdd.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		btnAdd.addClickListener(e->{

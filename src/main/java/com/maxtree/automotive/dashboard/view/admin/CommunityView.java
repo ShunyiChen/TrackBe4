@@ -49,7 +49,7 @@ public class CommunityView extends ContentView {
 		main.setSpacing(false);
 		main.setMargin(false);
 		
-		GridColumn[] columns = {new GridColumn("社区名",130), new GridColumn("描述",220), new GridColumn("租户",70),new GridColumn("省",80),new GridColumn("市",80),new GridColumn("区/县",80),new GridColumn("机构数",70),new GridColumn("", 20)}; 
+		GridColumn[] columns = {new GridColumn("社区名",81), new GridColumn("描述",81), new GridColumn("租户",81),new GridColumn("省份",81),new GridColumn("地级市",81),new GridColumn("市、县级市",81),new GridColumn("机构数",81),new GridColumn("", 20)}; 
 		List<CustomGridRow> data = new ArrayList<>();
 		List<Community> list = ui.communityService.findAll();
 		for (Community c : list) {

@@ -11,6 +11,7 @@ import com.maxtree.automotive.dashboard.TB4Application;
 import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.DataDictionary;
+import com.maxtree.automotive.dashboard.domain.Location;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.DataException;
 import com.vaadin.contextmenu.ContextMenu;
@@ -50,14 +51,14 @@ public class LocationView extends ContentView {
 		main.setSpacing(false);
 		main.setMargin(false);
 		
-		GridColumn[] columns = {new GridColumn("地点名称",285), new GridColumn("编码",285),new GridColumn("", 20)}; 
+		GridColumn[] columns = {new GridColumn("分类",190),new GridColumn("名称",190), new GridColumn("编号",190),new GridColumn("", 20)}; 
 		List<CustomGridRow> data = new ArrayList<>();
-		List<DataDictionary> list = ui.dataItemService.findAllByType(DataDictionaryType.LOCATION);
-		for (DataDictionary d : list) {
-			Object[] rowData = generateOneRow(d);
+		List<Location> list = ui.locationService.findAll();
+		for (Location l : list) {
+			Object[] rowData = generateOneRow(l);
 			data.add(new CustomGridRow(rowData));
 		}
-		grid = new CustomGrid("材料列表",columns, data);
+		grid = new CustomGrid("地址列表",columns, data);
 		
 		Callback addEvent = new Callback() {
 
@@ -68,9 +69,9 @@ public class LocationView extends ContentView {
 
 						@Override
 						public void onSuccessful(Object... objects) {
-							int dduniqueid = (int) objects[0];
-							DataDictionary dd = ui.dataItemService.findById(dduniqueid);
-							Object[] rowData = generateOneRow(dd);
+							int locationUniqueId = (int) objects[0];
+							Location l = ui.locationService.findById(locationUniqueId);
+							Object[] rowData = generateOneRow(l);
 							grid.insertRow(new CustomGridRow(rowData));
 						}
 					};
@@ -94,7 +95,7 @@ public class LocationView extends ContentView {
 	 * @param dd
 	 * @return
 	 */
-	private Object[] generateOneRow(DataDictionary dd) {
+	private Object[] generateOneRow(Location l) {
 		Image img = new Image(null, new ThemeResource("img/adminmenu/menu.png"));
 		img.addStyleName("PeopleView_menuImage");
 		img.addClickListener(e->{
@@ -112,12 +113,12 @@ public class LocationView extends ContentView {
 
 							@Override
 							public void onSuccessful() {
-								DataDictionary dict = ui.dataItemService.findById(dd.getDictionaryUniqueId());
-								Object[] rowData = generateOneRow(dict);
-								grid.setValueAt(new CustomGridRow(rowData), dd.getDictionaryUniqueId());
+								Location location = ui.locationService.findById(l.getLocationUniqueId());
+								Object[] rowData = generateOneRow(location);
+								grid.setValueAt(new CustomGridRow(rowData), l.getLocationUniqueId());
 							}
 						};
-						EditDataDictionaryWindow.edit(dd, callback);
+						EditLocationWindow.edit(l, callback);
 					}
 					else {
 		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
@@ -138,12 +139,8 @@ public class LocationView extends ContentView {
 						Callback event = new Callback() {
 							@Override
 							public void onSuccessful() {
-								try {
-									ui.dataItemService.delete(dd);
-								} catch (DataException e) {
-									Notifications.warning("无法删除该项目。");
-								}
-								grid.deleteRow(dd.getDictionaryUniqueId());
+								ui.locationService.delete(l.getLocationUniqueId());
+								grid.deleteRow(l.getLocationUniqueId());
 							}
 						};
 						
@@ -158,7 +155,7 @@ public class LocationView extends ContentView {
 			menu.open(e.getClientX(), e.getClientY());
 		});
 		
-		return new Object[] {dd.getItemName(),dd.getCode(),img,dd.getDictionaryUniqueId()};
+		return new Object[] {l.getCategory(),l.getName(),l.getCode(),img,l.getLocationUniqueId()};
 	}
 	
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();

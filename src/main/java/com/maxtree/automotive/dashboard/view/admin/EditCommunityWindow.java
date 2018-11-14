@@ -1,5 +1,6 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.util.StringUtils;
@@ -7,7 +8,9 @@ import org.springframework.util.StringUtils;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Community;
+import com.maxtree.automotive.dashboard.domain.Location;
 import com.maxtree.automotive.dashboard.domain.Tenant;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
@@ -61,13 +64,46 @@ public class EditCommunityWindow extends Window {
 		//设置焦点
 		nameField.focus();
 		descField = new TextField("描述:");
-		descField.setIcon(VaadinIcons.EDIT);
+		descField.setIcon(VaadinIcons.DEINDENT);
 		//社区
 		List<Tenant> lstTenant = ui.tenantService.findAll();
 		tenantNameBox.setEmptySelectionAllowed(false);
 		tenantNameBox.setTextInputAllowed(false);
 		tenantNameBox.setItems(lstTenant);
+		tenantNameBox.setIcon(VaadinIcons.USER_STAR);
+		//省份
+		List<Location> items1 = ui.locationService.findByCategory("省份");
+		List<String> p = new ArrayList<>();
+		for(Location l : items1) {
+			p.add(l.getName());
+		}
+		provinceBox.setEmptySelectionAllowed(false);
+		provinceBox.setTextInputAllowed(false);
+		provinceBox.setItems(p);
+		provinceBox.setIcon(VaadinIcons.LOCATION_ARROW);
 		
+		
+		//地级市
+		List<Location> items2 = ui.locationService.findByCategory("地级市");
+		List<String> c = new ArrayList<>();
+		for(Location l : items2) {
+			c.add(l.getName());
+		}
+		cityBox.setEmptySelectionAllowed(false);
+		cityBox.setTextInputAllowed(false);
+		cityBox.setItems(c);
+		cityBox.setIcon(VaadinIcons.LOCATION_ARROW);
+		
+		//地级市
+		List<Location> items3 = ui.locationService.findByCategory("市、县级市");
+		List<String> d = new ArrayList<>();
+		for(Location l : items3) {
+			d.add(l.getName());
+		}
+		districtBox.setEmptySelectionAllowed(false);
+		districtBox.setTextInputAllowed(false);
+		districtBox.setItems(d);
+		districtBox.setIcon(VaadinIcons.LOCATION_ARROW);
 		
 		form.addComponents(nameField,descField,tenantNameBox,provinceBox,cityBox, districtBox);
 		HorizontalLayout buttonPane = new HorizontalLayout();
@@ -165,16 +201,36 @@ public class EditCommunityWindow extends Window {
 	 */
 	private boolean checkEmptyValues() {
 		if (StringUtils.isEmpty(community.getCommunityName())) {
-			Notification notification = new Notification("提示：", "社区名不能为空", Type.WARNING_MESSAGE);
-			notification.setDelayMsec(2000);
-			notification.show(Page.getCurrent());
-			
+//			Notification notification = new Notification("提示：", "社区名不能为空", Type.WARNING_MESSAGE);
+//			notification.setDelayMsec(2000);
+//			notification.show(Page.getCurrent());
+			Notifications.warning("社区名不能为空");
 			return false;
 		}
+		else if(tenantNameBox.getValue()==null) {
+			Notifications.warning("租户不能为空");
+			return false;
+		}
+		else if(provinceBox.getValue()==null) {
+			Notifications.warning("省份不能为空");
+			return false;
+		}
+		else if(cityBox.getValue()==null) {
+			Notifications.warning("地级市不能为空");
+			return false;
+		}
+		else if(districtBox.getValue()==null) {
+			Notifications.warning("市、县级市不能为空");
+			return false;
+		}
+		
 		if (nameField.getErrorMessage() != null) {
 			nameField.setComponentError(nameField.getErrorMessage());
 			return false;
 		}
+		
+		
+		
 		return true;
 	}
 	
@@ -188,6 +244,12 @@ public class EditCommunityWindow extends Window {
         w.btnAdd.setCaption("添加");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
+        		
+        		w.community.setTenantName(w.tenantNameBox.getValue().getName());
+        		w.community.setProvince(w.provinceBox.getValue());
+        		w.community.setCity(w.cityBox.getValue());
+        		w.community.setDistrict(w.districtBox.getValue());
+        		
     			int communityuniqueid = ui.communityService.insert(w.community);
     			w.close();
     			callback.onSuccessful(communityuniqueid);
@@ -206,6 +268,7 @@ public class EditCommunityWindow extends Window {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditCommunityWindow w = new EditCommunityWindow();
         Community c = ui.communityService.findById(community.getCommunityUniqueId());
+        w.community.setCommunityUniqueId(c.getCommunityUniqueId());
         List<Tenant> items = ui.tenantService.findAll();
         w.tenantNameBox.setItems(items);
         for(Tenant t : items) {
@@ -223,6 +286,10 @@ public class EditCommunityWindow extends Window {
         w.setCaption("编辑社区");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
+        		w.community.setTenantName(w.tenantNameBox.getValue().getName());
+        		w.community.setProvince(w.provinceBox.getValue());
+        		w.community.setCity(w.cityBox.getValue());
+        		w.community.setDistrict(w.districtBox.getValue());
     			ui.communityService.update(w.community);
     			w.close();
     			callback.onSuccessful();
@@ -235,22 +302,10 @@ public class EditCommunityWindow extends Window {
 	
 	private TextField nameField;
 	private TextField descField;
-	private ComboBox<Tenant> tenantNameBox = new ComboBox<>();
-	private ComboBox<String> provinceBox = new ComboBox<>();
-	private ComboBox<String> cityBox = new ComboBox<>();
-	private ComboBox<String> districtBox = new ComboBox<>();
-	
-	/*
-    private String communityName;	//社区名称
-	private String communityDescription;//社区描述
-	private String tenantName;// 租户名
-	private String province; // 车辆所在省份
-	private String city; // 车辆所在地级市
-	private String district; // 车辆所在市、县级市
-	 */
-	
-	
-	
+	private ComboBox<Tenant> tenantNameBox = new ComboBox<>("租户:");
+	private ComboBox<String> provinceBox = new ComboBox<>("省份:");
+	private ComboBox<String> cityBox = new ComboBox<>("地级市:");
+	private ComboBox<String> districtBox = new ComboBox<>("市、县级市:");
 	private Button btnAdd;
 	private Binder<Community> binder = new Binder<>();
 	private Community community = new Community();

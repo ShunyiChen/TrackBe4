@@ -476,8 +476,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	editableTrans.setIndexNumber(1);
-        	// 是否跳过质检
-        	if(editableCompany.getIgnoreChecker() == 1) {
+        	// 如果不支持质检
+        	if(!editableCompany.getQcsupport()) {
         		// 获取社区内的车管所
         		Company com = ui.communityService.findDMVByCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         		if(com == null) {
@@ -550,8 +550,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
         	editableTrans.setIndexNumber(indexNumber + 1);
         	
-        	// 是否跳过质检
-        	if(editableCompany.getIgnoreChecker() == 1) {
+        	//如果不支持质检
+        	if(!editableCompany.getQcsupport()) {
         		// 新车注册首个上架号
         		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
         		if(StringUtils.isEmpty(firstCode)) {
@@ -618,8 +618,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
         	editableTrans.setIndexNumber(indexNumber + 1);
         	
-        	// 是否跳过质检
-        	if(editableCompany.getIgnoreChecker() == 1) {
+        	// 如果不支持质检
+        	if(!editableCompany.getQcsupport()) {
         		// 新车注册首个上架号
         		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
         		if(StringUtils.isEmpty(firstCode)) {
@@ -696,8 +696,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
         	editableTrans.setIndexNumber(indexNumber + 1);
         	
-        	// 是否跳过质检
-        	if(editableCompany.getIgnoreChecker() == 1) {
+        	//如果不支持质检
+        	if(!editableCompany.getQcsupport()) {
         		// 新车注册首个上架号
         		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
         		if(StringUtils.isEmpty(firstCode)) {
@@ -816,8 +816,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	if (businessTypePane.getSelected().getName().contains("注册登记")) {
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateModified(new Date());
-    		// 跳过质检
-    		if(editableCompany.getIgnoreChecker() == 1) {
+    		//如果不支持质检
+    		if(!editableCompany.getQcsupport()) {
     			editableTrans.setStatus(ui.state().getName("B2"));
         		ui.transactionService.update(editableTrans);
         		
@@ -856,8 +856,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	else if ("无".equals(businessTypePane.getSelected().getCheckLevel())) {
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateModified(new Date());
-        	// 跳过质检
-    		if(editableCompany.getIgnoreChecker() == 1) {
+        	//如果不支持质检
+    		if(!editableCompany.getQcsupport()) {
     			editableTrans.setStatus(ui.state().getName("B2"));
         		ui.transactionService.update(editableTrans);
         		
@@ -895,8 +895,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateModified(new Date());
         	
-        	// 是否跳过质检
-        	if(editableCompany.getIgnoreChecker() == 1) {
+        	//如果不支持质检
+        	if(!editableCompany.getQcsupport()) {
         		editableTrans.setStatus(ui.state().getName("B4"));
         		ui.transactionService.update(editableTrans);
         		
@@ -943,8 +943,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	else if (businessTypePane.getSelected().getCheckLevel().equals("二级审档")) {
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateModified(new Date());
-        	// 是否跳过质检
-        	if(editableCompany.getIgnoreChecker() == 1) {
+        	//如果不支持质检
+        	if(!editableCompany.getQcsupport()) {
         		editableTrans.setStatus(ui.state().getName("B4"));
         		ui.transactionService.update(editableTrans);
         		
