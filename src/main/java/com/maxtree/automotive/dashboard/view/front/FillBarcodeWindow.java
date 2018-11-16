@@ -13,6 +13,8 @@ import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Transaction;
+import com.maxtree.automotive.dashboard.view.finalcheck.PopupCaptureWindow;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -47,17 +49,31 @@ public class FillBarcodeWindow extends Window {
 	private void initComponents() {
 		this.setCaption("补充业务流水号");
 		this.setWidth("401px");
-		this.setHeight("300px");
+//		this.setHeight("300px");
 		this.setResizable(false);
 		List<String> data = ui.dataItemService.findNamesByType(1);
 		plateTypeField.setItems(data);
 		plateTypeField.setEmptySelectionAllowed(false);
 		
+		//车辆照片
+		HorizontalLayout picture = new HorizontalLayout();
+		picture.setCaption("车辆照片:");
+		picture.setWidthUndefined();
+		picture.setHeight("28px");
+		Button captureButton = new Button();
+		captureButton.setIcon(VaadinIcons.CAMERA);
+		captureButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		captureButton.addClickListener(e->{
+			PopupCaptureWindow.open();
+		});
+		picture.addComponent(captureButton);
+		picture.setComponentAlignment(captureButton, Alignment.MIDDLE_LEFT);
+		
 		//4个文本框都是手动录入
 		FormLayout form = new FormLayout();
 		form.setSizeFull();
 		form.setMargin(new MarginInfo(false,false,false,true));
-		form.addComponents(barcode,plateTypeField,plateNumber,plateVIN);
+		form.addComponents(barcode,plateTypeField,plateNumber,plateVIN,picture);
 		barcode.setHeight("28px");
 		plateTypeField.setHeight("28px");
 		plateNumber.setHeight("28px");
@@ -70,6 +86,12 @@ public class FillBarcodeWindow extends Window {
 		
 		plateNumber.setPlaceholder("请输入车牌号的后5位或6位");
 		btnFill.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		
+		
+		
+		
+		
+		
 		HorizontalLayout buttons = new HorizontalLayout();
 		buttons.setWidthUndefined();
 		buttons.setHeight("40px");

@@ -10,10 +10,8 @@ import com.maxtree.automotive.dashboard.PermissionCodes;
 import com.maxtree.automotive.dashboard.TB4Application;
 import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.domain.Location;
 import com.maxtree.automotive.dashboard.domain.User;
-import com.maxtree.automotive.dashboard.exception.DataException;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.MenuItem;
 import com.vaadin.contextmenu.Menu.Command;
@@ -75,7 +73,7 @@ public class LocationView extends ContentView {
 							grid.insertRow(new CustomGridRow(rowData));
 						}
 					};
-					EditDataDictionaryWindow.open(callback, DataDictionaryType.LOCATION);
+					EditLocationWindow.open(callback);
 				} else {
 	        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
 	        	}
@@ -144,7 +142,7 @@ public class LocationView extends ContentView {
 							}
 						};
 						
-						MessageBox.showMessage("提示", "请确认是否彻底删除当前数据？", MessageBox.WARNING, event, "删除");
+						MessageBox.showMessage("提示", "请确认是否彻底删除当前地址？", MessageBox.WARNING, event, "删除");
 					}
 					else {
 		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);

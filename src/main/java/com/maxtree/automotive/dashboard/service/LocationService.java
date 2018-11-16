@@ -89,29 +89,21 @@ public class LocationService {
 	
 	/**
 	 * 
-	 * @param cs
+	 * @param location
 	 */
 	public void update(Location location) {
-		String sql = "UPDATE LOCATIONS SET NAME=? WHERE LOCATIONUNIQUEID=?";
-	 	int opt = jdbcTemplate.update(sql, new Object[] { location.getName(),location.getLocationUniqueId()});
+		String sql = "UPDATE LOCATIONS SET CATEGORY=?,NAME=?,CODE=? WHERE LOCATIONUNIQUEID=?";
+	 	int opt = jdbcTemplate.update(sql, new Object[] {location.getCategory(),location.getName(),location.getCode(),location.getLocationUniqueId()});
 	 	log.info("Updated one record "+opt);
 	}
 	
 	/**
 	 * 
-	 * @param LocationUNIQUEID
+	 * @param locationUniqueId
 	 */
 	public void delete(int locationUniqueId) {
 		String sql = "DELETE FROM LOCATIONS WHERE LOCATIONUNIQUEID=?";
 		jdbcTemplate.update(sql, new Object[] {locationUniqueId});
 	}
-	
-	/**
-	 * Go up
-	 * @param Location
-	 */
-	public void up(Location location) {
-		String sql = "UPDATE LOCATIONS SET FREQUENCY=FREQUENCY+? WHERE LOCATIONUNIQUEID=?";
-		jdbcTemplate.update(sql, new Object[] {1, location.getLocationUniqueId()});
-	}
+
 }

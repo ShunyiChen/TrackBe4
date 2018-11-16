@@ -33,13 +33,13 @@ public class DataDictionaryRow extends FlexTableRow {
 			rootView.forward(new NumberplateView("管理号牌种类", rootView));
 		});
 		manageLocation.addLayoutClickListener(e->{
-			rootView.forward(new LocationView("管理地点", rootView));
+			rootView.forward(new LocationView("管理地区", rootView));
 		});
 	}
 
 	@Override
 	public String getSearchTags() {
-		return "管理业务类型,管理材料名称,管理号牌种类,管理地点,"+getTitle();
+		return "管理业务类型,管理材料名称,管理号牌种类,管理地区,"+getTitle();
 	}
 
 	@Override

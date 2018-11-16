@@ -16251,3 +16251,31 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 3px;
 	margin: 3px;
 }
+
+.dashboard .v-window-AboutTB4 {
+	background-color: #3c3f41 !important;
+}
+
+.dashboard div.v-window-AboutTB4 .v-window-contents {
+	background: #3c3f41;
+}
+
+.dashboard .AboutTB4 .v-label {
+	font-size: 28px;
+	color: white;
+	font-weight: bold;
+	font-family: Microsoft YaHei;
+}
+
+.dashboard .AboutTB4 .v-icon {
+	cursor: pointer;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.dashboard .AboutTB4-middleLine .v-label {
+	font-size: 14px;
+	color: white;
+	font-weight: normal;
+	font-family: Microsoft YaHei;
+}

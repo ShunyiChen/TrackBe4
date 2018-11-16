@@ -1,0 +1,220 @@
+package com.maxtree.automotive.dashboard.view.finalcheck;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+
+import org.yaml.snakeyaml.reader.UnicodeReader;
+
+import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.domain.SystemSettings;
+import com.maxtree.automotive.dashboard.domain.User;
+import com.vaadin.server.StreamResource;
+import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.BrowserFrame;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.Upload;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.Upload.FailedEvent;
+import com.vaadin.ui.Upload.FailedListener;
+import com.vaadin.ui.Upload.FinishedEvent;
+import com.vaadin.ui.Upload.FinishedListener;
+import com.vaadin.ui.Upload.ProgressListener;
+import com.vaadin.ui.Upload.Receiver;
+import com.vaadin.ui.Upload.StartedEvent;
+import com.vaadin.ui.Upload.StartedListener;
+import com.vaadin.ui.Upload.SucceededEvent;
+import com.vaadin.ui.Upload.SucceededListener;
+import com.vaadin.ui.Window.CloseListener;
+
+/**
+ * 
+ * @author Chen
+ *
+ */
+public class PopupCaptureWindow extends Window implements CloseListener, Receiver, SucceededListener, ProgressListener, StartedListener, FailedListener, FinishedListener{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * 
+	 */
+	public PopupCaptureWindow() {
+		initComponents();
+	}
+	
+	private void initComponents() {
+		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		this.setCaption("拍摄");
+		this.setWidth("1024px");
+		this.setHeight("768px");
+		this.setModal(true);
+		this.setClosable(true);
+		this.setResizable(true);
+		this.setCaption("拍照");
+		
+		settings = ui.settingsService.findByName("高拍仪");
+		if("无".equals(settings.getItemSettings())) {
+			Upload upload = new Upload(null, this);
+			upload.setButtonCaption("选择文件");
+			upload.setButtonStyleName("upload-button");
+			upload.setImmediateMode(true);
+			upload.addSucceededListener(this);
+			this.setContent(upload);
+		}
+		else {
+			browser.setSizeFull();
+			this.setContent(browser);
+		}
+		
+		this.addCloseListener(this);
+	}
+	
+	/**
+	 * 
+	 * @throws IOException
+	 */
+	private void generateNewHTML() throws IOException {
+		// 读取原来的html模板
+		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String everything = "";
+		File template;
+		if(settings.getItemSettings().equals("无锡华通H6-1")) {
+			template = new File("devices/templates/HtmlDemo3.html");//无锡华通H6-1
+		}
+		else {
+			template = new File("devices/templates/Sample_CamOCX_HTML_Device_IE.html");//维山VSA305FD
+		}
+//		File template = new File("devices/templates/TempHtml.html"); // 选择本地图片上传
+		FileInputStream in = new FileInputStream(template);
+		BufferedReader br = new BufferedReader(new UnicodeReader(in));
+		StringBuilder sb = new StringBuilder();
+		String line = br.readLine();
+		while (line != null) {
+			if (line.contains("var userUniqueId = \"\";")) {
+				line = line.replace("var userUniqueId = \"\";", "var userUniqueId = \""+user.getUserUniqueId()+"\";");
+			}
+			
+			if (line.contains("hello")) {
+				line = line.replace("hello", "capture");
+			}
+			// System.out.println(line);
+			sb.append(line);
+			sb.append(System.lineSeparator());
+			line = br.readLine();
+		}
+		everything = sb.toString();
+		br.close();
+		in.close();
+		
+		// 动态生成新的html
+		OutputStreamWriter oStreamWriter = new OutputStreamWriter(new FileOutputStream(new File("devices/" + user.getUserUniqueId() + ".html")), "utf-8");
+		oStreamWriter.append(everything);
+		oStreamWriter.close();
+	}
+	
+	/**
+	 * 显示影像
+	 */
+	public void displayImage() {
+		com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
+ 			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+ 			public InputStream getStream() {
+				
+				File generatedFile = new File("devices/"+loggedInUser.getUserUniqueId()+".html");
+				System.out.println("generatedFile.exists()="+generatedFile.exists());
+				if(!generatedFile.exists()) {
+					try {
+						generateNewHTML();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+ 				FileInputStream inputStream = null;
+				try {
+					inputStream = new FileInputStream("devices/"+loggedInUser.getUserUniqueId()+".html");
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+				return inputStream;
+ 			}
+ 		}; 
+ 		StreamResource streamResource = new StreamResource(streamSource, loggedInUser.getUserUniqueId()+".html");
+ 		streamResource.setCacheTime(0);
+		browser.setSource(streamResource);
+	}
+	
+	/**
+	 * 
+	 */
+	public static void open() {
+		PopupCaptureWindow pcw = new PopupCaptureWindow();
+		UI.getCurrent().addWindow(pcw);
+		pcw.center();
+		
+		pcw.displayImage();
+	}
+	
+	
+	@Override
+	public void uploadFinished(FinishedEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void uploadFailed(FailedEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void uploadStarted(StartedEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateProgress(long readBytes, long contentLength) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void uploadSucceeded(SucceededEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public OutputStream receiveUpload(String filename, String mimeType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public void windowClose(CloseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private DashboardUI ui = (DashboardUI) UI.getCurrent();
+	private User loggedInUser;
+	private BrowserFrame browser = new BrowserFrame(null);
+	private SystemSettings settings;
+
+}

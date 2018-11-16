@@ -34,7 +34,7 @@ public class AboutSystemRow extends FlexTableRow {
 
 	@Override
 	public String getSearchTags() {
-		return "关于TB4系统,帮助文档,开发者工具,"+getTitle();
+		return "关于系统,帮助文档,开发者工具,"+getTitle();
 	}
 
 	@Override

@@ -56,6 +56,8 @@ public class EditLocationWindow extends Window {
 		categoryBox.setTextInputAllowed(false);
 		categoryBox.setEmptySelectionAllowed(false);
 		categoryBox.setSelectedItem("省");
+		categoryBox.setIcon(VaadinIcons.WORKPLACE);
+		
 		nameField = new TextField("名称:");
 		nameField.setIcon(VaadinIcons.EDIT);
 		nameField.focus();
@@ -188,13 +190,14 @@ public class EditLocationWindow extends Window {
 	 * @param callback
 	 * @param type
 	 */
-	public static void open(Callback2 callback, int type) {
+	public static void open(Callback2 callback) {
 //        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
 		EditLocationWindow w = new EditLocationWindow();
         w.btnAdd.setCaption("添加");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
         		w.location.setCategory(w.categoryBox.getValue());
+        		
     			int locationuniqueid = ui.locationService.insert(w.location);
     			w.close();
     			callback.onSuccessful(locationuniqueid);
@@ -213,6 +216,7 @@ public class EditLocationWindow extends Window {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         EditLocationWindow w = new EditLocationWindow();
         Location r = ui.locationService.findById(l.getLocationUniqueId());
+        w.location.setLocationUniqueId(r.getLocationUniqueId());
         w.categoryBox.setValue(r.getCategory());
         w.nameField.setValue(r.getName());
         w.codeField.setValue(r.getCode());
@@ -220,6 +224,11 @@ public class EditLocationWindow extends Window {
         w.setCaption("编辑地址");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
+        		
+        		w.location.setCategory(w.categoryBox.getValue());
+        		w.location.setName(w.nameField.getValue());
+        		w.location.setCode(w.codeField.getValue());
+        		
     			ui.locationService.update(w.location);
     			w.close();
     			callback.onSuccessful();
@@ -230,7 +239,7 @@ public class EditLocationWindow extends Window {
         w.center();
     }
 	
-	private ComboBox<String> categoryBox = new ComboBox<>();
+	private ComboBox<String> categoryBox = new ComboBox<>("分类:");
 	private TextField nameField;
 	private TextField codeField;
 	private Button btnAdd;

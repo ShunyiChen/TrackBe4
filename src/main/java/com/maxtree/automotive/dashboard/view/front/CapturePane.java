@@ -110,7 +110,7 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
  			public InputStream getStream() {
 				
 				File generatedFile = new File("devices/"+loggedInUser.getUserUniqueId()+".html");
-				System.out.println("generatedFile.exists()="+generatedFile.exists());
+//				System.out.println("generatedFile.exists()="+generatedFile.exists());
 				if(!generatedFile.exists()) {
 					try {
 						generateNewHTML();
