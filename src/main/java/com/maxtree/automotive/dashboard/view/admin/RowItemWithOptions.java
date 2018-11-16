@@ -34,12 +34,12 @@ public class RowItemWithOptions extends FlexTableRowItem {
 		selector.addStyleName("RowItemWithOptions_selector");
 		selector.addValueChangeListener(e->{
 			SystemSettings device = new SystemSettings();
-			device.setItemName("高拍仪");
-			device.setItemSettings(e.getValue());
+			device.setName("高拍仪");
+			device.setValue(e.getValue());
 			ui.settingsService.update(device);
 		});
 		SystemSettings settings = ui.settingsService.findByName("高拍仪");
-		selector.setSelectedItem(settings.getItemSettings());
+		selector.setSelectedItem(settings.getValue());
 		
 		this.removeAllComponents();
 		this.addComponents(name, selector);

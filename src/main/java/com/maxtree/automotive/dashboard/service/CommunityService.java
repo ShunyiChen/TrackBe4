@@ -116,9 +116,6 @@ public class CommunityService {
 			jdbcTemplate.update(sql2, new Object[] {c.getCommunityUniqueId(), c.getCompanyUniqueId()});
 		}
 		
-		String sql3 = "DELETE FROM COMMUNITYTENANTS WHERE COMMUNITYUNIQUEID=?";
-		jdbcTemplate.update(sql3, new Object[] {communityUniqueId});
-		
 		String sql4 = "DELETE FROM COMMUNITYSITES WHERE COMMUNITYUNIQUEID=?";
 		jdbcTemplate.update(sql4, new Object[] {communityUniqueId});
 		

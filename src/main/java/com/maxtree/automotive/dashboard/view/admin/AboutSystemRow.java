@@ -22,19 +22,24 @@ public class AboutSystemRow extends FlexTableRow {
 	}
 	
 	private void initComponents() {
-		this.addComponents(aboutTB4Sys,help,log,developTool);
+		this.addComponents(aboutTB4Sys,sysSettings,logging,developTool);
 		aboutTB4Sys.addLayoutClickListener(e->{
 			AboutTB4.open();
 		});
+		sysSettings.addLayoutClickListener(e->{
+			rootView.forward(new SystemSettingsView("系统参数", rootView));
+		});
+		logging.addLayoutClickListener(e->{
+			LoggingWindow.open();
+		});
 		developTool.addLayoutClickListener(e->{
-//			rootView.forward(new PeopleView("管理用户", rootView));
 			DEV.open();
 		});
 	}
 
 	@Override
 	public String getSearchTags() {
-		return "关于系统,帮助文档,开发者工具,"+getTitle();
+		return "系统参数,系统日志,开发者工具,"+getTitle();
 	}
 
 	@Override
@@ -52,9 +57,9 @@ public class AboutSystemRow extends FlexTableRow {
 		return "about.png";
 	}
 	
-	private RowItemWithTitle aboutTB4Sys = new RowItemWithTitle("关于TB4系统");
-	private RowItemWithTitle help = new RowItemWithTitle("帮助文档");
-	private RowItemWithTitle log = new RowItemWithTitle("系统日志");
+	private RowItemWithTitle aboutTB4Sys = new RowItemWithTitle("关于系统");
+	private RowItemWithTitle sysSettings = new RowItemWithTitle("系统参数");
+	private RowItemWithTitle logging = new RowItemWithTitle("系统日志");
 	private RowItemWithTitle developTool = new RowItemWithTitle("开发者工具");
 	private AdminMainView rootView;
 }

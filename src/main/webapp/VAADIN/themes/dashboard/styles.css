@@ -16253,11 +16253,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .v-window-AboutTB4 {
-	background-color: #3c3f41 !important;
+	background-color: #47484b !important;
 }
 
 .dashboard div.v-window-AboutTB4 .v-window-contents {
-	background: #3c3f41;
+	background: #47484b;
 }
 
 .dashboard .AboutTB4 .v-label {
@@ -16265,6 +16265,7 @@ div.v-layout.v-horizontal.v-widget {
 	color: white;
 	font-weight: bold;
 	font-family: Microsoft YaHei;
+	text-shadow: #87D0F0 1px 0 28px;
 }
 
 .dashboard .AboutTB4 .v-icon {

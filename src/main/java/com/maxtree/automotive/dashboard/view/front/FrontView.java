@@ -111,7 +111,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
             @Override
             public void run() {
             	
-            	
             	Callback2 verifyEvent = new Callback2() {
 					@Override
 					public void onSuccessful(Object... objects) {

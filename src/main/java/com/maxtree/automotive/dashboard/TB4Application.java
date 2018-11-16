@@ -40,11 +40,11 @@ public class TB4Application extends SpringBootServletInitializer implements Comm
 
     @Override
     public void run(String... strings) throws Exception {
-    	SystemConfiguration sc = Yaml.readSystemConfiguration();
-    	if(sc.getCreateDBTableOnStartup().equalsIgnoreCase("yes")) {
-    		App dbbuilder = new App();
-        	dbbuilder.build(jdbcTemplate.getDataSource().getConnection());
-    	}
+//    	SystemConfiguration sc = Yaml.readSystemConfiguration();
+//    	if(sc.getCreateDBTableOnStartup().equalsIgnoreCase("yes")) {
+//    		App dbbuilder = new App();
+//        	dbbuilder.build(jdbcTemplate.getDataSource().getConnection());
+//    	}
     }
     
     

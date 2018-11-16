@@ -23,7 +23,8 @@ public enum DashboardViewType {
 	SHELF("上架下架", ShelfView.class, VaadinIcons.ROCKET, true),
 	IMAGING_MANAGER("影像管理", ImagingManagerView.class, VaadinIcons.STORAGE, true),
 	IMAGING_INPUT("影像录入", ImagingInputView.class, VaadinIcons.PENCIL, true),
-	IMAGING_QUALITY("影像质检", ImagingQualityView.class, VaadinIcons.CLIPBOARD_CHECK, true);
+	IMAGING_QUALITY("影像质检", ImagingQualityView.class, VaadinIcons.CLIPBOARD_CHECK, true),
+	FINAL_CHECK("最终审档", ImagingQualityView.class, VaadinIcons.CAR, true);
 	
     private final String viewName;
     private final Class<? extends View> viewClass;

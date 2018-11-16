@@ -46,6 +46,7 @@ public final class DashboardMenu extends CustomComponent {
     private Label imagingAdminBadge;
     private Label imagingInputBadge;
     private Label imagingQualityBadge;
+    private Label finalCheckBadge;
     
     private MenuItem settingsItem;
     
@@ -218,6 +219,12 @@ public final class DashboardMenu extends CustomComponent {
             		continue;
             	}
         	}
+        	//终审
+        	else if (view == DashboardViewType.FINAL_CHECK) {
+        		if(!user.isPermitted(PermissionCodes.A11)) {
+            		continue;
+            	}
+        	}
         	
         	
         	// 保存首个界面名称
@@ -262,7 +269,10 @@ public final class DashboardMenu extends CustomComponent {
             	imagingQualityBadge = new Label();
                 menuItemComponent = buildBadgeWrapper(menuItemComponent, imagingQualityBadge);
             }
-            
+            else if (view == DashboardViewType.FINAL_CHECK) {
+            	finalCheckBadge = new Label();
+                menuItemComponent = buildBadgeWrapper(menuItemComponent, finalCheckBadge);
+            }
             menuItemsLayout.addComponent(menuItemComponent);
         }
         return menuItemsLayout;
@@ -375,6 +385,15 @@ public final class DashboardMenu extends CustomComponent {
     		imagingQualityBadge.setVisible(count > 0);
     	}
     }
+    
+    @Subscribe
+    public void finalCheckCount(int count) {
+    	if (finalCheckBadge != null) {
+    		finalCheckBadge.setValue(String.valueOf(count));
+    		finalCheckBadge.setVisible(count > 0);
+    	}
+    }
+    
     
 
     @Subscribe

@@ -26,7 +26,7 @@ public class AboutTB4 extends Window {
 	public AboutTB4() {
 		this.setIcon(VaadinIcons.INFO_CIRCLE_O);
 		this.setCaption("关于");
-		this.setModal(false);
+		this.setModal(true);
 		this.setClosable(false);
 		this.setResizable(false);
 		this.setWidth("460px");
@@ -46,33 +46,22 @@ public class AboutTB4 extends Window {
 		middleLine.addComponents(versionLabel, buildInLabel);
 		middleLine.addStyleName("AboutTB4-middleLine");
 		
-		HorizontalLayout buttons = new HorizontalLayout();
-		buttons.setWidth("100%");
-		buttons.setHeight("30px");
-		buttons.addComponent(okButton);
-		buttons.setComponentAlignment(okButton, Alignment.MIDDLE_RIGHT);
-		
 		main.setSizeFull();
-		main.addComponents(titleLine,middleLine,buttons);
+		main.addComponents(titleLine,middleLine);
 		main.setComponentAlignment(titleLine, Alignment.TOP_CENTER);
 		main.setComponentAlignment(middleLine, Alignment.TOP_CENTER);
-		main.setComponentAlignment(buttons, Alignment.BOTTOM_RIGHT);
-		main.setExpandRatio(buttons, 0);
 		this.setContent(main);
 		this.addStyleName("AboutTB4");
-		okButton.addClickListener(e->{
+		this.addBlurListener(e->{
 			close();
 		});
 	}
-	
-	
+
 	public static void open() {
 		AboutTB4 AboutTB4 = new AboutTB4();
 		UI.getCurrent().addWindow(AboutTB4);
 		AboutTB4.center();
 	}
 	
-	private DashboardUI ui = (DashboardUI) UI.getCurrent();
-	private Button okButton = new Button("确定");
 	private VerticalLayout main = new VerticalLayout();
 }

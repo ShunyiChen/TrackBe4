@@ -203,10 +203,9 @@ public class CustomGrid extends VerticalLayout {
 				break;
 			}
 			GridColumn col = columns[i];
-			if(obj instanceof String || obj instanceof StringBuilder) {
-				
-				Label objLabel = new Label(obj.toString());
-				objLabel.setDescription(obj.toString());
+			if(obj instanceof String || obj instanceof StringBuilder || obj == null) {
+				Label objLabel = new Label(obj == null?"":obj.toString());
+				objLabel.setDescription(obj == null?"":obj.toString());
 				objLabel.setWidth(col.getWidth()+"px");
 				objLabel.addStyleName("CustomGrid_objLabel");
 				VerticalLayout cell = new VerticalLayout();

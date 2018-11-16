@@ -21,11 +21,35 @@ public class SystemSettingsService {
 	
 	/**
 	 * 
-	 * @param key
+	 * @return
+	 */
+	public List<SystemSettings> findAll() {
+		String sql = "SELECT * FROM SYSTEMSETTINGS ORDER BY SETTINGUNIQUEID";
+		List<SystemSettings> results = jdbcTemplate.query(sql, new Object[] {}, new BeanPropertyRowMapper<SystemSettings>(SystemSettings.class));
+		return results;
+	}
+	
+	/**
+	 * 
+	 * @param settingUniqueId
+	 * @return
+	 */
+	public SystemSettings findById(int settingUniqueId) {
+		String sql = "SELECT * FROM SYSTEMSETTINGS WHERE SETTINGUNIQUEID=?";
+		List<SystemSettings> results = jdbcTemplate.query(sql, new Object[] {settingUniqueId}, new BeanPropertyRowMapper<SystemSettings>(SystemSettings.class));
+		if(results.size() > 0) {
+			return results.get(0);
+		}
+		return new SystemSettings();
+	}
+	
+	/**
+	 * 
+	 * @param name
 	 * @return
 	 */
 	public SystemSettings findByName(String name) {
-		String sql = "SELECT * FROM SYSTEMSETTINGS WHERE ITEMNAME=?";
+		String sql = "SELECT * FROM SYSTEMSETTINGS WHERE NAME=?";
 		List<SystemSettings> results = jdbcTemplate.query(sql, new Object[] {name}, new BeanPropertyRowMapper<SystemSettings>(SystemSettings.class));
 		if(results.size() > 0) {
 			return results.get(0);
@@ -38,8 +62,8 @@ public class SystemSettingsService {
 	 * @param settings
 	 */
 	public void update(SystemSettings settings) {
-		String sql = "UPDATE SYSTEMSETTINGS SET ITEMSETTINGS=? WHERE ITEMNAME=?";
-		jdbcTemplate.update(sql, new Object[] {settings.getItemSettings(),settings.getItemName()});
+		String sql = "UPDATE SYSTEMSETTINGS SET VALUE=?,COMMENTS=? WHERE NAME=?";
+		jdbcTemplate.update(sql, new Object[] {settings.getValue(),settings.getComments(),settings.getName()});
 	}
 	
 }

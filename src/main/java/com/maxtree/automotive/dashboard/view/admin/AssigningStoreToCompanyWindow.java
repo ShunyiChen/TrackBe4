@@ -11,6 +11,7 @@ import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -46,8 +47,7 @@ public class AssigningStoreToCompanyWindow extends Window {
 		mainLayout.setWidth("100%");
 		mainLayout.setHeightUndefined();
  
-		Image img = new Image();
-		img.setIcon(VaadinIcons.GROUP);
+		Image img = new Image(null, new ThemeResource("img/adminmenu/storage.png"));
 		Label companyName = new Label(company.getCompanyName());
 		HorizontalLayout title = new HorizontalLayout();
 		title.setWidthUndefined();
@@ -67,8 +67,8 @@ public class AssigningStoreToCompanyWindow extends Window {
 		select = new TwinColSelect<>(null, allStores);
 		select.setWidth("100%");
 		select.setRows(14);
-		select.setLeftColumnCaption("未分配的库");
-		select.setRightColumnCaption("已分配的库");
+		select.setLeftColumnCaption("未分配的库房");
+		select.setRightColumnCaption("已分配的库房");
 		
 		List<FrameNumber> selectedStored = new ArrayList<>();
 		assignedStore = ui.companyService.findAssignedStores(company.getStorehouseName());

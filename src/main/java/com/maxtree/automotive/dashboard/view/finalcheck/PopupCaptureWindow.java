@@ -18,6 +18,7 @@ import com.maxtree.automotive.dashboard.domain.User;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.BrowserFrame;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.Window;
@@ -32,6 +33,7 @@ import com.vaadin.ui.Upload.StartedListener;
 import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
 import com.vaadin.ui.Window.CloseListener;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -59,11 +61,13 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 		this.setHeight("768px");
 		this.setModal(true);
 		this.setClosable(true);
-		this.setResizable(true);
+		this.setResizable(false);
 		this.setCaption("拍照");
 		
+		link.addStyleName(ValoTheme.BUTTON_LINK);
+		
 		settings = ui.settingsService.findByName("高拍仪");
-		if("无".equals(settings.getItemSettings())) {
+		if("无".equals(settings.getValue())) {
 			Upload upload = new Upload(null, this);
 			upload.setButtonCaption("选择文件");
 			upload.setButtonStyleName("upload-button");
@@ -88,7 +92,7 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		String everything = "";
 		File template;
-		if(settings.getItemSettings().equals("无锡华通H6-1")) {
+		if(settings.getValue().equals("无锡华通H6-1")) {
 			template = new File("devices/templates/HtmlDemo3.html");//无锡华通H6-1
 		}
 		else {
@@ -172,7 +176,6 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 	
 	@Override
 	public void uploadFinished(FinishedEvent event) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -216,5 +219,5 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 	private User loggedInUser;
 	private BrowserFrame browser = new BrowserFrame(null);
 	private SystemSettings settings;
-
+	private Button link = new Button();
 }

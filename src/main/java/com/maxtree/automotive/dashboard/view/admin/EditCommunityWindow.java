@@ -191,8 +191,8 @@ public class EditCommunityWindow extends Window {
 	        2, 20)) .bind(Community::getCommunityName, Community::setCommunityName);
 		// Validating Field Values
 		binder.forField(descField).withValidator(new StringLengthValidator(
-	        "描述长度范围在2~40个字符",
-	        2, 40)) .bind(Community::getCommunityDescription, Community::setCommunityDescription);
+	        "描述长度范围在0~40个字符",
+	        0, 40)) .bind(Community::getCommunityDescription, Community::setCommunityDescription);
 	}
 	
 	/**
@@ -229,8 +229,6 @@ public class EditCommunityWindow extends Window {
 			return false;
 		}
 		
-		
-		
 		return true;
 	}
 	
@@ -246,6 +244,7 @@ public class EditCommunityWindow extends Window {
         	if (w.checkEmptyValues()) {
         		
         		w.community.setTenantName(w.tenantNameBox.getValue().getName());
+        		w.community.setCommunityDescription(w.descField.getValue()==null?"":w.descField.getValue());
         		w.community.setProvince(w.provinceBox.getValue());
         		w.community.setCity(w.cityBox.getValue());
         		w.community.setDistrict(w.districtBox.getValue());
@@ -277,7 +276,7 @@ public class EditCommunityWindow extends Window {
         	}
         }
         w.nameField.setValue(c.getCommunityName());
-        w.descField.setValue(c.getCommunityDescription());
+        w.descField.setValue(c.getCommunityDescription()==null?"":c.getCommunityDescription());
         w.provinceBox.setSelectedItem(c.getProvince());
         w.cityBox.setSelectedItem(c.getCity());
         w.districtBox.setSelectedItem(c.getDistrict());
