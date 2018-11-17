@@ -326,8 +326,8 @@ public class FrameNumberService {
 	 * @return
 	 */
 	public List<Company> getAvailableCompanies(String storehouseName) {
-		String sql = "SELECT * FROM COMPANIES WHERE HASSTOREHOUSE=? AND STOREHOUSENAME IS NULL OR STOREHOUSENAME=? ORDER BY COMPANYUNIQUEID";
-		List<Company> results = jdbcTemplate.query(sql, new Object[] {1,storehouseName}, new BeanPropertyRowMapper<Company>(Company.class));
+		String sql = "SELECT * FROM COMPANIES WHERE STOREHOUSENAME IS NULL OR STOREHOUSENAME=? ORDER BY COMPANYUNIQUEID";
+		List<Company> results = jdbcTemplate.query(sql, new Object[] {storehouseName}, new BeanPropertyRowMapper<Company>(Company.class));
 		return results;
 	}
 	

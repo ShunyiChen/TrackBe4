@@ -146,7 +146,6 @@ public class EditSystemSettingsWindow extends Window {
 		w.systemSettings.setSettingUniqueId(settings.getSettingUniqueId());
 		w.nameField.setValue(settings.getName());
 		w.nameField.setEnabled(false);
-		
 		w.valueField.setValue(settings.getValue());
 		w.commentsField.setValue(settings.getComments());
 		

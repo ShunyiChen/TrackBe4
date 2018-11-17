@@ -36,6 +36,7 @@ public class RowItemWithOptions extends FlexTableRowItem {
 			SystemSettings device = new SystemSettings();
 			device.setName("高拍仪");
 			device.setValue(e.getValue());
+			device.setComments("");
 			ui.settingsService.update(device);
 		});
 		SystemSettings settings = ui.settingsService.findByName("高拍仪");
