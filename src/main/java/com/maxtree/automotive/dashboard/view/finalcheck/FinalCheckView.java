@@ -3,17 +3,21 @@ package com.maxtree.automotive.dashboard.view.finalcheck;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.util.StringUtils;
+
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
+import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.NotificationsButton;
 import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Notification;
+import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
@@ -21,6 +25,7 @@ import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
+import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.UIEvents;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
@@ -34,6 +39,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -159,11 +165,34 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
         header.addComponent(titleLabel);
  
         buildNotificationsButton();
-        HorizontalLayout tools = new HorizontalLayout(notificationsButton);
+        buildSearchBar();
+        
+        
+        HorizontalLayout tools = new HorizontalLayout(searchField,notificationsButton);
         tools.addStyleName("toolbar");
         header.addComponent(tools);
 
         return header;
+    }
+    
+    /**
+     * 
+     */
+    private void buildSearchBar() {
+    	searchField.setPlaceholder("请输入业务流水号");
+    	ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER,
+ 				null) {
+ 			/**
+ 			 * 
+ 			 */
+ 			private static final long serialVersionUID = 1L;
+
+ 			@Override
+ 			public void handleAction(Object sender, Object target) {
+ 				 
+ 			}
+ 		};
+    	searchField.addShortcutListener(enterListener);
     }
     
     private void buildNotificationsButton() {
@@ -215,4 +244,5 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     public static final String EDIT_ID = "dashboard-edit";
     public static final String TITLE_ID = "dashboard-title";
+    private TextField searchField = new TextField();
 }

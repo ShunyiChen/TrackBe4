@@ -16280,3 +16280,19 @@ div.v-layout.v-horizontal.v-widget {
 	font-weight: normal;
 	font-family: Microsoft YaHei;
 }
+
+.dashboard .LoggingTableHeader {
+	background-color: #F1F1F1;
+}
+
+.dashboard .LoggingTableRow_dark {
+	background-color: #F0F8FF;
+}
+
+.dashboard .LoggingTableRow:hover {
+	background-color: lightgray;
+}
+
+.dashboard .LoggingTableRow_menu {
+	cursor: pointer;
+}

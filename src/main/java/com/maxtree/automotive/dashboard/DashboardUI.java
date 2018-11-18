@@ -139,6 +139,9 @@ public final class DashboardUI extends UI {
 
 	@Override
 	protected void init(final VaadinRequest request) {
+		
+		System.out.println("loggingService="+loggingService);
+		
 		setLocale(Locale.US);
 
 		DashboardEventBus.register(this);
@@ -181,7 +184,8 @@ public final class DashboardUI extends UI {
 					|| user.isPermitted(PermissionCodes.A7)
 					|| user.isPermitted(PermissionCodes.A8)
 					|| user.isPermitted(PermissionCodes.A9)
-					|| user.isPermitted(PermissionCodes.A10)) {
+					|| user.isPermitted(PermissionCodes.A10)
+					|| user.isPermitted(PermissionCodes.A11)) {
 				
 				MainView mainView = new MainView();
 				setContent(mainView);

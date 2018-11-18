@@ -29,7 +29,6 @@ public class LoginView extends VerticalLayout {
         setMargin(false);
         setSpacing(false);
 //        addStyleName("image-background");
-
         Component loginForm = buildLoginForm();
         addComponent(loginForm);
         setComponentAlignment(loginForm, Alignment.MIDDLE_CENTER);

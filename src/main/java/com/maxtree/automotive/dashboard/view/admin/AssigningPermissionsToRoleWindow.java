@@ -78,9 +78,7 @@ public class AssigningPermissionsToRoleWindow extends Window {
         rows.setHeightUndefined();
         rows.setMargin(false);
         rows.setSpacing(false);
-        
-//        scroll.setWidth("1024px");
-//        scroll.setHeight("100%");
+
         scroll.setContent(rows);
         scroll.setSizeFull();
         List<PermissionCategory> categories = ui.permissionCategoryService.findAll();

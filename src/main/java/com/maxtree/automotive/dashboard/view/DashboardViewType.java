@@ -9,6 +9,7 @@ import com.maxtree.automotive.dashboard.view.shelf.ShelfView;
 import com.maxtree.automotive.dashboard.view.imaging.ImagingManagerView;
 import com.maxtree.automotive.dashboard.view.imaging.ImagingInputView;
 import com.maxtree.automotive.dashboard.view.imaging.ImagingQualityView;
+import com.maxtree.automotive.dashboard.view.finalcheck.FinalCheckView;
 import com.vaadin.navigator.View;
 import com.vaadin.server.Resource;
 import com.vaadin.icons.VaadinIcons;
@@ -24,7 +25,7 @@ public enum DashboardViewType {
 	IMAGING_MANAGER("影像管理", ImagingManagerView.class, VaadinIcons.STORAGE, true),
 	IMAGING_INPUT("影像录入", ImagingInputView.class, VaadinIcons.PENCIL, true),
 	IMAGING_QUALITY("影像质检", ImagingQualityView.class, VaadinIcons.CLIPBOARD_CHECK, true),
-	FINAL_CHECK("最终审档", ImagingQualityView.class, VaadinIcons.CAR, true);
+	FINAL_CHECK("最终审档", FinalCheckView.class, VaadinIcons.CAR, true);
 	
     private final String viewName;
     private final Class<? extends View> viewClass;
