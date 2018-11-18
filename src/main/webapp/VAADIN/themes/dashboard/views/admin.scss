@@ -753,4 +753,19 @@ box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
         font-weight:normal;
         font-family: Microsoft YaHei;
     }
+    
+    .LoggingTableHeader {
+        background-color:#F1F1F1;
+    }
+    .LoggingTableRow {
+    }
+    .LoggingTableRow_dark {
+        background-color:#F0F8FF;
+    }
+    .LoggingTableRow:hover {
+        background-color:lightgray;
+    } 
+    .LoggingTableRow_menu {
+        cursor: pointer;
+    }
 }

@@ -105,7 +105,12 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
         root.addLayoutClickListener(new LayoutClickListener() {
-            @Override
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void layoutClick(final LayoutClickEvent event) {
             	if (notificationsWindow != null) {
             		notificationsWindow.close();
@@ -452,11 +457,11 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
     		//3.记录跟踪
     		track(ui.state().getName("B14"),comments);
     		//4.发信给前台
-    		String location = Yaml.readAddress().getLicenseplate();
+    		String plate = Yaml.readSystemConfiguration().getLicenseplate();
     		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
     		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
     		String subject = loggedInUser.getUserName()+"通过了确认审档";
-    		String content = location+" "+editableTrans.getPlateNumber()+","+comments;
+    		String content = plate+" "+editableTrans.getPlateNumber()+","+comments;
     		Message newMessage = messageSystem.createNewMessage(loggedInUser,subject,content, matedata);
     		
     		Set<Name> names = new HashSet<Name>();
@@ -498,11 +503,11 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 		track(ui.state().getName("B17"),comments);
 		
 		//4.发信给前台
-		String location = Yaml.readAddress().getLicenseplate();
+		String plate = Yaml.readSystemConfiguration().getLicenseplate();
 		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
 		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
 		String subject = loggedInUser.getUserName()+"退回了一笔业务";
-		String content = location+" "+editableTrans.getPlateNumber()+","+comments;
+		String content = plate+" "+editableTrans.getPlateNumber()+","+comments;
 		Message newMessage = messageSystem.createNewMessage(loggedInUser, subject,content,matedata);
 		
 		Set<Name> names = new HashSet<Name>();

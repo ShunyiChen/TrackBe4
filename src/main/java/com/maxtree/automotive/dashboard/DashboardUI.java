@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import com.google.common.eventbus.Subscribe;
+import com.maxtree.automotive.dashboard.component.LoggingWrapper;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
@@ -27,6 +28,7 @@ import com.maxtree.automotive.dashboard.service.EmbeddedServerService;
 import com.maxtree.automotive.dashboard.service.FrameNumberService;
 import com.maxtree.automotive.dashboard.service.ImagingService;
 import com.maxtree.automotive.dashboard.service.LocationService;
+import com.maxtree.automotive.dashboard.service.LoggingService;
 import com.maxtree.automotive.dashboard.service.MessagingService;
 import com.maxtree.automotive.dashboard.service.PermissionCategoryService;
 import com.maxtree.automotive.dashboard.service.PermissionService;
@@ -122,6 +124,8 @@ public final class DashboardUI extends UI {
 	public LocationService locationService;
 	@Autowired
 	public CompanyCategoryService companyCategoryService;
+	@Autowired
+	public LoggingService loggingService;
 	
 	
 	private StateHelper state = null;
@@ -201,29 +205,31 @@ public final class DashboardUI extends UI {
 	@Subscribe
 	public void userLoginRequested(final DashboardEvent.UserLoginRequestedEvent event) {
 		if (StringUtils.isEmpty(event.getUserName()) || StringUtils.isEmpty(event.getPassword())) {
-			log.info("Incorrect username or password.");
+			loggingWrapper.info(event.getUserName(),LoggingWrapper.LOGIN,"Incorrect username or password.");
 			smoothNotification("用户名或密码不能为空", "请重新输入用户名和密码。");
+			
 		} else {
 			User user = userService.getUserByUserName(event.getUserName());
 			if (user.getUserName() != null) {
 				
 				if (user.getActivated() == 0) {
-					log.info("User["+event.getUserName()+"] not found.");
+					loggingWrapper.info(event.getUserName(),LoggingWrapper.LOGIN,"User["+event.getUserName()+"] not found.");
 					smoothNotification("该账号尚未激活", "当前用户没有被激活，请联系管理员进行设置。");
 					
 				} else {
 					boolean successful = PasswordSecurity.check(event.getPassword(), user.getHashed());
 					if (successful) {
-						log.info("Login is sucessful.");
+						loggingWrapper.info(user.getUserName(), LoggingWrapper.LOGIN, "Login is sucessful.");
 						VaadinSession.getCurrent().setAttribute(User.class.getName(), user);
 						updateContent();
 					} else {
-						log.info("Incorrect password.");
+//						log.info("Incorrect password.");
+						loggingWrapper.info(user.getUserName(), LoggingWrapper.LOGIN, "Incorrect password.");
 						smoothNotification("密码错误", "请重新输入密码，如果忘记密码请联系管理员重置密码。");
 					}
 				}
 			} else {
-				log.info("User["+event.getUserName()+"] not found.");
+				loggingWrapper.info(event.getUserName(),LoggingWrapper.LOGIN,"The username["+event.getUserName()+"] does not exist.");
 				smoothNotification("用户不存在", "用户名"+event.getUserName()+"不存在，请重新输入用户名和密码。");
 			}
 			
@@ -328,4 +334,5 @@ public final class DashboardUI extends UI {
 		return state;
 	}
 	
+	private LoggingWrapper loggingWrapper = new LoggingWrapper(DashboardUI.class);
 }

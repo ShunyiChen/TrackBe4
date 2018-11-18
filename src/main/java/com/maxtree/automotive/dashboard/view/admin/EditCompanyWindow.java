@@ -228,7 +228,9 @@ public class EditCompanyWindow extends Window {
         	if (w.checkEmptyValues()) {
         		w.company.setCategory(w.categorySelector.getValue().trim());
         		w.company.setCommunityUniqueId(w.communitySelector.getValue() == null?0:w.communitySelector.getValue().getCommunityUniqueId());
-        		w.company.setStorehouseName(w.storeSelector.getValue().getStorehouseName());
+        		if(w.storeSelector.getValue() != null) {
+        			w.company.setStorehouseName(w.storeSelector.getValue().getStorehouseName());
+        		}
         		w.company.setQcsupport(w.qcsupportSelector.getValue().equals("支持")?true:false);
         		int companyuniqueid = ui.companyService.insert(w.company);
     			w.close();
@@ -270,7 +272,9 @@ public class EditCompanyWindow extends Window {
         		w.company.setCategory(w.categorySelector.getValue().trim());
         		w.company.setEmployees(c.getEmployees());
         		w.company.setCommunityUniqueId(w.communitySelector.getValue() == null?0:w.communitySelector.getValue().getCommunityUniqueId());
-        		w.company.setStorehouseName(w.storeSelector.getValue().getStorehouseName());
+        		if(w.storeSelector.getValue() != null) {
+        			w.company.setStorehouseName(w.storeSelector.getValue().getStorehouseName());
+        		}
         		w.company.setQcsupport(w.qcsupportSelector.getValue().equals("支持")?true:false);
     			ui.companyService.update(w.company);
     			w.close();

@@ -8,7 +8,6 @@ import java.util.Set;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Transaction;
@@ -76,8 +75,8 @@ public class QuickQueryWindow extends Window {
 			}
 		};
 		plateField.addShortcutListener(keyListener);
-		
-		Label fieldName = new Label(VaadinIcons.CAR.getHtml()+"车牌号:  "+Yaml.readAddress().getLicenseplate()+"  ");
+		String plate = Yaml.readSystemConfiguration().getLicenseplate();
+		Label fieldName = new Label(VaadinIcons.CAR.getHtml()+"车牌号:  "+plate+"  ");
 		fieldName.setContentMode(ContentMode.HTML);
 		toolbar.addComponents(fieldName,plateField,btnSearch);
 		toolbar.setComponentAlignment(fieldName, Alignment.MIDDLE_LEFT);

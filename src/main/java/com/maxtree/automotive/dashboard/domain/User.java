@@ -117,6 +117,14 @@ public class User {
 	public void setProfile(UserProfile profile) {
 		this.profile = profile;
 	}
+	
+	public String getCommunityName() {
+		return communityName;
+	}
+
+	public void setCommunityName(String communityName) {
+		this.communityName = communityName;
+	}
 
 	@Override
 	public String toString() {
@@ -145,4 +153,6 @@ public class User {
 	private List<Role> roles; 			// 角色列表
 	private List<Site> sites; 			// 站点列表
 	private UserProfile profile;        // 用户个人配置
+	
+	private String communityName;//非字段
 }

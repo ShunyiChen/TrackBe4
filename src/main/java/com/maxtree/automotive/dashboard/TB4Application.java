@@ -10,8 +10,8 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
+import com.maxtree.automotive.dashboard.service.LoggingService;
 import com.maxtree.tb4builder.App;
 
 @ServletComponentScan
@@ -20,9 +20,18 @@ public class TB4Application extends SpringBootServletInitializer implements Comm
 
 	// define the logger
     private static Logger log = Logger.getLogger(TB4Application.class);
+
+    private static TB4Application app = null;
+    
+    public static TB4Application getInstance() {
+    	return app;
+    }
     
     @Autowired
     JdbcTemplate jdbcTemplate;
+    
+    @Autowired
+    public LoggingService loggingService;
     
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
@@ -40,6 +49,7 @@ public class TB4Application extends SpringBootServletInitializer implements Comm
 
     @Override
     public void run(String... strings) throws Exception {
+    	app = this;
 //    	SystemConfiguration sc = Yaml.readSystemConfiguration();
 //    	if(sc.getCreateDBTableOnStartup().equalsIgnoreCase("yes")) {
 //    		App dbbuilder = new App();

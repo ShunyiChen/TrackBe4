@@ -491,7 +491,8 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
 		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
 		String subject = loggedInUser.getUserName()+"退回了一笔业务";
-		String content = Yaml.readAddress().getLicenseplate()+" "+ editableTrans.getPlateNumber()+",质检不合格,"+comments;
+		String plate = Yaml.readSystemConfiguration().getLicenseplate();
+		String content = plate+" "+ editableTrans.getPlateNumber()+",质检不合格,"+comments;
 		
 		Message newMessage = messageSystem.createNewMessage(loggedInUser, subject, content, matedata);
 		Set<Name> names = new HashSet<Name>();

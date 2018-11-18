@@ -213,7 +213,7 @@ public class PeopleView extends ContentView {
 		photo.setHeight("30px");
 		ImageWithString photoWithName = new ImageWithString(photo, user.getUserName());
 		
-		return new Object[] {photoWithName, user.getCompanyName(), user.getCommunityUniqueId(), roles.toString(), img, user.getUserUniqueId()};
+		return new Object[] {photoWithName, user.getCompanyName(), user.getCommunityName(), roles.toString(), img, user.getUserUniqueId()};
 	}
 	
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();

@@ -19,7 +19,6 @@ import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.NotificationsButton;
 import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
-import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Community;
@@ -215,7 +214,8 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 		plateTypeField.setHeight("30px");
 		// 号牌号码
 		Label plateNumberLabel = new Label("号牌号码:");
-		Label plateNumberTitle = new Label(""+addr.getLicenseplate());
+		String plate = Yaml.readSystemConfiguration().getLicenseplate();
+		Label plateNumberTitle = new Label(plate);
 		plateNumberField.setWidth("140px");
 		plateNumberField.setHeight("30px");
 		// 车辆识别代号
@@ -440,8 +440,6 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     private TextField plateNumberField = new TextField();//号牌号码
     private TextField vinField = new TextField();//车辆识别代号
     private TextField keywordField = new TextField();
-    
-    private Address addr = Yaml.readAddress();
     private MatedataJsonParser jsonHelper = new MatedataJsonParser();
     private User loggedInUser;	//登录用户
     private Label titleLabel;

@@ -3,7 +3,6 @@ package com.maxtree.automotive.dashboard.view.imaging;
 import java.util.List;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
@@ -46,7 +45,6 @@ public class FuzzyQueryWindow extends Window {
 		toolbar.setHeight("30px");
 		btnSearch.setStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		btnSearch.setIcon(VaadinIcons.SEARCH);
-		Address addr = Yaml.readAddress();
 		plateField.setWidth("240px");
 		plateField.setPlaceholder("请输入车牌号后5位或后6位");
 		plateField.setHeight("28px");
@@ -63,8 +61,9 @@ public class FuzzyQueryWindow extends Window {
 		};
 		plateField.addShortcutListener(keyListener);
 		
+		String plate = Yaml.readSystemConfiguration().getLicenseplate();
 		Label fieldName = new Label(VaadinIcons.CAR.getHtml()+"车牌号: ");
-		Label location = new Label(addr.getLicenseplate());
+		Label location = new Label(plate);
 		fieldName.setContentMode(ContentMode.HTML);
 		toolbar.addComponents(fieldName,location,plateField,btnSearch);
 		toolbar.setComponentAlignment(fieldName, Alignment.MIDDLE_LEFT);

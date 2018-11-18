@@ -1,10 +1,8 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
@@ -24,8 +22,6 @@ import com.vaadin.server.Page.Styles;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
@@ -33,6 +29,11 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class AssigningPermissionsToRoleWindow extends Window {
 
 	/**
@@ -45,19 +46,13 @@ public class AssigningPermissionsToRoleWindow extends Window {
 	 * @param role
 	 */
 	public AssigningPermissionsToRoleWindow(Role role) {
-		this.setWidth("900px");
-		this.setHeight("510px");
+		this.setWidth("1024px");
+		this.setHeight("768px");
 		this.setModal(true);
 		this.setClosable(true);
 		this.setResizable(true);
 		this.setCaption("为角色分配权限 - "+role.getRoleName());
 		this.addStyleName("set-permissions-to-role-window-"+this.hashCode());
-		
-		VerticalLayout mainLayout = new VerticalLayout(); 
-		mainLayout.setSpacing(false);
-		mainLayout.setMargin(false);
-		mainLayout.setWidth("100%");
-		mainLayout.setHeightUndefined();
  
 		Styles styles = Page.getCurrent().getStyles();
     	String css = ".set-permissions-to-role-window-"+this.hashCode()+" { padding:5px !important; }";
@@ -66,133 +61,82 @@ public class AssigningPermissionsToRoleWindow extends Window {
     	styles.add(css);
     	styles.add(css2);
     	styles.add(css3);
+    	
+    	HorizontalLayout header = selectAllLink();
+    	
     	// 初始化获取已分配的权限
         List<Permission> assignedPermissions = ui.roleService.assignedPermissions(role.getRoleUniqueId());
         for (Permission p : assignedPermissions) {
         	assignedPermissionUniqueIDs.add(p.getPermissionUniqueId());
         }
-        
-    	HorizontalLayout header = selectAllLink();
-//		Hr hr = new Hr();
-		gridLayout = new GridLayout();
-		gridLayout.setSpacing(false);
-		gridLayout.setMargin(false);
-        gridLayout.setWidth("1290px");
+ 
         /*
          Did you mean 100% height and undefined width? (to get horizontal scrollbar, but no vertical one)
-Of course - if you want to get both scrollbars and the content size can not be set in pixels, one should use setSizeUndefined().
+		 Of course - if you want to get both scrollbars and the content size can not be set in pixels, one should use setSizeUndefined().
          */
-        gridLayout.setHeightUndefined();
+        rows.setWidthUndefined();
+        rows.setHeightUndefined();
+        rows.setMargin(false);
+        rows.setSpacing(false);
         
-        generateMatrixGrid();
-		
-	 
-		Button btnCancel = new Button("取消");
+//        scroll.setWidth("1024px");
+//        scroll.setHeight("100%");
+        scroll.setContent(rows);
+        scroll.setSizeFull();
+        List<PermissionCategory> categories = ui.permissionCategoryService.findAll();
+        for(PermissionCategory category : categories) {
+        	HorizontalLayout row = new HorizontalLayout();
+        	row.setWidthUndefined();
+        	Label title = new Label(category.getName()+":");
+        	title.setWidth("100px");
+        	row.addComponent(title);
+        	row.setComponentAlignment(title, Alignment.TOP_LEFT);
+        	
+        	List<Permission> lst = ui.permissionService.findByCategoryUniqueId(category.getCategoryUniqueId());
+        	for(Permission p : lst) {
+        		PermissionBox box = new PermissionBox(p);
+        		allBoxes.add(box);
+        	    if (assignedPermissionUniqueIDs.contains(p.getPermissionUniqueId())) {
+        	    	box.setSelected(true);
+        	    }
+        		box.setWidth("100px");
+        		row.addComponent(box);
+        		row.setComponentAlignment(box, Alignment.MIDDLE_LEFT);
+        	}
+        	
+        	rows.addComponent(row);
+        	rows.setComponentAlignment(row, Alignment.MIDDLE_LEFT);
+        }
+        
+        Button btnCancel = new Button("取消");
 		btnOK = new Button("确定");
 		btnApply = new Button("应用");
-		
-		btnCancel.addStyleName("grid-button-without-border");
-		btnOK.addStyleName("grid-button-without-border");
-		btnApply.addStyleName("grid-button-without-border");
-		
 		HorizontalLayout subButtonPane = new HorizontalLayout();
-		subButtonPane.setWidth("206px");
-		subButtonPane.setHeightUndefined();
-		subButtonPane.addComponents(btnCancel, btnOK, btnApply);
+		subButtonPane.setWidthUndefined();
+		subButtonPane.setHeight("40px");
+		subButtonPane.setMargin(false);
+		subButtonPane.setSpacing(false);
+		subButtonPane.addComponents(btnCancel,Box.createHorizontalBox(5),btnOK,Box.createHorizontalBox(5),btnApply);
 		subButtonPane.setComponentAlignment(btnCancel, Alignment.MIDDLE_LEFT);
 		subButtonPane.setComponentAlignment(btnOK, Alignment.MIDDLE_LEFT);
 		subButtonPane.setComponentAlignment(btnApply, Alignment.MIDDLE_LEFT);
-		
-		Panel scrollPane = new Panel();
-		scrollPane.setWidth("100%");
-		scrollPane.setHeight("365px");
-		scrollPane.setContent(gridLayout);
-		
-		mainLayout.addComponents(header, Box.createVerticalBox(1), scrollPane, subButtonPane);
-		mainLayout.setComponentAlignment(header,Alignment.MIDDLE_CENTER);
-		mainLayout.setComponentAlignment(scrollPane, Alignment.TOP_CENTER);
-		mainLayout.setComponentAlignment(subButtonPane, Alignment.BOTTOM_RIGHT);
-		this.setContent(mainLayout);
-		
 		btnCancel.addClickListener(e -> {
 			close();
 		});
+		
+		main.setSizeFull();
+		main.setMargin(false);
+		main.setSpacing(false);
+		main.addComponents(header,scroll,subButtonPane);
+		main.setComponentAlignment(header, Alignment.TOP_LEFT);
+		main.setComponentAlignment(scroll, Alignment.TOP_LEFT);
+		main.setComponentAlignment(subButtonPane, Alignment.BOTTOM_RIGHT);
+		main.setExpandRatio(header, 0);
+		main.setExpandRatio(scroll, 1);
+		main.setExpandRatio(subButtonPane, 0);
+		this.setContent(main);
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	private Permission[][] getPermissionArray() {
-		// 最大值索引 = 权限分类数
-		Permission[][] array = new Permission[17][10];//key:分类 value:分类中的项
-		List<Permission> values = ui.permissionService.findAll();
-		String key = null;
-		int i = 0;
-		int j = 0;
-		for (Permission p : values) {
-			String group = p.getCode().substring(0, 1);
-			if (key == null) {
-				key = group;
-			}
-			if (!key.equals(group)) {
-				i++;
-				j=0;
-			}
-			array[i][j] = p;
-			
-			j++;
-			key = group;
-		}
-		return array;
-	}
-	
-	/**
-	 * 
-	 * @param rows
-	 * @param columns
-	 */
-	private void generateMatrixGrid() {
-		List<PermissionCategory> categories = ui.permissionCategoryService.findAll();
-        
-        Permission[][] codes = getPermissionArray();
-        
-        final int rows = codes.length;
-        final int columns = codes[0].length + 1;
-        gridLayout.removeAllComponents();
-        gridLayout.setRows(rows);
-        gridLayout.setColumns(columns);
-        
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < columns; col++) {
-            	
-            	if (col == 0) {
-            		Label category = new Label(categories.get(row).getName()+":");
-            		category.setHeight("50px");
-                    gridLayout.addComponents(category);
-                    gridLayout.setComponentAlignment(category, Alignment.TOP_LEFT);
-            		
-            	} else {
-            		Permission code = codes[row][col-1];
-            		if (code != null) {
-            			PermissionBox box = new PermissionBox(code);
-                	    gridLayout.addComponents(box);
-                	    gridLayout.setComponentAlignment(box, Alignment.TOP_LEFT);
-                	    
-                	    if (assignedPermissionUniqueIDs.contains(code.getPermissionUniqueId())) {
-                	    	box.setSelected(true);
-                	    }
-                	    
-            		} else {
-            			Label blankLabel = new Label();
-            			gridLayout.addComponents(blankLabel);
-                	    gridLayout.setComponentAlignment(blankLabel, Alignment.TOP_LEFT);
-            		}
-            	}
-            }
-        }
-    }
-	
 	/**
 	 * 
 	 * @return
@@ -211,29 +155,29 @@ Of course - if you want to get both scrollbars and the content size can not be s
 		
 		ClickLabel checkAll = new ClickLabel("<span style='cursor:pointer;font-size:13px;font-weight: bold;color: #2499DD;'>全选</span>");
 		checkAll.addLayoutClickListener(new LayoutClickListener() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void layoutClick(LayoutClickEvent event) {
-				Iterator<Component> iter = gridLayout.iterator();
-				while(iter.hasNext()) {
-					Component comp = iter.next();
-					if (comp instanceof PermissionBox) {
-						PermissionBox box = (PermissionBox) comp;
-						box.setSelected(true);
-					}
+				for(PermissionBox box : allBoxes) {
+					box.setSelected(true);
 				}
 			}
 		});
 		ClickLabel checkNone = new ClickLabel("<span style='cursor:pointer;font-size:13px;font-weight: bold;color: #2499DD;'>全不选</span>");
 		checkNone.addLayoutClickListener(new LayoutClickListener() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void layoutClick(LayoutClickEvent event) {
-				Iterator<Component> iter = gridLayout.iterator();
-				while(iter.hasNext()) {
-					Component comp = iter.next();
-					if (comp instanceof PermissionBox) {
-						PermissionBox box = (PermissionBox) comp;
-						box.setSelected(false);
-					}
+				for(PermissionBox box : allBoxes) {
+					box.setSelected(false);
 				}
 			}
 		});
@@ -248,18 +192,15 @@ Of course - if you want to get both scrollbars and the content size can not be s
 		return main;
 	}
  
+	/**
+	 * 
+	 * @param role
+	 */
 	private void apply(Role role) {
-		
 		List<Integer> permissionUniqueIDs = new ArrayList<>();
-		
-		Iterator<Component> iter = gridLayout.iterator();
-		while(iter.hasNext()) {
-			Component comp = iter.next();
-			if (comp instanceof PermissionBox) {
-				PermissionBox box = (PermissionBox) comp;
-				if (box.isSelected()) {
-					permissionUniqueIDs.add(box.getPermission().getPermissionUniqueId());
-				}
+		for(PermissionBox box : allBoxes) {
+			if (box.isSelected()) {
+				permissionUniqueIDs.add(box.getPermission().getPermissionUniqueId());
 			}
 		}
 		ui.roleService.updateRolePermissions(role.getRoleUniqueId(), permissionUniqueIDs);
@@ -287,7 +228,10 @@ Of course - if you want to get both scrollbars and the content size can not be s
         w.center();
     }
 
-	private GridLayout gridLayout;
+	private List<PermissionBox> allBoxes = new ArrayList<>();
+	private Panel scroll = new Panel();
+	private VerticalLayout rows = new VerticalLayout(); 
+	private VerticalLayout main = new VerticalLayout(); 
 	private Button btnApply;
 	private Button btnOK;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();

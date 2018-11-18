@@ -1,8 +1,12 @@
 package com.maxtree.automotive.dashboard.component;
 
-import com.maxtree.automotive.dashboard.PermissionCodes;
 import com.maxtree.automotive.dashboard.domain.Permission;
 
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class PermissionBox extends SwitchButton {
 
 	/**
@@ -21,11 +25,4 @@ public class PermissionBox extends SwitchButton {
 	}
 
 	private Permission permission;
-	
-	
-//	public PermissionBox(PermissionCodes permissionCode) {
-//		super(false, permissionCode.name, SwitchButton.WHITE);
-//		img.setDescription(permissionCode.description);
-//	}
-	
 }

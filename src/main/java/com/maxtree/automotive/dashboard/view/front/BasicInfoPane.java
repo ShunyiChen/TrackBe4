@@ -1,14 +1,10 @@
 package com.maxtree.automotive.dashboard.view.front;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.data.Address;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Transaction;
@@ -25,8 +21,11 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
-import Tmri.InterF;
-
+/**
+ * 
+ * @author Chen
+ *
+ */
 public class BasicInfoPane extends Panel {
 
 	/**
@@ -332,7 +331,7 @@ public class BasicInfoPane extends Panel {
 	}
 	
 	public String getPlateNumber() {
-		return addr.getLicenseplate()+" "+plateNumberField.getValue();
+		return config.getLicenseplate()+" "+plateNumberField.getValue();
 	}
 	
 	public String getPlateType() {
@@ -343,12 +342,11 @@ public class BasicInfoPane extends Panel {
 		return vinField.getValue();
 	}
 	
-	private Address addr = Yaml.readAddress();
 	private SystemConfiguration config = Yaml.readSystemConfiguration();
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private TextField barCodeField = new TextField("条形码:"); 			// 条形码文本框
 	private ComboBox<String> plateTypeField = new ComboBox<>("号牌种类:");// 号牌种类文本框
-	private TextField plateNumberField = new TextField("号码号牌:"+addr.getLicenseplate()); 		// 号码号牌文本框
+	private TextField plateNumberField = new TextField("号码号牌:"+config.getLicenseplate());// 号码号牌文本框
 	private TextField vinField = new TextField("车辆识别代号:"); 			// 车辆识别码文本框
 	private String fieldHeight = "27px";
 //	private InterF interF = new InterF();

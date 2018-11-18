@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -474,11 +473,11 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     		track(ui.state().getName("B14"),comments);
     		
     		//4.发信给前台
-    		String location = Yaml.readAddress().getLicenseplate();
+    		String plate = Yaml.readSystemConfiguration().getLicenseplate();
     		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
     		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
     		String subject = loggedInUser.getUserName()+"通过了审档";
-    		String content = location+" "+editableTrans.getPlateNumber()+","+comments;
+    		String content = plate+" "+editableTrans.getPlateNumber()+","+comments;
     		Message newMessage = messageSystem.createNewMessage(loggedInUser,subject,content,matedata);
 
     		Set<Name> names = new HashSet<Name>();
@@ -538,11 +537,11 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
 		track(ui.state().getName("B16"),comments);
 		
 		//4.发信给前台
-		String location = Yaml.readAddress().getLicenseplate();
+		String plate = Yaml.readSystemConfiguration().getLicenseplate();
 		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
 		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
 		String subject = loggedInUser.getUserName()+"退回了一笔业务";
-		String content = location+" "+editableTrans.getPlateNumber()+",审档不合格,"+comments;
+		String content = plate+" "+editableTrans.getPlateNumber()+",审档不合格,"+comments;
 		Message newMessage = messageSystem.createNewMessage(loggedInUser,subject,content,matedata);
 
 		Set<Name> names = new HashSet<Name>();

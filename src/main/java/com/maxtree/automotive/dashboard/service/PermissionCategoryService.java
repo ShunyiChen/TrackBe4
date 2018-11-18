@@ -35,4 +35,13 @@ public class PermissionCategoryService {
 		return result;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public int getPermissionCategorys() {
+		String sql = "SELECT COUNT(CATEGORYUNIQUEID) FROM PERMISSIONCATEGORY";
+		int count = jdbcTemplate.queryForObject(sql, Integer.class);
+		return count;
+	}
 }

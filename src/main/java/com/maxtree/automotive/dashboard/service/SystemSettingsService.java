@@ -24,8 +24,8 @@ public class SystemSettingsService {
 	 * @return
 	 */
 	public List<SystemSettings> findAll() {
-		String sql = "SELECT * FROM SYSTEMSETTINGS ORDER BY SETTINGUNIQUEID";
-		List<SystemSettings> results = jdbcTemplate.query(sql, new Object[] {}, new BeanPropertyRowMapper<SystemSettings>(SystemSettings.class));
+		String sql = "SELECT * FROM SYSTEMSETTINGS WHERE NAME <> ? ORDER BY SETTINGUNIQUEID";
+		List<SystemSettings> results = jdbcTemplate.query(sql, new Object[] {"高拍仪"}, new BeanPropertyRowMapper<SystemSettings>(SystemSettings.class));
 		return results;
 	}
 	

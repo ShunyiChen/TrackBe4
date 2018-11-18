@@ -66,7 +66,7 @@ public class UserService {
 	 * @throws EmptyResultDataAccessException
 	 */
 	public User findById(int userUniqueId) throws EmptyResultDataAccessException {
-		String sql = "SELECT * FROM USERS WHERE USERUNIQUEID=?";
+		String sql = "SELECT A.*,B.COMMUNITYNAME AS COMMUNITYNAME FROM USERS AS A LEFT JOIN COMMUNITIES AS B ON A.COMMUNITYUNIQUEID=B.COMMUNITYUNIQUEID WHERE A.USERUNIQUEID=? ";
 		List<User> lstUsers = jdbcTemplate.query(sql, new Object[] {userUniqueId}, new BeanPropertyRowMapper<User>(User.class));
 		if (lstUsers.size() > 0) {
 			User user = lstUsers.get(0);
@@ -163,9 +163,9 @@ public class UserService {
 	 * @return
 	 */
 	public List<User> findAll(boolean systemIncluded) {
-		String sql = "SELECT * FROM USERS WHERE USERNAME <> 'system' ORDER BY USERUNIQUEID";
+		String sql = "SELECT A.*,B.COMMUNITYNAME AS COMMUNITYNAME FROM USERS AS A LEFT JOIN COMMUNITIES AS B ON A.COMMUNITYUNIQUEID=B.COMMUNITYUNIQUEID WHERE A.USERNAME <> 'system' ORDER BY A.USERUNIQUEID";
 		if (systemIncluded) {
-			sql = "SELECT * FROM USERS ORDER BY USERUNIQUEID";
+			sql = "SELECT A.*,B.COMMUNITYNAME AS COMMUNITYNAME FROM USERS AS A LEFT JOIN COMMUNITIES AS B ON A.COMMUNITYUNIQUEID=B.COMMUNITYUNIQUEID ORDER BY A.USERUNIQUEID";
 		}
 		List<User> lstUsers = jdbcTemplate.query(sql, new Object[] {}, new BeanPropertyRowMapper<User>(User.class));
 		

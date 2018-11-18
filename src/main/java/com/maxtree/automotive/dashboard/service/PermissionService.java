@@ -3,6 +3,7 @@ package com.maxtree.automotive.dashboard.service;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,21 @@ public class PermissionService {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
+	/**
+	 * 取权限分类中权限最多的数
+	 * 
+	 * @return
+	 */
+	public int getMaxChildrenCount() {
+		String sql = "SELECT COUNT(*) AS A FROM PERMISSION GROUP BY CATEGORYUNIQUEID ORDER BY A DESC LIMIT ?";
+		int maxCount = jdbcTemplate.queryForObject(sql, new Object[] {1}, Integer.class);
+		return maxCount;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public List<Permission> findAll() {
 		String sql = "SELECT * FROM PERMISSION ORDER BY PERMISSIONUNIQUEID";
 		List<Permission> result = jdbcTemplate.query(sql, new Object[] {},
@@ -31,6 +47,23 @@ public class PermissionService {
 		return result;
 	}
 
+	/**
+	 * 
+	 * @param categoryUniqueId
+	 * @return
+	 */
+	public List<Permission> findByCategoryUniqueId(int categoryUniqueId) {
+		String sql = "SELECT * FROM PERMISSION WHERE CATEGORYUNIQUEID=? ORDER BY PERMISSIONUNIQUEID";
+		List<Permission> result = jdbcTemplate.query(sql, new Object[] {categoryUniqueId},
+				new BeanPropertyRowMapper<Permission>(Permission.class));
+		return result;
+	}
+	
+	/**
+	 * 
+	 * @param permissionUniqueId
+	 * @return
+	 */
 	public Permission findById(int permissionUniqueId) {
 		String sql = "SELECT * FROM PERMISSION WHERE PERMISSIONUNIQUEID = ?";
 		List<Permission> result = jdbcTemplate.query(sql, new Object[] { permissionUniqueId },
@@ -103,6 +136,11 @@ public class PermissionService {
 		return count;
 	}
 	
+	/**
+	 * 
+	 * @param permissionUniqueId
+	 * @return
+	 */
 	public int getUserCount(int permissionUniqueId) {
 		String sql = "SELECT COUNT(B.USERUNIQUEID) FROM ROLERIGHT AS A LEFT JOIN ROLEMEMBER AS B ON A.ROLEUNIQUEID = B.ROLEUNIQUEID AND A.PERMISSIONUNIQUEID = ?";
 		int count = jdbcTemplate.queryForObject(

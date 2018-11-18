@@ -746,7 +746,8 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 		
 		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
 		String subject = loggedInUser.getUserName()+"修改了一笔业务";
-		String content = Yaml.readAddress().getLicenseplate()+" "+editableTrans.getPlateNumber()+",已完成修改，请再检查一遍。";
+		String plate = Yaml.readSystemConfiguration().getLicenseplate();
+		String content = plate+" "+editableTrans.getPlateNumber()+",已完成修改，请再检查一遍。";
 		Message newMessage = messageSystem.createNewMessage(loggedInUser,subject,content,matedata);
 		
 		Set<Name> names = new HashSet<Name>();

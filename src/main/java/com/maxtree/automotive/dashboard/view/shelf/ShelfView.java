@@ -67,9 +67,11 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
 	private static final Logger log = LoggerFactory.getLogger(QCView.class);
 	
+	/**
+	 * 
+	 */
 	public ShelfView() {
         addStyleName(ValoTheme.PANEL_BORDERLESS);
         setSizeFull();
@@ -190,7 +192,8 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
         searchbar.setMargin(false);
         searchbar.setWidthUndefined();
         
-        Label location = new Label(Yaml.readAddress().getLicenseplate());
+        String plate = Yaml.readSystemConfiguration().getLicenseplate();
+        Label location = new Label(plate);
         TextField searchField = new TextField();
         searchField.setWidth("400px");
         searchField.setPlaceholder("请输入车牌号后5位或后6位。 例如:B8K57");

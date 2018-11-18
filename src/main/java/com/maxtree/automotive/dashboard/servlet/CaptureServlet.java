@@ -96,6 +96,9 @@ public class CaptureServlet extends HttpServlet {
 				String[] parameters = name.split("_");
 				Integer userUniqueId = Integer.parseInt(parameters[0]);
 				UploadInDTO p = IN_DTOs.get(userUniqueId);
+				
+				
+				
 //				if (!checkEmpty(p)) {
 //					return;
 //				}
