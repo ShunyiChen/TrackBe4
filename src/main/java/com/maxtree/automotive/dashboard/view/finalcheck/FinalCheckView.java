@@ -3,19 +3,18 @@ package com.maxtree.automotive.dashboard.view.finalcheck;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.util.StringUtils;
-
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
-import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.NotificationsButton;
 import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
+import com.maxtree.automotive.dashboard.domain.Car;
+import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
@@ -25,15 +24,19 @@ import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
-import com.vaadin.event.ShortcutListener;
-import com.vaadin.event.UIEvents;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
+import com.vaadin.event.ShortcutListener;
+import com.vaadin.event.UIEvents;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -43,8 +46,6 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.schlichtherle.license.LicenseContent;
@@ -74,13 +75,16 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
         Responsive.makeResponsive(root);
         root.addComponent(buildHeader());
         root.addComponent(buildSparklines());
+        
+        main.setSpacing(false);
+        main.setMargin(false);
         main.addStyleName("main-check");
         main.setWidth("100%");
         main.setHeight("100%");
         main.addComponents(blankLabel);
         main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
         root.addComponents(main);
-        root.setExpandRatio(main, 7.0f);
+        root.setExpandRatio(main, 1f);
         loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
@@ -163,12 +167,29 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
         titleLabel.addStyleName(ValoTheme.LABEL_H1);
         titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         header.addComponent(titleLabel);
- 
+        //
         buildNotificationsButton();
         buildSearchBar();
+        //
+        Button searchButton = new Button();
+        searchButton.addClickListener(e->{
+        	String barcode = searchField.getValue();
+        	Car car = ui.carService.findByBarcode(barcode);
+        	Transaction trans = ui.transactionService.findByBarcode(barcode, car.getVin());
+        	
+        	List<Document> lstDocs = ui.documentService.findAllDocument1(car.getVin(), trans.getUuid());
+        	
+        	splitPane.fillCarInfo(trans);
+        	splitPane.loadThumbnails(lstDocs);
+        	
+        	resetComponents();
+        });
+        searchButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        searchButton.setIcon(VaadinIcons.SEARCH);
+        Label inputlabel = new Label("按流水号查询:");
         
-        
-        HorizontalLayout tools = new HorizontalLayout(searchField,notificationsButton);
+        HorizontalLayout tools = new HorizontalLayout(inputlabel,searchField,searchButton,notificationsButton);
+        tools.setComponentAlignment(inputlabel, Alignment.MIDDLE_RIGHT);
         tools.addStyleName("toolbar");
         header.addComponent(tools);
 
@@ -180,8 +201,7 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
      */
     private void buildSearchBar() {
     	searchField.setPlaceholder("请输入业务流水号");
-    	ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER,
- 				null) {
+    	ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER, null) {
  			/**
  			 * 
  			 */
@@ -233,8 +253,21 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
 		
 	}
 	
+	/**
+	 * 
+	 */
+	private void resetComponents() {
+		main.removeAllComponents();
+    	main.setHeightUndefined();
+    	
+    	main.addComponent(splitPane);
+    	main.setComponentAlignment(splitPane, Alignment.TOP_CENTER);
+    	main.setExpandRatio(splitPane, 1);
+	}
+	
+	private TextField searchField = new TextField();
+	private SplitPane splitPane = new SplitPane();
 	private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.DOUBLECHECK.getViewName());
-    private TB4MessagingSystem messageSystem = new TB4MessagingSystem();
 	private User loggedInUser;
 	private NotificationsButton notificationsButton;
 	private Window notificationsWindow;
@@ -244,5 +277,5 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     public static final String EDIT_ID = "dashboard-edit";
     public static final String TITLE_ID = "dashboard-title";
-    private TextField searchField = new TextField();
+    private TB4MessagingSystem messageSystem = new TB4MessagingSystem();
 }

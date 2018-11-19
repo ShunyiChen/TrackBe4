@@ -37,6 +37,24 @@ public class TransactionService {
 	}
 
 	/**
+	 * 按流水号查
+	 * 
+	 * @param barcode
+	 * @param vin
+	 * @return
+	 */
+	public Transaction findByBarcode(String barcode, String vin) {
+		int index = getTableIndex(vin);
+		String sql = "SELECT A.*,B.NAME AS BUSINESSNAME FROM TRANSACTION_"+index+" AS A LEFT JOIN BUSINESS AS B ON A.BUSINESSCODE=B.CODE WHERE A.BARCODE=?";
+		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {barcode}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
+		Transaction trans = null;
+		if (result.size() > 0) {
+			trans = result.get(0);
+		}
+		return trans;
+	}
+	
+	/**
 	 * 
 	 * @param transactionUniqueId
 	 * @param vin

@@ -15006,6 +15006,12 @@ div.v-layout.v-horizontal.v-widget {
 	cursor: pointer;
 }
 
+.dashboard .Thumbnail-name {
+	font-size: 12px;
+	font-weight: normal;
+	font-family: Microsoft YaHei;
+}
+
 .dashboard .drop-area {
 	cursor: pointer;
 	background-color: transparent;
@@ -15139,6 +15145,10 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .PrintingFiletagsWindow_bf {
 	text-align: center;
+}
+
+.dashboard .SplitPane {
+	padding-top: 5px;
 }
 
 .dashboard .schedule .v-calendar-event-content {

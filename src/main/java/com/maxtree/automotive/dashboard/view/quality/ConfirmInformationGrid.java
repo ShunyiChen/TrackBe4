@@ -8,8 +8,14 @@ import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
+/**
+ * 
+ * @author chens
+ *
+ */
 public class ConfirmInformationGrid extends HorizontalLayout {
 
 	/**
@@ -57,14 +63,28 @@ public class ConfirmInformationGrid extends HorizontalLayout {
 		hlayout.setComponentAlignment(businessTypeText, Alignment.MIDDLE_LEFT);
 		hlayout.setComponentAlignment(businessTypeField, Alignment.MIDDLE_LEFT);
 		this.addComponent(hlayout);
-		setValues(transaction);
+		
+		barCodeField.setWidth("150px");
+		plateTypeField.setWidth("150px");
+		plateNumberField.setWidth("150px");
+		vinField.setWidth("150px");
+		businessTypeField.setWidth("150px");
+		
+		barCodeField.setHeight("28px");
+		plateTypeField.setHeight("28px");
+		plateNumberField.setHeight("28px");
+		vinField.setHeight("28px");
+		businessTypeField.setHeight("28px");
+		
+		if(transaction != null)
+			setValues(transaction);
 	}
 	
 	/**
 	 * 
 	 * @param transaction
 	 */
-	private void setValues(Transaction transaction) {
+	public void setValues(Transaction transaction) {
 		barCodeField.setValue(transaction.getBarcode());
 		plateTypeField.setValue(transaction.getPlateType());
 		plateNumberField.setValue(transaction.getPlateNumber());
@@ -88,9 +108,9 @@ public class ConfirmInformationGrid extends HorizontalLayout {
 	private Label plateNumberText = new Label(htmlText("号码号牌:"), ContentMode.HTML);
 	private Label vinText = new Label(htmlText("车辆识别码:"), ContentMode.HTML);
 	private Label businessTypeText = new Label(htmlText("业务类型:"), ContentMode.HTML);
-	private Label barCodeField = new Label(); 	// 条形码文本
-	private Label plateTypeField = new Label();	// 号牌种类文本框
-	private Label plateNumberField = new Label(); // 号码号牌文本框
-	private Label vinField = new Label(); 			// 车辆识别码文本框
-	private Label businessTypeField = new Label();  // 业务类型文本框
+	private TextField barCodeField = new TextField(); 	// 条形码文本
+	private TextField plateTypeField = new TextField();	// 号牌种类文本框
+	private TextField plateNumberField = new TextField(); // 号码号牌文本框
+	private TextField vinField = new TextField(); 			// 车辆识别码文本框
+	private TextField businessTypeField = new TextField();  // 业务类型文本框
 }

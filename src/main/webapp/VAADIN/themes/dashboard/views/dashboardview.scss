@@ -289,16 +289,11 @@
         box-shadow:0 0 8px rgba(0,191,255,0.8);
         cursor:pointer;
     }
-    
-//    .Thumbnail-selected {
-//        border-radius: 5px;
-//        border-style: solid;
-//        border-color:cadetblue;
-//        border-width: 2px;
-//        padding: 1px;
-//        box-shadow:0 0 8px rgba(0,91,155,0.8);
-//        cursor:pointer;
-//    }
+    .Thumbnail-name{
+        font-size: 12px;
+        font-weight:normal;
+        font-family: Microsoft YaHei;
+    }
 
     // 拖拽上传
     .drop-area{
@@ -439,5 +434,7 @@
     .PrintingFiletagsWindow_bf {
         text-align: center;
     }
-     
+    .SplitPane {
+        padding-top: 5px;
+    }
 }
