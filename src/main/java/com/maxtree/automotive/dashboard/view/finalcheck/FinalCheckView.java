@@ -15,9 +15,9 @@ import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Car;
-import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.Transaction;
+import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
@@ -31,6 +31,8 @@ import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewBeforeLeaveEvent;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ContentMode;
@@ -141,6 +143,7 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
             	
             }
         });
+        
 	}
 	
 	private void startPolling() {
@@ -173,26 +176,83 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
         buildSearchBar();
         Button searchButton = new Button();
         searchButton.addClickListener(e->{
-        	String barcode = searchField.getValue();
-        	Car car = ui.carService.findByBarcode(barcode);
-        	if(car == null) {
-        		Notifications.warning("找不到该车辆。");
-        		cleanStage();
-        		return;
-        	}
-        	Transaction trans = ui.transactionService.findByBarcode(barcode, car.getVin());
-        	mainPage.load(trans);
-        	resetComponents();
+        	doSearch();
         });
         searchButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         searchButton.setIcon(VaadinIcons.SEARCH);
         Label inputlabel = new Label("按流水号查询:");
+        submit.addClickListener(e->{
+        	submit();
+        });
         HorizontalLayout tools = new HorizontalLayout(inputlabel,searchField,searchButton,submit,notificationsButton);
         tools.setComponentAlignment(inputlabel, Alignment.MIDDLE_RIGHT);
+        tools.setComponentAlignment(searchField, Alignment.MIDDLE_RIGHT);
         tools.addStyleName("toolbar");
         header.addComponent(tools);
         
         return header;
+    }
+    
+    /**
+     * 
+     */
+    private void doSearch() {
+    	String barcode = searchField.getValue();
+    	Car car = ui.carService.findByBarcode(barcode);
+    	if(car == null) {
+    		Notifications.warning("找不到该车辆。");
+    		cleanStage();
+    		return;
+    	}
+    	trans = ui.transactionService.findByBarcode(barcode, car.getVin());
+    	mainPage.load(trans);
+    	resetComponents();
+    }
+    
+    /**
+     * 
+     */
+    private void submit() {
+    	if(trans == null) {
+    		Notifications.warning("没有可提交的业务。");
+    	}
+    	else {
+    		trans.setStatus(ui.state().getName("B18"));
+    		trans.setDateModified(new Date());
+    		ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), trans.getStatus());
+    		
+    		track(trans.getStatus());
+    		
+    		//清空舞台
+        	cleanStage();
+        	Notifications.bottomWarning("提交成功！已改为待入库状态。");
+    	}
+    }
+    
+    /**
+     * 
+     * @param status
+     */
+    private void track(String status) {
+    	// 插入移行表
+		Transition transition = new Transition();
+		transition.setTransactionUUID(trans.getUuid());
+		transition.setVin(trans.getVin());
+		transition.setActivity(status);
+		transition.setComments(null);
+		transition.setOperator(loggedInUser.getUserName());
+		transition.setDateCreated(new Date());
+		ui.transitionService.insert(transition, trans.getVin());
+    }
+    
+//    @Override
+//    public void beforeLeave(final ViewBeforeLeaveEvent event) {
+//    	cleanStage();
+//    }
+    
+    @Override
+    public void enter(final ViewChangeEvent event) {
+    	cleanStage();
     }
     
     /**
@@ -209,6 +269,7 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
 
  			@Override
  			public void handleAction(Object sender, Object target) {
+ 				doSearch();
  			}
  		};
     	searchField.addShortcutListener(enterListener);
@@ -289,6 +350,7 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
     	main.setExpandRatio(mainPage, 1);
 	}
 	
+	private Transaction trans = null;
 	private TextField searchField = new TextField();
 	private MainPane mainPage = new MainPane();
 	private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.DOUBLECHECK.getViewName());

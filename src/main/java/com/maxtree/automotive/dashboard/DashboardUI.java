@@ -140,8 +140,6 @@ public final class DashboardUI extends UI {
 	@Override
 	protected void init(final VaadinRequest request) {
 		
-		System.out.println("loggingService="+loggingService);
-		
 		setLocale(Locale.US);
 
 		DashboardEventBus.register(this);

@@ -3,13 +3,15 @@ package com.maxtree.automotive.dashboard.view.finalcheck;
 import java.text.SimpleDateFormat;
 
 import com.maxtree.automotive.dashboard.Callback;
-import com.maxtree.automotive.dashboard.component.Box;
+import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.EncryptionUtils;
 import com.maxtree.automotive.dashboard.component.MessageBox;
+import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.DocumentHistory;
-import com.maxtree.automotive.dashboard.exception.FileException;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.UI;
 
 /**
  * 
@@ -25,9 +27,11 @@ public class HistoryRow extends HorizontalLayout {
 
 	/**
 	 * 
+	 * @param window
 	 * @param history
+	 * @param callback
 	 */
-	public HistoryRow(DocumentHistory history) {
+	public HistoryRow(PopupHistory window, DocumentHistory history, Callback callback) {
 		this.setWidth("100%");
 		this.setHeight("30px");
 		this.setSpacing(false);
@@ -46,6 +50,18 @@ public class HistoryRow extends HorizontalLayout {
 
 					@Override
 					public void onSuccessful() {
+						Document doc = ui.documentService.findById(history.getDocumentUniqueId(), history.getTableId());
+				 
+						doc.setThumbnail(history.getThumbnail());
+						doc.setFileFullPath(EncryptionUtils.decryptString(history.getFileFullPath()));
+						
+//						System.out.println(history+","+doc.getDocumentUniqueId());
+						
+						ui.documentService.update(doc, history.getTableId());
+						
+						window.close();
+						 
+						callback.onSuccessful();
 					}
 				};
 				MessageBox.showMessage("提示", "请确认是否还原此项。", MessageBox.WARNING, onOK, "确定");
@@ -53,5 +69,7 @@ public class HistoryRow extends HorizontalLayout {
 		});
 	}
 	
-	private SimpleDateFormat format = new SimpleDateFormat();
+	private String pattern = "yyyy年MM月dd日 HH:mm:ss";
+	private SimpleDateFormat format = new SimpleDateFormat(pattern);
+	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 }

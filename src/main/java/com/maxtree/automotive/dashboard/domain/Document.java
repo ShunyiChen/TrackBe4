@@ -68,6 +68,5 @@ public class Document {
 	private String dictionarycode; // 资料CODE
 	private String fileFullPath; // 文件实际存放全路径
 	private byte[] thumbnail;//缩略图
-	public String vin;			//车辆识别代码，用于获取表索引（非数据表字段）
 	public String alias;//材料别名（非数据表字段）
 }

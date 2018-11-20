@@ -2,6 +2,7 @@ package com.maxtree.automotive.dashboard.view.finalcheck;
 
 import java.util.List;
 
+import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.DocumentHistory;
@@ -48,7 +49,7 @@ public class PopupHistory extends Window {
 		main.removeAllComponents();
 		List<DocumentHistory> lst = ui.documentService.findHistoryById(document.getDocumentUniqueId());
 		for(DocumentHistory history : lst) {
-			HistoryRow row = new HistoryRow(history);
+			HistoryRow row = new HistoryRow(this, history, callback);
 			main.addComponent(row);
 			main.setComponentAlignment(row, Alignment.TOP_CENTER);
 		}
@@ -57,8 +58,14 @@ public class PopupHistory extends Window {
 		}
 	}
 	
-	public static void open(Document document) {
+	/**
+	 * 
+	 * @param document
+	 * @param callback
+	 */
+	public static void open(Document document, Callback callback) {
 		PopupHistory w = new PopupHistory(document);
+		w.callback = callback;
 		UI.getCurrent().addWindow(w);
 		w.center();
 		w.loadItems();
@@ -67,4 +74,5 @@ public class PopupHistory extends Window {
 	private Document document;
 	private VerticalLayout main = new VerticalLayout(); 
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
+	private Callback callback;
 }

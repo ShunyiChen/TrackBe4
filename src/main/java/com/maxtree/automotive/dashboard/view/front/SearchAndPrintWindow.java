@@ -59,12 +59,11 @@ public class SearchAndPrintWindow extends Window {
 	
 	private void initComponents() {
 		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		final Community community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
+		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
 		VerticalLayout main = new VerticalLayout();
 		main.setSizeFull();
         
         Label barCodeLabel = new Label("条形码:");
-        TextField barCodeField = new TextField();
         barCodeField.setPlaceholder("请输入条形码");
         barCodeField.focus();
         barCodeField.addFocusListener(e->{
@@ -80,24 +79,9 @@ public class SearchAndPrintWindow extends Window {
         btnSearch.setDescription("按照条形码查找");
         btnSearch.focus();
         btnSearch.addClickListener(e -> {
-        	if(StringUtils.isEmpty(barCodeField.getValue())) {
-        		Notifications.warning("条形码不能为空");
-        		return;
-        	}
-        	
-        	Car car = ui.carService.findByBarcode(barCodeField.getValue());
-        	if(car == null) {
-        		List<Transaction> items = ui.transactionService.search_by_keyword(-1, 0, barCodeField.getValue(), community.getCommunityName());
-            	grid.setItems(items);
-        	}
-        	else {
-        		List<Transaction> items = ui.transactionService.findForList(car.getVin(),barCodeField.getValue(),0);
-            	grid.setItems(items);
-        	}
-        	
+        	doSearch();
         });
-        ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER,
-				null) {
+        ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER, null) {
 			/**
 			 * 
 			 */
@@ -105,12 +89,7 @@ public class SearchAndPrintWindow extends Window {
 
 			@Override
 			public void handleAction(Object sender, Object target) {
-				if(StringUtils.isEmpty(barCodeField.getValue())) {
-	        		Notifications.warning("条形码不能为空");
-	        		return;
-	        	}
-				List<Transaction> items = ui.transactionService.search_by_keyword(-1, 0,barCodeField.getValue(), community.getCommunityName());
-	        	grid.setItems(items);
+				doSearch();
 			}
 		};
         barCodeField.addShortcutListener(enterListener);
@@ -194,6 +173,23 @@ public class SearchAndPrintWindow extends Window {
         });
     }
 	
+	private void doSearch() {
+//		if(StringUtils.isEmpty(barCodeField.getValue())) {
+//    		Notifications.warning("条形码不能为空");
+//    		return;
+//    	}
+//    	
+//    	Car car = ui.carService.findByBarcode(barCodeField.getValue());
+//    	if(car == null) {
+//    		List<Transaction> items = ui.transactionService.search_by_keyword(-1, 0, barCodeField.getValue(), community.getCommunityName());
+//        	grid.setItems(items);
+//    	}
+//    	else {
+//    		List<Transaction> items = ui.transactionService.findForList(car.getVin(),barCodeField.getValue(),0);
+//        	grid.setItems(items);
+//    	}
+	}
+	
 	/**
 	 * 
 	 * @param user
@@ -206,6 +202,8 @@ public class SearchAndPrintWindow extends Window {
         w.center();
     }
 	
+	private TextField barCodeField = new TextField();
+	private Community community;
 	private User loggedInUser;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private Grid<Transaction> grid = new Grid<>(Transaction.class);

@@ -265,6 +265,9 @@ public class FrameNumberService {
 		String sql = "UPDATE FRAMENUMBER SET STOREHOUSENAME=? WHERE STOREHOUSENAME=?";
 		int opt = jdbcTemplate.update(sql, new Object[] { storehouse.getStorehouseName(),oldName});
 		log.info("Affected row:"+opt);
+		
+		sql = "UPDATE COMPANIES SET STOREHOUSENAME=? WHERE STOREHOUSENAME=?";
+		jdbcTemplate.update(sql, new Object[] { storehouse.getStorehouseName(),oldName});
 	}
 	
 	/**

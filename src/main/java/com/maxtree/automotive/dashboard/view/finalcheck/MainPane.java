@@ -7,6 +7,7 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.MessageBox;
+import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.Transaction;
@@ -101,13 +102,23 @@ public class MainPane extends VerticalLayout implements ImageViewIF {
 
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
+					
+					Callback2 callback1 = new Callback2() {
+						@Override
+						public void onSuccessful(Object... objects) {
+							load(trans);
+						}
+					};
+					
 					Callback2 callback = new Callback2() {
 						@Override
 						public void onSuccessful(Object... objects) {
-							load((Transaction)objects[0]);
+							DataDictionary dd = (DataDictionary) objects[0];
+							PopupCaptureWindow.open(trans, dd, callback1);
 						}
 					};
-					PopupCaptureWindow.open(trans, callback);
+					PopupNameSelector.open(callback);
+					
 				}
 			});
 			menu.addItem("变更", new Command() {
@@ -121,13 +132,13 @@ public class MainPane extends VerticalLayout implements ImageViewIF {
 					Callback2 callback = new Callback2() {
 						@Override
 						public void onSuccessful(Object... objects) {
-							load((Transaction)objects[0]);
+							load(trans);
 						}
 					};
 					PopupCaptureWindow.edit(trans,doc,callback);
 				}
 			});
-			menu.addItem("历史还原", new Command() {
+			menu.addItem("历史记录", new Command() {
 				/**
 				 * 
 				 */
@@ -135,7 +146,14 @@ public class MainPane extends VerticalLayout implements ImageViewIF {
 
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-					PopupHistory.open(doc);
+					Callback callback = new Callback() {
+
+						@Override
+						public void onSuccessful() {
+							load(trans);
+						}
+					};
+					PopupHistory.open(doc,callback);
 				}
 			});
 			menu.addSeparator();
@@ -197,13 +215,21 @@ public class MainPane extends VerticalLayout implements ImageViewIF {
 		toolbar.setMargin(false);
 		Button add = new Button();
 		add.addClickListener(e->{
+			Callback2 callback1 = new Callback2() {
+				@Override
+				public void onSuccessful(Object... objects) {
+					load(trans);
+				}
+			};
+			
 			Callback2 callback = new Callback2() {
 				@Override
 				public void onSuccessful(Object... objects) {
-					load((Transaction)objects[0]);
+					DataDictionary dd = (DataDictionary) objects[0];
+					PopupCaptureWindow.open(trans, dd, callback1);
 				}
 			};
-			PopupCaptureWindow.open(trans, callback);
+			PopupNameSelector.open(callback);
 		});
 		add.setWidth("25px");
 		add.setHeight("25px");

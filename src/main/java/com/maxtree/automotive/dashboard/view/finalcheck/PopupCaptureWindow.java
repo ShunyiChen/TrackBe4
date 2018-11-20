@@ -25,20 +25,14 @@ import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.servlet.CaptureServlet;
 import com.maxtree.automotive.dashboard.servlet.UploadInDTO;
 import com.maxtree.automotive.dashboard.servlet.UploadOutDTO;
-import com.maxtree.automotive.dashboard.view.admin.DataDictionaryType;
 import com.vaadin.event.UIEvents;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Upload;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.Upload.FailedEvent;
 import com.vaadin.ui.Upload.FailedListener;
 import com.vaadin.ui.Upload.FinishedEvent;
@@ -49,6 +43,8 @@ import com.vaadin.ui.Upload.StartedEvent;
 import com.vaadin.ui.Upload.StartedListener;
 import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseListener;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -82,31 +78,14 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 		this.setClosable(true);
 		this.setResizable(false);
 		this.setCaption("拍照");
-		list = ui.dataItemService.findAllByType(DataDictionaryType.MATERIAL);
+		
 		
 		main.setMargin(false);
 		main.setSpacing(false);
 		main.setSizeFull();
 		
-		Label label = new Label("请选择材料名称：");
-		namebox.setTextInputAllowed(true);
-		namebox.setEmptySelectionAllowed(false);
-		namebox.setWidth("300px");
-		namebox.setHeight("30px");
-		toolbar.setWidthUndefined();
-		toolbar.addStyleName("PopupCaptureWindow-toolbar");
-		toolbar.addComponents(label,namebox);
-		toolbar.setComponentAlignment(label, Alignment.MIDDLE_LEFT);
-		toolbar.setComponentAlignment(namebox, Alignment.MIDDLE_LEFT);
-		
-		main.addComponent(toolbar);
-		main.setComponentAlignment(toolbar, Alignment.TOP_LEFT);
-		main.setExpandRatio(toolbar, 0);
-		
-		namebox.setItems(list);
 		
 		link.addStyleName(ValoTheme.BUTTON_LINK);
-		
 		settings = ui.settingsService.findByName("高拍仪");
 		if("无".equals(settings.getValue())) {
 			Upload upload = new Upload(null, this);
@@ -125,6 +104,7 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 			main.setComponentAlignment(browser, Alignment.TOP_CENTER);
 			main.setExpandRatio(browser, 1);
 		}
+		
 		this.setContent(main);
 		this.addCloseListener(this);
 		
@@ -169,7 +149,7 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 		in.close();
 		
 		// 动态生成新的html
-		OutputStreamWriter oStreamWriter = new OutputStreamWriter(new FileOutputStream(new File("devices/" + user.getUserUniqueId() + ".html")), "utf-8");
+		OutputStreamWriter oStreamWriter = new OutputStreamWriter(new FileOutputStream(new File("devices/capture/" + user.getUserUniqueId() + ".html")), "utf-8");
 		oStreamWriter.append(everything);
 		oStreamWriter.close();
 	}
@@ -187,7 +167,7 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 			@Override
  			public InputStream getStream() {
 				
-				File generatedFile = new File("devices/"+loggedInUser.getUserUniqueId()+".html");
+				File generatedFile = new File("devices/capture/"+loggedInUser.getUserUniqueId()+".html");
 				if(!generatedFile.exists()) {
 					try {
 						generateNewHTML();
@@ -197,7 +177,7 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 				}
  				FileInputStream inputStream = null;
 				try {
-					inputStream = new FileInputStream("devices/"+loggedInUser.getUserUniqueId()+".html");
+					inputStream = new FileInputStream("devices/capture/"+loggedInUser.getUserUniqueId()+".html");
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				}
@@ -211,41 +191,31 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 	
 	@Override
 	public void uploadFinished(FinishedEvent event) {
-		
 	}
 
 	@Override
 	public void uploadFailed(FailedEvent event) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void uploadStarted(StartedEvent event) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void updateProgress(long readBytes, long contentLength) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void uploadSucceeded(SucceededEvent event) {
-		
 	}
 
 	@Override
 	public OutputStream receiveUpload(String filename, String mimeType) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	@Override
 	public void windowClose(CloseEvent e) {
-		
 	}
 	
 	private void startPolling() {
@@ -253,7 +223,9 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 		
 		SystemConfiguration sc = Yaml.readSystemConfiguration();
 		ui.setPollInterval(sc.getInterval());
-		ui.addPollListener(new UIEvents.PollListener() {
+		
+		
+	    UIEvents.PollListener listener = new UIEvents.PollListener() {
 			/**
 			 * 
 			 */
@@ -263,25 +235,31 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 			public void poll(UIEvents.PollEvent event) {
 				UploadOutDTO dto = CaptureServlet.OUT_DTOs.get(loggedInUser.getUserUniqueId());
 				if(dto != null) {
+					
+					callback.onSuccessful();
+					
 					close();
+					
+					ui.removePollListener(this);
 				}
 			}
-		});
+		};
+		
+		ui.addPollListener(listener);
 	}
 	
 	/**
 	 * 
 	 */
-	public static void open(Transaction trans, Callback2 callback) {
+	public static void open(Transaction trans, DataDictionary dd, Callback2 callback) {
 		PopupCaptureWindow w = new PopupCaptureWindow(trans);
 		UI.getCurrent().addWindow(w);
 		w.center();
 		w.displayCamera();
 		w.callback = callback;
-		w.namebox.setValue(w.list.get(0));
 		
 		w.p.setBatch(trans.getBatch()+"");
-		w.p.setDictionaryCode(w.namebox.getValue().getCode());
+		w.p.setDictionaryCode(dd.getCode());
 		w.p.setSiteCode(trans.getSiteCode());
 		w.p.setUserUniqueId(w.loggedInUser.getUserUniqueId());
 		w.p.setUuid(trans.getUuid());
@@ -301,16 +279,10 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 		w.center();
 		w.displayCamera();
 		w.callback = callback;
-		for(DataDictionary dd : w.list) {
-			if(dd.getCode().equals(doc.getDictionarycode())) {
-				w.namebox.setValue(dd);
-				w.namebox.setEnabled(false);
-				break;
-			}
-		}
+ 
 		w.p.setDocumentUniqueId(doc.getDocumentUniqueId());
 		w.p.setBatch(trans.getBatch()+"");
-		w.p.setDictionaryCode(w.namebox.getValue().getCode());
+		w.p.setDictionaryCode(doc.getDictionarycode());
 		w.p.setSiteCode(trans.getSiteCode());
 		w.p.setUserUniqueId(w.loggedInUser.getUserUniqueId());
 		w.p.setUuid(trans.getUuid());
@@ -318,9 +290,8 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 		CaptureServlet.IN_DTOs.put(w.loggedInUser.getUserUniqueId(), w.p);
 	}
 	
-	private HorizontalLayout toolbar = new HorizontalLayout();
+	
 	private VerticalLayout main = new VerticalLayout();
-	private ComboBox<DataDictionary> namebox = new ComboBox<>();
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private User loggedInUser;
 	private BrowserFrame browser = new BrowserFrame(null);

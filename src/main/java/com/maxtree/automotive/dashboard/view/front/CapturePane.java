@@ -109,7 +109,7 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 			@Override
  			public InputStream getStream() {
 				
-				File generatedFile = new File("devices/"+loggedInUser.getUserUniqueId()+".html");
+				File generatedFile = new File("devices/hello/"+loggedInUser.getUserUniqueId()+".html");
 				if(!generatedFile.exists()) {
 					try {
 						generateNewHTML();
@@ -119,7 +119,7 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 				}
  				FileInputStream inputStream = null;
 				try {
-					inputStream = new FileInputStream("devices/"+loggedInUser.getUserUniqueId()+".html");
+					inputStream = new FileInputStream("devices/hello/"+loggedInUser.getUserUniqueId()+".html");
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				}
@@ -167,7 +167,7 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 		in.close();
 		
 		// 动态生成新的html
-		OutputStreamWriter oStreamWriter = new OutputStreamWriter(new FileOutputStream(new File("devices/" + user.getUserUniqueId() + ".html")), "utf-8");
+		OutputStreamWriter oStreamWriter = new OutputStreamWriter(new FileOutputStream(new File("devices/hello/" + user.getUserUniqueId() + ".html")), "utf-8");
 		oStreamWriter.append(everything);
 		oStreamWriter.close();
 	}
@@ -203,15 +203,13 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 		
 			//创建Document
 			Document document = new Document();
-			document.vin = p.getVin();
 			document.setUuid(p.getUuid());
 			document.setDictionarycode(p.getDictionaryCode());
 			document.setFileFullPath(targetPath);
 			document.setThumbnail(smallOutputStream.toByteArray());
-			int documentUniqueId = ui.documentService.insert(document);
+			int documentUniqueId = ui.documentService.insert(document,p.getVin());
 			
 			UploadOutDTO ufq = new UploadOutDTO();
-			ufq.location = 1;//1:主要材料 2:次要材料  
 			ufq.thumbnail = new ByteArrayInputStream(smallOutputStream.toByteArray());
 			ufq.setDictionaryCode(p.getDictionaryCode());
 			ufq.setDocumentUniqueId(documentUniqueId);

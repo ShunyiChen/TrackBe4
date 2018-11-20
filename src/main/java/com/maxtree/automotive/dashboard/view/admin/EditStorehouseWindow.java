@@ -169,8 +169,6 @@ public class EditStorehouseWindow extends Window {
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
         		
-        		
-        		
     			ui.frameService.updateStorehouse(w.storehouse, store.getStorehouseName());
     			w.close();
     			callback.onSuccessful();

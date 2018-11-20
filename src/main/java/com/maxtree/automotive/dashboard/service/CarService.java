@@ -64,6 +64,20 @@ public class CarService {
 	
 	/**
 	 * 
+	 * @param vin
+	 * @return
+	 */
+	public Car findByVIN(String vin) {
+		String sql = "SELECT * FROM CARS WHERE VIN=?";
+		List<Car> results = jdbcTemplate.query(sql, new Object[] {vin}, new BeanPropertyRowMapper<Car>(Car.class));
+		if(results.size() > 0) {
+			return results.get(0);
+		}
+		return null;
+	}
+	
+	/**
+	 * 
 	 * @param embeddedServer
 	 * @return
 	 */
@@ -90,9 +104,10 @@ public class CarService {
 	 * 
 	 * @param car
 	 */
-	public void update(Car car) {
-		String sql = "UPDATE CARS SET BARCODE=?,PLATETYPE=?,PLATENUMBER=?,VIN=? WHERE CARUNIQUEID=?";
-		jdbcTemplate.update(sql, new Object[] {car.getBarcode(),car.getPlateType(),car.getPlateNumber(),car.getVin(),car.getCarUniqueId()});
+	public int update(Car car) {
+		String sql = "UPDATE CARS SET BARCODE=?,PLATETYPE=?,PLATENUMBER=? WHERE VIN=?";
+		int opt = jdbcTemplate.update(sql, new Object[] {car.getBarcode(),car.getPlateType(),car.getPlateNumber(),car.getVin()});
+		return opt;
 	}
 	
 	/**

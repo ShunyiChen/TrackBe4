@@ -131,20 +131,18 @@ public class UploadFileServlet extends HttpServlet {
 				//生成缩略图
 				is = new ByteArrayInputStream(bytes);
 				ByteArrayOutputStream smallOutputStream = new ByteArrayOutputStream();
-				Thumbnails.of(is).size(100, 100)/*.scale(0.033f)*/.toOutputStream(smallOutputStream);//.toFile("devices/"+userUniqueId+"/thumbnails/"+documentUniqueId+".jpg");  
+				Thumbnails.of(is).size(100, 100)/*.scale(0.033f)*/.toOutputStream(smallOutputStream);
 				is.close();
 				
 				//创建Document
 				Document document = new Document();
-				document.vin = p.getVin();
 				document.setUuid(p.getUuid());
 				document.setDictionarycode(dictionarycode);
 				document.setFileFullPath(fileFullPath);
 				document.setThumbnail(smallOutputStream.toByteArray());
-				int documentUniqueId = documentService.insert(document);
+				int documentUniqueId = documentService.insert(document, p.getVin());
 				
 				UploadOutDTO ufq = new UploadOutDTO();
-				ufq.location = dictionarycode.equals("$$$$")?2:1;//1:主要材料 2:次要材料  
 				ufq.thumbnail = new ByteArrayInputStream(smallOutputStream.toByteArray());
 				ufq.setDictionaryCode(dictionarycode);
 				ufq.setDocumentUniqueId(documentUniqueId);

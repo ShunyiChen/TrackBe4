@@ -10,14 +10,6 @@ import java.io.InputStream;
  */
 public class UploadOutDTO {
 
-	public int getLocation() {
-		return location;
-	}
-
-	public void setLocation(int location) {
-		this.location = location;
-	}
-
 	public String getDictionaryCode() {
 		return dictionaryCode;
 	}
@@ -58,7 +50,6 @@ public class UploadOutDTO {
 		this.removable = removable;
 	}
 
-	public int location;// 1:document主表 2:次表
 	public InputStream thumbnail;
 	private String dictionaryCode;// 字典CODE
 	private int documentUniqueId; // 文档ID

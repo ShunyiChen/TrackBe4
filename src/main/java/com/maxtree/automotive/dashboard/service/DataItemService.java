@@ -94,6 +94,20 @@ public class DataItemService {
 	
 	/**
 	 * 
+	 * @param name
+	 * @return
+	 */
+	public DataDictionary findDDByName(String name) {
+		String sql = "SELECT * FROM DATADICTIONARY WHERE ITEMTYPE=? AND ITEMNAME=?";
+		List<DataDictionary> results = jdbcTemplate.query(sql, new Object[] {3,name}, new BeanPropertyRowMapper<DataDictionary>(DataDictionary.class));
+		if(results.size() > 0) {
+			return results.get(0);
+		}
+		return new DataDictionary();
+	}
+	
+	/**
+	 * 
 	 * @param dict
 	 * @return
 	 */

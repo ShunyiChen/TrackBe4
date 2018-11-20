@@ -45,6 +45,7 @@ import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewBeforeLeaveEvent;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinSession;
@@ -189,12 +190,15 @@ public final class FrontView extends Panel implements View,InputViewIF {
         return header;
     }
 
-    
-
     @Override
     public void enter(final ViewChangeEvent event) {
     	updateUnreadCount();
     }
+    
+//    @Override
+//    public void beforeLeave(final ViewBeforeLeaveEvent event) {
+//    	cleanStage();
+//    }
     
     /**
      * 

@@ -56,6 +56,24 @@ public class TransactionService {
 	
 	/**
 	 * 
+	 * @param plateType
+	 * @param plateNumber
+	 * @param vin
+	 * @return
+	 */
+	public Transaction find(String plateType,String plateNumber,String vin) {
+		int index = getTableIndex(vin);
+		String sql = "SELECT A.*,B.NAME AS BUSINESSNAME FROM TRANSACTION_"+index+" AS A LEFT JOIN BUSINESS AS B ON A.BUSINESSCODE=B.CODE WHERE A.PLATETYPE=? AND A.PLATENUMBER=? AND A.VIN=?";
+		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {plateType,plateNumber,vin}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
+		Transaction trans = null;
+		if (result.size() > 0) {
+			trans = result.get(0);
+		}
+		return trans;
+	}
+	
+	/**
+	 * 
 	 * @param transactionUniqueId
 	 * @param vin
 	 * @return
@@ -109,18 +127,18 @@ public class TransactionService {
 		return result;
 	}
 	
-//	/**
-//	 * 
-//	 * @param vin
-//	 * @param businessCode
-//	 * @return
-//	 */
-//	public List<Transaction> findForList(String vin, String businessCode) {
-//		int index = getTableIndex(vin);
-//		String sql = "SELECT A.*,B.NAME AS BUSINESSNAME FROM TRANSACTION_"+index+" AS A LEFT JOIN BUSINESS AS B ON A.BUSINESSCODE=B.CODE WHERE A.VIN=? AND A.BUSINESSCODE=? ORDER BY A.TRANSACTIONUNIQUEID";
-//		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {vin,businessCode}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
-//		return result;
-//	}
+	/**
+	 * 
+	 * @param vin
+	 * @param businessCode
+	 * @return
+	 */
+	public List<Transaction> findForList(String vin, String businessCode) {
+		int index = getTableIndex(vin);
+		String sql = "SELECT A.*,B.NAME AS BUSINESSNAME FROM TRANSACTION_"+index+" AS A LEFT JOIN BUSINESS AS B ON A.BUSINESSCODE=B.CODE WHERE A.VIN=? AND A.BUSINESSCODE=? ORDER BY A.TRANSACTIONUNIQUEID";
+		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {vin,businessCode}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
+		return result;
+	}
 	
 	/**
 	 * 

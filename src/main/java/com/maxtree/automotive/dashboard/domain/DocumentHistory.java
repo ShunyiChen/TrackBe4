@@ -85,7 +85,7 @@ public class DocumentHistory {
 	public String toString() {
 		return String.format(
 				"DocumentHistory[historyUniqueId=%d, tableId=%d,,documentUniqueId=%d, uuid='%s',dictionarycode='%s', "
-						+ "fileFullPath='%s', fileFullPath='%s', dateCreated='%s']",
+						+ "fileFullPath='%s', userName='%s', dateCreated='%s']",
 						historyUniqueId,tableId,documentUniqueId,uuid,dictionarycode,fileFullPath,userName,dateCreated);
 	}
 	

@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -140,7 +139,6 @@ public class CaptureServlet extends HttpServlet {
 				
 				//创建Document
 				Document document = new Document();
-				document.vin = p.getVin();
 				document.setDocumentUniqueId(p.getDocumentUniqueId());
 				document.setUuid(p.getUuid());
 				document.setDictionarycode(dictionarycode);
@@ -161,10 +159,10 @@ public class CaptureServlet extends HttpServlet {
 					history.setTableId(tableId);
 					documentService.insertHistory(history);
 					
-					documentService.update(document);
+					documentService.update(document,p.getVin());
 				}
 				else {
-					int documentUniqueId = documentService.insert(document);
+					int documentUniqueId = documentService.insert(document,p.getVin());
 					p.setDocumentUniqueId(documentUniqueId);
 				}
 				
