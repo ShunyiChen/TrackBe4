@@ -89,7 +89,6 @@ public class EditCommunityWindow extends Window {
 		for(Location l : items2) {
 			c.add(l.getName());
 		}
-		cityBox.setEmptySelectionAllowed(false);
 		cityBox.setTextInputAllowed(false);
 		cityBox.setItems(c);
 		cityBox.setIcon(VaadinIcons.LOCATION_ARROW);
@@ -100,7 +99,6 @@ public class EditCommunityWindow extends Window {
 		for(Location l : items3) {
 			d.add(l.getName());
 		}
-		districtBox.setEmptySelectionAllowed(false);
 		districtBox.setTextInputAllowed(false);
 		districtBox.setItems(d);
 		districtBox.setIcon(VaadinIcons.LOCATION_ARROW);
@@ -215,15 +213,6 @@ public class EditCommunityWindow extends Window {
 			Notifications.warning("省份不能为空");
 			return false;
 		}
-		else if(cityBox.getValue()==null) {
-			Notifications.warning("地级市不能为空");
-			return false;
-		}
-		else if(districtBox.getValue()==null) {
-			Notifications.warning("市、县级市不能为空");
-			return false;
-		}
-		
 		if (nameField.getErrorMessage() != null) {
 			nameField.setComponentError(nameField.getErrorMessage());
 			return false;
