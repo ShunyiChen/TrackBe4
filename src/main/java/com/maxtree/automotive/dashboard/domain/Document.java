@@ -1,9 +1,5 @@
 package com.maxtree.automotive.dashboard.domain;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-
 /**
  * 文档
  * 
@@ -73,6 +69,5 @@ public class Document {
 	private String fileFullPath; // 文件实际存放全路径
 	private byte[] thumbnail;//缩略图
 	public String vin;			//车辆识别代码，用于获取表索引（非数据表字段）
-	public int location = 1;    //存储位置1:主文档表2:次文档表（非数据表字段）
 	public String alias;//材料别名（非数据表字段）
 }

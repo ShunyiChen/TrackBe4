@@ -46,7 +46,7 @@ public class DataDictionary {
 	}
 	
 	private Integer dictionaryUniqueId; // 数据字典id
-	private Integer itemType;// 1-号牌种类 ；2-地区；3-材料名称
+	private Integer itemType;// 1-号牌种类 ； 3-材料名称
 	private String itemName;//数据项名称
 	private String code;//7位代码
 }

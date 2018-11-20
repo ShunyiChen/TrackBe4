@@ -15161,6 +15161,33 @@ div.v-layout.v-horizontal.v-widget {
 	padding-top: 5px;
 }
 
+.dashboard .SplitPane-scroll {
+	border-top: 0px;
+	border-top-color: transparent;
+	border-right: 0px;
+	border-right-color: transparent;
+}
+
+.dashboard .PopupCaptureWindow-toolbar {
+	padding-top: 3px;
+}
+
+.dashboard .HistoryRow {
+	border-bottom: 1px;
+	border-bottom-color: gray;
+	cursor: pointer;
+}
+
+.dashboard .HistoryRow:hover {
+	background-color: azure;
+}
+
+.dashboard .HistoryRow .v-label {
+	font-size: 13px;
+	font-family: Microsoft YaHei;
+	color: black;
+}
+
 .dashboard .schedule .v-calendar-event-content {
 	background-repeat: repeat-x, no-repeat;
 	background-size: auto, cover;

@@ -168,33 +168,30 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
         titleLabel.addStyleName(ValoTheme.LABEL_H1);
         titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         header.addComponent(titleLabel);
-        //
+        buildSubmittButton();
         buildNotificationsButton();
         buildSearchBar();
-        //
         Button searchButton = new Button();
         searchButton.addClickListener(e->{
         	String barcode = searchField.getValue();
         	Car car = ui.carService.findByBarcode(barcode);
         	if(car == null) {
         		Notifications.warning("找不到该车辆。");
+        		cleanStage();
         		return;
         	}
         	Transaction trans = ui.transactionService.findByBarcode(barcode, car.getVin());
-        	
-        	splitPane.load(trans);
-        	
+        	mainPage.load(trans);
         	resetComponents();
         });
         searchButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         searchButton.setIcon(VaadinIcons.SEARCH);
         Label inputlabel = new Label("按流水号查询:");
-        
-        HorizontalLayout tools = new HorizontalLayout(inputlabel,searchField,searchButton,notificationsButton);
+        HorizontalLayout tools = new HorizontalLayout(inputlabel,searchField,searchButton,submit,notificationsButton);
         tools.setComponentAlignment(inputlabel, Alignment.MIDDLE_RIGHT);
         tools.addStyleName("toolbar");
         header.addComponent(tools);
-
+        
         return header;
     }
     
@@ -203,6 +200,7 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
      */
     private void buildSearchBar() {
     	searchField.setPlaceholder("请输入业务流水号");
+    	searchField.setHeight("30px");
     	ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER, null) {
  			/**
  			 * 
@@ -211,16 +209,38 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
 
  			@Override
  			public void handleAction(Object sender, Object target) {
- 				 
  			}
  		};
     	searchField.addShortcutListener(enterListener);
     }
     
+    /**
+     * 
+     */
+    private void buildSubmittButton() {
+    	submit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	submit.setIcon(VaadinIcons.CLOUD_UPLOAD);
+    	submit.addClickListener(new ClickListener() {
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+            public void buttonClick(final ClickEvent event) {
+            }
+        });
+    }
+    
     private void buildNotificationsButton() {
         notificationsButton = new NotificationsButton();
     	notificationsButton.addClickListener(new ClickListener() {
-            @Override
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void buttonClick(final ClickEvent event) {
                 popup.open(event);
             }
@@ -252,7 +272,10 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
 
 	@Override
 	public void cleanStage() {
-		
+		main.removeAllComponents();
+		main.setHeight("100%");
+		main.addComponents(blankLabel);
+		main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
 	}
 	
 	/**
@@ -261,16 +284,16 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
 	private void resetComponents() {
 		main.removeAllComponents();
     	main.setHeightUndefined();
-    	
-    	main.addComponent(splitPane);
-    	main.setComponentAlignment(splitPane, Alignment.TOP_CENTER);
-    	main.setExpandRatio(splitPane, 1);
+    	main.addComponent(mainPage);
+    	main.setComponentAlignment(mainPage, Alignment.TOP_CENTER);
+    	main.setExpandRatio(mainPage, 1);
 	}
 	
 	private TextField searchField = new TextField();
-	private SplitPane splitPane = new SplitPane();
+	private MainPane mainPage = new MainPane();
 	private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.DOUBLECHECK.getViewName());
 	private User loggedInUser;
+	private Button submit = new Button();
 	private NotificationsButton notificationsButton;
 	private Window notificationsWindow;
 	private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);

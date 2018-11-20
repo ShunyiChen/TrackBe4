@@ -93,6 +93,14 @@ public class ConfirmInformationGrid extends HorizontalLayout {
 		businessTypeField.setValue(business.toString());
 	}
 	
+	public void setReadOnly() {
+		barCodeField.setReadOnly(true);
+		plateTypeField.setReadOnly(true);
+		plateNumberField.setReadOnly(true);
+		vinField.setReadOnly(true);
+		businessTypeField.setReadOnly(true);
+	}
+	
 	/**
 	 * 
 	 * @param text

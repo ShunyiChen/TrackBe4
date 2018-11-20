@@ -187,7 +187,7 @@ public class ImageStage extends VerticalLayout implements ClickListener {
 				double conHeight = Double.parseDouble(objects[1].toString());
 		        //默认的边框间距
 		        final double SMALL_SCALE = 0.95;
-		 
+		        
 		        double imgWidth = pictureActualWidth;
 		        double imgHeight = pictureActualHeight;
 		        //原图的宽长比
@@ -229,7 +229,6 @@ public class ImageStage extends VerticalLayout implements ClickListener {
 		                }
 		            }
 		        }
-			 
 		        picture.setWidth((int)reImgWidth+"px");
 		        picture.setHeight((int)reImgHeight+"px");
 				pictureFrame.setSizeFull();
@@ -309,7 +308,6 @@ public class ImageStage extends VerticalLayout implements ClickListener {
 		JavaScript.getCurrent().execute("myGetPanelSize(document.getElementById('" + scroll.getId() + "').clientWidth,document.getElementById('" + scroll.getId() + "').clientHeight);");
 	}
 	
-	
 	/**
 	 * 
 	 * @param site
@@ -348,13 +346,11 @@ public class ImageStage extends VerticalLayout implements ClickListener {
 			int[] size = pictureSizes.get(document.getDocumentUniqueId());
 		    pictureActualWidth = size[0];
 		    pictureActualHeight = size[1];
- 
 		} catch (FileException e) {
 			Notifications.warning(e.getMessage());
 		} catch (FileSystemException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

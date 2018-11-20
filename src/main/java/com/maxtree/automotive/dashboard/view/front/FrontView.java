@@ -470,7 +470,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-//        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
         	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
@@ -505,6 +504,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		//清空舞台
             	cleanStage();
             	Notifications.bottomWarning("提交成功！已完成逻辑上架。");
+            	
+            	
         	}
         	// 提交给质检队列
         	else {

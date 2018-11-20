@@ -8,8 +8,6 @@ package com.maxtree.automotive.dashboard.view.admin;
 public class DataDictionaryType {
 	// 号牌种类
 	public static final int NUMPLATE_TYPE = 1;
-	// 地点
-	public static final int LOCATION = 2;
-	// 材料
+	// 材料名称
 	public static final int MATERIAL = 3;
 }

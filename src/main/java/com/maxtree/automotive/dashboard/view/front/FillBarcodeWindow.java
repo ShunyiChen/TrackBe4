@@ -64,7 +64,7 @@ public class FillBarcodeWindow extends Window {
 		captureButton.setIcon(VaadinIcons.CAMERA);
 		captureButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		captureButton.addClickListener(e->{
-			PopupCaptureWindow.open();
+//			PopupCaptureWindow.open();
 		});
 		picture.addComponent(captureButton);
 		picture.setComponentAlignment(captureButton, Alignment.MIDDLE_LEFT);

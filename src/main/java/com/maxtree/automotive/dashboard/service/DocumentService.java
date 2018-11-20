@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import com.maxtree.automotive.dashboard.EncryptionUtils;
 import com.maxtree.automotive.dashboard.domain.Document;
+import com.maxtree.automotive.dashboard.domain.DocumentHistory;
 
 @Component
 public class DocumentService {
@@ -44,26 +45,24 @@ public class DocumentService {
 		return result;
 	}
 	
-//	/**
-//	 * 获取辅助文件列表
-//	 * 
-//	 * @param vin
-//	 * @param uuid
-//	 * @return
-//	 */
-//	public List<Document> findAllDocument2(String vin, String uuid) {
-//		int index = getTableIndex(vin);
-//		String sql = "SELECT * FROM DOCUMENTS_2_"+index+" WHERE UUID=? ORDER BY DOCUMENTUNIQUEID";
-//		List<Document> result = jdbcTemplate.query(sql, new Object[] {uuid}, new BeanPropertyRowMapper<Document>(Document.class));
-//		// decode
-//		int i = 1;
-//		for (Document doc : result) {
-//			doc.setFileFullPath(EncryptionUtils.decryptString(doc.getFileFullPath()));
-//			doc.setAlias("其他材料_"+i);
-//			i++;
-//		}
-//		return result;
-//	}
+	/**
+	 * 
+	 * @param documentUniqueId
+	 * @param tableId
+	 * @return
+	 */
+	public Document findById(int documentUniqueId, int tableId) {
+		String sql = "SELECT A.*,B.ITEMNAME AS ALIAS FROM DOCUMENTS_1_"+tableId+" AS A LEFT JOIN DATADICTIONARY AS B ON A.DICTIONARYCODE=B.CODE AND B.ITEMTYPE=? WHERE A.DOCUMENTUNIQUEID=?";
+		List<Document> result = jdbcTemplate.query(sql, new Object[] {3,documentUniqueId}, new BeanPropertyRowMapper<Document>(Document.class));
+		// decode
+		for (Document doc : result) {
+			doc.setFileFullPath(EncryptionUtils.decryptString(doc.getFileFullPath()));
+		}
+		if(result.size() > 0) {
+			return result.get(0);
+		}
+		return new Document();
+	}
 	
 	/**
 	 * 创建一个文件
@@ -79,27 +78,14 @@ public class DocumentService {
 
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-				String SQL = "";
-//				if (document.location == 1) {
-					SQL = "INSERT INTO DOCUMENTS_1_"+index+"(UUID,DICTIONARYCODE,FILEFULLPATH,THUMBNAIL) VALUES(?,?,?,?)";
-					PreparedStatement ps = con.prepareStatement(
-							SQL, new String[] {"documentuniqueid"});
-					ps.setString(1, document.getUuid());
-					ps.setString(2, document.getDictionarycode());
-					ps.setString(3, EncryptionUtils.encryptString(document.getFileFullPath()));
-					ps.setBinaryStream(4, new ByteArrayInputStream(document.getThumbnail()), document.getThumbnail().length);
-					return ps;
-//				}
-//				else {
-//					SQL = "INSERT INTO DOCUMENTS_2_"+index+"(UUID,FILEFULLPATH,THUMBNAIL) VALUES(?,?,?)";
-//					PreparedStatement ps = con.prepareStatement(
-//							SQL, new String[] {"documentuniqueid"});
-//					ps.setString(1, document.getUuid());
-//					ps.setString(2, EncryptionUtils.encryptString(document.getFileFullPath()));
-//					ps.setBinaryStream(3, new ByteArrayInputStream(document.getThumbnail()), document.getThumbnail().length);
-//					return ps;
-//				}
-				
+				String SQL = "INSERT INTO DOCUMENTS_1_"+index+"(UUID,DICTIONARYCODE,FILEFULLPATH,THUMBNAIL) VALUES(?,?,?,?)";
+				PreparedStatement ps = con.prepareStatement(
+						SQL, new String[] {"documentuniqueid"});
+				ps.setString(1, document.getUuid());
+				ps.setString(2, document.getDictionarycode());
+				ps.setString(3, EncryptionUtils.encryptString(document.getFileFullPath()));
+				ps.setBinaryStream(4, new ByteArrayInputStream(document.getThumbnail()), document.getThumbnail().length);
+				return ps;
 			}
 		}, keyHolder);
 		
@@ -116,13 +102,7 @@ public class DocumentService {
 	public void update(Document document) {
 		String vin = document.vin;
 		int index = getTableIndex(vin);
-		String SQL = "";
-//		if (document.location == 1) {
-			SQL = "UPDATE DOCUMENTS_1_"+index+" SET FILEFULLPATH=?,THUMBNAIL=? WHERE DOCUMENTUNIQUEID=?";
-//		}
-//		else {
-//			SQL = "UPDATE DOCUMENTS_2_"+index+" SET FILEFULLPATH=?,THUMBNAIL=? WHERE DOCUMENTUNIQUEID=?";
-//		}
+		String SQL = "UPDATE DOCUMENTS_1_"+index+" SET FILEFULLPATH=?,THUMBNAIL=? WHERE DOCUMENTUNIQUEID=?";
 	 	int opt = jdbcTemplate.update(SQL, new Object[] {
 	 			EncryptionUtils.encryptString(document.getFileFullPath()),
 	 			document.getThumbnail(),
@@ -133,12 +113,11 @@ public class DocumentService {
 	/**
 	 * 
 	 * @param documentUniqueId
-	 * @param location
 	 * @param vin
 	 */
-	public void deleteById(int documentUniqueId, int location, String vin) {
+	public void deleteById(int documentUniqueId, String vin) {
 		int index = getTableIndex(vin);
-		String sql = "DELETE FROM DOCUMENTS_"+location+"_"+index+" WHERE DOCUMENTUNIQUEID=?";
+		String sql = "DELETE FROM DOCUMENTS_1_"+index+" WHERE DOCUMENTUNIQUEID=?";
 		int affected = jdbcTemplate.update(sql, new Object[] {documentUniqueId});
 		log.info("Affected row "+affected);
 	}
@@ -172,4 +151,51 @@ public class DocumentService {
 		return sum % 256;
 	}
 	
+	/**
+	 * 
+	 * @param docHistory
+	 * @return
+	 */
+	public int insertHistory(DocumentHistory docHistory) {
+	 	GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+	 	jdbcTemplate.update(new PreparedStatementCreator() {
+
+			@Override
+			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+				String SQL = "INSERT INTO DOCUMENTHISTORY(TABLEID,DOCUMENTUNIQUEID,UUID,DICTIONARYCODE,FILEFULLPATH,THUMBNAIL,USERNAME,DATECREATED) VALUES(?,?,?,?,?,?,?,?)";
+				PreparedStatement ps = con.prepareStatement(
+						SQL, new String[] {"historyuniqueid"});
+				ps.setInt(1, docHistory.getHistoryUniqueId());
+				ps.setInt(2, docHistory.getDocumentUniqueId());
+				ps.setString(3,docHistory.getUuid());
+				ps.setString(4, docHistory.getDictionarycode());
+				ps.setString(5, docHistory.getFileFullPath());
+				ps.setBinaryStream(6, new ByteArrayInputStream(docHistory.getThumbnail()), docHistory.getThumbnail().length);
+				ps.setString(7, docHistory.getUserName());
+				long millis=System.currentTimeMillis();
+				java.sql.Date date=new java.sql.Date(millis);
+				ps.setDate(8, date);
+				return ps;
+			}
+		}, keyHolder);
+		
+		int historyUniqueId  = keyHolder.getKey().intValue();
+		log.info("Affected row id= "+historyUniqueId);
+		return historyUniqueId;
+	}
+	
+	/**
+	 * 
+	 * @param documentUniqueId
+	 * @return
+	 */
+	public List<DocumentHistory> findHistoryById(int documentUniqueId) {
+		String sql = "SELECT * FROM DOCUMENTHISTORY WHERE DOCUMENTUNIQUEID=? ORDER BY DATECREATED DESC";
+		List<DocumentHistory> result = jdbcTemplate.query(sql, new Object[] {documentUniqueId}, new BeanPropertyRowMapper<DocumentHistory>(DocumentHistory.class));
+		// decode
+		for (DocumentHistory doc : result) {
+			doc.setFileFullPath(EncryptionUtils.decryptString(doc.getFileFullPath()));
+		}
+		return result;
+	}
 }

@@ -2,8 +2,11 @@ package com.maxtree.automotive.dashboard.view.front;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Collection;
 
 import com.maxtree.automotive.dashboard.domain.Document;
+import com.vaadin.event.LayoutEvents.LayoutClickEvent;
+import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Image;
@@ -34,7 +37,6 @@ public class Thumbnail extends VerticalLayout{
 		Image image = new Image(null, streamResource);
 		this.addComponents(image);
 		this.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
-		
 	}
 	
 	public Thumbnail(String txt,InputStream is) {
@@ -45,4 +47,5 @@ public class Thumbnail extends VerticalLayout{
 		this.addComponent(name);
 		this.setComponentAlignment(name, Alignment.BOTTOM_CENTER);
 	}
+	
 }

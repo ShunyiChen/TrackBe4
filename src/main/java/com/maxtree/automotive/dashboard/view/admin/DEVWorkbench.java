@@ -183,7 +183,14 @@ public class DEVWorkbench extends VerticalLayout {
 						// ps.setBinaryStream(4, new ByteArrayInputStream(document.getThumbnail()),
 						// document.getThumbnail().length);
 					}
+					else if (rsmd.getColumnType(j) == java.sql.Types.BIT) {
+						Boolean bool = res.getBoolean(rsmd.getColumnName(j));
+						row.add(bool+"");
+					}
 					else {
+						
+						System.out.println(rsmd.getColumnType(j)+"========");
+						
 						int val = res.getInt(rsmd.getColumnName(j));
 						row.add(val+"");
 					}

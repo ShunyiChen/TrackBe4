@@ -137,7 +137,6 @@ public class UploadFileServlet extends HttpServlet {
 				//创建Document
 				Document document = new Document();
 				document.vin = p.getVin();
-				document.location = dictionarycode.equals("$$$$")?2:1;//1:主要材料 2:次要材料 
 				document.setUuid(p.getUuid());
 				document.setDictionarycode(dictionarycode);
 				document.setFileFullPath(fileFullPath);

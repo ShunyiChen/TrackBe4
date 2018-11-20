@@ -110,7 +110,6 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
  			public InputStream getStream() {
 				
 				File generatedFile = new File("devices/"+loggedInUser.getUserUniqueId()+".html");
-//				System.out.println("generatedFile.exists()="+generatedFile.exists());
 				if(!generatedFile.exists()) {
 					try {
 						generateNewHTML();
@@ -205,7 +204,6 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 			//创建Document
 			Document document = new Document();
 			document.vin = p.getVin();
-			document.location =  1;//1:主要材料 2:次要材料 
 			document.setUuid(p.getUuid());
 			document.setDictionarycode(p.getDictionaryCode());
 			document.setFileFullPath(targetPath);

@@ -386,7 +386,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 									}
 									
 									//从数据库删除
-									ui.documentService.deleteById(ufq.getDocumentUniqueId(), ufq.getLocation() ,view.vin());
+									ui.documentService.deleteById(ufq.getDocumentUniqueId(),view.vin());
 									
 									//从UI删除
 									ThumbnailRow row = view.thumbnailGrid().mapRows.get(ufq.getDictionaryCode());
@@ -477,7 +477,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 					}
 					
 					//从数据库删除
-					ui.documentService.deleteById(doc.getDocumentUniqueId(),1,view.vin());
+					ui.documentService.deleteById(doc.getDocumentUniqueId(),view.vin());
 					
 					//从UI删除
 					ThumbnailRow row = view.thumbnailGrid().mapRows.get(doc.getDictionarycode());

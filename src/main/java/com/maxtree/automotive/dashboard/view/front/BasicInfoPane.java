@@ -108,6 +108,7 @@ public class BasicInfoPane extends Panel {
 		vinField.addFocusListener(e->{
 			ui.setPollInterval(-1);
 		});
+		
 		barCodeField.addBlurListener(e -> {
 			callInterface();
 			ui.setPollInterval(config.getInterval());
@@ -123,6 +124,17 @@ public class BasicInfoPane extends Panel {
 		vinField.addBlurListener(e -> {
 			callInterface();
 			ui.setPollInterval(config.getInterval());
+		});
+		
+		
+		barCodeField.addValueChangeListener(e->{
+			barCodeField.setValue(barCodeField.getValue().toUpperCase());
+		});
+		plateNumberField.addValueChangeListener(e->{
+			plateNumberField.setValue(plateNumberField.getValue().toUpperCase());
+		});
+		vinField.addValueChangeListener(e->{
+			vinField.setValue(vinField.getValue().toUpperCase());
 		});
 	}
 	
