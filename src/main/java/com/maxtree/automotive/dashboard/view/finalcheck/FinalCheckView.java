@@ -8,6 +8,7 @@ import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
+import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.NotificationsButton;
 import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
@@ -175,12 +176,13 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
         searchButton.addClickListener(e->{
         	String barcode = searchField.getValue();
         	Car car = ui.carService.findByBarcode(barcode);
+        	if(car == null) {
+        		Notifications.warning("找不到该车辆。");
+        		return;
+        	}
         	Transaction trans = ui.transactionService.findByBarcode(barcode, car.getVin());
         	
-        	List<Document> lstDocs = ui.documentService.findAllDocument1(car.getVin(), trans.getUuid());
-        	
-        	splitPane.fillCarInfo(trans);
-        	splitPane.loadThumbnails(lstDocs);
+        	splitPane.load(trans);
         	
         	resetComponents();
         });

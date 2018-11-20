@@ -37,6 +37,12 @@ import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 
 import net.coobird.thumbnailator.Thumbnails;
 
+/**
+ * 前台录入用
+ * 
+ * @author Chen
+ *
+ */
 @WebServlet("/hello")
 public class UploadFileServlet extends HttpServlet {
 

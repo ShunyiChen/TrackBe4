@@ -20,8 +20,8 @@ import com.maxtree.automotive.dashboard.view.ImageViewIF;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
-import com.vaadin.server.StreamResource;
 import com.vaadin.server.Page.Styles;
+import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -33,13 +33,17 @@ import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import elemental.json.JsonArray;
 
+/**
+ * 通用图片查看器
+ * 
+ * @author Chen
+ *
+ */
 public class ImageStage extends VerticalLayout implements ClickListener {
 
 	/**

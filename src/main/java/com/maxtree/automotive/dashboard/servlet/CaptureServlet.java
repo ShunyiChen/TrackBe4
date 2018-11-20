@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +30,7 @@ import com.maxtree.automotive.dashboard.service.DocumentService;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 
 /**
+ * 补充业务流水号和终审用
  * 
  * @author Chen
  *
@@ -147,10 +149,10 @@ public class CaptureServlet extends HttpServlet {
 //				ufq.setRemovable(0);
 //				smallOutputStream.close();
 //				
-//				if(OUT_DTOs.get(userUniqueId) == null) {
-//					OUT_DTOs.put(userUniqueId, new ArrayList<UploadOutDTO>());
-//				}
-//				List<UploadOutDTO> list = OUT_DTOs.get(userUniqueId);
+				if(OUT_DTOs.get(userUniqueId) == null) {
+					OUT_DTOs.put(userUniqueId, new ArrayList<UploadOutDTO>());
+				}
+				List<UploadOutDTO> list = OUT_DTOs.get(userUniqueId);
 //				list.add(ufq);
             	
             }

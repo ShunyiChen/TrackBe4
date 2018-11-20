@@ -23,20 +23,23 @@
 	<table  height="10%">
 	 
 		 <tr height="40">
-			<td colspan="3" width="60%">
-			设备：
-			<select name="DeviceList" id = "DeviceList" onchange = "ChangeDevice()" style = " width:60%">
-			</select>
+			<td colspan="3" width="50%">
+				设备：
+				<select name="DeviceList" id = "DeviceList" onchange = "ChangeDevice()" style = " width:50%"></select>
 			</td>
 			<td>
 				<input id="okButton" type = "button" value = "拍照" onClick="Capture()" style = "width:60; text-align:center">
-				<input type = "button" value = "+" onClick="ZoomIN()" style = "margin-left:5; width:20%; text-align:center";>
-		     	<input type = "button" value = "-" onClick="Zoomout()" style = "margin-left:5; width:20%; text-align:center">
 			</td>
-			 <td width="180">
+			<td>
+				<input type = "button" value = "放大" onClick="ZoomIN()" style = "width:60; text-align:center">
+			</td>
+			<td>
+				<input type = "button" value = "缩小" onClick="Zoomout()" style = "width:60; text-align:center">
+			</td>
+			<td width="180">
 				<input type = "checkbox" name = "CurCrop" id = "CurCrop" onClick="SetCusCrop(CurCrop)"/>
 				手动裁切
-				</td>
+			</td>
 		 </tr>
 		  <tr height="40">
 			<td>
