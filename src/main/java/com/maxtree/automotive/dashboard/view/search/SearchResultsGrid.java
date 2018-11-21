@@ -50,7 +50,9 @@ public class SearchResultsGrid extends VerticalLayout {
 		grid.addColumn(Transaction::getStatus).setCaption("状态");
         
 		// Set the selection mode
-        grid.setSelectionMode(SelectionMode.MULTI);
+        grid.setSelectionMode(SelectionMode.SINGLE);
+        grid.setRowHeight(30);
+        
         grid.addContextClickListener(e->{
         	GridContextClickEvent<Transaction> event = (GridContextClickEvent<Transaction>) e;
         	trans = event.getItem();
@@ -158,12 +160,12 @@ public class SearchResultsGrid extends VerticalLayout {
     	grid.setItems(perPageData);
     }
 	
-	public String getCommunityName() {
-		return communityName;
+	public String getTenantName() {
+		return tenantName;
 	}
 
-	public void setCommunityName(String communityName) {
-		this.communityName = communityName;
+	public void setTenantName(String tenantName) {
+		this.tenantName = tenantName;
 	}
 
 	public String getKeyword() {
@@ -218,7 +220,7 @@ public class SearchResultsGrid extends VerticalLayout {
 	private String plateNumber; 			// 号码号牌
 	private String vin; 					// 车辆识别代码
 	private Transaction trans;
-	private String communityName;
+	private String tenantName; //租户
 	private String keyword;
 	private List<Transaction> allData;
 	private Grid<Transaction> grid = new Grid<>();

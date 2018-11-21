@@ -14691,11 +14691,12 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .login-panel .labels .h4 {
 	margin: 0;
 	vertical-align: baseline;
+	float: right;
 }
 
 .dashboard .login-panel .labels .h3 {
 	margin: 0;
-	float: right;
+	float: left;
 }
 
 .dashboard .login-panel .fields .v-icon {

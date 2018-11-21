@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.LocationCode;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.data.Yaml;
@@ -128,11 +129,23 @@ public class QuickQueryWindow extends Window {
 	}
 	
 	/**
-	 * 
+	 * 按车牌号查询
 	 */
 	private void doSearch() {
-		List<Transaction> rs = ui.transactionService.search_by_keyword(20, 0, plateField.getValue(), community.getCommunityName());
-		setPerPageData(rs);
+		LocationCode localCodes = new LocationCode(ui.locationService);
+		String locationCode = localCodes.getCompleteLocationCode(community);
+		if(plateField.getValue() != null) {
+			if(plateField.getValue().length() == 5 || plateField.getValue().length() == 6) {
+				List<Transaction> rs = ui.transactionService.search_by_keyword(20, 0, plateField.getValue(),community.getTenantName(),locationCode);
+				setPerPageData(rs);
+			}
+			else {
+				Notifications.warning("请输入车牌号的后5位或后6位查询。");
+			}
+		}
+		else {
+			Notifications.warning("请输入车牌号的后5位或后6位查询。");
+		}
 	}
 	
 	/**

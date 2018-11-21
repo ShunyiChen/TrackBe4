@@ -63,13 +63,12 @@ public class LoginView extends VerticalLayout {
         final TextField username = new TextField("用户名");
         username.setIcon(VaadinIcons.USER);
         username.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
-        username.setValue("system");
+//        username.setValue("system");
 
         final PasswordField password = new PasswordField("密码");
         password.setIcon(VaadinIcons.LOCK);
         password.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
-        password.setValue("123456");
-        
+//        password.setValue("123456");
 
         final Button signin = new Button("登录");
         signin.addStyleName(ValoTheme.BUTTON_PRIMARY);
@@ -95,13 +94,13 @@ public class LoginView extends VerticalLayout {
 
         Label welcome = new Label("机动车影像档案综合管理平台");
         welcome.setSizeUndefined();
-        welcome.addStyleName(ValoTheme.LABEL_H4);
+        welcome.addStyleName(ValoTheme.LABEL_H3);
         welcome.addStyleName(ValoTheme.LABEL_COLORED);
         labels.addComponent(welcome);
 
-        Label title = new Label("<strong>"+TB4Application.NAME+"</strong> "+TB4Application.VERSION+"", ContentMode.HTML);
+        Label title = new Label("<strong>"+"版本:"+"</strong> "+TB4Application.VERSION+"", ContentMode.HTML);
         title.setSizeUndefined();
-        title.addStyleName(ValoTheme.LABEL_H3);
+        title.addStyleName(ValoTheme.LABEL_H4);
         title.addStyleName(ValoTheme.LABEL_LIGHT);
         labels.addComponent(title);
         return labels;

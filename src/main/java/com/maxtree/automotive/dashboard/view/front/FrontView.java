@@ -3,7 +3,9 @@ package com.maxtree.automotive.dashboard.view.front;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
@@ -14,6 +16,7 @@ import org.springframework.util.StringUtils;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.LocationCode;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -26,6 +29,7 @@ import com.maxtree.automotive.dashboard.domain.Car;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.FrameNumber;
+import com.maxtree.automotive.dashboard.domain.Location;
 import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.Site;
@@ -443,10 +447,13 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	this.exception = exception;
     }
     
+    
+    
     /**
      * 
      */
     public void newTransaction() {
+    	LocationCode localCodes = new LocationCode(ui.locationService);
     	if(!StringUtils.isEmpty(exception)) {
     		Notifications.warning(exception);
     		return;
@@ -464,6 +471,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
 			Notifications.warning("请将必录材料上传完整。");
 			return;
     	}
+    	
+    	Community community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
     	//4大流程
     	//新车注册流程
     	if (businessTypePane.getSelected().getName().contains("注册登记")) {
@@ -478,6 +487,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	editableTrans.setIndexNumber(1);
+        	
+        	
         	// 如果不支持质检
         	if(!editableCompany.getQcsupport()) {
         		// 获取社区内的车管所
@@ -547,12 +558,12 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-//        	editableTrans.setLocationCode(editableCompany.getProvince()+","+editableCompany.getCity()+","+editableCompany.getDistrict());
         	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
         	editableTrans.setIndexNumber(indexNumber + 1);
+        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
         	
         	//如果不支持质检
         	if(!editableCompany.getQcsupport()) {
@@ -607,7 +618,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	// 需要审档（一级）流程
     	else if (businessTypePane.getSelected().getCheckLevel().equals("一级审档")) {
-    		Community myCommunity = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -615,13 +625,12 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setLocationCode(myCommunity.getProvince()+","+myCommunity.getCity()+","+myCommunity.getDistrict());
         	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
         	editableTrans.setIndexNumber(indexNumber + 1);
-        	
+        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
         	// 如果不支持质检
         	if(!editableCompany.getQcsupport()) {
         		// 新车注册首个上架号
@@ -686,7 +695,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	// 需要审档（二级）流程
     	else if (businessTypePane.getSelected().getCheckLevel().equals("二级审档")) {
-    		Community myCommunity = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -694,12 +702,11 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setLocationCode(myCommunity.getProvince()+","+myCommunity.getCity()+","+myCommunity.getDistrict());
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
         	editableTrans.setIndexNumber(indexNumber + 1);
-        	
+        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
         	//如果不支持质检
         	if(!editableCompany.getQcsupport()) {
         		// 新车注册首个上架号

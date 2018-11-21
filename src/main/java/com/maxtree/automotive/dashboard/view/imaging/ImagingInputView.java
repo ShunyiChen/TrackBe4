@@ -3,8 +3,10 @@ package com.maxtree.automotive.dashboard.view.imaging;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -16,6 +18,7 @@ import org.springframework.util.StringUtils;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.LocationCode;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -29,6 +32,7 @@ import com.maxtree.automotive.dashboard.domain.Car;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.FrameNumber;
+import com.maxtree.automotive.dashboard.domain.Location;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.Site;
@@ -580,6 +584,21 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
    	
     /**
      * 
+     * @param list
+     * @param locationName
+     * @return
+     */
+    private Map<String, String> getLocationMap() {
+    	List<Location> list = ui.locationService.findAll();
+    	HashMap<String, String> map = new HashMap<>();
+    	for(Location l : list) {
+    		map.put(l.getName(), l.getCode());
+    	}
+    	return map;
+    }
+    
+    /**
+     * 
      */
     public void newTransaction() {
     	if(!StringUtils.isEmpty(exception)) {
@@ -599,9 +618,11 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 			Notifications.warning("请将必录材料上传完整。");
 			return;
     	}
+    	Community community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
+    	LocationCode localCodes = new LocationCode(ui.locationService);
+    	Map<String, String> l = getLocationMap();
     	//新车注册流程
     	if (businessTypePane.getSelected().getName().contains("注册登记")) {
-    		Community myCommunity = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -609,13 +630,13 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setLocationCode(myCommunity.getProvince()+","+myCommunity.getCity()+","+myCommunity.getDistrict());
         	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	editableTrans.setIndexNumber(1);
         	editableTrans.setStatus(ui.state().getName("B7"));
-//        	FrameNumber frame = ui.frameService.getNewCode(editableCompany.getStorehouseName());
+        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
+        	
         	// 获得社区内的全部机构
     		List<Company> companies = ui.communityService.findAllCompanies(loggedInUser.getCommunityUniqueId());
     		Company com = null;
@@ -650,7 +671,6 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     			Notifications.warning("上架号不存在！请录入注册登记业务,确保先生成上架号。");
     			return;
     		}
-    		Community myCommunity = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
@@ -658,14 +678,14 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setLocationCode(myCommunity.getProvince()+","+myCommunity.getCity()+","+myCommunity.getDistrict());
         	editableTrans.setUuid(uuid);
         	editableTrans.setCode(code);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
         	editableTrans.setIndexNumber(indexNumber + 1);
-        	
         	editableTrans.setStatus(ui.state().getName("B7"));
+        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
+        	
     		ui.transactionService.insert(editableTrans);
     		
     		//更改车辆信息

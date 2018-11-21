@@ -3,6 +3,7 @@ package com.maxtree.automotive.dashboard.view.shelf;
 import java.util.List;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.LocationCode;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Community;
@@ -37,6 +38,7 @@ public class DownGrid extends VerticalLayout {
 	private void initComponents() {
 		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
+		localCodes = new LocationCode(ui.locationService);
 		this.setSpacing(false);
 		this.setMargin(false);
 		this.setSizeFull();
@@ -100,15 +102,16 @@ public class DownGrid extends VerticalLayout {
 	}
 	
 	/**
-	 * 
+	 * 按车牌号查询
 	 */
 	public void execute() {
 		// 按车牌号查询
 		if (keyword.length() == 5 || keyword.length() == 6) {
-			 List<Transaction> rs = ui.transactionService.search_by_keyword(-1, 0, keyword, community.getCommunityName());
+			 String locationCode = localCodes.getCompleteLocationCode(community);
+			 List<Transaction> rs = ui.transactionService.search_by_keyword(-1, 0, keyword,community.getCommunityName(),locationCode);
 			 grid.setItems(rs);
 		} else {
-			Notifications.warning("关键字长度应该在5~6位。");
+			Notifications.warning("请输入车牌号的后5位或后6位查询。");
 		}
 	}
 	
@@ -120,6 +123,7 @@ public class DownGrid extends VerticalLayout {
 	}
 	
 	private Community community;
+	private LocationCode localCodes;
 	private User loggedInUser;
 	private String keyword;
 	private List<Transaction> allData;

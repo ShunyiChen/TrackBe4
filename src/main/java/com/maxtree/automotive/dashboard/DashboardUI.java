@@ -275,6 +275,9 @@ public final class DashboardUI extends UI {
 
 	@Subscribe
 	public void userLoggedOut(final DashboardEvent.UserLoggedOutEvent event) {
+		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		loggingWrapper.info(user.getUserName(),LoggingWrapper.LOGIN,"logout.");
+		
 		// When the user logs out, current VaadinSession gets closed and the
 		// page gets reloaded on the login screen. Do notice the this doesn't
 		// invalidate the current HttpSession.

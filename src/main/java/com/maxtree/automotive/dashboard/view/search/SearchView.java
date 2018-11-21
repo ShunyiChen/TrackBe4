@@ -1,13 +1,10 @@
 package com.maxtree.automotive.dashboard.view.search;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
@@ -51,7 +48,6 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -60,6 +56,11 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import de.schlichtherle.license.LicenseContent;
 
+/**
+ * 
+ * @author chens
+ *
+ */
 public class SearchView extends Panel implements View, FrontendViewIF{
 
 	/**
@@ -71,6 +72,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 	
 	public SearchView() {
 		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
         addStyleName(ValoTheme.PANEL_BORDERLESS);
         setSizeFull();
         DashboardEventBus.register(this);
@@ -89,7 +91,12 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
         root.addLayoutClickListener(new LayoutClickListener() {
-            @Override
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void layoutClick(final LayoutClickEvent event) {
                 DashboardEventBus.post(new DashboardEvent.CloseOpenWindowsEvent());
             }
@@ -181,9 +188,8 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         searchbar.setSpacing(false);
         searchbar.setMargin(false);
         searchbar.setWidthUndefined();
-        Community current = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
-        keywordField.setWidth("400px");
-        keywordField.setHeight("30px");
+        keywordField.setWidth("260px");
+        keywordField.setHeight("32px");
         keywordField.setPlaceholder("请输入车牌号\\车架号\\业务流水号");
         ShortcutListener enter = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER, null) {
 			/**
@@ -203,61 +209,21 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         });
         searchButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         searchButton.setIcon(VaadinIcons.SEARCH);
-        Label textLabel = new Label("选择社区:");
         
-        // 号牌种类
-        Label plateTypeLabel = new Label("号牌种类:");
-        List<String> types = ui.dataItemService.findNamesByType(1);
-		plateTypeField.setItems(types);
-		plateTypeField.setEmptySelectionAllowed(false);
-		plateTypeField.setWidth("140px");
-		plateTypeField.setHeight("30px");
-		// 号牌号码
-		Label plateNumberLabel = new Label("号牌号码:");
-		String plate = Yaml.readSystemConfiguration().getLicenseplate();
-		Label plateNumberTitle = new Label(plate);
-		plateNumberField.setWidth("140px");
-		plateNumberField.setHeight("30px");
-		// 车辆识别代号
-		Label vinLabel = new Label("或者 车辆识别代号:");
-		vinField.setWidth("220px");
-		vinField.setHeight("30px");
-        List<String> data = Arrays.asList("基本查询","模糊查询");
-        radio.setItems(data);
-        radio.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
-        radio.setItemCaptionGenerator(item -> item);
-        radio.addValueChangeListener(e ->{
-        	if(e.getValue().equals("模糊查询")) {
-        		searchbar.removeAllComponents();
-                searchbar.addComponents(radio,textLabel,Box.createHorizontalBox(3),keywordField,Box.createHorizontalBox(3),searchButton);
-                searchbar.setComponentAlignment(radio, Alignment.MIDDLE_LEFT);
-                searchbar.setComponentAlignment(keywordField, Alignment.MIDDLE_LEFT);
-                searchbar.setComponentAlignment(searchButton, Alignment.MIDDLE_LEFT);
-                searchbar.setComponentAlignment(textLabel, Alignment.MIDDLE_LEFT);
-        	} 
-        	else {
-        		searchbar.removeAllComponents();
-                searchbar.addComponents(radio,textLabel,
-                		Box.createHorizontalBox(3),plateTypeLabel,plateTypeField,
-                		Box.createHorizontalBox(3),plateNumberLabel,plateNumberTitle,plateNumberField,
-                		Box.createHorizontalBox(3),vinLabel,vinField,
-                		Box.createHorizontalBox(3),searchButton);
-                searchbar.setComponentAlignment(radio, Alignment.MIDDLE_LEFT);
-                searchbar.setComponentAlignment(textLabel, Alignment.MIDDLE_LEFT);
-                searchbar.setComponentAlignment(plateTypeLabel, Alignment.MIDDLE_LEFT);
-                searchbar.setComponentAlignment(plateTypeField, Alignment.MIDDLE_LEFT);
-                
-                searchbar.setComponentAlignment(plateNumberLabel, Alignment.MIDDLE_LEFT);
-                searchbar.setComponentAlignment(plateNumberTitle, Alignment.MIDDLE_LEFT);
-                searchbar.setComponentAlignment(plateNumberField, Alignment.MIDDLE_LEFT);
-                searchbar.setComponentAlignment(vinLabel, Alignment.MIDDLE_LEFT);
-                searchbar.setComponentAlignment(vinField, Alignment.MIDDLE_LEFT);
-                
-                searchbar.setComponentAlignment(searchButton, Alignment.MIDDLE_LEFT);
-                
-        	}
-        });
-        radio.setSelectedItem(data.get(0));
+        Label choose = new Label("选择查询：");
+        type.setItems(new String[] {"流水号","号牌号码","车辆识别代号"});
+        type.setWidth("150px");
+        type.setHeight("32px");
+        type.setValue("号牌号码");
+        type.setEmptySelectionAllowed(false);
+        type.setTextInputAllowed(false);
+        
+        searchbar.addComponents(choose,type,Box.createHorizontalBox(5),keywordField,Box.createHorizontalBox(5),searchButton);
+        searchbar.setComponentAlignment(choose,Alignment.MIDDLE_RIGHT);
+        searchbar.setComponentAlignment(type,Alignment.MIDDLE_RIGHT);
+        searchbar.setComponentAlignment(keywordField,Alignment.MIDDLE_RIGHT);
+        searchbar.setComponentAlignment(searchButton,Alignment.MIDDLE_RIGHT);
+        
         header.addComponents(titleLabel,searchbar);
         buildNotificationsButton();
         HorizontalLayout tools = new HorizontalLayout(notificationsButton);
@@ -270,23 +236,32 @@ public class SearchView extends Panel implements View, FrontendViewIF{
      * 
      */
     private void doSearch() {
-//    	String communityName = communityBox.getSelectedItem().get().getCommunityName();
-//		if(StringUtils.isEmpty(communityName)) {
-//			Notifications.warning("没有可用的社区选项。");
-//			return;
-//		}
-//    	if(radio.getValue().equals("基本查询")) {
-//    		grid.setCommunityName(communityName);
-//    		grid.setPlateType(plateTypeField.getValue());
-//    		grid.setPlateNumber(plateNumberField.getValue());
-//    		grid.setVin(vinField.getValue());
-//    		grid.executeByPlateNumberOrVIN();
-//    	}
-//    	else {
-//			grid.setCommunityName(communityName);
-//        	grid.setKeyword(keywordField.getValue());
-//        	grid.executeByKeyword();
-//    	}
+    	if(keywordField.getValue() == null) {
+			Notifications.warning("请输入查询关键字。");
+			return;
+		}
+    	if(type.getValue().equals("号牌号码")) {
+    		if(keywordField.getValue().length() != 5 && type.getValue().length() != 6) {
+    			Notifications.warning("请输入车牌号的后5位或后6位查询。");
+    			return;
+    		}
+    		
+    	}
+    	else if(type.getValue().equals("车辆识别代号")){
+    		if(keywordField.getValue().length() != 17) {
+    			Notifications.warning("请输入17位的车辆识别代号。");
+    			return;
+    		}
+    	}
+    	else {
+    		if(keywordField.getValue().length() != 13) {
+    			Notifications.warning("请输入13位的流水号。");
+    			return;
+    		}
+    	}
+    	grid.setTenantName(community.getTenantName());
+    	grid.setKeyword(keywordField.getValue());
+    	grid.executeByKeyword();
     }
     
     /**
@@ -434,14 +409,10 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     	return transaction;
     }
     
-    
-    private RadioButtonGroup<String> radio = new RadioButtonGroup<>(null);
-    private ComboBox<String> plateTypeField = new ComboBox<>(); //号牌种类
-    private TextField plateNumberField = new TextField();//号牌号码
-    private TextField vinField = new TextField();//车辆识别代号
+    private ComboBox<String> type = new ComboBox<>();
     private TextField keywordField = new TextField();
-    private MatedataJsonParser jsonHelper = new MatedataJsonParser();
     private User loggedInUser;	//登录用户
+    private Community community;//登录用户社区
     private Label titleLabel;
     private Window notificationsWindow;
     public static final String EDIT_ID = "dashboard-edit";
@@ -453,4 +424,5 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     private SearchResultsGrid grid = new SearchResultsGrid();
     private Label blankLabel = new Label("<span style='font-size:30px;color: #8D99A6;font-family: Microsoft YaHei;'>无查询结果</span>", ContentMode.HTML);
     private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.SEARCH.getViewName());
+    private MatedataJsonParser jsonHelper = new MatedataJsonParser();
 }

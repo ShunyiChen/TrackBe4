@@ -223,7 +223,7 @@ public class Transaction {
 	private Integer communityUniqueId = 0; 	// 办理社区ID
 	private Integer companyUniqueId = 0;    // 办理机构ID
 	private String locationCode;   			// 车辆所在地地点CODE
-	private Integer batch = 0;					// 批次号
+	private Integer batch = 0;			 	// 批次号
 	private String uuid;					// 文件挂接UUID
 	private String code;                 	// 上架号
 	private Site site;						// 文件站点

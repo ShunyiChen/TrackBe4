@@ -5,8 +5,12 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.LocationCode;
 import com.maxtree.automotive.dashboard.component.Notifications;
+import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Transaction;
+import com.maxtree.automotive.dashboard.domain.User;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -37,8 +41,9 @@ public class ControlsLayout extends HorizontalLayout {
 	}
 	
 	private void initComponents() {
-//		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-//		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
+		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
+		localCodes = new LocationCode(ui.locationService);
 		this.setWidthUndefined();
 		numField.setWidth("73px");
 		this.addComponents(first, previous, numField, next, last, currentPageIndexLabel, pageSizeLabel, sizePerPageLabel);
@@ -84,18 +89,19 @@ public class ControlsLayout extends HorizontalLayout {
 			Notifications.warning("查询关键字不能为空。");
 			return;
 		}
-		pageCount = ui.transactionService.search_by_keyword_pagingcount(sizePerPage, grid.getKeyword(), grid.getCommunityName());
+		String locationCode = localCodes.getCompleteLocationCode(community);
+		pageCount = ui.transactionService.search_by_keyword_pagingcount(sizePerPage, grid.getKeyword(),grid.getTenantName(),locationCode);
 		pageSizeLabel.setValue("总共"+pageCount+"页");
 		first();
 	}
-	
 	
 	/**
 	 * 
 	 */
 	private void first() {
 		if (grid != null) {
-			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage, 0, grid.getKeyword(), grid.getCommunityName()); 
+			String locationCode = localCodes.getCompleteLocationCode(community);
+			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage, 0, grid.getKeyword(),grid.getTenantName(),locationCode); 
 			grid.setPerPageData(items);
 			
 			// Update inputs
@@ -114,14 +120,14 @@ public class ControlsLayout extends HorizontalLayout {
 			if (currentPageIndex < 1) {
 				currentPageIndex = 1;
 			}
+			String locationCode = localCodes.getCompleteLocationCode(community);
 			int offset = (currentPageIndex - 1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage, offset, grid.getKeyword(), grid.getCommunityName()); 
+			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(),grid.getTenantName(),locationCode); 
 			grid.setPerPageData(items);
 			
 			// Update inputs
 			numField.setValue(currentPageIndex+"");
 			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
-		 
 		}
 	}
 	
@@ -134,8 +140,9 @@ public class ControlsLayout extends HorizontalLayout {
 			if (currentPageIndex > pageCount) {
 				currentPageIndex = pageCount;
 			}
+			String locationCode = localCodes.getCompleteLocationCode(community);
 			int offset = (currentPageIndex -1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage, offset, grid.getKeyword(), grid.getCommunityName()); 
+			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(),grid.getTenantName(),locationCode); 
 			grid.setPerPageData(items);
 			// Update inputs
 			numField.setValue(currentPageIndex+"");
@@ -148,9 +155,10 @@ public class ControlsLayout extends HorizontalLayout {
 	 */
 	private void last() {
 		if (grid != null) {
+			String locationCode = localCodes.getCompleteLocationCode(community);
 			currentPageIndex = pageCount;
 			int offset = (currentPageIndex -1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage, offset, grid.getKeyword(), grid.getCommunityName()); 
+			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(),grid.getTenantName(),locationCode); 
 			grid.setPerPageData(items);
 			// Update inputs
 			numField.setValue(currentPageIndex+"");
@@ -162,8 +170,9 @@ public class ControlsLayout extends HorizontalLayout {
 	 * 
 	 */
 	private void jumpTo() {
+		String locationCode = localCodes.getCompleteLocationCode(community);
 		int offset = (currentPageIndex - 1) * sizePerPage;
-		List<Transaction> data = ui.transactionService.search_by_keyword(sizePerPage, offset, grid.getKeyword(), grid.getCommunityName());
+		List<Transaction> data = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(),grid.getTenantName(),locationCode);
 		grid.setPerPageData(data);
 	}
 	
@@ -179,6 +188,8 @@ public class ControlsLayout extends HorizontalLayout {
 	private Label currentPageIndexLabel = new Label();
 	private Label pageSizeLabel = new Label();
 	private Label sizePerPageLabel = new Label();
-	private Label totalCountLabel = new Label();
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
+	private User loggedInUser;
+	private Community community;
+	private LocationCode localCodes;
 }

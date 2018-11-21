@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.LocationCode;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
@@ -174,20 +175,22 @@ public class SearchAndPrintWindow extends Window {
     }
 	
 	private void doSearch() {
-//		if(StringUtils.isEmpty(barCodeField.getValue())) {
-//    		Notifications.warning("条形码不能为空");
-//    		return;
-//    	}
-//    	
-//    	Car car = ui.carService.findByBarcode(barCodeField.getValue());
-//    	if(car == null) {
-//    		List<Transaction> items = ui.transactionService.search_by_keyword(-1, 0, barCodeField.getValue(), community.getCommunityName());
-//        	grid.setItems(items);
-//    	}
-//    	else {
-//    		List<Transaction> items = ui.transactionService.findForList(car.getVin(),barCodeField.getValue(),0);
-//        	grid.setItems(items);
-//    	}
+		if(StringUtils.isEmpty(barCodeField.getValue())) {
+    		Notifications.warning("条形码不能为空");
+    		return;
+    	}
+		LocationCode localCodes = new LocationCode(ui.locationService);
+		String locationCode = localCodes.getCompleteLocationCode(community);
+    	Car car = ui.carService.findByBarcode(barCodeField.getValue());
+    	if(car == null) {
+    		//参数为-1，则表示不分页
+    		List<Transaction> items = ui.transactionService.search_by_keyword(-1, 0, barCodeField.getValue(),community.getTenantName(),locationCode);
+        	grid.setItems(items);
+    	}
+    	else {
+    		List<Transaction> items = ui.transactionService.findForList(car.getVin(),barCodeField.getValue(),0);
+        	grid.setItems(items);
+    	}
 	}
 	
 	/**

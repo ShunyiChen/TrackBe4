@@ -239,37 +239,35 @@ public class TransactionService {
 	}
 	
 	/**
+	 * 按关键字查找 20181121
 	 * 
 	 * @param limit
 	 * @param offset
 	 * @param keyword
-	 * @param parentCommunityName
+	 * @param tenantName
+	 * @param locationCode
 	 * @return
 	 */
-	public List<Transaction> search_by_keyword(int limit, int offset, String keyword, String parentCommunityName) {
-		List<Transaction> all = new ArrayList<Transaction>();
-		String sql = "SELECT B.COMMUNITYNAME FROM COMMUNITIES AS A INNER JOIN COMMUNITIES AS B ON A.GROUPID=B.GROUPID WHERE A.COMMUNITYNAME=? AND A.LEVEL<=B.LEVEL ORDER BY B.COMMUNITYUNIQUEID";
-		List<String> communityNames = jdbcTemplate.queryForList(sql, new Object[] {parentCommunityName}, String.class);
-		for (String name : communityNames){
-			keyword = "%"+keyword+"%";
-			sql = "SELECT * FROM SEARCH_BY_KEYWORD(?,?,?,?)";
-			List<Transaction> lst = jdbcTemplate.query(sql, new Object[] {limit, offset, keyword, name}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
-			all.addAll(lst);
-		}
-		return all;
+	public List<Transaction> search_by_keyword(int limit, int offset, String keyword, String tenantName, String locationCode) {
+		String sql = "SELECT * FROM SEARCH_BY_KEYWORD(?,?,?,?,?)";
+		List<Transaction> lst = jdbcTemplate.query(sql, new Object[] {limit, offset,keyword,tenantName,locationCode}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
+		return lst;
 	}
 	
 	/**
+	 * 查询页数 20181121
 	 * 
 	 * @param limit
 	 * @param keyword
-	 * @param communityName
+	 * @param tenantName
+	 * @param locationCode
 	 * @return
 	 */
-	public int search_by_keyword_pagingcount(int limit, String keyword, String communityName) {
-		keyword = "%"+keyword+"%";
-		String sql = "SELECT * FROM SEARCH_BY_KEYWORD_PAGINGCOUNT(?,?,?)";
-		int count = jdbcTemplate.queryForObject( sql, new Object[] {limit, keyword, communityName}, Integer.class);
+	public int search_by_keyword_pagingcount(int limit, String keyword, String tenantName,String locationCode) {
+		String sql = "SELECT * FROM SEARCH_BY_KEYWORD_PAGINGCOUNT(?,?,?,?)";
+		int count = jdbcTemplate.queryForObject( sql, new Object[] {limit, keyword,tenantName,locationCode}, Integer.class);
+		
+		System.out.println("count="+count);
 		return count;
 	}
 	
