@@ -417,7 +417,7 @@ public class QCView extends Panel implements View, FrontendViewIF{
     private void accept(String comments) {
     	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
     	// 不需要审档的直接退回前台
-    	if (StringUtils.isEmpty(business.getCheckLevel())) {
+    	if ("无".equals(business.getCheckLevel())) {
     		//1.删除锁定队列
     		int serial = 1; //1:质检 2:审档 3:确认审档
     		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());
@@ -458,11 +458,10 @@ public class QCView extends Panel implements View, FrontendViewIF{
     		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.INPUT.getViewName());
     		// 更新消息轮询的缓存
     		CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
-    		// 5.清空
-    		cleanStage();
     		// 6.提示信息
     		Notifications.bottomWarning("提交成功！已发送至前台用户"+editableTrans.getCreator()+"。");
-    		
+    		// 5.清空
+    		cleanStage();
     	}
     	// 需要审档则继续提交
     	else {

@@ -6,6 +6,7 @@ import java.util.List;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.LocationCode;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -15,6 +16,7 @@ import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Car;
+import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
@@ -66,6 +68,8 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
 	private static final long serialVersionUID = 1L;
 
 	public FinalCheckView() {
+		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
 		addStyleName(ValoTheme.PANEL_BORDERLESS);
         setSizeFull();
         DashboardEventBus.register(this);
@@ -197,16 +201,24 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
      * 
      */
     private void doSearch() {
+    	LocationCode locationCode = new LocationCode(ui.locationService);
     	String barcode = searchField.getValue();
-    	Car car = ui.carService.findByBarcode(barcode);
-    	if(car == null) {
-    		Notifications.warning("找不到该车辆。");
-    		cleanStage();
-    		return;
+    	List<Transaction> list = ui.transactionService.search_by_keyword(-1, 0, barcode, community.getTenantName(), locationCode.getCompleteLocationCode(community));
+//    	Car car = ui.carService.findByBarcode(barcode);
+//    	if(car == null) {
+//    		Notifications.warning("找不到该车辆。");
+//    		cleanStage();
+//    		return;
+//    	}
+//    	trans = ui.transactionService.findByBarcode(barcode, car.getVin());
+    	if(list.size() > 0) {
+    		trans = list.get(0);
+        	mainPage.load(trans);
+        	resetComponents();
     	}
-    	trans = ui.transactionService.findByBarcode(barcode, car.getVin());
-    	mainPage.load(trans);
-    	resetComponents();
+    	else {
+    		Notifications.warning("找不到该业务流水号。");
+    	}
     }
     
     /**
@@ -355,6 +367,7 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
 	private MainPane mainPage = new MainPane();
 	private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.DOUBLECHECK.getViewName());
 	private User loggedInUser;
+	private Community community;
 	private Button submit = new Button();
 	private NotificationsButton notificationsButton;
 	private Window notificationsWindow;

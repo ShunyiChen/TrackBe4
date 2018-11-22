@@ -46,10 +46,14 @@ public class DownGrid extends VerticalLayout {
 		plateNumber.setReadOnly(true);
 		plateVIN.setReadOnly(true);
 		
+		plateType.setHeight("30px");
+		plateNumber.setHeight("30px");
+		plateVIN.setHeight("30px");
+		
 		HorizontalLayout info = new HorizontalLayout();
 		info.setWidthUndefined();
-		info.setSpacing(false);
-		info.setMargin(false);
+		info.setHeight("34px");
+		 
 		Label plateTypeLabel = new Label("号牌种类:");
 		Label plateNumberLabel = new Label("号码号牌:");
 		Label plateVINLabel = new Label("车辆识别代号:");

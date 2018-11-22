@@ -3,9 +3,7 @@ package com.maxtree.automotive.dashboard.view.front;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
@@ -29,7 +27,6 @@ import com.maxtree.automotive.dashboard.domain.Car;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.FrameNumber;
-import com.maxtree.automotive.dashboard.domain.Location;
 import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.Queue;
 import com.maxtree.automotive.dashboard.domain.Site;
@@ -49,7 +46,6 @@ import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewBeforeLeaveEvent;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinSession;
@@ -344,7 +340,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
     		editableSite = null;
     		return;
     	}
-    	
     	editableTrans = new Transaction();
     	editableTrans.setBarcode("");
     	editableTrans.setPlateType("");
@@ -436,6 +431,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	
     	basicInfoPane.populateFields(editableTrans);
     	businessTypePane.populate(editableTrans.getBusinessCode());
+    	
+    	capturePane.displayImage();
     	
     	callback.onSuccessful();
     }
