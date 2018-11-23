@@ -361,7 +361,12 @@
 		<!-- 
 		 Since the Tomcat is default in the spring boot,you should add the following two dependencies to switch to Jetty if you want.
 		 Note: if you want to deploy the final war file to a real server,you should comment out the following two dependencies.
-		 The final generated war is supported in both Jetty and tomcat. -->
+		 The final generated war is supported in both Jetty and tomcat. 
+		 
+		 Development: For tomcat, copy configuration文件夹和其他配置到tomcat下的bin文件夹下。
+		 
+		 -->
+		<!-- 
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-web</artifactId>
@@ -376,6 +381,7 @@
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-jetty</artifactId>
 		</dependency>
+		-->
 		
 		<!-- H2 Database -->
 		<dependency>
