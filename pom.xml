@@ -376,7 +376,7 @@
 		 Development: For tomcat, copy configuration文件夹和其他配置到tomcat下的bin文件夹下。
 		 
 		 -->
-		<!-- 
+		<!-- -->
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-web</artifactId>
@@ -391,7 +391,7 @@
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-jetty</artifactId>
 		</dependency>
-		-->
+		
 		
 		<!-- H2 Database -->
 		<dependency>
