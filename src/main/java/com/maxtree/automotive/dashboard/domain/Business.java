@@ -88,8 +88,8 @@ public class Business {
 	private String name; // 业务类型名称
 	private String code; // 4位代码
 	private String checkLevel;// ""/一级审档/二级审档,例如“”表示不需要审档；一级审档标识本机构内部审档；二级审档指同社区内车管所审档
-	private Boolean updatePlateNumber = false;
-	private Boolean uploadPicture = false;
-	private List<DataDictionary> requiredItems; //比录材料名(非数据库字段)
+	private Boolean updatePlateNumber = false; //上架后更新号码号牌
+	private Boolean uploadPicture = false;//上架后更新车辆照片
+	private List<DataDictionary> requiredItems; //必录材料名(非数据库字段)
 	private List<DataDictionary> optionalItems; //选录材料名(非数据库字段)
 }

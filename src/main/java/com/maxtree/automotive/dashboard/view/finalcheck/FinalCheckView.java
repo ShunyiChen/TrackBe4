@@ -201,24 +201,27 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
      * 
      */
     private void doSearch() {
-    	LocationCode locationCode = new LocationCode(ui.locationService);
     	String barcode = searchField.getValue();
-    	List<Transaction> list = ui.transactionService.search_by_keyword(-1, 0, barcode, community.getTenantName(), locationCode.getCompleteLocationCode(community));
-//    	Car car = ui.carService.findByBarcode(barcode);
-//    	if(car == null) {
-//    		Notifications.warning("找不到该车辆。");
-//    		cleanStage();
-//    		return;
+    	Car car = ui.carService.findByBarcode(barcode);
+    	if(car == null) {
+    		Notifications.warning("找不到该车辆。");
+    		cleanStage();
+    		return;
+    	}
+    	trans = ui.transactionService.findByBarcode(barcode, car.getVin());
+    	mainPage.load(trans);
+    	resetComponents();
+    	
+//    	LocationCode locationCode = new LocationCode(ui.locationService);
+//    	List<Transaction> list = ui.transactionService.search_by_keyword(-1, 0, barcode, community.getTenantName(), locationCode.getCompleteLocationCode(community));
+//    	if(list.size() > 0) {
+//    		trans = list.get(0);
+//        	mainPage.load(trans);
+//        	resetComponents();
 //    	}
-//    	trans = ui.transactionService.findByBarcode(barcode, car.getVin());
-    	if(list.size() > 0) {
-    		trans = list.get(0);
-        	mainPage.load(trans);
-        	resetComponents();
-    	}
-    	else {
-    		Notifications.warning("找不到该业务流水号。");
-    	}
+//    	else {
+//    		Notifications.warning("找不到该业务流水号。");
+//    	}
     }
     
     /**

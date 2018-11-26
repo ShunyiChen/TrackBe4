@@ -57,7 +57,7 @@ public class EmbeddedServerService {
 	 */
 	public int insert(EmbeddedServer embeddedServer) {
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-		String INSERT_TRANS_SQL = "INSERT INTO EMBEDDEDSERVER(SERVERNAME,SERVERTYPE,HOSTADDR,PORT,DEFAULTREMOTEDIRECTORY,USERNAME,PASSWORD,RUNNINGSTATUS,CODE) VALUES(?,?,?,?,?,?,?,?,?)";
+		String INSERT_TRANS_SQL = "INSERT INTO EMBEDDEDSERVER(SERVERNAME,SERVERTYPE,PORT,RUNNINGSTATUS,CODE) VALUES(?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -65,13 +65,9 @@ public class EmbeddedServerService {
 				PreparedStatement ps = con.prepareStatement(INSERT_TRANS_SQL, new String[] { "serveruniqueid" });
 				ps.setString(1, embeddedServer.getServerName());
 				ps.setString(2, embeddedServer.getServerType());
-				ps.setString(3, embeddedServer.getHostAddr());
-				ps.setInt(4, embeddedServer.getPort());
-				ps.setString(5, embeddedServer.getDefaultRemoteDirectory());
-				ps.setString(6, embeddedServer.getUserName());
-				ps.setString(7, embeddedServer.getPassword());
-				ps.setInt(8, embeddedServer.getRunningStatus());
-				ps.setString(9, embeddedServer.getCode());
+				ps.setInt(3, embeddedServer.getPort());
+				ps.setInt(4, embeddedServer.getRunningStatus());
+				ps.setString(5, embeddedServer.getCode());
 				return ps;
 			}
 		}, keyHolder);
@@ -84,11 +80,15 @@ public class EmbeddedServerService {
 	 * @param embeddedServer
 	 */
 	public void update(EmbeddedServer embeddedServer) {
-		String sql = "UPDATE EMBEDDEDSERVER SET SERVERNAME=?,SERVERTYPE=?,HOSTADDR=?,PORT=?,DEFAULTREMOTEDIRECTORY=?,USERNAME=?,PASSWORD=?,RUNNINGSTATUS=?,CODE=? WHERE SERVERUNIQUEID=?";
-		jdbcTemplate.update(sql, new Object[] { embeddedServer.getServerName(), embeddedServer.getServerType(),
-				embeddedServer.getHostAddr(), embeddedServer.getPort(), embeddedServer.getDefaultRemoteDirectory(),
-				embeddedServer.getUserName(), embeddedServer.getPassword(), embeddedServer.getRunningStatus(),
-				embeddedServer.getCode(), embeddedServer.getServerUniqueId() });
+		String sql = "UPDATE EMBEDDEDSERVER SET SERVERNAME=?,SERVERTYPE=?,PORT=?,RUNNINGSTATUS=?,CODE=? WHERE SERVERUNIQUEID=?";
+		jdbcTemplate.update(sql, new Object[] {
+				embeddedServer.getServerName(),
+				embeddedServer.getServerType(),
+				embeddedServer.getPort(),
+				embeddedServer.getRunningStatus(),
+				embeddedServer.getCode(),
+				embeddedServer.getServerUniqueId()
+		});
 	}
 	
 	/**

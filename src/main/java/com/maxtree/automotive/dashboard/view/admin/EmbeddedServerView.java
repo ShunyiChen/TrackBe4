@@ -55,7 +55,7 @@ public class EmbeddedServerView extends ContentView {
 		main.setSpacing(false);
 		main.setMargin(false);
 		
-		GridColumn[] columns = {new GridColumn("服务器名",70), new GridColumn("类型",70), new GridColumn("主机地址",70),new GridColumn("端口",70),new GridColumn("主目录",70),new GridColumn("用户名",70),new GridColumn("密码",70),new GridColumn("运行状态",70),new GridColumn("", 20)}; 
+		GridColumn[] columns = {new GridColumn("服务器",142), new GridColumn("类型",142),new GridColumn("端口",142),new GridColumn("运行状态",143),new GridColumn("", 20)}; 
 		List<CustomGridRow> data = new ArrayList<>();
 		List<EmbeddedServer> list = ui.embeddedServerService.findAll();
 		for (EmbeddedServer es : list) {
@@ -68,20 +68,22 @@ public class EmbeddedServerView extends ContentView {
 			@Override
 			public void onSuccessful() {
 //				if (loggedInUser.isPermitted(PermissionCodes.F1)) {
-//					Callback2 callback = new Callback2() {
-//
-//						@Override
-//						public void onSuccessful(Object... objects) {
-//							int serverUniqueId = (int) objects[0];
-//							EmbeddedServer server = ui.embeddedServerService.findById(serverUniqueId);
-//							Object[] rowData = generateOneRow(server);
-//							grid.insertRow(new CustomGridRow(rowData));
-//						}
-//					};
-//					EditEmbeddedServerWindow.open(callback);
+//					
 //				} else {
 //	        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
 //	        	}
+				
+				Callback2 callback = new Callback2() {
+
+					@Override
+					public void onSuccessful(Object... objects) {
+						int serverUniqueId = (int) objects[0];
+						EmbeddedServer server = ui.embeddedServerService.findById(serverUniqueId);
+						Object[] rowData = generateOneRow(server);
+						grid.insertRow(new CustomGridRow(rowData));
+					}
+				};
+				EditEmbeddedServerWindow.open(callback);
 			}
 		};
 		grid.setAddEvent(addEvent);
@@ -158,7 +160,7 @@ public class EmbeddedServerView extends ContentView {
 				});
 			}
 			
-			menu.addItem("测试", VaadinIcons.BUG, new Command() {
+			menu.addItem("用户管理", VaadinIcons.USERS, new Command() {
 				/**
 				 * 
 				 */
@@ -194,22 +196,22 @@ public class EmbeddedServerView extends ContentView {
 
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-//					if (loggedInUser.isPermitted(PermissionCodes.K2)) {
-//						Callback callback = new Callback() {
-//
-//							@Override
-//							public void onSuccessful() {
-//								// 更新表格UI
-//								EmbeddedServer s = ui.embeddedServerService.findById(es.getServerUniqueId());
-//								Object[] rowData = generateOneRow(s);
-//								grid.setValueAt(new CustomGridRow(rowData),es.getServerUniqueId());
-//							}
-//						};
-//						EditEmbeddedServerWindow.edit(es, callback);
-//					}
-//					else {
-//		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
-//		        	}
+					if (loggedInUser.isPermitted(PermissionCodes.K2)) {
+						Callback callback = new Callback() {
+
+							@Override
+							public void onSuccessful() {
+								// 更新表格UI
+								EmbeddedServer s = ui.embeddedServerService.findById(es.getServerUniqueId());
+								Object[] rowData = generateOneRow(s);
+								grid.setValueAt(new CustomGridRow(rowData),es.getServerUniqueId());
+							}
+						};
+						EditEmbeddedServerWindow.edit(es, callback);
+					}
+					else {
+		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
+		        	}
 				}
 			});
 			menu.addItem("从列表删除", VaadinIcons.FILE_REMOVE, new Command() {
@@ -242,7 +244,7 @@ public class EmbeddedServerView extends ContentView {
 			menu.open(e.getClientX(), e.getClientY());
 		});
 		
-		return new Object[] {es.getServerName(),es.getServerType(),es.getHostAddr(),es.getPort(),es.getDefaultRemoteDirectory(),es.getUserName(),es.getPassword(),es.getRunningStatus(),img,es.getServerUniqueId()};
+		return new Object[] {es.getServerName(),es.getServerType(),es.getPort(),es.getRunningStatus(),img,es.getServerUniqueId()};
 	}
 	
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();

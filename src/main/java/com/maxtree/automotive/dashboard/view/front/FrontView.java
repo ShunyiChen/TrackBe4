@@ -2,6 +2,8 @@ package com.maxtree.automotive.dashboard.view.front;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +25,7 @@ import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
+import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Car;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Company;
@@ -444,7 +447,34 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	this.exception = exception;
     }
     
-    
+    /**
+     * 
+     */
+    private void printNow(int transactionUniqueId, String vin) {
+    	Transaction trans = ui.transactionService.findById(transactionUniqueId, vin);
+    	// 注册登记业务
+    	if(trans.getBusinessName().contains("注册登记")) {
+    		List<String> options = Arrays.asList("车辆标签", "文件标签");
+    		PrintingFiletagsWindow.open("车辆和文件标签-打印预览",trans,options);
+    	}
+    	else {
+    		Business bus = ui.businessService.findByCode(trans.getBusinessCode());
+    		if(bus.getCheckLevel().equals("无")) {
+    			// 非审档业务
+    			List<String> options = Arrays.asList("文件标签");
+    			PrintingFiletagsWindow.open("文件标签-打印预览",trans,options);
+    		}
+    		else if(bus.getCheckLevel().equals("一级审档")
+    				|| bus.getCheckLevel().equals("二级审档")) {//一级审档
+    		Callback callback = new Callback() {
+				@Override
+				public void onSuccessful() {
+				}
+			};
+    			PrintingResultsWindow.open("审核结果单-打印预览", trans, callback);
+    		}
+    	}
+    }
     
     /**
      * 
@@ -484,8 +514,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	editableTrans.setIndexNumber(1);
-        	
-        	
         	// 如果不支持质检
         	if(!editableCompany.getQcsupport()) {
         		// 获取社区内的车管所
@@ -506,7 +534,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		}
         		
         		editableTrans.setStatus(ui.state().getName("B2"));
-        		ui.transactionService.insert(editableTrans);
+        		int transactionUniqueId = ui.transactionService.insert(editableTrans);
         		//更新车辆信息
         		updateCar(editableTrans);
         		
@@ -517,12 +545,14 @@ public final class FrontView extends Panel implements View,InputViewIF {
             	cleanStage();
             	Notifications.bottomWarning("提交成功！已完成逻辑上架。");
             	
+            	//立刻打印
+        		printNow(transactionUniqueId,basicInfoPane.getVIN());
             	
         	}
         	// 提交给质检队列
         	else {
         		editableTrans.setStatus(ui.state().getName("B7"));
-        		ui.transactionService.insert(editableTrans);
+        		int transactionUniqueId = ui.transactionService.insert(editableTrans);
         		
         		//更新车辆信息
         		updateCar(editableTrans);
@@ -543,6 +573,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		// 清空舞台
             	cleanStage();
             	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
+            	
+            	//立刻打印
+        		printNow(transactionUniqueId,basicInfoPane.getVIN());
         	}
     	}
     	
@@ -574,7 +607,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         			editableTrans.setCode(firstCode+"");//上架号
         		}
         		editableTrans.setStatus(ui.state().getName("B2"));
-        		ui.transactionService.insert(editableTrans);
+        		int transactionUniqueId = ui.transactionService.insert(editableTrans);
         		
         		//更新车辆信息
         		updateCar(editableTrans);
@@ -585,11 +618,14 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		//清空舞台
             	cleanStage();
             	Notifications.bottomWarning("提交成功！已完成逻辑上架。");
+            	
+            	//立刻打印
+        		printNow(transactionUniqueId,basicInfoPane.getVIN());
         	}
         	// 提交给质检队列
         	else {
         		editableTrans.setStatus(ui.state().getName("B7"));
-        		ui.transactionService.insert(editableTrans);
+        		int transactionUniqueId = ui.transactionService.insert(editableTrans);
         		
         		//更新车辆信息
         		updateCar(editableTrans);
@@ -610,6 +646,9 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		// 清空舞台
             	cleanStage();
             	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
+            	
+            	//立刻打印
+        		printNow(transactionUniqueId,basicInfoPane.getVIN());
         	}
     	}
     	

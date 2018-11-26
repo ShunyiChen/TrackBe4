@@ -5,6 +5,8 @@ import org.springframework.util.StringUtils;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
+import com.maxtree.automotive.dashboard.component.Box;
+import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.domain.Role;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
@@ -54,24 +56,17 @@ public class EditRoleWindow extends Window {
 //		tf1.setRequiredIndicatorVisible(true);
 		form.addComponents(roleNameField);
 		HorizontalLayout buttonPane = new HorizontalLayout();
-		buttonPane.setSizeFull();
+		buttonPane.setWidthUndefined();
+		buttonPane.setHeight("40px");
 		buttonPane.setSpacing(false);
 		buttonPane.setMargin(false);
 		Button btnCancel = new Button("取消");
 		btnAdd = new Button("添加");
-		btnPermission = new Button("权限");
-		HorizontalLayout subButtonPane = new HorizontalLayout();
-		subButtonPane.setSpacing(false);
-		subButtonPane.setMargin(false);
-		subButtonPane.setWidth("195px");
-		subButtonPane.setHeight("100%");
-		subButtonPane.addComponents(btnCancel, btnAdd, btnPermission);
-		subButtonPane.setComponentAlignment(btnCancel, Alignment.BOTTOM_LEFT);
-		subButtonPane.setComponentAlignment(btnAdd, Alignment.BOTTOM_CENTER);
-		subButtonPane.setComponentAlignment(btnPermission, Alignment.BOTTOM_RIGHT);
-		buttonPane.addComponent(subButtonPane);
-		buttonPane.setComponentAlignment(subButtonPane, Alignment.BOTTOM_RIGHT);
+		buttonPane.addComponents(btnCancel,Box.createHorizontalBox(5),btnAdd);//, btnPermission);
+		buttonPane.setComponentAlignment(btnCancel, Alignment.MIDDLE_LEFT);
+		buttonPane.setComponentAlignment(btnAdd, Alignment.MIDDLE_LEFT);
 		mainLayout.addComponents(form, buttonPane);
+		mainLayout.setComponentAlignment(buttonPane, Alignment.BOTTOM_RIGHT);
 		this.setContent(mainLayout);
 		
 		btnCancel.addClickListener(e -> {
@@ -153,20 +148,36 @@ public class EditRoleWindow extends Window {
         	if (w.checkEmptyValues()) {
         		
     			int roleUniqueId = ui.roleService.insert(w.role);
-    			w.close();
-    			callback.onSuccessful(roleUniqueId);
+    			if(roleUniqueId > 0) {
+    				w.close();
+    				
+					Callback onOk = new Callback() {
+
+						@Override
+						public void onSuccessful() {
+							Role r = ui.roleService.findById(roleUniqueId);
+							Callback2 call2 = new Callback2() {
+
+								@Override
+								public void onSuccessful(Object... objects) {
+									callback.onSuccessful(roleUniqueId);
+								}
+							};
+							AssigningPermissionsToRoleWindow.open(call2, r);
+						}
+					};
+					Callback onCancel = new Callback() {
+
+						@Override
+						public void onSuccessful() {
+							callback.onSuccessful(roleUniqueId);
+						}
+					};
+					MessageBox.showMessage("设置", "是否为该角色设置权限?", MessageBox.INFO, onOk,onCancel,"是","否");
+    			}
+    			
         	}
 		});
-        w.btnPermission.addClickListener(e -> {
-			if (w.checkEmptyValues()) {
-				int newRoleUniqueId = ui.roleService.insert(w.role);
-				Role r = ui.roleService.findById(newRoleUniqueId);
-				w.close();
-				callback.onSuccessful();
-				AssigningPermissionsToRoleWindow.open(callback, r);
-			}
-		});
-        
         UI.getCurrent().addWindow(w);
         w.center();
     }
@@ -187,11 +198,11 @@ public class EditRoleWindow extends Window {
     			callback.onSuccessful();
         	}
 		});
-        w.btnPermission.addClickListener(e -> {
-			if (w.checkEmptyValues()) {
-				AssigningPermissionsToRoleWindow.open(callback, r);
-			}
-		});
+//        w.btnPermission.addClickListener(e -> {
+//			if (w.checkEmptyValues()) {
+//				AssigningPermissionsToRoleWindow.open(callback, r);
+//			}
+//		});
         
         UI.getCurrent().addWindow(w);
         w.center();
@@ -199,7 +210,7 @@ public class EditRoleWindow extends Window {
 	
 	private TextField roleNameField;
 	private Button btnAdd;
-	private Button btnPermission;
+//	private Button btnPermission;
 	private Binder<Role> binder = new Binder<>();
 	private Role role = new Role();
 	private static DashboardUI ui = (DashboardUI) UI.getCurrent();
