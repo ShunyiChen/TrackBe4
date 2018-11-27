@@ -2,7 +2,6 @@ package com.maxtree.automotive.dashboard.view.front;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -197,11 +196,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
     public void enter(final ViewChangeEvent event) {
     	updateUnreadCount();
     }
-    
-//    @Override
-//    public void beforeLeave(final ViewBeforeLeaveEvent event) {
-//    	cleanStage();
-//    }
     
     /**
      * 
@@ -514,6 +508,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	editableTrans.setIndexNumber(1);
+        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
         	// 如果不支持质检
         	if(!editableCompany.getQcsupport()) {
         		// 获取社区内的车管所
@@ -728,7 +723,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	}
     	}
     	
-    	
     	// 需要审档（二级）流程
     	else if (businessTypePane.getSelected().getCheckLevel().equals("二级审档")) {
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
@@ -738,6 +732,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+        	editableTrans.setBatch(batch);
         	editableTrans.setUuid(uuid);
         	editableTrans.setCreator(loggedInUser.getUserName());
         	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());

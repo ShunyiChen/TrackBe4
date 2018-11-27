@@ -1,0 +1,17 @@
+前言
+java ： jdk1.8 
+证书库：用于在本地测试的、maxtree域名证书库。 
+证书库密码：密码为“cDe3@wsx”。 
+证书库位置：当前路径 
+证书库文件名：.jks 
+证书库格式：JKS
+
+创建证书库及localhost证书
+keytool -genkey -alias maxtree -keyalg RSA -keysize 4096 -validity 3650
+注意：默认生成的.keystore文件在C:\Users\SIMEON下（.jks是.keystore的缩写）
+
+查看证书库
+keytool -list -v -keystore C:\Users\SIMEON\.keystore -storepass cDe3@wsx
+
+导出证书
+//keytool -export -alias localhost -file localhost.cer -keystore localhost.jks -storetype JKS -storepass localhost
