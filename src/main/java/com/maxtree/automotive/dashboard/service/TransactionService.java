@@ -62,10 +62,10 @@ public class TransactionService {
 	 * @param vin
 	 * @return
 	 */
-	public Transaction find(String plateType,String plateNumber,String vin) {
+	public Transaction findByStatus(String plateType,String plateNumber,String vin) {
 		int index = getTableIndex(vin);
-		String sql = "SELECT A.*,B.NAME AS BUSINESSNAME FROM TRANSACTION_"+index+" AS A LEFT JOIN BUSINESS AS B ON A.BUSINESSCODE=B.CODE WHERE A.PLATETYPE=? AND A.PLATENUMBER=? AND A.VIN=?";
-		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {plateType,plateNumber,vin}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
+		String sql = "SELECT A.*,B.NAME AS BUSINESSNAME FROM TRANSACTION_"+index+" AS A LEFT JOIN BUSINESS AS B ON A.BUSINESSCODE=B.CODE WHERE A.PLATETYPE=? AND A.PLATENUMBER=? AND A.VIN=? AND A.STATUS=?";
+		List<Transaction> result = jdbcTemplate.query(sql, new Object[] {plateType,plateNumber,vin,"待补充"}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
 		Transaction trans = null;
 		if (result.size() > 0) {
 			trans = result.get(0);
@@ -194,6 +194,8 @@ public class TransactionService {
 	 	int affected = jdbcTemplate.update(sql, new Object[] {transaction.getBarcode(), transaction.getPlateType(), transaction.getPlateNumber(), 
 	 			transaction.getVin(), transaction.getStatus(),transaction.getDateModified(),transaction.getTransactionUniqueId()});
 	 	log.info("Updated.Affected row = "+affected);
+	 	System.out.println("开始打印sql");
+	 	System.out.println("UPDATE TRANSACTION_"+index+" SET BARCODE="+transaction.getBarcode()+",PLATETYPE="+transaction.getPlateType()+",PLATENUMBER="+transaction.getPlateNumber()+",VIN="+transaction.getVin()+",STATUS="+transaction.getStatus()+",DATEMODIFIED="+transaction.getDateModified()+" WHERE TRANSACTIONUNIQUEID="+transaction.getTransactionUniqueId());
 	}
 	
 	/**

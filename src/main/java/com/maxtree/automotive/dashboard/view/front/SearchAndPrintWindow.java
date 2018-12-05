@@ -155,7 +155,7 @@ public class SearchAndPrintWindow extends Window {
       	    		Business bus = ui.businessService.findByCode(trans.getBusinessCode());
       	    		if(bus.getCheckLevel().equals("无")) {
       	    			// 非审档业务
-      	    			List<String> options = Arrays.asList("文件标签");
+      	    			List<String> options = Arrays.asList("车辆标签", "文件标签");
       	    			PrintingFiletagsWindow.open("文件标签-打印预览",trans,options);
       	    		}
       	    		else if(bus.getCheckLevel().equals("一级审档")

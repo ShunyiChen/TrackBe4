@@ -12,6 +12,7 @@ import java.util.List;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
+import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.FinalCheck;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
@@ -68,7 +69,7 @@ public class PrintingResultsWindow extends Window {
 			closableEvent.onSuccessful();
 		});
 		
-		List<String> options = Arrays.asList("打印审核结果单");
+		List<String> options = Arrays.asList("车辆标签", "文件标签","打印审核结果单");
 		radios = new RadioButtonGroup<>(null, options);
 		radios.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
 		
@@ -124,7 +125,110 @@ public class PrintingResultsWindow extends Window {
 		bean.setBusName(trans.getBusinessName());
 		bean.setWrongContent(transition.getComments());
 		list.add(bean);
+		radios.addValueChangeListener(e->{
+			
+			if(e.getValue().equals("打印审核结果单")) {
+				Callback callback = new Callback() {
+					@Override
+					public void onSuccessful() {
+						com.vaadin.server.StreamResource.StreamSource source = new com.vaadin.server.StreamResource.StreamSource() {
+				 			/**
+							 * 
+							 */
+							private static final long serialVersionUID = 1L;
+
+							@Override
+				 			public InputStream getStream() {
+				 				FileInputStream inputStream = null;
+								try {
+									inputStream = new FileInputStream("reports/generates/"+loggedInUser.getUserUniqueId()+"/report.pdf");
+								} catch (FileNotFoundException e) {
+									e.printStackTrace();
+								}
+								return inputStream;
+				 			}
+				 		};
+						
+				        // Create the stream resource and give it a file name
+				        String filename = "report.pdf";
+				        StreamResource resource = new StreamResource(source, filename);
+				        
+				        // These settings are not usually necessary. MIME type
+				        // is detected automatically from the file name, but
+				        // setting it explicitly may be necessary if the file
+				        // suffix is not ".pdf".
+				        resource.setMIMEType("application/pdf");
+				        resource.getStream().setParameter(
+				                "Content-Disposition",
+				                "attachment; filename="+filename);
+
+				        // Extend the print button with an opener
+				        // for the PDF resource
+				        opener =  new BrowserWindowOpener(resource);
+				        opener.extend(btnReady);
+						
+						FinalCheck finalCheck = new FinalCheck();
+						finalCheck.setBarcode(trans.getBarcode());
+						finalCheck.setVin(trans.getVin());
+						ui.transactionService.insertFinalCheck(finalCheck);
+						
+						if(trans.getStatus().equals("待上架")) {
+							ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), ui.state().getName("B19"));
+						}
+						 
+						try {
+							resource.getStreamSource().getStream().close();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				};
+				if(trans.getStatus().equals(ui.state().getName("B16"))
+						|| trans.getStatus().equals(ui.state().getName("B17"))) {
+					try {
+						new TB4Reports().jasperToPDF(list, loggedInUser.getUserUniqueId(), "影像化档案审核退办单.jasper", callback);
+					} catch (ReportException e1) {
+						e1.printStackTrace();
+					}
+				}
+				else {
+					try {
+						new TB4Reports().jasperToPDF(list, loggedInUser.getUserUniqueId(), "影像化档案审核合格证明书.jasper", callback);
+					} catch (ReportException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+			else if(e.getValue().equals("车辆标签")) {
+				List<PrintableBean> lst = new ArrayList<PrintableBean>();
+				PrintableBean b = new PrintableBean();
+				b.setPlateType(trans.getPlateType());
+				b.setPlateNum(trans.getPlateNumber());
+				b.setCLSBDH(trans.getVin());
+				b.setShelvesNum(trans.getCode());
+				lst.add(b);
+				
+				printingPDFForTags(lst, "上架标签-车.jasper");
+				
+			} else {
+				List<PrintableBean> lst = new ArrayList<PrintableBean>();
+				PrintableBean b = new PrintableBean();
+				b.setPlateType(trans.getPlateType());//号码种类
+				b.setPlateNum(trans.getPlateNumber());//号牌号码
+				Business business = ui.businessService.findByCode(trans.getBusinessCode());
+				b.setBusType(business.getName());//业务类型
+				b.setShelvesNum(trans.getCode()); //上架号
+				b.setIndex(trans.getIndexNumber()); //索引号
+				b.setCode(trans.getBarcode()); //流水号
+				lst.add(b);
+				printingPDFForTags(lst, "上架标签.jasper");
+			}
+		});
 		
+	}
+	
+	private void printingPDFForTags(List<PrintableBean> beans, String templateFileName) {
 		Callback callback = new Callback() {
 			@Override
 			public void onSuccessful() {
@@ -144,12 +248,12 @@ public class PrintingResultsWindow extends Window {
 						}
 						return inputStream;
 		 			}
-		 		};
+		 		}; 
 				
 		        // Create the stream resource and give it a file name
 		        String filename = "report.pdf";
 		        StreamResource resource = new StreamResource(source, filename);
-		        
+
 		        // These settings are not usually necessary. MIME type
 		        // is detected automatically from the file name, but
 		        // setting it explicitly may be necessary if the file
@@ -158,39 +262,36 @@ public class PrintingResultsWindow extends Window {
 		        resource.getStream().setParameter(
 		                "Content-Disposition",
 		                "attachment; filename="+filename);
-
+		        resource.setCacheTime(0);
+		        
+		        try {
+					resource.getStreamSource().getStream().close();
+					  resource.getStream().getStream().close();
+					 
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        
 		        // Extend the print button with an opener
 		        // for the PDF resource
-		        opener =  new BrowserWindowOpener(resource);
+		        opener = new BrowserWindowOpener(resource);
 		        opener.extend(btnReady);
+		        
+		        if(trans.getStatus().equals("待上架")) {
+					ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), ui.state().getName("B19"));
+				}
 				
 				FinalCheck finalCheck = new FinalCheck();
 				finalCheck.setBarcode(trans.getBarcode());
 				finalCheck.setVin(trans.getVin());
 				ui.transactionService.insertFinalCheck(finalCheck);
-				
-				try {
-					resource.getStreamSource().getStream().close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
 		};
-		if(trans.getStatus().equals(ui.state().getName("B16"))
-				|| trans.getStatus().equals(ui.state().getName("B17"))) {
-			try {
-				new TB4Reports().jasperToPDF(list, loggedInUser.getUserUniqueId(), "影像化档案审核退办单.jasper", callback);
-			} catch (ReportException e1) {
-				e1.printStackTrace();
-			}
-		}
-		else {
-			try {
-				new TB4Reports().jasperToPDF(list, loggedInUser.getUserUniqueId(), "影像化档案审核合格证明书.jasper", callback);
-			} catch (ReportException e1) {
-				e1.printStackTrace();
-			}
+		try {
+			new TB4Reports().jasperToPDF(beans, loggedInUser.getUserUniqueId(), templateFileName, callback);
+		} catch (ReportException e1) {
+			e1.printStackTrace();
 		}
 	}
 	

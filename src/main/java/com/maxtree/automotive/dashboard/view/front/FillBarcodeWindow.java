@@ -191,7 +191,7 @@ public class FillBarcodeWindow extends Window {
 	private void capture() {
 		if(!StringUtils.isEmpty(barcode.getValue())
 				&& !StringUtils.isEmpty(plateVIN.getValue())) {
-			trans = ui.transactionService.find(plateTypeField.getValue(), plateNumber.getValue(),plateVIN.getValue());
+			trans = ui.transactionService.findByStatus(plateTypeField.getValue(), plateNumber.getValue(),plateVIN.getValue());
 			if(trans == null) {
 				Notifications.warning("主记录不存在。");
 				return;
