@@ -15,6 +15,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
 import com.maxtree.automotive.dashboard.domain.EmbeddedServer;
+import com.maxtree.automotive.dashboard.domain.ServerUser;
 
 
 @Component
@@ -48,7 +49,6 @@ public class EmbeddedServerService {
 		List<EmbeddedServer> results = jdbcTemplate.query(sql, new Object[] {}, new BeanPropertyRowMapper<EmbeddedServer>(EmbeddedServer.class));
 		return results;
 	}
-	
 	
 	/**
 	 * 
@@ -98,5 +98,75 @@ public class EmbeddedServerService {
 	public void delete(int serverUniqueId) {
 		String sql = "DELETE FROM EMBEDDEDSERVER WHERE SERVERUNIQUEID=?";
 		jdbcTemplate.update(sql, new Object[] {serverUniqueId});
+	}
+	
+	/**
+	 * 
+	 * @param serverCode
+	 * @return
+	 */
+	public List<ServerUser> findServerUsers(String serverCode) {
+		String sql = "SELECT * FROM SERVERUSER WHERE SERVERCODE=?";
+		List<ServerUser> results = jdbcTemplate.query(sql, new Object[] {serverCode}, new BeanPropertyRowMapper<ServerUser>(ServerUser.class));
+		return results;
+	}
+	
+	/**
+	 * 
+	 * @param serverUser
+	 * @return
+	 */
+	public int insertUser(ServerUser serverUser) {
+		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+		String INSERT_TRANS_SQL = "INSERT INTO SERVERUSER(USERNAME,USERPASSWORD,ENABLEFLAG,WRITEPERMISSION,MAXLOGINNUMBER,MAXLOGINPERIP,IDLETIME,UPLOADRATE,DOWNLOADRATE,SERVERCODE) VALUES(?,?,?,?,?,?,?,?,?,?)";
+		jdbcTemplate.update(new PreparedStatementCreator() {
+
+			@Override
+			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+				PreparedStatement ps = con.prepareStatement(INSERT_TRANS_SQL, new String[] { "serveruseruniqueid" });
+				ps.setString(1, serverUser.getUserName());
+				ps.setString(2, serverUser.getUserPassword());
+				ps.setBoolean(3, serverUser.getEnableflag());
+				ps.setBoolean(4, serverUser.getWritepermission());
+				ps.setInt(5, serverUser.getMaxloginnumber());
+				ps.setInt(6, serverUser.getMaxloginperip());
+				ps.setInt(7, serverUser.getIdletime());
+				ps.setInt(8, serverUser.getUploadrate());
+				ps.setInt(9, serverUser.getDownloadrate());
+				ps.setString(10, serverUser.getServerCode());
+				return ps;
+			}
+		}, keyHolder);
+		int serveruseruniqueid = keyHolder.getKey().intValue();
+		return serveruseruniqueid;
+	}
+	
+	/**
+	 * 
+	 * @param user
+	 */
+	public void updateUser(ServerUser user) {
+		String sql = "UPDATE SERVERUSER SET USERNAME=?,USERPASSWORD=?,ENABLEFLAG=?,WRITEPERMISSION=?,MAXLOGINNUMBER=?,MAXLOGINPERIP=?,IDLETIME=?,UPLOADRATE=?,DOWNLOADRATE=? WHERE SERVERUSERUNIQUEID=?";
+		jdbcTemplate.update(sql, new Object[] {
+				user.getUserName(),
+				user.getUserPassword(),
+				user.getEnableflag(),
+				user.getWritepermission(),
+				user.getMaxloginnumber(),
+				user.getMaxloginperip(),
+				user.getIdletime(),
+				user.getUploadrate(),
+				user.getDownloadrate(),
+				user.getServerUserUniqueId()
+		});
+	}
+	
+	/**
+	 * 
+	 * @param serveruseruniqueid
+	 */
+	public void deleteUser(int serveruseruniqueid) {
+		String sql = "DELETE FROM SERVERUSER WHERE SERVERUSERUNIQUEID=?";
+		jdbcTemplate.update(sql, new Object[] {serveruseruniqueid});
 	}
 }
