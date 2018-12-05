@@ -210,6 +210,9 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         searchButton.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         searchButton.setIcon(VaadinIcons.SEARCH);
         
+        SystemConfiguration sc = Yaml.readSystemConfiguration();
+        Label plateNumHeader = new Label(sc.getLicenseplate());
+        
         Label choose = new Label("选择查询：");
         type.setItems(new String[] {"流水号","号牌号码","车辆识别代号"});
         type.setWidth("150px");
@@ -217,10 +220,19 @@ public class SearchView extends Panel implements View, FrontendViewIF{
         type.setValue("号牌号码");
         type.setEmptySelectionAllowed(false);
         type.setTextInputAllowed(false);
+        type.addValueChangeListener(e->{
+        	if(e.getValue().equals("号牌号码")) {
+        		plateNumHeader.setVisible(true);
+        	}
+        	else {
+        		plateNumHeader.setVisible(false);
+        	}
+        });
         
-        searchbar.addComponents(choose,type,Box.createHorizontalBox(5),keywordField,Box.createHorizontalBox(5),searchButton);
+        searchbar.addComponents(choose,type,Box.createHorizontalBox(10),plateNumHeader,keywordField,Box.createHorizontalBox(5),searchButton);
         searchbar.setComponentAlignment(choose,Alignment.MIDDLE_RIGHT);
         searchbar.setComponentAlignment(type,Alignment.MIDDLE_RIGHT);
+        searchbar.setComponentAlignment(plateNumHeader,Alignment.MIDDLE_RIGHT);
         searchbar.setComponentAlignment(keywordField,Alignment.MIDDLE_RIGHT);
         searchbar.setComponentAlignment(searchButton,Alignment.MIDDLE_RIGHT);
         
@@ -241,11 +253,10 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 			return;
 		}
     	if(type.getValue().equals("号牌号码")) {
-    		if(keywordField.getValue().length() != 5 && type.getValue().length() != 6) {
+    		if(keywordField.getValue().length() != 5 && keywordField.getValue().length() != 6) {
     			Notifications.warning("请输入车牌号的后5位或后6位查询。");
     			return;
     		}
-    		
     	}
     	else if(type.getValue().equals("车辆识别代号")){
     		if(keywordField.getValue().length() != 17) {
@@ -408,6 +419,7 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     public Transaction getCurrentTransaction() {
     	return transaction;
     }
+    
     
     private ComboBox<String> type = new ComboBox<>();
     private TextField keywordField = new TextField();

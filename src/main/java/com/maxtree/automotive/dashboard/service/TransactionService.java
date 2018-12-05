@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
+import com.maxtree.automotive.dashboard.domain.FinalCheck;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 
 @Component
@@ -356,4 +357,44 @@ public class TransactionService {
 	 	int affected = jdbcTemplate.update(sql, new Object[] {status, new Date(),uuid});
 	 	log.info("Updated.Affected row = "+affected);
 	}
+	
+	/**
+	 * 
+	 * @param barcode
+	 * @return
+	 */
+	public FinalCheck findFinalCheck(String barcode) {
+		String sql = "SELECT * FROM FINALCHECK WHERE BARCODE=?";
+		List<FinalCheck> result = jdbcTemplate.query(sql, new Object[] {barcode}, new BeanPropertyRowMapper<FinalCheck>(FinalCheck.class));
+		FinalCheck finalCheck = null;
+		if (result.size() > 0) {
+			finalCheck = result.get(0);
+		}
+		return finalCheck;
+	}
+	
+	/**
+	 * 插入待终审记录表
+	 * 
+	 * @param finalCheck
+	 * @return
+	 */
+	public int insertFinalCheck(FinalCheck finalCheck) {
+		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+		String INSERT_TRANS_SQL = "INSERT INTO FINALCHECK(BARCODE,VIN) VALUES(?,?)";
+		jdbcTemplate.update(new PreparedStatementCreator() {
+
+			@Override
+			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+				PreparedStatement ps = con.prepareStatement(INSERT_TRANS_SQL, new String[] { "checkuniqueid" });
+				ps.setString(1, finalCheck.getBarcode());
+				ps.setString(2, finalCheck.getVin());
+				return ps;
+			}
+		}, keyHolder);
+		int checkuniqueid = keyHolder.getKey().intValue();
+		log.info("Affected row = "+checkuniqueid);
+		return checkuniqueid;
+	}
+	
 }

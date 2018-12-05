@@ -17,6 +17,7 @@ import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Car;
 import com.maxtree.automotive.dashboard.domain.Community;
+import com.maxtree.automotive.dashboard.domain.FinalCheck;
 import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.Transition;
@@ -202,7 +203,7 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
      */
     private void doSearch() {
     	String barcode = searchField.getValue();
-    	Car car = ui.carService.findByBarcode(barcode);
+    	FinalCheck car = ui.transactionService.findFinalCheck(barcode);
     	if(car == null) {
     		Notifications.warning("找不到该车辆。");
     		cleanStage();

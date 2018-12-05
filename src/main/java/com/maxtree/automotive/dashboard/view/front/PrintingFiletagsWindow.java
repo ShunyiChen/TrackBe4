@@ -12,6 +12,7 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.domain.Business;
+import com.maxtree.automotive.dashboard.domain.FinalCheck;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.ReportException;
@@ -196,6 +197,11 @@ public class PrintingFiletagsWindow extends Window {
 		        
 				// Update status
 				ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), ui.state().getName("B19"));
+				
+				FinalCheck finalCheck = new FinalCheck();
+				finalCheck.setBarcode(trans.getBarcode());
+				finalCheck.setVin(trans.getVin());
+				ui.transactionService.insertFinalCheck(finalCheck);
 			}
 		};
 		try {
