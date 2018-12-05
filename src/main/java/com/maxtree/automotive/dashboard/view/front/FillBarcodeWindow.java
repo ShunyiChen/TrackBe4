@@ -65,7 +65,7 @@ public class FillBarcodeWindow extends Window {
 		
 		//车辆照片
 		HorizontalLayout picture = new HorizontalLayout();
-		picture.setCaption("车辆照片:");
+		picture.setCaption("申请表:");
 		picture.setWidthUndefined();
 		picture.setHeight("28px");
 		Button captureButton = new Button();
@@ -221,7 +221,16 @@ public class FillBarcodeWindow extends Window {
 					link.setCaption("申请表原文");
 				}
 			};
-			PopupCaptureWindow.open(trans,dd,callback);
+			
+			Transaction copy = new Transaction();
+			copy.setTransactionUniqueId(trans.getTransactionUniqueId());
+			copy.setBatch(trans.getBatch());
+			copy.setCode(dd.getCode());
+			copy.setSiteCode(trans.getSiteCode());
+			copy.setUuid(trans.getUuid());
+			copy.setVin(trans.getVin());
+			
+			PopupCaptureWindow.open(copy,dd,callback);
 		}
 		else {
 			Notifications.warning("输入不能有空。");
@@ -254,6 +263,7 @@ public class FillBarcodeWindow extends Window {
 	private void fill() {
 		if(check()) {
 			trans.setBarcode(barcode.getValue());
+			trans.setStatus(ui.state().getName("B2"));//所有业务都是这个流程，当补完流水号后把状态改成"待上架"
 			ui.transactionService.update(trans);
 			close();
 		}
@@ -261,34 +271,12 @@ public class FillBarcodeWindow extends Window {
 	}
 	
 	private boolean check() {
-//		if(StringUtils.isEmpty(barcode.getValue())) {
-//			Notifications.warning("流水号不能空。");
-//			return false;
-//		}
-//		else if(StringUtils.isEmpty(plateTypeField.getValue())) {
-//			Notifications.warning("号牌种类不能空。");
-//			return false;
-//		}
-//		else if(StringUtils.isEmpty(plateNumber.getValue())) {
-//			Notifications.warning("号牌号码不能空。");
-//			return false;
-//		}
-//		else if(StringUtils.isEmpty(plateNumber.getValue())) {
-//			Notifications.warning("车辆识别代号不能空。");
-//			return false;
-//		}
-//		else if(plateNumber.getValue().length() != 5
-//				&& plateNumber.getValue().length() != 6) {
-//			Notifications.warning("号牌号码输入位数错误。");
-//			return false;
-//		}
 		if(trans == null 
 				|| StringUtils.isEmpty(barcode.getValue())
 				|| StringUtils.isEmpty(link.getCaption())) {
 			Notifications.warning("输入信息有误，或者缺少原文上传。");
 			return false;
 		}
-		
 		return true;
 	}
 	
