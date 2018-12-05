@@ -15,6 +15,7 @@ import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
+import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.Car;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.FinalCheck;
@@ -233,7 +234,20 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
     		Notifications.warning("没有可提交的业务。");
     	}
     	else {
-    		trans.setStatus(ui.state().getName("B18"));
+    		Business business = ui.businessService.findByCode(trans.getBusinessCode());
+    		if(business.getName().contains("注册登记")) {
+    			trans.setStatus(ui.state().getName("B18"));
+    		}
+    		else if("无".equals(business.getCheckLevel())) {
+    			trans.setStatus(ui.state().getName("B18"));
+    		}
+    		else if(business.getCheckLevel().equals("一级审档")) {
+    			trans.setStatus(ui.state().getName("B18"));
+    		}
+    		else if(business.getCheckLevel().equals("二级审档")) {
+    			trans.setStatus(ui.state().getName("B18"));
+    		}
+    		
     		trans.setDateModified(new Date());
     		ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), trans.getStatus());
     		

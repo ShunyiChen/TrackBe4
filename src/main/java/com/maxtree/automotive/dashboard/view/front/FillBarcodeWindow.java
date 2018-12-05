@@ -4,11 +4,9 @@ import java.util.List;
 
 import org.springframework.util.StringUtils;
 
-import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
-import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
@@ -28,7 +26,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -262,8 +259,14 @@ public class FillBarcodeWindow extends Window {
 	
 	private void fill() {
 		if(check()) {
+			Business business = ui.businessService.findByCode(trans.getBusinessCode());
+    		if(business.getCheckLevel().equals("一级审档")) {
+    			trans.setStatus(ui.state().getName("B2"));
+    		}
+    		else if(business.getCheckLevel().equals("二级审档")) {
+    			trans.setStatus(ui.state().getName("B2"));
+    		}
 			trans.setBarcode(barcode.getValue());
-			trans.setStatus(ui.state().getName("B2"));//所有业务都是这个流程，当补完流水号后把状态改成"待上架"
 			ui.transactionService.update(trans);
 			close();
 		}

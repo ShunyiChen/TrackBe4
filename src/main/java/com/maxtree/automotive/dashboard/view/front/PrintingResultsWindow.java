@@ -164,9 +164,6 @@ public class PrintingResultsWindow extends Window {
 		        opener =  new BrowserWindowOpener(resource);
 		        opener.extend(btnReady);
 				
-				// Update status
-				ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), ui.state().getName("B19"));
-				
 				FinalCheck finalCheck = new FinalCheck();
 				finalCheck.setBarcode(trans.getBarcode());
 				finalCheck.setVin(trans.getVin());
