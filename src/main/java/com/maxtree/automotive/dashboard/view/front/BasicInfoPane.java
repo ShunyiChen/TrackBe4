@@ -303,7 +303,7 @@ public class BasicInfoPane extends Panel {
 		return true;
 	}
 	
-	public void reset() {
+	public void fieldClear() {
 		barCodeField.clear();
 		plateTypeField.clear();
 		plateNumberField.clear();

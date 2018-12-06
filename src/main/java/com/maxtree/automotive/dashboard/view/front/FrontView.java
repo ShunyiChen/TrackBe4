@@ -143,8 +143,6 @@ public final class FrontView extends Panel implements View,InputViewIF {
 					}
 				};
 				new Test().verify(verifyEvent);
-            	
-            	
             }
         });
     }
@@ -201,9 +199,11 @@ public final class FrontView extends Panel implements View,InputViewIF {
      * 
      */
     private void resetComponents() {
+    	basicInfoPane.fieldClear();
+    	businessTypePane.fieldClear();
+    	
     	main.removeAllComponents();
     	main.setHeightUndefined();
-    	
     	fileGrid.removeAllRows();
 //    	businessTypePane.setSelectorEnabled(false);
     	

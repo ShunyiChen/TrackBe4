@@ -366,16 +366,12 @@
 			<artifactId>ftpserver-core</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-		
-		
 		<!-- 
-		  
 		 Note: if you want to deploy the final war file to tomcat server,you should comment out the following two dependencies.
 		 The final generated war is supported in both Jetty and tomcat. 
 		 
 		 Development: For tomcat, copy configuration文件夹和其他配置到tomcat下的bin文件夹下。
-		 
-		 -->
+	 	-->
 		<!-- 
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
@@ -387,11 +383,12 @@
 		        </exclusion>
 		    </exclusions>
 		</dependency>
+		-->
+		<!-- 如果想部署在jetty上必须使用下面依赖
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-jetty</artifactId>
 		</dependency>
-		
 		-->
 		<!-- H2 Database -->
 		<dependency>

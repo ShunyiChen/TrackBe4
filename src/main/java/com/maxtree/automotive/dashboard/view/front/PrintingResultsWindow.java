@@ -24,10 +24,8 @@ import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -110,95 +108,10 @@ public class PrintingResultsWindow extends Window {
 	 * 
 	 */
 	private void generateReport() {
-		Transition transition = ui.transitionService.findByUUID(trans.getUuid(), trans.getVin());
-//		ArrayList<Map> arry = interF.getDriverBusView(trans.getBarcode());
-		List<PrintableBean> list = new ArrayList<PrintableBean>();
-		PrintableBean bean = new PrintableBean();
-		bean.setOwner(trans.getCreator());//机动车所有人
-		bean.setIDNum("");//证件号
-		bean.setPlateType(trans.getPlateType());
-		bean.setPlateNum(trans.getPlateNumber());
-		bean.setCLSBDH(trans.getVin());
-		bean.setShelvesNum(trans.getCode());
-		bean.setVerifier(transition.getOperator());
-		bean.setVerifytime(format.format(transition.getDateCreated()));
-		bean.setBusName(trans.getBusinessName());
-		bean.setWrongContent(transition.getComments());
-		list.add(bean);
+		
 		radios.addValueChangeListener(e->{
-			
 			if(e.getValue().equals("打印审核结果单")) {
-				Callback callback = new Callback() {
-					@Override
-					public void onSuccessful() {
-						com.vaadin.server.StreamResource.StreamSource source = new com.vaadin.server.StreamResource.StreamSource() {
-				 			/**
-							 * 
-							 */
-							private static final long serialVersionUID = 1L;
-
-							@Override
-				 			public InputStream getStream() {
-				 				FileInputStream inputStream = null;
-								try {
-									inputStream = new FileInputStream("reports/generates/"+loggedInUser.getUserUniqueId()+"/report.pdf");
-								} catch (FileNotFoundException e) {
-									e.printStackTrace();
-								}
-								return inputStream;
-				 			}
-				 		};
-						
-				        // Create the stream resource and give it a file name
-				        String filename = "report.pdf";
-				        StreamResource resource = new StreamResource(source, filename);
-				        
-				        // These settings are not usually necessary. MIME type
-				        // is detected automatically from the file name, but
-				        // setting it explicitly may be necessary if the file
-				        // suffix is not ".pdf".
-				        resource.setMIMEType("application/pdf");
-				        resource.getStream().setParameter(
-				                "Content-Disposition",
-				                "attachment; filename="+filename);
-
-				        // Extend the print button with an opener
-				        // for the PDF resource
-				        opener =  new BrowserWindowOpener(resource);
-				        opener.extend(btnReady);
-						
-						FinalCheck finalCheck = new FinalCheck();
-						finalCheck.setBarcode(trans.getBarcode());
-						finalCheck.setVin(trans.getVin());
-						ui.transactionService.insertFinalCheck(finalCheck);
-						
-						if(trans.getStatus().equals("待上架")) {
-							ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), ui.state().getName("B19"));
-						}
-						 
-						try {
-							resource.getStreamSource().getStream().close();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				};
-				if(trans.getStatus().equals(ui.state().getName("B16"))
-						|| trans.getStatus().equals(ui.state().getName("B17"))) {
-					try {
-						new TB4Reports().jasperToPDF(list, loggedInUser.getUserUniqueId(), "影像化档案审核退办单.jasper", callback);
-					} catch (ReportException e1) {
-						e1.printStackTrace();
-					}
-				}
-				else {
-					try {
-						new TB4Reports().jasperToPDF(list, loggedInUser.getUserUniqueId(), "影像化档案审核合格证明书.jasper", callback);
-					} catch (ReportException e1) {
-						e1.printStackTrace();
-					}
-				}
+				printingPDFForResults();
 			}
 			else if(e.getValue().equals("车辆标签")) {
 				List<PrintableBean> lst = new ArrayList<PrintableBean>();
@@ -228,6 +141,102 @@ public class PrintingResultsWindow extends Window {
 		
 	}
 	
+	/**
+	 * 
+	 */
+	private void printingPDFForResults() {
+		Transition transition = ui.transitionService.findByUUID(trans.getUuid(), trans.getVin());
+		List<PrintableBean> list = new ArrayList<PrintableBean>();
+		PrintableBean bean = new PrintableBean();
+		bean.setOwner(trans.getCreator());//机动车所有人
+		bean.setIDNum("");//证件号
+		bean.setPlateType(trans.getPlateType());
+		bean.setPlateNum(trans.getPlateNumber());
+		bean.setCLSBDH(trans.getVin());
+		bean.setShelvesNum(trans.getCode());
+		bean.setVerifier(transition.getOperator());
+		bean.setVerifytime(format.format(transition.getDateCreated()));
+		bean.setBusName(trans.getBusinessName());
+		bean.setWrongContent(transition.getComments());
+		list.add(bean);
+		Callback callback = new Callback() {
+			@Override
+			public void onSuccessful() {
+				com.vaadin.server.StreamResource.StreamSource source = new com.vaadin.server.StreamResource.StreamSource() {
+		 			/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+		 			public InputStream getStream() {
+		 				FileInputStream inputStream = null;
+						try {
+							inputStream = new FileInputStream("reports/generates/"+loggedInUser.getUserUniqueId()+"/report.pdf");
+						} catch (FileNotFoundException e) {
+							e.printStackTrace();
+						}
+						return inputStream;
+		 			}
+		 		};
+				
+		        // Create the stream resource and give it a file name
+		        String filename = "report.pdf";
+		        StreamResource resource = new StreamResource(source, filename);
+		        
+		        // These settings are not usually necessary. MIME type
+		        // is detected automatically from the file name, but
+		        // setting it explicitly may be necessary if the file
+		        // suffix is not ".pdf".
+		        resource.setMIMEType("application/pdf");
+		        resource.getStream().setParameter(
+		                "Content-Disposition",
+		                "attachment; filename="+filename);
+
+		        // Extend the print button with an opener
+		        // for the PDF resource
+		        opener =  new BrowserWindowOpener(resource);
+		        opener.extend(btnReady);
+				
+				FinalCheck finalCheck = new FinalCheck();
+				finalCheck.setBarcode(trans.getBarcode());
+				finalCheck.setVin(trans.getVin());
+				ui.transactionService.insertFinalCheck(finalCheck);
+				
+				if(trans.getStatus().equals("待上架")) {
+					ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), ui.state().getName("B19"));
+				}
+				 
+				try {
+					resource.getStreamSource().getStream().close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+		if(trans.getStatus().equals(ui.state().getName("B16"))
+				|| trans.getStatus().equals(ui.state().getName("B17"))) {
+			try {
+				new TB4Reports().jasperToPDF(list, loggedInUser.getUserUniqueId(), "影像化档案审核退办单.jasper", callback);
+			} catch (ReportException e1) {
+				e1.printStackTrace();
+			}
+		}
+		else {
+			try {
+				new TB4Reports().jasperToPDF(list, loggedInUser.getUserUniqueId(), "影像化档案审核合格证明书.jasper", callback);
+			} catch (ReportException e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @param beans
+	 * @param templateFileName
+	 */
 	private void printingPDFForTags(List<PrintableBean> beans, String templateFileName) {
 		Callback callback = new Callback() {
 			@Override

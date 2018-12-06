@@ -6,6 +6,11 @@ import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 
+/**
+ * 
+ * @author chens
+ *
+ */
 public class BusinessTypePane extends Panel{
 
 	/**
@@ -40,6 +45,7 @@ public class BusinessTypePane extends Panel{
 	}
 	
 	/**
+	 * Get value
 	 * 
 	 * @return
 	 */
@@ -47,13 +53,12 @@ public class BusinessTypePane extends Panel{
 		return selector.getValue();
 	}
 	
-//	/**
-//	 * 
-//	 * @param enabled
-//	 */
-//	public void setSelectorEnabled(boolean enabled) {
-//		selector.setEnabled2(enabled);
-//	}
+	/**
+	 * Clear field's value
+	 */
+	public void fieldClear() {
+		selector.setEmpty();
+	}
 	
 	/**
 	 * 业务代码

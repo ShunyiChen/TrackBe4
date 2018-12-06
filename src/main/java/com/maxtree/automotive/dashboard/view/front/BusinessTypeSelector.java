@@ -31,7 +31,6 @@ import com.maxtree.automotive.dashboard.servlet.UploadOutDTO;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
-import com.maxtree.trackbe4.messagingsystem.MatedataJsonParser;
 import com.maxtree.trackbe4.messagingsystem.Name;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.event.UIEvents;
@@ -310,22 +309,6 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 				UploadFileServlet.IN_DTOs.put(view.loggedInUser().getUserUniqueId(), inDto);
 			}
 		}
-		
-		
-		
-//		i++;
-//		ThumbnailRow row = new ThumbnailRow(i+"."+"其它材料");
-//		DataDictionary dict = new DataDictionary();
-//		dict.setCode("$$$$"); // $$$$为辅助材料code
-//		row.setDataDictionary(dict);
-//		view.thumbnailGrid().addRow(row);
-//		if (i == 1) {
-//			row.selected();
-//			
-//			UploadInDTO inDto = new UploadInDTO(view.loggedInUser().getUserUniqueId(), view.vin(), view.batch()+"", view.editableSite().getSiteUniqueId(),view.uuid(),dict.getCode());
-//			UploadFileServlet.IN_DTOs.put(view.loggedInUser().getUserUniqueId(), inDto);
-//		}
-		
 		view.thumbnailGrid().focus();
 		// 加载拍照影像
 //		view.capturePane().displayImage();
@@ -417,13 +400,12 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 		return selector.getValue();
 	}
 	
-//	/**
-//	 * 
-//	 * @param enabled
-//	 */
-//	public void setEnabled2(boolean enabled) {
-//		selector.setEnabled(enabled);
-//	}
+	/**
+	 * 
+	 */
+	public void setEmpty() {
+		selector.setValue(null);
+	}
 	
 	/**
 	 * 业务编码
@@ -484,56 +466,9 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 					row.removeThumbnail(thumbnail);
 				}
 			});
-			
-			
 			ThumbnailRow row = view.thumbnailGrid().mapRows.get(doc.getDictionarycode());
 			row.addThumbnail(thumbnail);
 		}
-//		List<Document> documentList2 = ui.documentService.findAllDocument2(view.vin(), view.uuid());
-//		for (Document doc : documentList2) {
-//			
-//			Thumbnail thumbnail = new Thumbnail(new ByteArrayInputStream(doc.getThumbnail()));
-//			// 右键菜单
-//			com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(thumbnail, true);
-//			menu.addItem("查看", new com.vaadin.contextmenu.Menu.Command() {
-//				/**
-//				 * 
-//				 */
-//				private static final long serialVersionUID = 1L;
-//
-//				@Override
-//				public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
-//					ImageViewerWindow.open(view, doc.getDocumentUniqueId());
-//				}
-//			});
-//			menu.addSeparator();
-//			menu.addItem("删除", new com.vaadin.contextmenu.Menu.Command() {
-//				/**
-//				 * 
-//				 */
-//				private static final long serialVersionUID = 1L;
-//
-//				@Override
-//				public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
-//					//从文件系统删除
-//					try {
-//						fileSystem.deleteFile(view.editableSite(), doc.getFileFullPath());
-//					} catch (FileException e) {
-//						e.printStackTrace();
-//					}
-//					
-//					//从数据库删除
-//					ui.documentService.deleteById(doc.getDocumentUniqueId(),2,view.vin());
-//					
-//					//从UI删除
-//					ThumbnailRow row = view.thumbnailGrid().mapRows.get(doc.getDictionarycode());
-//					row.removeThumbnail(thumbnail);
-//				}
-//			});
-//			
-//			ThumbnailRow row = view.thumbnailGrid().mapRows.get("$$$$");// $$$$为辅助材料code
-//			row.addThumbnail(thumbnail);
-//		}
 	}
 
 	private InputViewIF view;
@@ -542,7 +477,6 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private TB4FileSystem fileSystem = new TB4FileSystem();
 	private UIEvents.PollListener pollListener;
-	private MatedataJsonParser jsonHelper = new MatedataJsonParser();
 	private User loggedinUser = null;
 	private TB4MessagingSystem messageSystem = new TB4MessagingSystem();
 }
