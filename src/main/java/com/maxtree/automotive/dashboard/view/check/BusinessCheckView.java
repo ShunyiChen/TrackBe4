@@ -345,6 +345,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
         btnCommit.setIcon(VaadinIcons.CLOUD_UPLOAD);
         btnCommit.addStyleName("icon-edit");
         btnCommit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        btnCommit.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnCommit.addClickListener(e -> {
         	if (editableTrans == null) {
         		Notifications.warning("暂无可提交的信息。");
@@ -625,7 +626,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     private VerticalLayout main = new VerticalLayout();
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private ConfirmInformationGrid confirmInformationGrid;
-    private Button btnCommit = new Button();//提交给确认审档
+    private Button btnCommit = new Button("提交业务");//提交给确认审档
     private FetchButton fetchButton;
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);

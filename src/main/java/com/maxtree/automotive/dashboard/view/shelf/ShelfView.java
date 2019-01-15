@@ -252,7 +252,8 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
 		btnUp.setId(EDIT_ID);
 		btnUp.setIcon(VaadinIcons.ARROW_UP);
 		btnUp.addStyleName("icon-edit");
-		btnUp.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		btnUp.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+		btnUp.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnUp.setDescription(TAB1_TITLE);
 		btnUp.addClickListener(e -> {
 			putaway();
@@ -266,7 +267,8 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     	btnDown.setId(EDIT_ID);
     	btnDown.setIcon(VaadinIcons.ARROW_DOWN);
     	btnDown.addStyleName("icon-edit");
-    	btnDown.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	btnDown.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+    	btnDown.addStyleName(ValoTheme.BUTTON_PRIMARY);
     	btnDown.setDescription(TAB2_TITLE);
     	btnDown.addClickListener(e -> {
     		removeOff();
@@ -480,8 +482,8 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     private VerticalLayout root;
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private NotificationsButton notificationsButton;
-    private Button btnUp = new Button();
-    private Button btnDown = new Button();
+    private Button btnUp = new Button("上架");
+    private Button btnDown = new Button("下架");
     private HorizontalLayout tools = null;
     private TabSheet main = new TabSheet();
     private UpGrid upgrid = new UpGrid();

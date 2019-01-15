@@ -13707,13 +13707,13 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .valo-menu {
 	height: 100%;
-	background-color: #47484B;
-	background-image: -webkit-linear-gradient(right, #3d3e41 0%, #47484B 9px);
-	background-image: linear-gradient(to left,#3d3e41 0%, #47484B 9px);
-	color: #a2a3a6;
+	background-color: #0068D5;
+	background-image: -webkit-linear-gradient(right, #005ec1 0%, #0068D5 9px);
+	background-image: linear-gradient(to left,#005ec1 0%, #0068D5 9px);
+	color: #7db3ec;
 	font-size: 14px;
 	line-height: 30px;
-	border-right: 1px solid #38383b;
+	border-right: 1px solid #0052a8;
 	white-space: nowrap;
 }
 
@@ -13727,7 +13727,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-part {
-	border-left: 1px solid #3e3e41;
+	border-left: 1px solid #005aba;
 	height: 100%;
 	padding-bottom: 37px;
 	overflow: auto;
@@ -13890,13 +13890,13 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-subtitle {
-	color: #828488;
+	color: #489aef;
 	margin: 7px 0 7px 19px;
-	border-bottom: 1px solid #626366;
+	border-bottom: 1px solid #267edb;
 }
 
 .dashboard .valo-menu-subtitle [class*="badge"] {
-	color: #72a4d7;
+	color: #6aa9e8;
 }
 
 .dashboard .valo-menuitems {
@@ -13927,22 +13927,22 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-item [class*="badge"] {
-	color: #72a4d7;
+	color: #6aa9e8;
 }
 
 .dashboard .valo-menu-item.selected {
-	background: #404043;
+	background: #0061c6;
 }
 
 .dashboard .valo-menu-item.selected .v-icon {
-	color: #197de1;
+	color: #4396ea;
 }
 
 .dashboard .valo-menu-item.selected [class*="badge"] {
-	background-color: #197de1;
-	background-image: -webkit-linear-gradient(top, #1b87e3 2%, #166ed5 98%);
-	background-image: linear-gradient(to bottom,#1b87e3 2%, #166ed5 98%);
-	color: #c8dbed;
+	background-color: #4396ea;
+	background-image: -webkit-linear-gradient(top, #489eeb 2%, #3a87de 98%);
+	background-image: linear-gradient(to bottom,#489eeb 2%, #3a87de 98%);
+	color: #d3e2f1;
 }
 
 .dashboard .valo-menu-item:focus, .dashboard .valo-menu-item:hover, .dashboard .valo-menu-item.selected {
@@ -13962,7 +13962,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-item [class*="badge"] {
-	background-color: #535558;
+	background-color: #0074ef;
 	-webkit-transition: background-color 300ms;
 	-moz-transition: background-color 300ms;
 	transition: background-color 300ms;
@@ -13975,7 +13975,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-part.large-icons {
-	background-color: #47484B;
+	background-color: #0068D5;
 	min-width: 74px;
 	max-width: 111px;
 }
@@ -14006,7 +14006,7 @@ div.v-layout.v-horizontal.v-widget {
 	border: none;
 	text-overflow: ellipsis;
 	overflow: hidden;
-	background: #38393b;
+	background: #0059b6;
 	font-size: 13px;
 	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
 }
@@ -14025,7 +14025,7 @@ div.v-layout.v-horizontal.v-widget {
 	line-height: 1;
 	padding: 12px;
 	text-align: center;
-	border-top: 1px solid #525255;
+	border-top: 1px solid #0f71d7;
 }
 
 .dashboard .valo-menu-part.large-icons .valo-menu-item:first-child {
@@ -14050,7 +14050,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-part.large-icons .valo-menu-item.selected {
-	background: #404043;
+	background: #0061c6;
 }
 
 .dashboard .valo-menu-part.large-icons .valo-menu-item.selected .v-icon {
@@ -14058,7 +14058,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-part.large-icons .valo-menu-item.selected [class*="badge"] {
-	border-color: #404043;
+	border-color: #0061c6;
 }
 
 .dashboard .valo-menu-part.large-icons .valo-menu-item [class*="badge"] {
@@ -14066,7 +14066,7 @@ div.v-layout.v-horizontal.v-widget {
 	padding-right: 4px;
 	top: 7px;
 	right: 7px;
-	border: 2px solid #47484B;
+	border: 2px solid #0068D5;
 }
 
 .dashboard .valo-menu-logo {
@@ -14092,7 +14092,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part {
-	background-color: #47484B;
+	background-color: #0068D5;
 	min-width: 74px;
 	max-width: 111px;
 }
@@ -14123,7 +14123,7 @@ div.v-layout.v-horizontal.v-widget {
 	border: none;
 	text-overflow: ellipsis;
 	overflow: hidden;
-	background: #38393b;
+	background: #0059b6;
 	font-size: 13px;
 	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
 }
@@ -14142,7 +14142,7 @@ div.v-layout.v-horizontal.v-widget {
 	line-height: 1;
 	padding: 12px;
 	text-align: center;
-	border-top: 1px solid #525255;
+	border-top: 1px solid #0f71d7;
 }
 
 .dashboard .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part .valo-menu-item:first-child {
@@ -14167,7 +14167,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part .valo-menu-item.selected {
-	background: #404043;
+	background: #0061c6;
 }
 
 .dashboard .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part .valo-menu-item.selected .v-icon {
@@ -14175,7 +14175,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part .valo-menu-item.selected [class*="badge"] {
-	border-color: #404043;
+	border-color: #0061c6;
 }
 
 .dashboard .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part .valo-menu-item [class*="badge"] {
@@ -14183,7 +14183,7 @@ div.v-layout.v-horizontal.v-widget {
 	padding-right: 4px;
 	top: 7px;
 	right: 7px;
-	border: 2px solid #47484B;
+	border: 2px solid #0068D5;
 }
 
 .dashboard .valo-menu-responsive[width-range~="0-800px"] {
@@ -14253,13 +14253,13 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .valo-menu-responsive[width-range~="0-800px"] .valo-menuitems {
 	height: 100%;
-	background-color: #47484B;
-	background-image: -webkit-linear-gradient(right, #3d3e41 0%, #47484B 9px);
-	background-image: linear-gradient(to left,#3d3e41 0%, #47484B 9px);
-	color: #a2a3a6;
+	background-color: #0068D5;
+	background-image: -webkit-linear-gradient(right, #005ec1 0%, #0068D5 9px);
+	background-image: linear-gradient(to left,#005ec1 0%, #0068D5 9px);
+	color: #7db3ec;
 	font-size: 14px;
 	line-height: 30px;
-	border-right: 1px solid #38383b;
+	border-right: 1px solid #0052a8;
 	white-space: nowrap;
 	position: fixed;
 	z-index: 9000;
@@ -14315,10 +14315,10 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .v-ui[width-range~="0-800px"] .valo-menu-title {
-	background-color: #47484B;
-	background-image: -webkit-linear-gradient(top, #4c4d51 2%, #3e3f42 98%);
-	background-image: linear-gradient(to bottom,#4c4d51 2%, #3e3f42 98%);
-	border-bottom-color: #38383b;
+	background-color: #0068D5;
+	background-image: -webkit-linear-gradient(top, #0070d8 2%, #005bc8 98%);
+	background-image: linear-gradient(to bottom,#0070d8 2%, #005bc8 98%);
+	border-bottom-color: #0052a8;
 }
 
 .dashboard .v-ui[width-range~="0-800px"] .valo-menu .v-menubar-user-menu {
@@ -14566,7 +14566,7 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	padding-top: 20px;
-	background-color: #47484B;
+	background-color: #0068D5;
 }
 
 .dashboard .v-ios7 .v-ui  > .v-widget, .dashboard .v-ios8 .v-ui  > .v-widget {
@@ -15577,7 +15577,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .searchpane {
-	background-color: #47484B;
+	background-color: #0068D5;
 	height: 56px !important;
 	width: 100%;
 	white-space: 20px;
@@ -15613,7 +15613,7 @@ div.v-layout.v-horizontal.v-widget {
 	caret-color: white;
 	font-size: 15px;
 	font-weight: bold;
-	color: #47484B;
+	color: #0068D5;
 	-webkit-input-placeholder: white;
 	-moz-placeholder: white;
 }
@@ -15621,7 +15621,7 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .SearchToolBar_outerField {
 	cursor: text;
 	justify-content: center;
-	background-color: #BBBBBB;
+	background-color: #0051A6;
 	height: 40px;
 	width: 680px;
 	border-radius: 2px;
@@ -15882,7 +15882,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .SearchToolBar {
-	background-color: #47484B;
+	background-color: #0068D5;
 }
 
 .dashboard .NavigationBar {
@@ -16301,11 +16301,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .v-window-AboutTB4 {
-	background-color: #47484b !important;
+	background-color: #0068d5 !important;
 }
 
 .dashboard div.v-window-AboutTB4 .v-window-contents {
-	background: #47484b;
+	background: #0068d5;
 }
 
 .dashboard .AboutTB4 .v-label {

@@ -25,6 +25,7 @@ public class NotificationsButton extends Button {
         setId(ID);
         addStyleName("notifications");
         addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        addStyleName(ValoTheme.BUTTON_PRIMARY);
         DashboardEventBus.register(this);
     }
 

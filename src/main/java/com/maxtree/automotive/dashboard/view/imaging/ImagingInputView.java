@@ -361,7 +361,8 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	btnPrint.setId(EDIT_ID);
     	btnPrint.setIcon(VaadinIcons.PRINT);
     	btnPrint.addStyleName("icon-edit");
-    	btnPrint.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	btnPrint.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+    	btnPrint.addStyleName(ValoTheme.BUTTON_PRIMARY);
     	btnPrint.setDescription("打印标签");
     	btnPrint.addClickListener(e -> {
     		if (!validate()) {
@@ -415,7 +416,8 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	btnAdd.setId(EDIT_ID);
     	btnAdd.setIcon(VaadinIcons.FILE_ADD);
     	btnAdd.addStyleName("icon-edit");
-    	btnAdd.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	btnAdd.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+    	btnAdd.addStyleName(ValoTheme.BUTTON_PRIMARY);
     	btnAdd.setDescription("创建或补充流水号");
     	btnAdd.addClickListener(e -> {
     		if(editableTrans == null) {
@@ -437,7 +439,8 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	btnCommit.setId(EDIT_ID);
         btnCommit.setIcon(VaadinIcons.CLOUD_UPLOAD);
         btnCommit.addStyleName("icon-edit");
-        btnCommit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        btnCommit.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+        btnCommit.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnCommit.setDescription("保存并提交给质检");
         btnCommit.addClickListener(e -> {
         	if (commitMode.equals("INSERT")) {
@@ -896,9 +899,9 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     private BusinessTypePane businessTypePane = new BusinessTypePane(this);
     private ThumbnailGrid fileGrid = new ThumbnailGrid(this);
     private CapturePane capturePane = new CapturePane();
-    private Button btnPrint = new Button();
-    private Button btnAdd = new Button();
-    private Button btnCommit = new Button();
+    private Button btnPrint = new Button("打印标签");
+    private Button btnAdd = new Button("录入新业务");
+    private Button btnCommit = new Button("提交业务");
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
     private HorizontalLayout spliterNorth = new HorizontalLayout();

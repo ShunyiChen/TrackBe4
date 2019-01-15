@@ -350,7 +350,8 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
 		btnCommit.setId(EDIT_ID);
 		btnCommit.setIcon(VaadinIcons.CLOUD_UPLOAD);
 		btnCommit.addStyleName("icon-edit");
-		btnCommit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		btnCommit.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+		btnCommit.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnCommit.setDescription("提交或反馈给前台录入");
 		btnCommit.addClickListener(e -> {
 			if (editableTrans == null) {
@@ -611,7 +612,7 @@ public class DoubleCheckView extends Panel implements View, FrontendViewIF{
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private ConfirmInformationGrid confirmInformationGrid;
     private Manual manualPane;
-    private Button btnCommit = new Button();
+    private Button btnCommit = new Button("提交业务");
     private FetchButton fetchButton;
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);

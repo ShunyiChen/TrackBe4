@@ -28,12 +28,6 @@ public class FetchButton extends Button {
         DashboardEventBus.register(this);
     }
 
-//    @Subscribe
-//    public void updateNotificationsCount(NotificationsCountUpdatedEvent event) {
-//    	DashboardMenu.getInstance().updateNotificationsCount(event.getCount());
-//    	setUnreadCount(event.getCount());
-//    }
-
     /**
      * 
      * @param count

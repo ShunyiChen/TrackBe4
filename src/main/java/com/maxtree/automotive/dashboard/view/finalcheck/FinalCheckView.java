@@ -6,7 +6,6 @@ import java.util.List;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.LocationCode;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -16,7 +15,6 @@ import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
-import com.maxtree.automotive.dashboard.domain.Car;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.FinalCheck;
 import com.maxtree.automotive.dashboard.domain.Notification;
@@ -35,7 +33,6 @@ import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.UIEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewBeforeLeaveEvent;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinSession;
@@ -275,11 +272,6 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
 		ui.transitionService.insert(transition, trans.getVin());
     }
     
-//    @Override
-//    public void beforeLeave(final ViewBeforeLeaveEvent event) {
-//    	cleanStage();
-//    }
-    
     @Override
     public void enter(final ViewChangeEvent event) {
     	cleanStage();
@@ -309,7 +301,8 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
      * 
      */
     private void buildSubmittButton() {
-    	submit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	submit.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+    	submit.addStyleName(ValoTheme.BUTTON_PRIMARY);
     	submit.setIcon(VaadinIcons.CLOUD_UPLOAD);
     	submit.addClickListener(new ClickListener() {
             /**
@@ -386,7 +379,7 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
 	private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.DOUBLECHECK.getViewName());
 	private User loggedInUser;
 	private Community community;
-	private Button submit = new Button();
+	private Button submit = new Button("提交");
 	private NotificationsButton notificationsButton;
 	private Window notificationsWindow;
 	private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);

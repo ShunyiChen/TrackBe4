@@ -230,7 +230,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	btnFill.setId(EDIT_ID);
     	btnFill.setIcon(VaadinIcons.BARCODE);
     	btnFill.addStyleName("icon-edit");
-    	btnFill.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	btnFill.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+    	btnFill.addStyleName(ValoTheme.BUTTON_PRIMARY);
     	btnFill.setDescription("补充业务流水号");
     	btnFill.addClickListener(e -> {
     		FillBarcodeWindow.open();
@@ -245,7 +246,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	btnPrint.setId(EDIT_ID);
     	btnPrint.setIcon(VaadinIcons.PRINT);
     	btnPrint.addStyleName("icon-edit");
-    	btnPrint.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	btnPrint.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+    	btnPrint.addStyleName(ValoTheme.BUTTON_PRIMARY);
     	btnPrint.setDescription("打印标签");
     	btnPrint.addClickListener(e -> {
     		if (!validate()) {
@@ -270,7 +272,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	btnAdd.setId(EDIT_ID);
     	btnAdd.setIcon(VaadinIcons.FILE_ADD);
     	btnAdd.addStyleName("icon-edit");
-    	btnAdd.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+    	btnAdd.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+    	btnAdd.addStyleName(ValoTheme.BUTTON_PRIMARY);
     	btnAdd.setDescription("创建新业务");
     	btnAdd.addClickListener(e -> {
     		if(editableTrans == null) {
@@ -292,7 +295,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	btnCommit.setId(EDIT_ID);
         btnCommit.setIcon(VaadinIcons.CLOUD_UPLOAD);
         btnCommit.addStyleName("icon-edit");
-        btnCommit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        btnCommit.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+        btnCommit.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnCommit.setDescription("提交业务");
         btnCommit.addClickListener(e -> {
         	// 新建
@@ -484,7 +488,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     		return;
     	}
     	//如果是新车注册业务，则需验证业务流水号
-    	if(!basicInfoPane.emptyChecks(businessTypePane.getSelected().getName().contains("注册登记"))) {
+    	if(businessTypePane.getSelected() == null || !basicInfoPane.emptyChecks(businessTypePane.getSelected().getName().contains("注册登记"))) {
 			Notifications.warning("有效性验证失败。");
 			return;
     	}
@@ -1146,10 +1150,10 @@ public final class FrontView extends Panel implements View,InputViewIF {
     private BusinessTypePane businessTypePane = new BusinessTypePane(this);
     private ThumbnailGrid fileGrid = new ThumbnailGrid(this);
     private CapturePane capturePane = new CapturePane();
-    private Button btnFill = new Button();
-    private Button btnPrint = new Button();
-    private Button btnAdd = new Button();
-    private Button btnCommit = new Button();
+    private Button btnFill = new Button("补充流水号");
+    private Button btnPrint = new Button("打印标签");
+    private Button btnAdd = new Button("录入新业务");
+    private Button btnCommit = new Button("提交业务");
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
     private HorizontalLayout spliterNorth = new HorizontalLayout();
