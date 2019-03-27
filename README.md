@@ -27,6 +27,12 @@ Maven3.5
 Log4j
 
 ## Run and package
+
+Run:
 spring-boot:run -Dmaven.test.skip=true
 
+Build package:
 mvn clean package 
+
+Access to URL
+http://localhost:8787/
