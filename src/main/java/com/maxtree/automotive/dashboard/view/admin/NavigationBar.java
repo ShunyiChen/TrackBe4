@@ -1,7 +1,9 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
 import com.maxtree.automotive.dashboard.component.Hr;
+import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
@@ -54,6 +56,15 @@ public class NavigationBar extends Panel {
 	    	main.addComponent(item);
 	    	main.setComponentAlignment(item, Alignment.TOP_LEFT);
 	    }
+	    /// exit system item
+		ExitRow exitRow = new ExitRow(view);
+		HorizontalLayout item = menuItem(exitRow);
+		main.addComponent(item);
+		main.setComponentAlignment(item, Alignment.TOP_LEFT);
+		item.addLayoutClickListener(e -> {
+			VaadinSession.getCurrent().close();
+			Page.getCurrent().reload();
+		});
 	    
 	    this.addStyleName("NavigationBar");
 	    this.setContent(main);

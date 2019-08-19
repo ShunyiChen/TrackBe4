@@ -36,3 +36,6 @@ mvn clean package
 
 Access to URL
 http://localhost:8787/
+
+系统使用的图标
+https://github.com/vaadin/vaadin-icons
