@@ -2,11 +2,11 @@ package com.maxtree.automotive.dashboard;
 
 import com.maxtree.automotive.dashboard.persistence.entity.Customer;
 import com.maxtree.automotive.dashboard.persistence.repository.CustomerRepository;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
@@ -21,7 +21,7 @@ import com.maxtree.automotive.dashboard.service.LoggingService;
 public class TB4Application extends SpringBootServletInitializer implements CommandLineRunner {
 
 	// define the logger
-    private static Logger log = Logger.getLogger(TB4Application.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TB4Application.class);
 
     private static TB4Application app = null;
     
@@ -41,12 +41,12 @@ public class TB4Application extends SpringBootServletInitializer implements Comm
     }
     
     public static void main(String args[]) {
-    	
-    	log.info("Logger enabled: Entering main \n\n");
+
+        LOGGER.info("Logger enabled: Entering main {}\n\n","你好");
     	
         SpringApplication.run(TB4Application.class, args);
-        
-        log.info("Exiting main");
+
+        LOGGER.info("Exiting main");
     }
 
     @Override
@@ -62,40 +62,43 @@ public class TB4Application extends SpringBootServletInitializer implements Comm
     @Bean
     public CommandLineRunner demo(CustomerRepository repository) {
         return (args) -> {
+
+            repository.deleteAll();
+
             // save a couple of customers
             repository.save(new Customer("Jack", "Bauer"));
             repository.save(new Customer("Chloe", "O'Brian"));
-            repository.save(new Customer("Kim", "Bauer"));
+            repository.save(new Customer("Kim2222222", "Bauer222222222"));
             repository.save(new Customer("David", "Palmer"));
             repository.save(new Customer("Michelle", "Dessler"));
 
             // fetch all customers
-            log.info("Customers found with findAll():");
-            log.info("-------------------------------");
+            LOGGER.info("Customers found with findAll():");
+            LOGGER.info("-------------------------------");
             for (Customer customer : repository.findAll()) {
-                log.info(customer.toString());
+                LOGGER.info(customer.toString());
             }
-            log.info("");
+            LOGGER.info("");
 
             // fetch an individual customer by ID
             repository.findById(1L)
                     .ifPresent(customer -> {
-                        log.info("Customer found with findById(1L):");
-                        log.info("--------------------------------");
-                        log.info(customer.toString());
-                        log.info("");
+                        LOGGER.info("Customer found with findById(1L):");
+                        LOGGER.info("--------------------------------");
+                        LOGGER.info(customer.toString());
+                        LOGGER.info("");
                     });
 
             // fetch customers by last name
-            log.info("Customer found with findByLastName('Bauer'):");
-            log.info("--------------------------------------------");
+            LOGGER.info("Customer found with findByLastName('Bauer'):");
+            LOGGER.info("--------------------------------------------");
             repository.findByLastName("Bauer").forEach(bauer -> {
-                log.info(bauer.toString());
+                LOGGER.info(bauer.toString());
             });
             // for (Customer bauer : repository.findByLastName("Bauer")) {
             // 	log.info(bauer.toString());
             // }
-            log.info("");
+            LOGGER.info("");
         };
     }
 
