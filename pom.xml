@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.2.RELEASE</version>
+		<version>2.1.6.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -206,18 +206,19 @@
 		    <artifactId>xfire-jaxb2</artifactId>
 		    <version>1.2.6</version>
 		</dependency>
-	    <dependency>
+		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
-			<scope>compile</scope>
+			<version>3.2.2</version>
 		</dependency>
-		 <dependency>
+
+		<dependency>
 			<groupId>commons-digester</groupId>
 			<artifactId>commons-digester</artifactId>
-			<scope>compile</scope>
+			<version>2.1</version>
 		</dependency>
-        
-        <!-- VFS  -->
+
+		<!-- VFS  -->
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-vfs2 -->
 		<dependency>
 		    <groupId>org.apache.commons</groupId>
@@ -302,24 +303,21 @@
 		    <artifactId>caffeine</artifactId>
 		    <version>2.6.2</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
 		<dependency>
-		    <groupId>com.fasterxml.jackson.core</groupId>
-		    <artifactId>jackson-databind</artifactId>
-		    <version>2.6.3</version>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.9.9.3</version>
 		</dependency>
 		<dependency>
-	        <groupId>com.fasterxml.jackson.dataformat</groupId>
-	        <artifactId>jackson-dataformat-yaml</artifactId>
-	    </dependency>
-		<!-- https://mvnrepository.com/artifact/net.coobird/thumbnailator -->
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-yaml</artifactId>
+			<version>2.9.9</version>
+		</dependency>
 		<dependency>
 		    <groupId>net.coobird</groupId>
 		    <artifactId>thumbnailator</artifactId>
 		    <version>0.4.8</version>
 		</dependency>
-		
-		
 		<!-- Spring boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -395,7 +393,20 @@
 			<version>42.2.6</version>
 		</dependency>
 
-
+		<!-- spring data jpa -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
