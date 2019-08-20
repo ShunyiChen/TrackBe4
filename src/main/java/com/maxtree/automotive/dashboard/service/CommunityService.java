@@ -46,8 +46,8 @@ public class CommunityService {
 	
 	
 	/**
-	 * 
-	 * @param CommunityUniqueId
+	 * findById
+	 * @param communityUniqueId
 	 * @return
 	 */
 	public Community findById(int communityUniqueId) {
@@ -88,8 +88,8 @@ public class CommunityService {
 	 * @param community
 	 */
 	public void update(Community community) {
-		String sql = "UPDATE COMMUNITIES SET COMMUNITYNAME=?,COMMUNITYDESCRIPTION=?,TENANTNAME=?,PROVINCE=?,CITY=?,DISTRICT=? WHERE COMMUNITYUNIQUEID=?";
-	 	int opt = jdbcTemplate.update(sql, new Object[] { community.getCommunityName(),community.getCommunityDescription(),community.getTenantName(),community.getProvince(),community.getCity(),community.getDistrict(),community.getCommunityUniqueId()});
+		String sql = "UPDATE COMMUNITIES SET COMMUNITYNAME=?,COMMUNITYDESCRIPTION=?,PROVINCE=?,CITY=?,DISTRICT=? WHERE COMMUNITYUNIQUEID=?";
+	 	int opt = jdbcTemplate.update(sql, new Object[] { community.getCommunityName(),community.getCommunityDescription(),community.getProvince(),community.getCity(),community.getDistrict(),community.getCommunityUniqueId()});
 	 	log.info("Updated row "+opt);
 	}
 	
@@ -130,7 +130,7 @@ public class CommunityService {
 	 */
 	public int insert(Community community) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		String sql = "INSERT INTO COMMUNITIES(COMMUNITYNAME,COMMUNITYDESCRIPTION,TENANTNAME,PROVINCE,CITY,DISTRICT) VALUES(?,?,?,?,?,?)";
+		String sql = "INSERT INTO COMMUNITIES(COMMUNITYNAME,COMMUNITYDESCRIPTION,PROVINCE,CITY,DISTRICT) VALUES(?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
@@ -138,10 +138,9 @@ public class CommunityService {
 						sql, new String[] {"communityuniqueid"});
 				ps.setString(1, community.getCommunityName());
 				ps.setString(2, community.getCommunityDescription());
-				ps.setString(3, community.getTenantName());
-				ps.setString(4, community.getProvince());
-				ps.setString(5, community.getCity());
-				ps.setString(6, community.getDistrict());
+				ps.setString(3, community.getProvince());
+				ps.setString(4, community.getCity());
+				ps.setString(5, community.getDistrict());
 				return ps;
 			}
 			

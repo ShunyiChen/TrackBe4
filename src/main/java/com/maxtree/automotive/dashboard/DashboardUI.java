@@ -4,6 +4,8 @@ import java.util.Locale;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.maxtree.automotive.dashboard.service.*;
+import com.vaadin.shared.ui.ui.Transport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,31 +17,6 @@ import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.security.PasswordSecurity;
-import com.maxtree.automotive.dashboard.service.BusinessService;
-import com.maxtree.automotive.dashboard.service.BusinessStateService;
-import com.maxtree.automotive.dashboard.service.CarService;
-import com.maxtree.automotive.dashboard.service.CommunityService;
-import com.maxtree.automotive.dashboard.service.CompanyCategoryService;
-import com.maxtree.automotive.dashboard.service.CompanyService;
-import com.maxtree.automotive.dashboard.service.FeedbackService;
-import com.maxtree.automotive.dashboard.service.DataItemService;
-import com.maxtree.automotive.dashboard.service.DocumentService;
-import com.maxtree.automotive.dashboard.service.EmbeddedServerService;
-import com.maxtree.automotive.dashboard.service.FrameNumberService;
-import com.maxtree.automotive.dashboard.service.ImagingService;
-import com.maxtree.automotive.dashboard.service.LocationService;
-import com.maxtree.automotive.dashboard.service.LoggingService;
-import com.maxtree.automotive.dashboard.service.MessagingService;
-import com.maxtree.automotive.dashboard.service.PermissionCategoryService;
-import com.maxtree.automotive.dashboard.service.PermissionService;
-import com.maxtree.automotive.dashboard.service.QueueService;
-import com.maxtree.automotive.dashboard.service.RoleService;
-import com.maxtree.automotive.dashboard.service.SystemSettingsService;
-import com.maxtree.automotive.dashboard.service.TenantService;
-import com.maxtree.automotive.dashboard.service.SiteService;
-import com.maxtree.automotive.dashboard.service.TransactionService;
-import com.maxtree.automotive.dashboard.service.TransitionService;
-import com.maxtree.automotive.dashboard.service.UserService;
 import com.maxtree.automotive.dashboard.view.LoginView;
 import com.maxtree.automotive.dashboard.view.MainView;
 import com.maxtree.automotive.dashboard.view.admin.AdminMainView;
@@ -68,18 +45,21 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
-@Push(PushMode.MANUAL)
+//@Push(PushMode.MANUAL)
+@Push(transport = Transport.WEBSOCKET_XHR)
 @Theme("dashboard")
 @Title(TB4Application.NAME+" "+TB4Application.VERSION)
 @SuppressWarnings("serial")
 @SpringUI
 public final class DashboardUI extends UI {
-
-	private static final Logger log = LoggerFactory.getLogger(DashboardUI.class);
+	// define the logger
+	private static final Logger LOGGER = LoggerFactory.getLogger(DashboardUI.class);
 	@Autowired
 	public RoleService roleService;
 	@Autowired
 	public UserService userService;
+	@Autowired
+	public AuthService authService;
 	@Autowired
 	public BusinessService businessService;
 	@Autowired
@@ -118,8 +98,6 @@ public final class DashboardUI extends UI {
 	public EmbeddedServerService embeddedServerService;
 	@Autowired
 	public CarService carService;
-	@Autowired
-	public TenantService tenantService;
 	@Autowired
 	public LocationService locationService;
 	@Autowired
@@ -164,12 +142,12 @@ public final class DashboardUI extends UI {
 	 * Otherwise login view is shown.
 	 */
 	private void updateContent() {
-		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		if (user == null) {
+		if (!AuthService.isAuthenticated()) {
 			setContent(new LoginView());
 			addStyleName("loginview");
 		} else {
-			
+			String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+			User user = userService.getUserByUserName(username);
 			if(user.isPermitted(PermissionCodes.A1)) {
 				setContent(new AdminMainView());
 				removeStyleName("loginview");
@@ -207,7 +185,7 @@ public final class DashboardUI extends UI {
 	@Subscribe
 	public void userLoginRequested(final DashboardEvent.UserLoginRequestedEvent event) {
 		if (StringUtils.isEmpty(event.getUserName()) || StringUtils.isEmpty(event.getPassword())) {
-			loggingWrapper.info(event.getUserName(),LoggingWrapper.LOGIN,"Incorrect username or password.");
+			LOGGER.info(event.getUserName(),LoggingWrapper.LOGIN,"Incorrect username or password.");
 			smoothNotification("用户名或密码不能为空", "请重新输入用户名和密码。");
 			
 		} else {
@@ -215,23 +193,21 @@ public final class DashboardUI extends UI {
 			if (user.getUserName() != null) {
 				
 				if (user.getActivated() == 0) {
-					loggingWrapper.info(event.getUserName(),LoggingWrapper.LOGIN,"User["+event.getUserName()+"] not found.");
+					LOGGER.info(event.getUserName(),LoggingWrapper.LOGIN,"User["+event.getUserName()+"] not found.");
 					smoothNotification("该账号尚未激活", "当前用户没有被激活，请联系管理员进行设置。");
 					
 				} else {
-					boolean successful = PasswordSecurity.check(event.getPassword(), user.getHashed());
+					boolean successful = authService.login(event.getUserName(), event.getPassword(), event.isRememberMe());// PasswordSecurity.check(event.getPassword(), user.getHashed());
 					if (successful) {
-						loggingWrapper.info(user.getUserName(), LoggingWrapper.LOGIN, "Login is sucessful.");
-						VaadinSession.getCurrent().setAttribute(User.class.getName(), user);
+						LOGGER.info(user.getUserName(), LoggingWrapper.LOGIN, "Login is sucessful.");
 						updateContent();
 					} else {
-//						log.info("Incorrect password.");
-						loggingWrapper.info(user.getUserName(), LoggingWrapper.LOGIN, "Incorrect password.");
+						LOGGER.info(user.getUserName(), LoggingWrapper.LOGIN, "Incorrect password.");
 						smoothNotification("密码错误", "请重新输入密码，如果忘记密码请联系管理员重置密码。");
 					}
 				}
 			} else {
-				loggingWrapper.info(event.getUserName(),LoggingWrapper.LOGIN,"The username["+event.getUserName()+"] does not exist.");
+				LOGGER.info(event.getUserName(),LoggingWrapper.LOGIN,"The username["+event.getUserName()+"] does not exist.");
 				smoothNotification("用户不存在", "用户名"+event.getUserName()+"不存在，请重新输入用户名和密码。");
 			}
 			
@@ -275,14 +251,16 @@ public final class DashboardUI extends UI {
 
 	@Subscribe
 	public void userLoggedOut(final DashboardEvent.UserLoggedOutEvent event) {
-		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		loggingWrapper.info(user.getUserName(),LoggingWrapper.LOGIN,"logout.");
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		LOGGER.info(username, LoggingWrapper.LOGIN,"You have logged out successfully.");
 		
 		// When the user logs out, current VaadinSession gets closed and the
 		// page gets reloaded on the login screen. Do notice the this doesn't
 		// invalidate the current HttpSession.
-		VaadinSession.getCurrent().close();
-		Page.getCurrent().reload();
+//		VaadinSession.getCurrent().close();
+//		Page.getCurrent().reload();
+
+		authService.logOut();
 	}
 
 	@Subscribe

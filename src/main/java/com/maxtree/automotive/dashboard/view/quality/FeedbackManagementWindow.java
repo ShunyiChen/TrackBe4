@@ -13,6 +13,7 @@ import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Feedback;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.maxtree.automotive.dashboard.view.admin.CustomGrid;
 import com.maxtree.automotive.dashboard.view.admin.CustomGridRow;
 import com.maxtree.automotive.dashboard.view.admin.EditCommunityWindow;
@@ -57,9 +58,9 @@ public class FeedbackManagementWindow extends Window{
 		this.setModal(true);
 		this.setClosable(true);
 		this.setResizable(false);
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-		
-		GridColumn[] columns = {new GridColumn("批改意见",490),new GridColumn("", 20)}; 
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
+		GridColumn[] columns = {new GridColumn("批改意见",490),new GridColumn("", 20)};
 		List<CustomGridRow> data = new ArrayList<>();
 		List<Feedback> list = ui.feedbackService.findByUserName(loggedInUser.getUserName());
 		for (Feedback f : list) {

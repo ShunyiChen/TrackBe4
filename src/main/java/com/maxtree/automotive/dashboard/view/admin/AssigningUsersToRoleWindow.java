@@ -12,6 +12,7 @@ import com.maxtree.automotive.dashboard.domain.Role;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
@@ -70,7 +71,8 @@ public class AssigningUsersToRoleWindow extends Window {
 		hlayout.setMargin(false);
 		
 		List<User> allUsers = null;
-		User operator = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		User operator = ui.userService.getUserByUserName(username);
 		if (operator.getUserName().equals("system")) {
 			allUsers = ui.userService.findAll(true);
 		} else {

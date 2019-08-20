@@ -14,6 +14,7 @@ import com.maxtree.automotive.dashboard.domain.EmbeddedServer;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.DataException;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.MenuItem;
@@ -49,7 +50,8 @@ public class EmbeddedServerView extends ContentView {
 	public EmbeddedServerView(String parentTitle, AdminMainView rootView) {
 		super(parentTitle, rootView);
 		this.setHeight((Page.getCurrent().getBrowserWindowHeight()-58)+"px");
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
 		main.setWidth("100%");
 		main.setHeightUndefined();
 		main.setSpacing(false);
@@ -97,7 +99,7 @@ public class EmbeddedServerView extends ContentView {
 	
 	/**
 	 * 
-	 * @param company
+	 * @param es
 	 * @return
 	 */
 	private Object[] generateOneRow(EmbeddedServer es) {

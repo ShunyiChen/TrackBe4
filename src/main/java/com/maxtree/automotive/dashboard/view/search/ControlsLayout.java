@@ -2,6 +2,7 @@ package com.maxtree.automotive.dashboard.view.search;
 
 import java.util.List;
 
+import com.maxtree.automotive.dashboard.service.AuthService;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
@@ -41,7 +42,8 @@ public class ControlsLayout extends HorizontalLayout {
 	}
 	
 	private void initComponents() {
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		User loggedInUser = ui.userService.getUserByUserName(username);
 		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
 		localCodes = new LocationCode(ui.locationService);
 		this.setWidthUndefined();
@@ -101,7 +103,7 @@ public class ControlsLayout extends HorizontalLayout {
 	private void first() {
 		if (grid != null) {
 			String locationCode = localCodes.getCompleteLocationCode(community);
-			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage, 0, grid.getKeyword(),grid.getTenantName(),locationCode); 
+			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage, 0, grid.getKeyword(),locationCode);
 			grid.setPerPageData(items);
 			
 			// Update inputs
@@ -122,7 +124,7 @@ public class ControlsLayout extends HorizontalLayout {
 			}
 			String locationCode = localCodes.getCompleteLocationCode(community);
 			int offset = (currentPageIndex - 1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(),grid.getTenantName(),locationCode); 
+			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(),locationCode);
 			grid.setPerPageData(items);
 			
 			// Update inputs
@@ -142,7 +144,7 @@ public class ControlsLayout extends HorizontalLayout {
 			}
 			String locationCode = localCodes.getCompleteLocationCode(community);
 			int offset = (currentPageIndex -1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(),grid.getTenantName(),locationCode); 
+			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(),locationCode);
 			grid.setPerPageData(items);
 			// Update inputs
 			numField.setValue(currentPageIndex+"");
@@ -158,7 +160,7 @@ public class ControlsLayout extends HorizontalLayout {
 			String locationCode = localCodes.getCompleteLocationCode(community);
 			currentPageIndex = pageCount;
 			int offset = (currentPageIndex -1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(),grid.getTenantName(),locationCode); 
+			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(), locationCode);
 			grid.setPerPageData(items);
 			// Update inputs
 			numField.setValue(currentPageIndex+"");
@@ -172,7 +174,7 @@ public class ControlsLayout extends HorizontalLayout {
 	private void jumpTo() {
 		String locationCode = localCodes.getCompleteLocationCode(community);
 		int offset = (currentPageIndex - 1) * sizePerPage;
-		List<Transaction> data = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(),grid.getTenantName(),locationCode);
+		List<Transaction> data = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(),locationCode);
 		grid.setPerPageData(data);
 	}
 	

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import com.maxtree.automotive.dashboard.service.AuthService;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
@@ -63,7 +64,8 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 		this.setSpacing(false);
 		this.setMargin(false);
 		this.setSizeFull();
-		loggedinUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedinUser = ui.userService.getUserByUserName(username);
 		data = ui.userService.findAssignedBusinesses(loggedinUser.getUserUniqueId());
 		selector = new ComboBox<Business>("业务类型:", data);
 		// Disallow null selections
@@ -224,7 +226,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
      * 注册检查
      * 
      * @param vin
-     * @param businessCode
+     * @param business
      * @return
      */
 	private boolean registrationCheck(String vin, Business business) {
@@ -471,12 +473,12 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 		}
 	}
 
+	private User loggedinUser;
 	private InputViewIF view;
 	private List<Business> data;
 	private ComboBox<Business> selector;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private TB4FileSystem fileSystem = new TB4FileSystem();
 	private UIEvents.PollListener pollListener;
-	private User loggedinUser = null;
 	private TB4MessagingSystem messageSystem = new TB4MessagingSystem();
 }

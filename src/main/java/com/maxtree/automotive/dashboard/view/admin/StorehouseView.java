@@ -12,6 +12,7 @@ import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.Menu.Command;
 import com.vaadin.contextmenu.MenuItem;
@@ -43,7 +44,8 @@ public class StorehouseView extends ContentView {
 	public StorehouseView(String parentTitle, AdminMainView rootView) {
 		super(parentTitle, rootView);
 		this.setHeight((Page.getCurrent().getBrowserWindowHeight()-58)+"px");
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
 		main.setWidth("100%");
 		main.setHeightUndefined();
 		main.setSpacing(false);
@@ -89,8 +91,9 @@ public class StorehouseView extends ContentView {
 	}
 	
 	/**
-	 * 
-	 * @param company
+	 * Generate one row
+	 *
+	 * @param storehouse
 	 * @return
 	 */
 	private Object[] generateOneRow(FrameNumber storehouse) {
@@ -106,7 +109,8 @@ public class StorehouseView extends ContentView {
 
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+					String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+					User loginUser = ui.userService.getUserByUserName(username);
 					if (loginUser.isPermitted(PermissionCodes.P5)) {
 						Callback callback = new Callback() {
 
@@ -134,7 +138,8 @@ public class StorehouseView extends ContentView {
 
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+					String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+					User loginUser = ui.userService.getUserByUserName(username);
 					if (loginUser.isPermitted(PermissionCodes.P6)) {
 						ManageFrameWindow.open(storehouse);
 					}
@@ -152,8 +157,8 @@ public class StorehouseView extends ContentView {
 
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-					
-					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+					String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+					User loginUser = ui.userService.getUserByUserName(username);
 					if (loginUser.isPermitted(PermissionCodes.P2)) {
 						Callback callback = new Callback() {
 
@@ -179,8 +184,8 @@ public class StorehouseView extends ContentView {
 
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-					
-					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+					String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+					User loginUser = ui.userService.getUserByUserName(username);
 					if (loginUser.isPermitted(PermissionCodes.P3)) {
 						
 						Callback event = new Callback() {

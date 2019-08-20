@@ -16,6 +16,7 @@ import com.maxtree.automotive.dashboard.domain.FinalCheck;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.ReportException;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.maxtree.tb4beans.PrintableBean;
 import com.maxtree.trackbe4.reports.TB4Reports;
 import com.vaadin.server.BrowserWindowOpener;
@@ -63,7 +64,8 @@ public class PrintingFiletagsWindow extends Window {
 		this.setResizable(false);
 		this.setWidth("300px");
 		this.setHeight("120px");
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
 		radios = new RadioButtonGroup<>(null, options);
 		radios.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
 		

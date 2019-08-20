@@ -247,13 +247,12 @@ public class TransactionService {
 	 * @param limit
 	 * @param offset
 	 * @param keyword
-	 * @param tenantName
 	 * @param locationCode
 	 * @return
 	 */
-	public List<Transaction> search_by_keyword(int limit, int offset, String keyword, String tenantName, String locationCode) {
+	public List<Transaction> search_by_keyword(int limit, int offset, String keyword,String locationCode) {
 		String sql = "SELECT * FROM SEARCH_BY_KEYWORD(?,?,?,?,?)";
-		List<Transaction> lst = jdbcTemplate.query(sql, new Object[] {limit, offset,keyword,tenantName,locationCode}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
+		List<Transaction> lst = jdbcTemplate.query(sql, new Object[] {limit, offset,keyword,locationCode}, new BeanPropertyRowMapper<Transaction>(Transaction.class));
 		return lst;
 	}
 	

@@ -12,6 +12,7 @@ import com.maxtree.automotive.dashboard.component.TimeAgo;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
@@ -55,7 +56,8 @@ public class NotificationTable extends VerticalLayout {
 		this.setSpacing(false);
 		this.setMargin(false);
 		this.addStyleName("NotificationTable");
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
 		HorizontalLayout header = new HorizontalLayout();
 		header.setWidth("100%");
 		header.setHeight("37px");

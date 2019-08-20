@@ -32,12 +32,6 @@ public class Community {
 	public void setCommunityDescription(String communityDescription) {
 		this.communityDescription = communityDescription;
 	}
-	public String getTenantName() {
-		return tenantName;
-	}
-	public void setTenantName(String tenantName) {
-		this.tenantName = tenantName;
-	}
 	public String getProvince() {
 		return province;
 	}
@@ -79,7 +73,6 @@ public class Community {
 	private Integer communityUniqueId = 0; // 社区ID
 	private String communityName;	//社区名称
 	private String communityDescription;//社区描述
-	private String tenantName;// 租户名
 	private String province; // 车辆所在省份
 	private String city; // 车辆所在地级市
 	private String district; // 车辆所在市、县级市

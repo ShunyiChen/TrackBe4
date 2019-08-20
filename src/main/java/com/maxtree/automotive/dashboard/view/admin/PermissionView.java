@@ -10,6 +10,7 @@ import com.maxtree.automotive.dashboard.TB4Application;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Permission;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.Menu.Command;
 import com.vaadin.contextmenu.MenuItem;
@@ -23,20 +24,20 @@ import com.vaadin.ui.VerticalLayout;
 
 public class PermissionView extends ContentView {
 
-	/**
-	 * 
-	 */
+	/** */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 * Constructor
+	 *
 	 * @param parentTitle
 	 * @param rootView
 	 */
 	public PermissionView(String parentTitle, AdminMainView rootView) {
 		super(parentTitle, rootView);
 		this.setHeight((Page.getCurrent().getBrowserWindowHeight()-58)+"px");
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
 		main.setWidth("100%");
 		main.setHeightUndefined();
 		main.setSpacing(false);

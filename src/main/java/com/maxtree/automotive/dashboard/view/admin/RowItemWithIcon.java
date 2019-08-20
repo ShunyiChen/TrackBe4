@@ -1,16 +1,17 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
+import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.LoggingWrapper;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -19,13 +20,13 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class RowItemWithIcon extends FlexTableRowItem {
 
-	/**
-	 * 
-	 */
+	// define the logger
+	private static final Logger LOGGER = LoggerFactory.getLogger(RowItemWithIcon.class);
+
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * 
+	 * Constructor
 	 */
 	public RowItemWithIcon() {
 		super("");
@@ -33,10 +34,12 @@ public class RowItemWithIcon extends FlexTableRowItem {
 	}
 	
 	private void initComponents() {
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		DashboardUI ui = (DashboardUI) UI.getCurrent();
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		User user = ui.userService.getUserByUserName(username);
 		Label separater = new Label();
 		separater.addStyleName("RowItemWithIcon_separater");
-		imageIcon = new Image(null, new ThemeResource(loggedInUser.getProfile().getPicture()));
+		imageIcon = new Image(null, new ThemeResource(user.getProfile().getPicture()));
 		this.addComponents(imageIcon,name,arrowIcon,separater,btnExit);
 		this.setComponentAlignment(imageIcon, Alignment.TOP_LEFT);
 		this.setComponentAlignment(name, Alignment.MIDDLE_LEFT);
@@ -45,15 +48,14 @@ public class RowItemWithIcon extends FlexTableRowItem {
 		
 		this.setExpandRatio(imageIcon, 0);
 		this.setExpandRatio(name, 1);
-		name.setValue(loggedInUser.getUserName());
+		name.setValue(username);
 		
 		btnExit.setIcon(VaadinIcons.EXIT);
 		btnExit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		btnExit.setDescription("退出系统");
 		btnExit.addClickListener(e->{
-			loggingWrapper.info(loggedInUser.getUserName(), LoggingWrapper.LOGIN, "logout.");
-			VaadinSession.getCurrent().close();
-    		Page.getCurrent().reload();
+			LOGGER.info(username, LoggingWrapper.LOGIN, "You have logged out successfully..");
+			ui.authService.logOut();
 		});
 	}
 
@@ -70,8 +72,7 @@ public class RowItemWithIcon extends FlexTableRowItem {
 		this.imageIcon = newImg;
 	}
 	
-	private User loggedInUser;
 	private Image imageIcon;
 	private Button btnExit = new Button();
-	private LoggingWrapper loggingWrapper = new LoggingWrapper(RowItemWithIcon.class);
+//	private LoggingWrapper loggingWrapper = new LoggingWrapper(RowItemWithIcon.class);
 }

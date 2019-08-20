@@ -14,6 +14,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.maxtree.automotive.dashboard.service.AuthService;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.yaml.snakeyaml.reader.UnicodeReader;
@@ -69,12 +70,12 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 	
 	private void initComponents() {
 		this.addStyleName("picture-pane");
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
 		UI.getCurrent().getPage().addBrowserWindowResizeListener(e->{
 			int height = UI.getCurrent().getPage().getBrowserWindowHeight() - 173;
 			this.setHeight(height+"px");
 		});
-		loggedinUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
 		int height = UI.getCurrent().getPage().getBrowserWindowHeight() - 173;
 		this.setWidth("100%");
 		this.setHeight(height+"px");
@@ -95,8 +96,6 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 	
 	/**
 	 * 显示拍照影像
-	 * 
-	 * @param uuid
 	 */
 	public void displayImage() {
 		
@@ -134,12 +133,12 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 	/**
 	 * 生成新的带参数的HTML文件
 	 * 
-	 * @param uuid
 	 * @throws IOException
 	 */
 	private void generateNewHTML() throws IOException {
 		// 读取原来的html模板
-		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		User user = ui.userService.getUserByUserName(username);
 		String everything = "";
 		File template;
 		if(settings.getValue().equals("无锡华通H6-1")) {

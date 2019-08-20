@@ -1,30 +1,22 @@
 package com.maxtree.automotive.dashboard.component;
 
-import java.util.Date;
-import java.util.List;
-
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.User;
-import com.maxtree.automotive.dashboard.view.DashboardViewType;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.maxtree.automotive.dashboard.view.admin.NotificationsManagementWindow;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
+import java.util.Date;
+import java.util.List;
+
 /**
- * 
  * @author Chen
  *
  */
@@ -54,7 +46,8 @@ public class NotificationsPopup extends Window{
 	}
 	
 	private void initComponents() {
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
 		setWidth(300.0f, Unit.PIXELS);
 		addStyleName("notifications");
 		setClosable(false);

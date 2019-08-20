@@ -3,6 +3,7 @@ package com.maxtree.automotive.dashboard.view.shelf;
 import java.util.Date;
 import java.util.List;
 
+import com.maxtree.automotive.dashboard.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,8 +108,6 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
         main.addTab(downgrid, TAB2_TITLE);
         root.addComponents(main);
         root.setExpandRatio(main, 1.0f);
-        
-        loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
         root.addLayoutClickListener(new LayoutClickListener() {

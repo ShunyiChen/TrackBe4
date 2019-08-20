@@ -23,6 +23,7 @@ import com.maxtree.automotive.dashboard.domain.Transition;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
@@ -67,7 +68,8 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
 	private static final long serialVersionUID = 1L;
 
 	public FinalCheckView() {
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		User loggedInUser = ui.userService.getUserByUserName(username);
 		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
 		addStyleName(ValoTheme.PANEL_BORDERLESS);
         setSizeFull();
@@ -91,7 +93,6 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
         main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
         root.addComponents(main);
         root.setExpandRatio(main, 1f);
-        loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
         root.addLayoutClickListener(new LayoutClickListener() {

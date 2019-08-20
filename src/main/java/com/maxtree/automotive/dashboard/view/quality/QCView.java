@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.maxtree.automotive.dashboard.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -96,7 +97,8 @@ public class QCView extends Panel implements View, FrontendViewIF{
         main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
         root.addComponents(main);
         root.setExpandRatio(main, 7.0f);
-        loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
         root.addLayoutClickListener(new LayoutClickListener() {
@@ -370,8 +372,6 @@ public class QCView extends Panel implements View, FrontendViewIF{
     
     /**
      * 获取一笔业务
-     * 
-     * @param Transaction
      */
     private void fetchTransaction() {
     	Queue lockedQueue = ui.queueService.getLockedQueue(1, loggedInUser.getUserUniqueId());
@@ -570,10 +570,8 @@ public class QCView extends Panel implements View, FrontendViewIF{
 		return transitionUniqueId;
     }
     
-    
     /**
-     * 
-     * @param transactionUniqueId
+     * Commit transaction
      */
     public void commitTransaction() {
 		Callback2 accept = new Callback2() {

@@ -495,11 +495,11 @@ public class EditSiteWindow extends Window {
         w.sizePercentage.setValue(sizeVal.floatValue());
         w.sizePercentage.setCaption(sizeVal.floatValue()*100+"%");
         
-        float p = ui.siteService.getUsageRates(site.getSiteUniqueId());
-        BigDecimal folderVal = new BigDecimal(p);
-        folderVal = folderVal.setScale(2, 4);//设置位数  和表示四舍五入
-        w.folderPercentage.setValue(folderVal.floatValue());
-		w.folderPercentage.setCaption(folderVal.floatValue()*100+"%");
+//        float p = ui.siteService.getUsageRates(site.getSiteUniqueId());
+//        BigDecimal folderVal = new BigDecimal(p);
+//        folderVal = folderVal.setScale(2, 4);//设置位数  和表示四舍五入
+//        w.folderPercentage.setValue(folderVal.floatValue());
+//		w.folderPercentage.setCaption(folderVal.floatValue()*100+"%");
         
         w.site.setSiteUniqueId(site.getSiteUniqueId());
         w.textFieldName.setValue(site.getSiteName()==null?"":site.getSiteName());

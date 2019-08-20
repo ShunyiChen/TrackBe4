@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import com.maxtree.automotive.dashboard.service.AuthService;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
@@ -46,8 +47,7 @@ public class SearchAndPrintWindow extends Window {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
-	 * @param message
+	 * Constructor
 	 */
 	public SearchAndPrintWindow() {
 		this.setResizable(true);
@@ -59,7 +59,8 @@ public class SearchAndPrintWindow extends Window {
 	}
 	
 	private void initComponents() {
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
 		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
 		VerticalLayout main = new VerticalLayout();
 		main.setSizeFull();
@@ -184,7 +185,7 @@ public class SearchAndPrintWindow extends Window {
     	Car car = ui.carService.findByBarcode(barCodeField.getValue());
     	if(car == null) {
     		//参数为-1，则表示不分页
-    		List<Transaction> items = ui.transactionService.search_by_keyword(-1, 0, barCodeField.getValue(),community.getTenantName(),locationCode);
+    		List<Transaction> items = ui.transactionService.search_by_keyword(-1, 0, barCodeField.getValue(), locationCode);
         	grid.setItems(items);
     	}
     	else {
@@ -192,13 +193,11 @@ public class SearchAndPrintWindow extends Window {
         	grid.setItems(items);
     	}
 	}
-	
+
 	/**
-	 * 
-	 * @param user
-	 * @param licenseEndDate
+	 *
 	 */
-	public static void open(String message, Callback2 callback) {
+	public static void open() {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
         SearchAndPrintWindow w = new SearchAndPrintWindow();
         UI.getCurrent().addWindow(w);

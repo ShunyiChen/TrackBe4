@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.maxtree.automotive.dashboard.service.AuthService;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
@@ -59,7 +60,8 @@ public class Openwith extends Window {
 		this.setHeight("322px");
 		this.setResizable(false);
 		this.setModal(true);
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
 		SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
 		Image img = new Image(null, new ThemeResource("img/adminmenu/info-circle-o.png"));
 		labelSubject.setValue(message.getSubject());

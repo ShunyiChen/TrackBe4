@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.maxtree.automotive.dashboard.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +99,8 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
         main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
         root.addComponents(main);
         root.setExpandRatio(main, 7.0f);
-        loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
         root.addLayoutClickListener(new LayoutClickListener() {
@@ -385,12 +387,11 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
             }
         });
     }
-    
-    /**
-     * 
-     * @param Transaction
-     */
-    private void fetchTransaction() {
+
+	/**
+	 * Fetch transaction
+	 */
+	private void fetchTransaction() {
     	Queue lockedQueue = ui.queueService.getLockedQueue(2, loggedInUser.getUserUniqueId());
     	if (lockedQueue.getQueueUniqueId() > 0) {
     		com.vaadin.ui.Notification notification = new com.vaadin.ui.Notification("提示：", "正在导入上次业务。", com.vaadin.ui.Notification.Type.WARNING_MESSAGE);
@@ -421,7 +422,7 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     
     /**
      * 
-     * @param suggestions
+     * @param comments
      */
     private void accept(String comments) {
     	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
@@ -522,7 +523,8 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
     private void reject(String comments) {
     	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
     	// 1.删除锁定队列
-    	User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		User loginUser = ui.userService.getUserByUserName(username);
 		int serial = 2; //1:质检 2:审档 3:确认审档
 		Queue queue = ui.queueService.getLockedQueue(serial, loginUser.getUserUniqueId());
     	try {

@@ -1,5 +1,6 @@
 package com.maxtree.automotive.dashboard.view.quality;
 
+import com.maxtree.automotive.dashboard.service.AuthService;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
@@ -150,7 +151,8 @@ public class EditFeedbackWindow extends Window {
         w.btnAdd.setCaption("添加");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
-        		User loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+				String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+				User loggedInUser = ui.userService.getUserByUserName(username);
         		w.feedback.setUserName(loggedInUser.getUserName());
     			int feedbackuniqueid = ui.feedbackService.insert(w.feedback);
     			w.close();

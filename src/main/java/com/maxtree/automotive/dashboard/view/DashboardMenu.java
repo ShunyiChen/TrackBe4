@@ -1,12 +1,14 @@
 package com.maxtree.automotive.dashboard.view;
 
 import com.google.common.eventbus.Subscribe;
+import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.PermissionCodes;
 import com.maxtree.automotive.dashboard.component.ChangePasswordWindow;
 import com.maxtree.automotive.dashboard.component.ProfilePreferencesWindow;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
@@ -36,7 +38,7 @@ public final class DashboardMenu extends CustomComponent {
     public static final String ID = "dashboard-menu";
     public static final String REPORTS_BADGE_ID = "dashboard-menu-reports-badge";
     private static final String STYLE_VISIBLE = "valo-menu-visible";
-    
+    private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private Label inputBadge;
     private Label qualityBadge;
     private Label checkBadge;
@@ -98,8 +100,9 @@ public final class DashboardMenu extends CustomComponent {
     }
 
     private User getCurrentUser() {
-        return (User) VaadinSession.getCurrent()
-                .getAttribute(User.class.getName());
+        String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+        User loggedInUser = ui.userService.getUserByUserName(username);
+        return loggedInUser;
     }
 
     private Component buildUserMenu() {
@@ -163,7 +166,8 @@ public final class DashboardMenu extends CustomComponent {
         CssLayout menuItemsLayout = new CssLayout();
         menuItemsLayout.addStyleName("valo-menuitems");
         // 不同角色登录不同界面
-    	User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+        String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+        User user = ui.userService.getUserByUserName(username);
         for (final DashboardViewType view : DashboardViewType.values()) {
         	// 前台录入check
         	if (view == DashboardViewType.INPUT) {
@@ -304,7 +308,7 @@ public final class DashboardMenu extends CustomComponent {
 
     /**
      * 前台
-     * @param event
+     * @param count
      */
     @Subscribe
     public void updateNotificationsCount(int count) {
@@ -316,7 +320,7 @@ public final class DashboardMenu extends CustomComponent {
 
     /**
      * 质检
-     * @param event
+     * @param count
      */
     @Subscribe
     public void qcCount(int count) {
@@ -328,7 +332,7 @@ public final class DashboardMenu extends CustomComponent {
     
     /**
      * 业务审核
-     * @param event
+     * @param count
      */
     @Subscribe
     public void checkerCount(int count) {

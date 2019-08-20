@@ -14,6 +14,7 @@ import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.MessageRecipient;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.Menu.Command;
@@ -48,7 +49,8 @@ public class ManageBroadCastGrid extends VerticalLayout {
 		Button addButton = new Button("新建消息");
 		addButton.addStyleName("grid-button-without-border");
 		addButton.addClickListener(e-> {
-			User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+			String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+			User loginUser = ui.userService.getUserByUserName(username);
 			if (loginUser.isPermitted(PermissionCodes.L1)) {
 				Callback callback = new Callback() {
 
@@ -110,7 +112,8 @@ public class ManageBroadCastGrid extends VerticalLayout {
 		tableBody = new VerticalLayout(); 
 		tableBody.setMargin(false);
 		tableBody.setSpacing(false);
-		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		User loginUser = ui.userService.getUserByUserName(username);
 		List<Message> data = ui.messagingService.findAll(loginUser.getUserUniqueId());
 		for (Message m : data) {
 			HorizontalLayout row1 = createDataRow(m);
@@ -122,8 +125,8 @@ public class ManageBroadCastGrid extends VerticalLayout {
 	}
 	
 	/**
-	 * 
-	 * @param community
+	 * Greate one new row
+	 * @param message
 	 * @return
 	 */
 	private HorizontalLayout createDataRow(Message message) {
@@ -157,8 +160,9 @@ public class ManageBroadCastGrid extends VerticalLayout {
 			menu.addItem("设置定时发送", new Command() {
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-					
-					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+
+					String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+					User loginUser = ui.userService.getUserByUserName(username);
 					if (loginUser.isPermitted(PermissionCodes.L3)) {
 						Callback callback = new Callback() {
 
@@ -193,7 +197,8 @@ public class ManageBroadCastGrid extends VerticalLayout {
 			menu.addItem("从列表删除", new Command() {
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+					String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+					User loginUser = ui.userService.getUserByUserName(username);
 					if (loginUser.isPermitted(PermissionCodes.L4)) {
 						
 						Callback event = new Callback() {
@@ -239,7 +244,8 @@ public class ManageBroadCastGrid extends VerticalLayout {
 	 * 
 	 */
 	private void refreshTable() {
-		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		User loginUser = ui.userService.getUserByUserName(username);
 		tableBody.removeAllComponents();
 		List<Message> data = ui.messagingService.findAll(loginUser.getUserUniqueId());
 		for (Message m : data) {

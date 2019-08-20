@@ -15,6 +15,7 @@ import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinSession;
@@ -49,7 +50,8 @@ public class QuickQueryWindow extends Window {
 	 * 
 	 */
 	public QuickQueryWindow() {
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
 		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
 		this.setWidth("700px");
 		this.setHeight("450px");
@@ -136,7 +138,7 @@ public class QuickQueryWindow extends Window {
 		String locationCode = localCodes.getCompleteLocationCode(community);
 		if(plateField.getValue() != null) {
 			if(plateField.getValue().length() == 5 || plateField.getValue().length() == 6) {
-				List<Transaction> rs = ui.transactionService.search_by_keyword(20, 0, plateField.getValue(),community.getTenantName(),locationCode);
+				List<Transaction> rs = ui.transactionService.search_by_keyword(20, 0, plateField.getValue(),locationCode);
 				setPerPageData(rs);
 			}
 			else {

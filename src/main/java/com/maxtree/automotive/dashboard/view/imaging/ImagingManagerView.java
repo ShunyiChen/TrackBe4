@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.maxtree.automotive.dashboard.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -91,23 +92,13 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
         root.setExpandRatio(main, 1.0f);
 //        root.addComponent(grid);
 //        root.setExpandRatio(grid, 1.0f);
-        loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-        // All the open sub-windows should be closed whenever the root layout
-        // gets clicked.
-        root.addLayoutClickListener(new LayoutClickListener() {
-            @Override
-            public void layoutClick(final LayoutClickEvent event) {
-//                DashboardEventBus.post(new DashboardEvent.CloseOpenWindowsEvent());
-            }
-        });
-        
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
         this.startPolling();
         
         UI.getCurrent().access(new Runnable() {
             @Override
             public void run() {
-            	
-            	
             	Callback2 verifyEvent = new Callback2() {
 					@Override
 					public void onSuccessful(Object... objects) {

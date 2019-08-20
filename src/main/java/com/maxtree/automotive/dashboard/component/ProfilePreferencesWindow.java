@@ -1,66 +1,34 @@
 package com.maxtree.automotive.dashboard.component;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Date;
-
-import javax.servlet.ServletContext;
-
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Profile;
-
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.domain.UserProfile;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
-import com.maxtree.automotive.dashboard.exception.FileException;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
-import com.maxtree.automotive.dashboard.view.front.FrontView;
-import com.maxtree.trackbe4.filesystem.TB4FileSystem;
 import com.vaadin.annotations.PropertyId;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.FileResource;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Page;
-import com.vaadin.server.Resource;
-import com.vaadin.server.Responsive;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.server.UserError;
-import com.vaadin.server.VaadinServlet;
-import com.vaadin.server.VaadinSession;
+import com.vaadin.server.*;
 import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.RadioButtonGroup;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import com.wcs.wcslib.vaadin.widget.multifileupload.ui.MultiFileUpload;
 import com.wcs.wcslib.vaadin.widget.multifileupload.ui.UploadFinishedHandler;
 import com.wcs.wcslib.vaadin.widget.multifileupload.ui.UploadStateWindow;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletContext;
+import java.io.*;
+import java.util.Arrays;
+import java.util.Date;
 
 @SuppressWarnings("serial")
 public class ProfilePreferencesWindow extends Window implements UploadFinishedHandler {
@@ -160,29 +128,13 @@ public class ProfilePreferencesWindow extends Window implements UploadFinishedHa
         VerticalLayout pic = new VerticalLayout();
         pic.setSizeUndefined();
         pic.setSpacing(true);
-        
-        currentUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-        
+        String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+        currentUser = ui.userService.getUserByUserName(username);
         filePath = currentUser.getProfile().getPicture();
-        
         Resource res = new ThemeResource(currentUser.getProfile().getPicture());
-//        if (currentUser.getProfile().getPicture().startsWith("users")) {
-//        	res = new FileResource(new File(currentUser.getProfile().getPicture()));
-//        }
         profilePic = new Image(null, res);
-        //new ThemeResource("img/profile-pic-300px.jpg"));
         profilePic.setWidth(100.0f, Unit.PIXELS);
         pic.addComponent(profilePic);
-
-//        Button upload = new Button("更改…", new ClickListener() {
-//            @Override
-//            public void buttonClick(ClickEvent event) {
-////                Notification.show("Not implemented in this demo");
-//            	
-//            }
-//        });
-//        upload.addStyleName(ValoTheme.BUTTON_TINY);
-        
         UploadStateWindow uploadStateWindow = new UploadStateWindow();
     	MultiFileUpload multi = new MultiFileUpload(this, uploadStateWindow, false);
 		multi.setEnabled(true);

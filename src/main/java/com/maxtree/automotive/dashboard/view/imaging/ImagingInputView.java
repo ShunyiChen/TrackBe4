@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import com.maxtree.automotive.dashboard.service.AuthService;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,7 +108,8 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
         main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
         root.addComponents(main);
         root.setExpandRatio(main, 7.0f);
-        loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
         root.addLayoutClickListener(new LayoutClickListener() {
@@ -373,7 +375,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 				public void onSuccessful(Object... objects) {
 				}
     		};
-    		SearchAndPrintWindow.open("", callback);
+    		SearchAndPrintWindow.open();
         });
     }
     
@@ -494,14 +496,14 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	}
 		//创建UUID
     	uuid = UUID.randomUUID().toString();
-		//如果站点文件夹装满则提醒用户
-    	batch = ui.siteService.updateFolders(editableSite);
-    	if (batch == 0) {
-    		Notifications.warning("当前站点-"+editableSite.getSiteName()+"已满。请联系管理员进行重新分配。");
-    		editableTrans = null;
-    		editableSite = null;
-    		return;
-    	}
+//		//如果站点文件夹装满则提醒用户
+//    	batch = ui.siteService.updateFolders(editableSite);
+//    	if (batch == 0) {
+//    		Notifications.warning("当前站点-"+editableSite.getSiteName()+"已满。请联系管理员进行重新分配。");
+//    		editableTrans = null;
+//    		editableSite = null;
+//    		return;
+//    	}
     	
     	editableTrans = new Transaction();
     	editableTrans.setBarcode("");
@@ -584,14 +586,12 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     public void throwException(String exception) {
     	this.exception = exception;
     }
-   	
-    /**
-     * 
-     * @param list
-     * @param locationName
-     * @return
-     */
-    private Map<String, String> getLocationMap() {
+
+	/**
+	 *
+	 * @return
+	 */
+	private Map<String, String> getLocationMap() {
     	List<Location> list = ui.locationService.findAll();
     	HashMap<String, String> map = new HashMap<>();
     	for(Location l : list) {
@@ -751,13 +751,12 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	
     	messageSys.deleteMessage(deletableMessageUniqueId, loggedInUser.getUserUniqueId(), TB4MessagingSystem.PERMANENTLYDELETE);
     }
-    
-    /**
-     * 
-     * @param transitionUniqueId
-     * @param receiverUniqueId
-     */
-    private void replyMessage(int deletableMessageUniqueId) {
+
+	/**
+	 *
+	 * @param deletableMessageUniqueId
+	 */
+	private void replyMessage(int deletableMessageUniqueId) {
     	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
     	Message msg = ui.messagingService.findById(deletableMessageUniqueId);
     	//发消息给影像化质检

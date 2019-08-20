@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import com.maxtree.automotive.dashboard.service.AuthService;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +98,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
         main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
         root.addComponents(main);
         root.setExpandRatio(main, 7.0f);
-        loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
         root.addLayoutClickListener(new LayoutClickListener() {
@@ -253,12 +255,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     		if (!validate()) {
     			return;
     		}
-    		Callback2 callback = new Callback2() {
-				@Override
-				public void onSuccessful(Object... objects) {
-				}
-    		};
-    		SearchAndPrintWindow.open("", callback);
+    		SearchAndPrintWindow.open();
         });
     }
     
@@ -334,13 +331,13 @@ public final class FrontView extends Panel implements View,InputViewIF {
 		}
 		//创建UUID
     	uuid = UUID.randomUUID().toString();
-		//如果站点文件夹装满则提醒用户
-    	batch = ui.siteService.updateFolders(editableSite);
-    	if (batch == 0) {
-    		Notifications.warning("当前站点-"+editableSite.getSiteName()+"已满。请联系管理员进行重新分配。");
-    		editableSite = null;
-    		return;
-    	}
+//		//如果站点文件夹装满则提醒用户
+//    	batch = ui.siteService.updateFolders(editableSite);
+//    	if (batch == 0) {
+//    		Notifications.warning("当前站点-"+editableSite.getSiteName()+"已满。请联系管理员进行重新分配。");
+//    		editableSite = null;
+//    		return;
+//    	}
     	editableTrans = new Transaction();
     	editableTrans.setBarcode("");
     	editableTrans.setPlateType("");

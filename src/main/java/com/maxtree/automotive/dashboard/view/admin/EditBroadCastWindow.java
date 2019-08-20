@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.maxtree.automotive.dashboard.service.AuthService;
 import org.springframework.util.StringUtils;
 import org.vaadin.addons.autocomplete.AutocompleteExtension;
 
@@ -294,7 +295,8 @@ public class EditBroadCastWindow extends Window {
         			Notifications.warning("内容不能超过160个字符。");
         			return;
         		}
-        		User creator = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+				String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+				User creator = ui.userService.getUserByUserName(username);
         		String subject = w.message.getSubject();
         		String matedata = "";
         		Message newMessage = w.messagingSystem.createNewMessage(creator, subject, w.message.getContent(), matedata);

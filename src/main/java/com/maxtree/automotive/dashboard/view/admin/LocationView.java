@@ -12,6 +12,7 @@ import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Location;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.MenuItem;
 import com.vaadin.contextmenu.Menu.Command;
@@ -43,7 +44,8 @@ public class LocationView extends ContentView {
 	public LocationView(String parentTitle, AdminMainView rootView) {
 		super(parentTitle, rootView);
 		this.setHeight((Page.getCurrent().getBrowserWindowHeight()-58)+"px");
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
 		main.setWidth("100%");
 		main.setHeightUndefined();
 		main.setSpacing(false);

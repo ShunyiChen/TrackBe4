@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.List;
 
+import com.maxtree.automotive.dashboard.service.AuthService;
 import org.yaml.snakeyaml.reader.UnicodeReader;
 
 import com.maxtree.automotive.dashboard.Callback2;
@@ -70,7 +71,8 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 	}
 	
 	private void initComponents() {
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
 		this.setCaption("拍摄");
 		this.setWidth("1024px");
 		this.setHeight("768px");
@@ -78,13 +80,10 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 		this.setClosable(true);
 		this.setResizable(false);
 		this.setCaption("拍照");
-		
-		
+
 		main.setMargin(false);
 		main.setSpacing(false);
 		main.setSizeFull();
-		
-		
 		link.addStyleName(ValoTheme.BUTTON_LINK);
 		settings = ui.settingsService.findByName("高拍仪");
 		if("无".equals(settings.getValue())) {
@@ -117,7 +116,8 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 	 */
 	private void generateNewHTML() throws IOException {
 		// 读取原来的html模板
-		User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		User loggedInUser = ui.userService.getUserByUserName(username);
 		String everything = "";
 		File template;
 		if(settings.getValue().equals("无锡华通H6-1")) {
@@ -133,7 +133,7 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 		String line = br.readLine();
 		while (line != null) {
 			if (line.contains("var userUniqueId = \"\";")) {
-				line = line.replace("var userUniqueId = \"\";", "var userUniqueId = \""+user.getUserUniqueId()+"\";");
+				line = line.replace("var userUniqueId = \"\";", "var userUniqueId = \""+loggedInUser.getUserUniqueId()+"\";");
 			}
 			
 			if (line.contains("hello")) {
@@ -149,7 +149,7 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 		in.close();
 		
 		// 动态生成新的html
-		OutputStreamWriter oStreamWriter = new OutputStreamWriter(new FileOutputStream(new File("devices/capture/" + user.getUserUniqueId() + ".html")), "utf-8");
+		OutputStreamWriter oStreamWriter = new OutputStreamWriter(new FileOutputStream(new File("devices/capture/" + loggedInUser.getUserUniqueId() + ".html")), "utf-8");
 		oStreamWriter.append(everything);
 		oStreamWriter.close();
 	}

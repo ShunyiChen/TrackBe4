@@ -3,6 +3,7 @@ package com.maxtree.automotive.dashboard.view.admin;
 import java.util.Arrays;
 import java.util.List;
 
+import com.maxtree.automotive.dashboard.service.AuthService;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
@@ -252,8 +253,9 @@ public class EditUserWindow extends Window {
 	}
 	
 	/**
-	 * 
-	 * @param user
+	 * Apply to save the changes
+	 *
+	 * @param createNewUser
 	 */
 	private boolean apply(boolean createNewUser) {
 		if (createNewUser) {
@@ -280,7 +282,8 @@ public class EditUserWindow extends Window {
     		}
     		
     		UserProfile profile = new UserProfile();
-    		User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+			String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+			User loginUser = ui.userService.getUserByUserName(username);
     		profile.setCreatedBy(loginUser.getUserName());
     		profile.setCreatorUniqueId(loginUser.getUserUniqueId());
     		profile.setTitle("职员");

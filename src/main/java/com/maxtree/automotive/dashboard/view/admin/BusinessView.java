@@ -14,6 +14,7 @@ import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.DataException;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.Menu.Command;
 import com.vaadin.contextmenu.MenuItem;
@@ -45,7 +46,8 @@ public class BusinessView extends ContentView {
 	public BusinessView(String parentTitle, AdminMainView rootView) {
 		super(parentTitle, rootView);
 		this.setHeight((Page.getCurrent().getBrowserWindowHeight()-58)+"px");
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		User loggedInUser = ui.userService.getUserByUserName(username);
 		main.setWidth("100%");
 		main.setHeightUndefined();
 		main.setSpacing(false);
@@ -109,7 +111,8 @@ public class BusinessView extends ContentView {
 
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+					String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+					User loginUser = ui.userService.getUserByUserName(username);
 					if (loginUser.isPermitted(PermissionCodes.N5)) {
 						Callback callback = new Callback() {
 							@Override
@@ -136,7 +139,8 @@ public class BusinessView extends ContentView {
 
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+					String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+					User loginUser = ui.userService.getUserByUserName(username);
 					if (loginUser.isPermitted(PermissionCodes.N2)) {
 						Callback callback = new Callback() {
 
@@ -163,9 +167,9 @@ public class BusinessView extends ContentView {
 
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-					User loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+					String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+					User loginUser = ui.userService.getUserByUserName(username);
 					if (loginUser.isPermitted(PermissionCodes.N3)) {
-						
 						Callback event = new Callback() {
 							@Override
 							public void onSuccessful() {

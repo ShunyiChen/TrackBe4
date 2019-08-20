@@ -13,6 +13,7 @@ import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.FileException;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.maxtree.automotive.dashboard.view.ImageViewIF;
 import com.maxtree.automotive.dashboard.view.front.Thumbnail;
 import com.maxtree.automotive.dashboard.view.quality.ConfirmInformationGrid;
@@ -60,7 +61,8 @@ public class MainPane extends VerticalLayout implements ImageViewIF {
 		this.setMargin(false);
 		this.setSpacing(false);
 		this.addStyleName("SplitPane");
-		loginUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loginUser = ui.userService.getUserByUserName(username);
 		initNavigationBar();
 		infoGrid.setReadOnly();
         splitPane.addStyleName("SplitPane-splitPane");

@@ -8,6 +8,7 @@ import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.AbsoluteLayout;
@@ -59,7 +60,8 @@ public class NotificationsManagementWindow extends Window {
 			}
 		};
 		table = new NotificationTable("通知列表", inputView, closeBySelf, changeQueryRanges);
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
 		progressBar.setIndeterminate(true);
 		Button markAllAsRead = new Button("全部标记已读");
 		markAllAsRead.addClickListener(e->{
@@ -302,7 +304,7 @@ class NavigationButton extends HorizontalLayout{
 	/**
 	 * 
 	 * @param text
-	 * @param unreadCount
+	 * @param count
 	 */
 	public NavigationButton(String text, int count) {
 		setWidth("100%");

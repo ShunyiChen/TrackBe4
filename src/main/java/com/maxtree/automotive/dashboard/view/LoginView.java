@@ -24,6 +24,8 @@ import com.vaadin.ui.themes.ValoTheme;
 @SuppressWarnings("serial")
 public class LoginView extends VerticalLayout {
 
+    private CheckBox rememberMe = new CheckBox("关闭浏览器后下次自动登录", false);
+
     public LoginView() {
         setSizeFull();
         setMargin(false);
@@ -52,7 +54,7 @@ public class LoginView extends VerticalLayout {
         loginPanel.addStyleName("login-panel");
         loginPanel.addComponent(buildLabels()); 
         loginPanel.addComponent(buildFields());
-        loginPanel.addComponent(new CheckBox("下次自动登录", true));
+        loginPanel.addComponent(rememberMe);
         return loginPanel;
     }
 
@@ -78,12 +80,8 @@ public class LoginView extends VerticalLayout {
         fields.addComponents(username, password, signin);
         fields.setComponentAlignment(signin, Alignment.BOTTOM_LEFT);
 
-        signin.addClickListener(new ClickListener() {
-            @Override
-            public void buttonClick(final ClickEvent event) {
-                DashboardEventBus.post(new DashboardEvent.UserLoginRequestedEvent(username
-                        .getValue(), password.getValue()));
-            }
+        signin.addClickListener(e -> {
+            DashboardEventBus.post(new DashboardEvent.UserLoginRequestedEvent(username.getValue(), password.getValue(), rememberMe.getValue()));
         });
         return fields;
     }

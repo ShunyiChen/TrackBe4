@@ -3,6 +3,7 @@ package com.maxtree.automotive.dashboard.view.search;
 import java.util.Date;
 import java.util.List;
 
+import com.maxtree.automotive.dashboard.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +72,8 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 	private static final Logger log = LoggerFactory.getLogger(SearchView.class);
 	
 	public SearchView() {
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+        String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+        User loggedInUser = ui.userService.getUserByUserName(username);
 		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
         addStyleName(ValoTheme.PANEL_BORDERLESS);
         setSizeFull();
@@ -270,7 +272,6 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     			return;
     		}
     	}
-    	grid.setTenantName(community.getTenantName());
     	grid.setKeyword(keywordField.getValue());
     	grid.executeByKeyword();
     }

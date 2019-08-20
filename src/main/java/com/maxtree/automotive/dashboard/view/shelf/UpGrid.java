@@ -8,6 +8,7 @@ import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.UI;
@@ -26,7 +27,8 @@ public class UpGrid extends VerticalLayout {
 	}
 	
 	private void initComponents() {
-		loggedInUser = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		loggedInUser = ui.userService.getUserByUserName(username);
 		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
 		localCodes = new LocationCode(ui.locationService);
 		this.setSpacing(false);
@@ -73,7 +75,7 @@ public class UpGrid extends VerticalLayout {
 		// 按车牌号后5位或后6位查询
 		if (keyword.length() == 5 || keyword.length() == 6) {
 			 String locationCode = localCodes.getCompleteLocationCode(community);
-			 List<Transaction> rs = ui.transactionService.search_by_keyword(-1,0,keyword, community.getCommunityName(),locationCode);
+			 List<Transaction> rs = ui.transactionService.search_by_keyword(-1,0,keyword,locationCode);
 			 grid.setItems(rs);
 		} else {
 			Notifications.warning("请输入车牌号的后5位或后6位查询。");
