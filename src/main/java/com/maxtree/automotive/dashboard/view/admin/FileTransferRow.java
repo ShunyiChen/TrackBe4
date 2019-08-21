@@ -27,14 +27,13 @@ public class FileTransferRow extends FlexTableRow {
 			rootView.forward(new SiteView("管理站点", rootView));
 		});
 		manageEmbeddedServer.addLayoutClickListener(e->{
-			rootView.forward(new EmbeddedServerView("管理内嵌服务器", rootView));
+			rootView.forward(new EmbeddedServerView("FTP服务器", rootView));
 		});
-//		EditEmbeddedServerWindow
 	}
 
 	@Override
 	public String getSearchTags() {
-		return "管理站点,管理内嵌服务器,"+getTitle();
+		return "管理站点,FTP服务器,"+getTitle();
 	}
 
 	@Override

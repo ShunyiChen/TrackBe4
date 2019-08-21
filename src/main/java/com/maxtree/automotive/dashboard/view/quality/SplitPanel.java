@@ -37,7 +37,7 @@ public class SplitPanel extends Panel implements ImageViewIF {
 		tree.setSelectionMode(SelectionMode.SINGLE);
 		tree.setSizeFull();
     	// 获取site
-    	site = ui.siteService.findByCode(transaction.getSiteCode());
+    	site = ui.siteService.findById(transaction.getSiteUniqueId());
     	root.setAlias("当前业务材料");
     	
         // Couple of childless root items

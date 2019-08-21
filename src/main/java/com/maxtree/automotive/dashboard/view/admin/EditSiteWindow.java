@@ -108,12 +108,6 @@ public class EditSiteWindow extends Window {
 		form2.addComponents(maximum, units, maxBatch, maxBusiness,row1,row2);
 		tabSheet.addTab(form2, "容量");
 		
-		FormLayout form3 = new FormLayout();
-		form3.setSizeFull();
-		codeField.setCaption("4位代码:");
-		form3.addComponents(codeField);
-		tabSheet.addTab(form3, "其它");
- 
 		// 赋初始值
 		String[] unit = {"PB", "TB", "GB", "MB"};
 		units.setWidth("100px");
@@ -225,17 +219,6 @@ public class EditSiteWindow extends Window {
 		binder.bind(textRemoteDirectory, Site::getDefaultRemoteDirectory, Site::setDefaultRemoteDirectory);
 		binder.bind(userName, Site::getUserName, Site::setUserName);
 		binder.bind(password, Site::getPassword, Site::setPassword);
-		
-		binder.forField(codeField).withValidator(new StringLengthValidator(
-		        "代码长度为4",
-		        4, 4))
-		    .bind(Site::getCode, Site::setCode);
-		
-		
-//		binder.forField(maximizeAllowed)
-//		  .withValidator(new EmptyValidator("最大文件夹数不能为空"))
-//		  .withConverter(new StringToIntegerConverter("请输入一个大于零的整数"))
-//		  .bind(Site::getMaximumNumberOfFolders, Site::setMaximumNumberOfFolders);
 	}
 	
 	/**
@@ -249,8 +232,8 @@ public class EditSiteWindow extends Window {
 	    .bind(Site::getSiteName, Site::setSiteName);
 		
 		binder.forField(textHostAddr).withValidator(new StringLengthValidator(
-				 "主机地址长度范围为2-20个字符",
-		        2, 20))
+				 "主机地址长度范围为2-220个字符",
+		        2, 220))
 		    .bind(Site::getHostAddr, Site::setHostAddr);
 		binder.forField(textRemoteDirectory).withValidator(new StringLengthValidator(
 				 "默认远程目录长度范围为2-50个字符",
@@ -303,25 +286,7 @@ public class EditSiteWindow extends Window {
 			});
 			return false;
 		}
-		else if (StringUtils.isEmpty(site.getCode())) {
-			codeField.setComponentError(new ErrorMessage() {
-				@Override
-				public ErrorLevel getErrorLevel() {
-					return ErrorLevel.ERROR;
-				}
 
-				@Override
-				public String getFormattedHtmlMessage() {
-					return "4位代码不能为空。";
-				}
-			});
-			Notifications.warning("4位代码不能为空。");
-			return false;
-		}
-		if (codeField.getErrorMessage() != null) {
-			codeField.setComponentError(codeField.getErrorMessage());
-			return false;
-		} 
 		if (textFieldName.getErrorMessage() != null) {
 			textFieldName.setComponentError(textFieldName.getErrorMessage());
 			return false;
@@ -437,7 +402,6 @@ public class EditSiteWindow extends Window {
         w.folderPercentage.setValue(0);
         w.sizePercentage.setCaption(0+"%");
 		w.folderPercentage.setCaption(0+"%");
-        w.codeField.setValue("");
 		w.maximum.setValue("2");
         w.units.setSelectedItem("GB");
 		w.maxBatch.setValue("1000");
@@ -513,8 +477,7 @@ public class EditSiteWindow extends Window {
         w.maximum.setValue(site.getSiteCapacity().getUnitNumber());
         w.maxBatch.setValue(site.getSiteCapacity().getMaxBatch()+"");
         w.maxBusiness.setValue(site.getSiteCapacity().getMaxBusiness()+"");
-        w.codeField.setValue(site.getCode());
-        
+
         w.btnAdd.setCaption("保存");
         w.setCaption("编辑站点");
         w.btnAdd.addClickListener(e -> {
@@ -559,14 +522,6 @@ public class EditSiteWindow extends Window {
         w.center();
     }
 	
-//	public static String humanReadableByteCount(long bytes, boolean si) {
-//	    int unit = si ? 1000 : 1024;
-//	    if (bytes < unit) return bytes + " B";
-//	    int exp = (int) (Math.log(bytes) / Math.log(unit));
-//	    String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
-//	    return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
-//	}
-	
 	private static DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private TextField userName;
 	private PasswordField password;
@@ -586,7 +541,6 @@ public class EditSiteWindow extends Window {
 	private DoubleField maxBusiness = new DoubleField(); // 每批次内最大业务数
 	private ProgressBar sizePercentage = new ProgressBar();
 	private ProgressBar folderPercentage = new ProgressBar();
-	private TextField codeField = new TextField();
 	private static String diskRateTxt = "磁盘使用率:";
 	private static String folderRateTxt = "文件夹使用率:";
 }

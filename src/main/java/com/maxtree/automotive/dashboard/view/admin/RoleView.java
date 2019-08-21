@@ -52,7 +52,7 @@ public class RoleView extends ContentView {
 		main.setSpacing(false);
 		main.setMargin(false);
 		
-		GridColumn[] columns = {new GridColumn("角色名称",130), new GridColumn("类型",120), new GridColumn("用户数",120),new GridColumn("访问权限数"),new GridColumn("", 20)}; 
+		GridColumn[] columns = {new GridColumn("角色名称",190), new GridColumn("用户数",180),new GridColumn("访问权限数"),new GridColumn("", 20)};
 		List<CustomGridRow> data = new ArrayList<>();
 		List<Role> lstRole = ui.roleService.findAll(false);
 		for (Role role : lstRole) {
@@ -190,7 +190,7 @@ public class RoleView extends ContentView {
 					String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
 					User loginUser = ui.userService.getUserByUserName(username);
 					if (loginUser.isPermitted(PermissionCodes.D3)) {
-						if (role.getRoleType().equals("自定义")) {
+
 							boolean force = (usernum != 0 || capabilitynum != 0);
 							Callback okAction = new Callback() {
 								@Override
@@ -201,11 +201,7 @@ public class RoleView extends ContentView {
 							};
 							MessageBox.showMessage("删除提示", "请确认是否删除当前角色。", MessageBox.WARNING, okAction, "删除");
  
-						} else {
-							Notification notification = new Notification("提示：", "内建角色无法删除。", Type.WARNING_MESSAGE);
-							notification.setDelayMsec(2000);
-							notification.show(Page.getCurrent());
-						}
+
 					} else {
 						Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
 					}
@@ -217,7 +213,7 @@ public class RoleView extends ContentView {
 			menu.open(e.getClientX(), e.getClientY());
 		});
 		
-		return new Object[] {role.getRoleName(), role.getRoleType(), usernum, capabilitynum, img, role.getRoleUniqueId()};
+		return new Object[] {role.getRoleName(), usernum, capabilitynum, img, role.getRoleUniqueId()};
 	}
 	
 	private User loggedInUser;

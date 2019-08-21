@@ -540,7 +540,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
    		commitMode = "UPDATE";
     	editableTrans = transaction;
     	this.deletableMessageUniqueId = deletableMessageUniqueId;
-    	editableSite = ui.siteService.findByCode(editableTrans.getSiteCode());
+    	editableSite = ui.siteService.findById(editableTrans.getSiteUniqueId());
     	uuid = editableTrans.getUuid();
     	batch = editableTrans.getBatch();
     	vin = editableTrans.getVin();
@@ -629,7 +629,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
         	editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
-        	editableTrans.setSiteCode(editableSite.getCode());
+			editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
@@ -677,7 +677,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
     		editableTrans.setDateCreated(new Date());
         	editableTrans.setDateModified(new Date());
-        	editableTrans.setSiteCode(editableSite.getCode());
+        	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
         	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
         	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
         	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());

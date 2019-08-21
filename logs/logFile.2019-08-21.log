@@ -1,0 +1,1189 @@
+2019-08-21 00:38:23.900 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Logger enabled: Entering main 你好
+
+
+2019-08-21 00:38:24.277 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Starting TB4Application on DESKTOP-O28860S with PID 14876 (C:\Users\forer\Downloads\TrackBe4\target\classes started by forer in C:\Users\forer\Downloads\TrackBe4)
+2019-08-21 00:38:24.277 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - No active profile set, falling back to default profiles: default
+2019-08-21 00:38:24.905 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-08-21 00:38:25.053 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 144ms. Found 1 repository interfaces.
+2019-08-21 00:38:25.128 [main] INFO  o.s.c.annotation.ConfigurationClassPostProcessor - Cannot enhance @Configuration bean definition 'com.vaadin.spring.VaadinConfiguration' since its singleton instance has been created too early. The typical cause is a non-static @Bean method with a BeanDefinitionRegistryPostProcessor return type: Consider declaring such methods as 'static'.
+2019-08-21 00:38:25.396 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$b1496d76] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-08-21 00:38:25.620 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8787 (http)
+2019-08-21 00:38:25.636 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8787"]
+2019-08-21 00:38:25.644 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2019-08-21 00:38:25.644 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.21]
+2019-08-21 00:38:25.720 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2019-08-21 00:38:25.720 [main] INFO  org.springframework.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1411 ms
+2019-08-21 00:38:25.728 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Registering Vaadin servlet
+2019-08-21 00:38:25.728 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Servlet will be mapped to URLs [/vaadinServlet/*, /VAADIN/*]
+2019-08-21 00:38:25.736 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Setting servlet init parameters
+2019-08-21 00:38:25.736 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Set servlet init parameter [productionMode] = [false]
+2019-08-21 00:38:25.736 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Set servlet init parameter [resourceCacheTime] = [3600]
+2019-08-21 00:38:25.736 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Set servlet init parameter [heartbeatInterval] = [300]
+2019-08-21 00:38:25.736 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Set servlet init parameter [closeIdleSessions] = [false]
+2019-08-21 00:38:26.079 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2019-08-21 00:38:26.168 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2019-08-21 00:38:26.257 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2019-08-21 00:38:26.321 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final}
+2019-08-21 00:38:26.325 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found
+2019-08-21 00:38:26.457 [main] INFO  org.hibernate.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final}
+2019-08-21 00:38:26.681 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL95Dialect
+2019-08-21 00:38:26.858 [main] INFO  o.h.engine.jdbc.env.internal.LobCreatorBuilderImpl - HHH000424: Disabling contextual LOB creation as createClob() method threw error : java.lang.reflect.InvocationTargetException
+2019-08-21 00:38:26.862 [main] INFO  org.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [java.util.UUID] overrides previous : org.hibernate.type.UUIDBinaryType@53d0197b
+2019-08-21 00:38:27.363 [main] INFO  o.s.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2019-08-21 00:38:27.822 [main] INFO  o.s.scheduling.concurrent.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor'
+2019-08-21 00:38:27.862 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration$JpaWebMvcConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-08-21 00:38:27.913 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Checking the application context for Vaadin UI mappings
+2019-08-21 00:38:27.914 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Registering Vaadin servlet of type [com.vaadin.spring.server.SpringVaadinServlet]
+2019-08-21 00:38:27.914 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Forwarding @SpringUI URLs from {/=org.springframework.web.servlet.mvc.ServletForwardingController@3cab57e8}
+2019-08-21 00:38:28.056 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8787"]
+2019-08-21 00:38:28.080 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8787 (http) with context path ''
+2019-08-21 00:38:28.080 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Started TB4Application in 4.12 seconds (JVM running for 25.732)
+2019-08-21 00:38:28.109 [main] INFO  o.h.hql.internal.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory
+2019-08-21 00:38:28.245 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customers found with findAll():
+2019-08-21 00:38:28.245 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - -------------------------------
+2019-08-21 00:38:28.255 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=1, firstName='Jack', lastName='Bauer']
+2019-08-21 00:38:28.255 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=2, firstName='Chloe', lastName='O'Brian']
+2019-08-21 00:38:28.255 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=3, firstName='Kim2222222', lastName='Bauer222222222']
+2019-08-21 00:38:28.255 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=4, firstName='David', lastName='Palmer']
+2019-08-21 00:38:28.255 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=5, firstName='Michelle', lastName='Dessler']
+2019-08-21 00:38:28.255 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - 
+2019-08-21 00:38:28.264 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer found with findById(1L):
+2019-08-21 00:38:28.264 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - --------------------------------
+2019-08-21 00:38:28.264 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=1, firstName='Jack', lastName='Bauer']
+2019-08-21 00:38:28.264 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - 
+2019-08-21 00:38:28.264 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer found with findByLastName('Bauer'):
+2019-08-21 00:38:28.264 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - --------------------------------------------
+2019-08-21 00:38:28.304 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=1, firstName='Jack', lastName='Bauer']
+2019-08-21 00:38:28.304 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - 
+2019-08-21 00:38:28.304 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Exiting main
+2019-08-21 00:38:28.332 [http-nio-8787-exec-3] WARN  com.vaadin.server.DefaultDeploymentConfiguration - 
+=================================================================
+Vaadin is running in DEBUG MODE.
+Add productionMode=true to web.xml to disable debug features.
+To show debug window, add ?debug to your application URL.
+=================================================================
+2019-08-21 00:38:28.379 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereHandler com.vaadin.server.communication.PushAtmosphereHandler mapped to context-path: /*
+2019-08-21 00:38:28.379 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.server.communication.PushAtmosphereHandler
+2019-08-21 00:38:28.397 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
+2019-08-21 00:38:28.401 [http-nio-8787-exec-3] INFO  org.atmosphere.util.ForkJoinPool - Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
+2019-08-21 00:38:28.405 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
+2019-08-21 00:38:28.413 [http-nio-8787-exec-3] INFO  org.atmosphere.container.JSR356AsyncSupport - JSR 356 Mapping path /{path}
+2019-08-21 00:38:28.421 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Installing Default AtmosphereInterceptors
+2019-08-21 00:38:28.421 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
+2019-08-21 00:38:28.421 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
+2019-08-21 00:38:28.425 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
+2019-08-21 00:38:28.425 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
+2019-08-21 00:38:28.425 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
+2019-08-21 00:38:28.425 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
+2019-08-21 00:38:28.425 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
+2019-08-21 00:38:28.425 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
+2019-08-21 00:38:28.425 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
+2019-08-21 00:38:28.425 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
+2019-08-21 00:38:28.425 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
+2019-08-21 00:38:28.425 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
+2019-08-21 00:38:28.425 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
+2019-08-21 00:38:28.429 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
+2019-08-21 00:38:28.429 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 00:38:28.429 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 00:38:28.429 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 00:38:28.429 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 00:38:28.429 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
+2019-08-21 00:38:28.429 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
+2019-08-21 00:38:28.429 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
+2019-08-21 00:38:28.429 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
+2019-08-21 00:38:28.429 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
+2019-08-21 00:38:28.429 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
+2019-08-21 00:38:28.429 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
+2019-08-21 00:38:28.429 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Broadcaster Shared List Resources: false
+2019-08-21 00:38:28.429 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Broadcaster Polling Wait Time 100
+2019-08-21 00:38:28.429 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Shared ExecutorService supported: true
+2019-08-21 00:38:28.433 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
+2019-08-21 00:38:28.433 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Async I/O Thread Pool Size: 200
+2019-08-21 00:38:28.433 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
+2019-08-21 00:38:28.433 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
+2019-08-21 00:38:28.433 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
+2019-08-21 00:38:28.433 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Invoke AtmosphereInterceptor on WebSocket message true
+2019-08-21 00:38:28.433 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - HttpSession supported: true
+2019-08-21 00:38:28.433 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
+2019-08-21 00:38:28.433 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.21 using javax.servlet/3.0 and jsr356/WebSocket API
+2019-08-21 00:38:28.433 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere Framework 2.4.11.vaadin2 started.
+2019-08-21 00:38:28.437 [http-nio-8787-exec-3] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
+2019-08-21 00:38:28.465 [http-nio-8787-exec-3] INFO  com.vaadin.spring.server.SpringUIProvider - Checking the application context for Vaadin UIs
+2019-08-21 00:38:28.469 [http-nio-8787-exec-3] INFO  com.vaadin.spring.server.SpringUIProvider - Found Vaadin UI [com.maxtree.automotive.dashboard.DashboardUI]
+2019-08-21 00:40:51.244 [http-nio-8787-exec-7] WARN  com.vaadin.server.DefaultDeploymentConfiguration - 
+=================================================================
+Vaadin is running in DEBUG MODE.
+Add productionMode=true to web.xml to disable debug features.
+To show debug window, add ?debug to your application URL.
+=================================================================
+2019-08-21 00:40:51.245 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereHandler com.vaadin.server.communication.PushAtmosphereHandler mapped to context-path: /*
+2019-08-21 00:40:51.245 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.server.communication.PushAtmosphereHandler
+2019-08-21 00:40:51.251 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
+2019-08-21 00:40:51.253 [http-nio-8787-exec-7] INFO  org.atmosphere.util.ForkJoinPool - Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
+2019-08-21 00:40:51.253 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
+2019-08-21 00:40:51.254 [http-nio-8787-exec-7] WARN  org.atmosphere.util.IOUtils - More than one Servlet Mapping defined. WebSocket may not work org.apache.catalina.core.ApplicationServletRegistration@5c7afc75
+2019-08-21 00:40:51.254 [http-nio-8787-exec-7] INFO  org.atmosphere.container.JSR356AsyncSupport - JSR 356 Mapping path /vaadinServlet
+2019-08-21 00:40:51.254 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installing Default AtmosphereInterceptors
+2019-08-21 00:40:51.254 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
+2019-08-21 00:40:51.255 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
+2019-08-21 00:40:51.255 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
+2019-08-21 00:40:51.255 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
+2019-08-21 00:40:51.255 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
+2019-08-21 00:40:51.255 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
+2019-08-21 00:40:51.255 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
+2019-08-21 00:40:51.255 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
+2019-08-21 00:40:51.255 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
+2019-08-21 00:40:51.255 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
+2019-08-21 00:40:51.255 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
+2019-08-21 00:40:51.255 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
+2019-08-21 00:40:51.255 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
+2019-08-21 00:40:51.255 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
+2019-08-21 00:40:51.256 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 00:40:51.256 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 00:40:51.256 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 00:40:51.256 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 00:40:51.256 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
+2019-08-21 00:40:51.256 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
+2019-08-21 00:40:51.256 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
+2019-08-21 00:40:51.256 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
+2019-08-21 00:40:51.256 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
+2019-08-21 00:40:51.256 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
+2019-08-21 00:40:51.256 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
+2019-08-21 00:40:51.256 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Broadcaster Shared List Resources: false
+2019-08-21 00:40:51.256 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Broadcaster Polling Wait Time 100
+2019-08-21 00:40:51.256 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Shared ExecutorService supported: true
+2019-08-21 00:40:51.256 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
+2019-08-21 00:40:51.257 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Async I/O Thread Pool Size: 200
+2019-08-21 00:40:51.257 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
+2019-08-21 00:40:51.257 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
+2019-08-21 00:40:51.257 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
+2019-08-21 00:40:51.257 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Invoke AtmosphereInterceptor on WebSocket message true
+2019-08-21 00:40:51.257 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - HttpSession supported: true
+2019-08-21 00:40:51.257 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
+2019-08-21 00:40:51.257 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.21 using javax.servlet/3.0 and jsr356/WebSocket API
+2019-08-21 00:40:51.257 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere Framework 2.4.11.vaadin2 started.
+2019-08-21 00:40:51.257 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
+2019-08-21 00:40:51.409 [http-nio-8787-exec-1] INFO  com.vaadin.spring.navigator.SpringViewProvider - Looking up SpringViews
+2019-08-21 00:40:51.410 [http-nio-8787-exec-1] WARN  com.vaadin.spring.navigator.SpringViewProvider - No SpringViews found
+2019-08-21 00:41:06.331 [http-nio-8787-exec-10] INFO  com.maxtree.automotive.dashboard.DashboardUI - root
+2019-08-21 00:42:51.280 [http-nio-8787-exec-4] ERROR com.vaadin.server.DefaultErrorHandler - 
+java.lang.NullPointerException: Resource ID must not be null
+	at com.vaadin.server.ThemeResource.<init>(ThemeResource.java:46)
+	at com.maxtree.automotive.dashboard.view.admin.PeopleView.generateOneRow(PeopleView.java:216)
+	at com.maxtree.automotive.dashboard.view.admin.PeopleView.<init>(PeopleView.java:54)
+	at com.maxtree.automotive.dashboard.view.admin.PeopleRow.lambda$initComponents$44ca30d2$2(PeopleRow.java:38)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.vaadin.event.ListenerMethod.receiveEvent(ListenerMethod.java:499)
+	at com.vaadin.event.EventRouter.fireEvent(EventRouter.java:273)
+	at com.vaadin.event.EventRouter.fireEvent(EventRouter.java:237)
+	at com.vaadin.server.AbstractClientConnector.fireEvent(AbstractClientConnector.java:1014)
+	at com.vaadin.ui.AbstractOrderedLayout.lambda$new$703cbfd7$1(AbstractOrderedLayout.java:50)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.vaadin.server.ServerRpcManager.applyInvocation(ServerRpcManager.java:155)
+	at com.vaadin.server.ServerRpcManager.applyInvocation(ServerRpcManager.java:116)
+	at com.vaadin.server.communication.ServerRpcHandler.handleInvocation(ServerRpcHandler.java:445)
+	at com.vaadin.server.communication.ServerRpcHandler.handleInvocations(ServerRpcHandler.java:410)
+	at com.vaadin.server.communication.ServerRpcHandler.handleRpc(ServerRpcHandler.java:274)
+	at com.vaadin.server.communication.UidlRequestHandler.synchronizedHandleRequest(UidlRequestHandler.java:90)
+	at com.vaadin.server.SynchronizedRequestHandler.handleRequest(SynchronizedRequestHandler.java:40)
+	at com.vaadin.server.VaadinService.handleRequest(VaadinService.java:1601)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:445)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:750)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:99)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:109)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:92)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:109)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.HiddenHttpMethodFilter.doFilterInternal(HiddenHttpMethodFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:109)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:200)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:109)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:202)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:96)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:490)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:139)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:408)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:853)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1587)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:748)
+2019-08-21 00:44:02.802 [http-nio-8787-exec-7] ERROR com.vaadin.server.DefaultErrorHandler - 
+java.lang.NullPointerException: Resource ID must not be null
+	at com.vaadin.server.ThemeResource.<init>(ThemeResource.java:46)
+	at com.maxtree.automotive.dashboard.view.admin.PeopleView.generateOneRow(PeopleView.java:216)
+	at com.maxtree.automotive.dashboard.view.admin.PeopleView.<init>(PeopleView.java:54)
+	at com.maxtree.automotive.dashboard.view.admin.PeopleRow.lambda$initComponents$44ca30d2$2(PeopleRow.java:38)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.vaadin.event.ListenerMethod.receiveEvent(ListenerMethod.java:499)
+	at com.vaadin.event.EventRouter.fireEvent(EventRouter.java:273)
+	at com.vaadin.event.EventRouter.fireEvent(EventRouter.java:237)
+	at com.vaadin.server.AbstractClientConnector.fireEvent(AbstractClientConnector.java:1014)
+	at com.vaadin.ui.AbstractOrderedLayout.lambda$new$703cbfd7$1(AbstractOrderedLayout.java:50)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.vaadin.server.ServerRpcManager.applyInvocation(ServerRpcManager.java:155)
+	at com.vaadin.server.ServerRpcManager.applyInvocation(ServerRpcManager.java:116)
+	at com.vaadin.server.communication.ServerRpcHandler.handleInvocation(ServerRpcHandler.java:445)
+	at com.vaadin.server.communication.ServerRpcHandler.handleInvocations(ServerRpcHandler.java:410)
+	at com.vaadin.server.communication.ServerRpcHandler.handleRpc(ServerRpcHandler.java:274)
+	at com.vaadin.server.communication.UidlRequestHandler.synchronizedHandleRequest(UidlRequestHandler.java:90)
+	at com.vaadin.server.SynchronizedRequestHandler.handleRequest(SynchronizedRequestHandler.java:40)
+	at com.vaadin.server.VaadinService.handleRequest(VaadinService.java:1601)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:445)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:750)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:99)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:109)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:92)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:109)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.HiddenHttpMethodFilter.doFilterInternal(HiddenHttpMethodFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:109)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:200)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:109)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:202)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:96)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:490)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:139)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:408)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:853)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1587)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:748)
+2019-08-21 05:49:34.262 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h58m8s583ms865µs200ns).
+2019-08-21 05:49:57.247 [http-nio-8787-exec-8] INFO  com.vaadin.spring.server.SpringUIProvider - Checking the application context for Vaadin UIs
+2019-08-21 05:49:57.251 [http-nio-8787-exec-8] INFO  com.vaadin.spring.server.SpringUIProvider - Found Vaadin UI [com.maxtree.automotive.dashboard.DashboardUI]
+2019-08-21 05:49:58.663 [http-nio-8787-exec-3] INFO  com.vaadin.spring.navigator.SpringViewProvider - Looking up SpringViews
+2019-08-21 05:49:58.663 [http-nio-8787-exec-3] WARN  com.vaadin.spring.navigator.SpringViewProvider - No SpringViews found
+2019-08-21 05:50:09.400 [http-nio-8787-exec-6] INFO  com.maxtree.automotive.dashboard.DashboardUI - root
+2019-08-21 05:51:15.900 [http-nio-8787-exec-3] INFO  c.maxtree.automotive.dashboard.service.UserService - Created an user.Affected id=4
+2019-08-21 05:51:15.900 [http-nio-8787-exec-3] INFO  c.maxtree.automotive.dashboard.service.UserService - Created an userprofile.Affected id=4
+2019-08-21 05:51:27.848 [http-nio-8787-exec-4] INFO  c.maxtree.automotive.dashboard.service.UserService - Created an user.Affected id=5
+2019-08-21 05:51:27.848 [http-nio-8787-exec-4] INFO  c.maxtree.automotive.dashboard.service.UserService - Created an userprofile.Affected id=5
+2019-08-21 05:51:38.106 [http-nio-8787-exec-4] INFO  c.maxtree.automotive.dashboard.service.UserService - Created an user.Affected id=6
+2019-08-21 05:51:38.106 [http-nio-8787-exec-4] INFO  c.maxtree.automotive.dashboard.service.UserService - Created an userprofile.Affected id=6
+2019-08-21 05:52:52.344 [http-nio-8787-exec-9] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1
+2019-08-21 05:53:04.648 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2
+2019-08-21 05:53:04.648 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:3
+2019-08-21 05:53:04.840 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:104
+2019-08-21 05:53:04.840 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:205
+2019-08-21 05:53:04.855 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:306
+2019-08-21 05:53:04.855 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:407
+2019-08-21 05:53:04.855 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:508
+2019-08-21 05:53:04.855 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:609
+2019-08-21 05:53:04.871 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:710
+2019-08-21 05:53:04.871 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:811
+2019-08-21 05:53:04.871 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:912
+2019-08-21 05:53:04.871 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1013
+2019-08-21 05:53:04.871 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1114
+2019-08-21 05:53:04.871 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1215
+2019-08-21 05:53:04.871 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1316
+2019-08-21 05:53:04.887 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1417
+2019-08-21 05:53:04.887 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1518
+2019-08-21 05:53:04.887 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1619
+2019-08-21 05:53:04.887 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1720
+2019-08-21 05:53:04.887 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1821
+2019-08-21 05:53:04.887 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1922
+2019-08-21 05:53:04.902 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2023
+2019-08-21 05:53:04.902 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2124
+2019-08-21 05:53:04.902 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2225
+2019-08-21 05:53:04.902 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2326
+2019-08-21 05:53:04.902 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2427
+2019-08-21 05:53:04.902 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2528
+2019-08-21 05:53:04.902 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2629
+2019-08-21 05:53:04.918 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2730
+2019-08-21 05:53:04.918 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2831
+2019-08-21 05:53:04.918 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2932
+2019-08-21 05:53:04.918 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:3033
+2019-08-21 05:53:04.918 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:3134
+2019-08-21 05:53:04.918 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:3235
+2019-08-21 05:53:04.918 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:3336
+2019-08-21 05:53:04.918 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:3437
+2019-08-21 05:53:04.934 [http-nio-8787-exec-2] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:3538
+2019-08-21 05:53:12.719 [http-nio-8787-exec-7] INFO  c.m.automotive.dashboard.service.CompanyService - Updated row 1
+2019-08-21 06:22:35.364 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Logger enabled: Entering main 你好
+
+
+2019-08-21 06:22:35.801 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Starting TB4Application on DESKTOP-O28860S with PID 12732 (C:\Users\forer\Downloads\TrackBe4\target\classes started by forer in C:\Users\forer\Downloads\TrackBe4)
+2019-08-21 06:22:35.801 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - No active profile set, falling back to default profiles: default
+2019-08-21 06:22:36.473 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-08-21 06:22:36.645 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 156ms. Found 1 repository interfaces.
+2019-08-21 06:22:36.755 [main] INFO  o.s.c.annotation.ConfigurationClassPostProcessor - Cannot enhance @Configuration bean definition 'com.vaadin.spring.VaadinConfiguration' since its singleton instance has been created too early. The typical cause is a non-static @Bean method with a BeanDefinitionRegistryPostProcessor return type: Consider declaring such methods as 'static'.
+2019-08-21 06:22:37.068 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$57644055] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-08-21 06:22:37.303 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8787 (http)
+2019-08-21 06:22:37.318 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8787"]
+2019-08-21 06:22:37.334 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2019-08-21 06:22:37.334 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.21]
+2019-08-21 06:22:37.412 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2019-08-21 06:22:37.412 [main] INFO  org.springframework.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1579 ms
+2019-08-21 06:22:37.428 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Registering Vaadin servlet
+2019-08-21 06:22:37.428 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Servlet will be mapped to URLs [/vaadinServlet/*, /VAADIN/*]
+2019-08-21 06:22:37.428 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Setting servlet init parameters
+2019-08-21 06:22:37.428 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Set servlet init parameter [productionMode] = [false]
+2019-08-21 06:22:37.428 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Set servlet init parameter [resourceCacheTime] = [3600]
+2019-08-21 06:22:37.428 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Set servlet init parameter [heartbeatInterval] = [300]
+2019-08-21 06:22:37.428 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Set servlet init parameter [closeIdleSessions] = [false]
+2019-08-21 06:22:37.787 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2019-08-21 06:22:37.896 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2019-08-21 06:22:38.006 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2019-08-21 06:22:38.106 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final}
+2019-08-21 06:22:38.107 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found
+2019-08-21 06:22:38.270 [main] INFO  org.hibernate.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final}
+2019-08-21 06:22:38.536 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL95Dialect
+2019-08-21 06:22:38.614 [main] INFO  o.h.engine.jdbc.env.internal.LobCreatorBuilderImpl - HHH000424: Disabling contextual LOB creation as createClob() method threw error : java.lang.reflect.InvocationTargetException
+2019-08-21 06:22:38.614 [main] INFO  org.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [java.util.UUID] overrides previous : org.hibernate.type.UUIDBinaryType@1e723ec7
+2019-08-21 06:22:39.192 [main] INFO  o.s.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2019-08-21 06:22:39.676 [main] INFO  o.s.scheduling.concurrent.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor'
+2019-08-21 06:22:39.708 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration$JpaWebMvcConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-08-21 06:22:39.770 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Checking the application context for Vaadin UI mappings
+2019-08-21 06:22:39.770 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Registering Vaadin servlet of type [com.vaadin.spring.server.SpringVaadinServlet]
+2019-08-21 06:22:39.770 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Forwarding @SpringUI URLs from {/=org.springframework.web.servlet.mvc.ServletForwardingController@7b35c3e1}
+2019-08-21 06:22:39.926 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8787"]
+2019-08-21 06:22:39.958 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8787 (http) with context path ''
+2019-08-21 06:22:39.958 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Started TB4Application in 4.547 seconds (JVM running for 27.246)
+2019-08-21 06:22:39.989 [main] INFO  o.h.hql.internal.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory
+2019-08-21 06:22:40.004 [http-nio-8787-exec-1] WARN  com.vaadin.server.DefaultDeploymentConfiguration - 
+=================================================================
+Vaadin is running in DEBUG MODE.
+Add productionMode=true to web.xml to disable debug features.
+To show debug window, add ?debug to your application URL.
+=================================================================
+2019-08-21 06:22:40.051 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereHandler com.vaadin.server.communication.PushAtmosphereHandler mapped to context-path: /*
+2019-08-21 06:22:40.051 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.server.communication.PushAtmosphereHandler
+2019-08-21 06:22:40.083 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
+2019-08-21 06:22:40.083 [http-nio-8787-exec-1] INFO  org.atmosphere.util.ForkJoinPool - Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
+2019-08-21 06:22:40.083 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
+2019-08-21 06:22:40.083 [http-nio-8787-exec-1] INFO  org.atmosphere.container.JSR356AsyncSupport - JSR 356 Mapping path /{path}
+2019-08-21 06:22:40.111 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installing Default AtmosphereInterceptors
+2019-08-21 06:22:40.111 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
+2019-08-21 06:22:40.111 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
+2019-08-21 06:22:40.112 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
+2019-08-21 06:22:40.112 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
+2019-08-21 06:22:40.112 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
+2019-08-21 06:22:40.113 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
+2019-08-21 06:22:40.113 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
+2019-08-21 06:22:40.114 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
+2019-08-21 06:22:40.114 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
+2019-08-21 06:22:40.114 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
+2019-08-21 06:22:40.115 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
+2019-08-21 06:22:40.115 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
+2019-08-21 06:22:40.115 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
+2019-08-21 06:22:40.119 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
+2019-08-21 06:22:40.119 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:22:40.119 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:22:40.119 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:22:40.120 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:22:40.120 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
+2019-08-21 06:22:40.120 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
+2019-08-21 06:22:40.120 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
+2019-08-21 06:22:40.121 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
+2019-08-21 06:22:40.121 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
+2019-08-21 06:22:40.121 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
+2019-08-21 06:22:40.121 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
+2019-08-21 06:22:40.121 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Broadcaster Shared List Resources: false
+2019-08-21 06:22:40.121 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Broadcaster Polling Wait Time 100
+2019-08-21 06:22:40.121 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Shared ExecutorService supported: true
+2019-08-21 06:22:40.122 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
+2019-08-21 06:22:40.122 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Async I/O Thread Pool Size: 200
+2019-08-21 06:22:40.122 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
+2019-08-21 06:22:40.122 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
+2019-08-21 06:22:40.122 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
+2019-08-21 06:22:40.125 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Invoke AtmosphereInterceptor on WebSocket message true
+2019-08-21 06:22:40.125 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - HttpSession supported: true
+2019-08-21 06:22:40.125 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
+2019-08-21 06:22:40.125 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.21 using javax.servlet/3.0 and jsr356/WebSocket API
+2019-08-21 06:22:40.125 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere Framework 2.4.11.vaadin2 started.
+2019-08-21 06:22:40.128 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
+2019-08-21 06:22:40.130 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customers found with findAll():
+2019-08-21 06:22:40.130 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - -------------------------------
+2019-08-21 06:22:40.146 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=1, firstName='Jack', lastName='Bauer']
+2019-08-21 06:22:40.146 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=2, firstName='Chloe', lastName='O'Brian']
+2019-08-21 06:22:40.146 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=3, firstName='Kim2222222', lastName='Bauer222222222']
+2019-08-21 06:22:40.146 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=4, firstName='David', lastName='Palmer']
+2019-08-21 06:22:40.146 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=5, firstName='Michelle', lastName='Dessler']
+2019-08-21 06:22:40.146 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - 
+2019-08-21 06:22:40.161 [http-nio-8787-exec-1] INFO  com.vaadin.spring.server.SpringUIProvider - Checking the application context for Vaadin UIs
+2019-08-21 06:22:40.161 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer found with findById(1L):
+2019-08-21 06:22:40.161 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - --------------------------------
+2019-08-21 06:22:40.161 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=1, firstName='Jack', lastName='Bauer']
+2019-08-21 06:22:40.161 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - 
+2019-08-21 06:22:40.161 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer found with findByLastName('Bauer'):
+2019-08-21 06:22:40.161 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - --------------------------------------------
+2019-08-21 06:22:40.161 [http-nio-8787-exec-1] INFO  com.vaadin.spring.server.SpringUIProvider - Found Vaadin UI [com.maxtree.automotive.dashboard.DashboardUI]
+2019-08-21 06:22:40.192 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=1, firstName='Jack', lastName='Bauer']
+2019-08-21 06:22:40.192 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - 
+2019-08-21 06:22:40.192 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Exiting main
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] WARN  com.vaadin.server.DefaultDeploymentConfiguration - 
+=================================================================
+Vaadin is running in DEBUG MODE.
+Add productionMode=true to web.xml to disable debug features.
+To show debug window, add ?debug to your application URL.
+=================================================================
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereHandler com.vaadin.server.communication.PushAtmosphereHandler mapped to context-path: /*
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.server.communication.PushAtmosphereHandler
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.util.ForkJoinPool - Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] WARN  org.atmosphere.util.IOUtils - More than one Servlet Mapping defined. WebSocket may not work org.apache.catalina.core.ApplicationServletRegistration@3325b2a4
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.container.JSR356AsyncSupport - JSR 356 Mapping path /vaadinServlet
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installing Default AtmosphereInterceptors
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Broadcaster Shared List Resources: false
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Broadcaster Polling Wait Time 100
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Shared ExecutorService supported: true
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
+2019-08-21 06:23:03.379 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Async I/O Thread Pool Size: 200
+2019-08-21 06:23:03.395 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
+2019-08-21 06:23:03.395 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
+2019-08-21 06:23:03.395 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
+2019-08-21 06:23:03.395 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Invoke AtmosphereInterceptor on WebSocket message true
+2019-08-21 06:23:03.395 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - HttpSession supported: true
+2019-08-21 06:23:03.395 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
+2019-08-21 06:23:03.395 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.21 using javax.servlet/3.0 and jsr356/WebSocket API
+2019-08-21 06:23:03.395 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere Framework 2.4.11.vaadin2 started.
+2019-08-21 06:23:03.395 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
+2019-08-21 06:23:03.540 [http-nio-8787-exec-1] INFO  com.vaadin.spring.navigator.SpringViewProvider - Looking up SpringViews
+2019-08-21 06:23:03.540 [http-nio-8787-exec-1] WARN  com.vaadin.spring.navigator.SpringViewProvider - No SpringViews found
+2019-08-21 06:25:24.301 [http-nio-8787-exec-3] INFO  com.maxtree.automotive.dashboard.DashboardUI - root
+2019-08-21 06:28:15.771 [http-nio-8787-exec-1] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1
+2019-08-21 06:28:26.645 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2
+2019-08-21 06:28:26.645 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:3
+2019-08-21 06:28:26.661 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:104
+2019-08-21 06:28:26.661 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:205
+2019-08-21 06:28:26.661 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:306
+2019-08-21 06:28:26.661 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:407
+2019-08-21 06:28:26.661 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:508
+2019-08-21 06:28:26.677 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:609
+2019-08-21 06:28:26.677 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:710
+2019-08-21 06:28:26.677 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:811
+2019-08-21 06:28:26.677 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:912
+2019-08-21 06:28:26.677 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1013
+2019-08-21 06:28:26.692 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1114
+2019-08-21 06:28:26.692 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1215
+2019-08-21 06:28:26.692 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1316
+2019-08-21 06:28:26.692 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1417
+2019-08-21 06:28:26.692 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1518
+2019-08-21 06:28:26.692 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1619
+2019-08-21 06:28:26.708 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1720
+2019-08-21 06:28:26.708 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1821
+2019-08-21 06:28:26.708 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:1922
+2019-08-21 06:28:26.708 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2023
+2019-08-21 06:28:26.708 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2124
+2019-08-21 06:28:26.708 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2225
+2019-08-21 06:28:26.708 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2326
+2019-08-21 06:28:26.723 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2427
+2019-08-21 06:28:26.723 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2528
+2019-08-21 06:28:26.723 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2629
+2019-08-21 06:28:26.723 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2730
+2019-08-21 06:28:26.723 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2831
+2019-08-21 06:28:26.723 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:2932
+2019-08-21 06:28:26.739 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:3033
+2019-08-21 06:28:26.739 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:3134
+2019-08-21 06:28:26.739 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:3235
+2019-08-21 06:28:26.739 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:3336
+2019-08-21 06:28:26.739 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:3437
+2019-08-21 06:28:26.739 [http-nio-8787-exec-3] INFO  c.m.a.dashboard.service.FrameNumberService - Affected id:3538
+2019-08-21 06:28:38.384 [http-nio-8787-exec-10] INFO  c.m.automotive.dashboard.service.CompanyService - Updated row 1
+2019-08-21 06:28:39.710 [http-nio-8787-exec-2] INFO  c.m.automotive.dashboard.service.CompanyService - Updated row 1
+2019-08-21 06:30:27.943 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Logger enabled: Entering main 你好
+
+
+2019-08-21 06:30:28.337 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Starting TB4Application on DESKTOP-O28860S with PID 19064 (C:\Users\forer\Downloads\TrackBe4\target\classes started by forer in C:\Users\forer\Downloads\TrackBe4)
+2019-08-21 06:30:28.337 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - No active profile set, falling back to default profiles: default
+2019-08-21 06:30:28.977 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-08-21 06:30:29.129 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 152ms. Found 1 repository interfaces.
+2019-08-21 06:30:29.208 [main] INFO  o.s.c.annotation.ConfigurationClassPostProcessor - Cannot enhance @Configuration bean definition 'com.vaadin.spring.VaadinConfiguration' since its singleton instance has been created too early. The typical cause is a non-static @Bean method with a BeanDefinitionRegistryPostProcessor return type: Consider declaring such methods as 'static'.
+2019-08-21 06:30:29.473 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$aa5197e5] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-08-21 06:30:29.723 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8787 (http)
+2019-08-21 06:30:29.723 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8787"]
+2019-08-21 06:30:29.739 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2019-08-21 06:30:29.739 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.21]
+2019-08-21 06:30:29.817 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2019-08-21 06:30:29.817 [main] INFO  org.springframework.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1449 ms
+2019-08-21 06:30:29.817 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Registering Vaadin servlet
+2019-08-21 06:30:29.817 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Servlet will be mapped to URLs [/vaadinServlet/*, /VAADIN/*]
+2019-08-21 06:30:29.833 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Setting servlet init parameters
+2019-08-21 06:30:29.833 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Set servlet init parameter [productionMode] = [false]
+2019-08-21 06:30:29.833 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Set servlet init parameter [resourceCacheTime] = [3600]
+2019-08-21 06:30:29.833 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Set servlet init parameter [heartbeatInterval] = [300]
+2019-08-21 06:30:29.833 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Set servlet init parameter [closeIdleSessions] = [false]
+2019-08-21 06:30:30.207 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2019-08-21 06:30:30.286 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2019-08-21 06:30:30.380 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2019-08-21 06:30:30.442 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final}
+2019-08-21 06:30:30.442 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found
+2019-08-21 06:30:30.551 [main] INFO  org.hibernate.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final}
+2019-08-21 06:30:30.755 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL95Dialect
+2019-08-21 06:30:30.927 [main] INFO  o.h.engine.jdbc.env.internal.LobCreatorBuilderImpl - HHH000424: Disabling contextual LOB creation as createClob() method threw error : java.lang.reflect.InvocationTargetException
+2019-08-21 06:30:30.927 [main] INFO  org.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [java.util.UUID] overrides previous : org.hibernate.type.UUIDBinaryType@4760a25
+2019-08-21 06:30:31.380 [main] WARN  o.h.t.schema.internal.ExceptionHandlerLoggedImpl - GenerationTarget encountered exception accepting command : Error executing DDL "
+    create table customer (
+       id  bigserial not null,
+        first_name varchar(255),
+        last_name varchar(255),
+        primary key (id)
+    )" via JDBC Statement
+org.hibernate.tool.schema.spi.CommandAcceptanceException: Error executing DDL "
+    create table customer (
+       id  bigserial not null,
+        first_name varchar(255),
+        last_name varchar(255),
+        primary key (id)
+    )" via JDBC Statement
+	at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:67)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlString(AbstractSchemaMigrator.java:559)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlStrings(AbstractSchemaMigrator.java:504)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.createTable(AbstractSchemaMigrator.java:277)
+	at org.hibernate.tool.schema.internal.GroupedSchemaMigratorImpl.performTablesMigration(GroupedSchemaMigratorImpl.java:71)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.performMigration(AbstractSchemaMigrator.java:207)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.doMigration(AbstractSchemaMigrator.java:114)
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.performDatabaseAction(SchemaManagementToolCoordinator.java:183)
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.process(SchemaManagementToolCoordinator.java:72)
+	at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:310)
+	at org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:467)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:939)
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:57)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:365)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:390)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:377)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:341)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1837)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1774)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:593)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:515)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:320)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:222)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:318)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1105)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:867)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:549)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:140)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:742)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:389)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:311)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1213)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1202)
+	at com.maxtree.automotive.dashboard.TB4Application.main(TB4Application.java:47)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.boot.maven.AbstractRunMojo$LaunchRunner.run(AbstractRunMojo.java:542)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: org.postgresql.util.PSQLException: 错误: 关系 "customer" 已经存在
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2468)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2211)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:309)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:446)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:370)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:311)
+	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:297)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:274)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:269)
+	at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:95)
+	at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java)
+	at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:54)
+	... 40 common frames omitted
+2019-08-21 06:30:31.380 [main] INFO  o.s.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2019-08-21 06:30:31.849 [main] INFO  o.s.scheduling.concurrent.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor'
+2019-08-21 06:30:31.880 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration$JpaWebMvcConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-08-21 06:30:31.927 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Checking the application context for Vaadin UI mappings
+2019-08-21 06:30:31.927 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Registering Vaadin servlet of type [com.vaadin.spring.server.SpringVaadinServlet]
+2019-08-21 06:30:31.942 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Forwarding @SpringUI URLs from {/=org.springframework.web.servlet.mvc.ServletForwardingController@70174b59}
+2019-08-21 06:30:32.083 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8787"]
+2019-08-21 06:30:32.115 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8787 (http) with context path ''
+2019-08-21 06:30:32.117 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Started TB4Application in 4.111 seconds (JVM running for 25.393)
+2019-08-21 06:30:32.129 [main] INFO  o.h.hql.internal.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory
+2019-08-21 06:30:32.270 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customers found with findAll():
+2019-08-21 06:30:32.270 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - -------------------------------
+2019-08-21 06:30:32.270 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=6, firstName='Jack', lastName='Bauer']
+2019-08-21 06:30:32.270 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=7, firstName='Chloe', lastName='O'Brian']
+2019-08-21 06:30:32.270 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=8, firstName='Kim2222222', lastName='Bauer222222222']
+2019-08-21 06:30:32.270 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=9, firstName='David', lastName='Palmer']
+2019-08-21 06:30:32.270 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=10, firstName='Michelle', lastName='Dessler']
+2019-08-21 06:30:32.270 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - 
+2019-08-21 06:30:32.270 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer found with findByLastName('Bauer'):
+2019-08-21 06:30:32.270 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - --------------------------------------------
+2019-08-21 06:30:32.301 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=6, firstName='Jack', lastName='Bauer']
+2019-08-21 06:30:32.301 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - 
+2019-08-21 06:30:32.301 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Exiting main
+2019-08-21 06:30:32.990 [http-nio-8787-exec-1] WARN  com.vaadin.server.DefaultDeploymentConfiguration - 
+=================================================================
+Vaadin is running in DEBUG MODE.
+Add productionMode=true to web.xml to disable debug features.
+To show debug window, add ?debug to your application URL.
+=================================================================
+2019-08-21 06:30:33.021 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereHandler com.vaadin.server.communication.PushAtmosphereHandler mapped to context-path: /*
+2019-08-21 06:30:33.021 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.server.communication.PushAtmosphereHandler
+2019-08-21 06:30:33.036 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
+2019-08-21 06:30:33.036 [http-nio-8787-exec-1] INFO  org.atmosphere.util.ForkJoinPool - Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
+2019-08-21 06:30:33.052 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
+2019-08-21 06:30:33.052 [http-nio-8787-exec-1] INFO  org.atmosphere.container.JSR356AsyncSupport - JSR 356 Mapping path /{path}
+2019-08-21 06:30:33.052 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installing Default AtmosphereInterceptors
+2019-08-21 06:30:33.052 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
+2019-08-21 06:30:33.052 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
+2019-08-21 06:30:33.052 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
+2019-08-21 06:30:33.052 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
+2019-08-21 06:30:33.052 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
+2019-08-21 06:30:33.052 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
+2019-08-21 06:30:33.052 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
+2019-08-21 06:30:33.052 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
+2019-08-21 06:30:33.052 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
+2019-08-21 06:30:33.052 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Broadcaster Shared List Resources: false
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Broadcaster Polling Wait Time 100
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Shared ExecutorService supported: true
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Async I/O Thread Pool Size: 200
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Invoke AtmosphereInterceptor on WebSocket message true
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - HttpSession supported: true
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.21 using javax.servlet/3.0 and jsr356/WebSocket API
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere Framework 2.4.11.vaadin2 started.
+2019-08-21 06:30:33.068 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
+2019-08-21 06:30:40.636 [http-nio-8787-exec-5] INFO  com.vaadin.spring.server.SpringUIProvider - Checking the application context for Vaadin UIs
+2019-08-21 06:30:40.636 [http-nio-8787-exec-5] INFO  com.vaadin.spring.server.SpringUIProvider - Found Vaadin UI [com.maxtree.automotive.dashboard.DashboardUI]
+2019-08-21 06:30:40.695 [http-nio-8787-exec-6] WARN  com.vaadin.server.DefaultDeploymentConfiguration - 
+=================================================================
+Vaadin is running in DEBUG MODE.
+Add productionMode=true to web.xml to disable debug features.
+To show debug window, add ?debug to your application URL.
+=================================================================
+2019-08-21 06:30:40.695 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereHandler com.vaadin.server.communication.PushAtmosphereHandler mapped to context-path: /*
+2019-08-21 06:30:40.695 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.server.communication.PushAtmosphereHandler
+2019-08-21 06:30:40.700 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.util.ForkJoinPool - Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] WARN  org.atmosphere.util.IOUtils - More than one Servlet Mapping defined. WebSocket may not work org.apache.catalina.core.ApplicationServletRegistration@331b262f
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.container.JSR356AsyncSupport - JSR 356 Mapping path /vaadinServlet
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installing Default AtmosphereInterceptors
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
+2019-08-21 06:30:40.704 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Broadcaster Shared List Resources: false
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Broadcaster Polling Wait Time 100
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Shared ExecutorService supported: true
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Async I/O Thread Pool Size: 200
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Invoke AtmosphereInterceptor on WebSocket message true
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - HttpSession supported: true
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.21 using javax.servlet/3.0 and jsr356/WebSocket API
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere Framework 2.4.11.vaadin2 started.
+2019-08-21 06:30:40.708 [http-nio-8787-exec-6] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
+2019-08-21 06:30:40.812 [http-nio-8787-exec-10] INFO  com.vaadin.spring.navigator.SpringViewProvider - Looking up SpringViews
+2019-08-21 06:30:40.812 [http-nio-8787-exec-10] WARN  com.vaadin.spring.navigator.SpringViewProvider - No SpringViews found
+2019-08-21 06:30:47.738 [http-nio-8787-exec-2] INFO  com.maxtree.automotive.dashboard.DashboardUI - root
+2019-08-21 06:31:48.129 [http-nio-8787-exec-7] ERROR com.vaadin.server.DefaultErrorHandler - 
+org.springframework.dao.DataIntegrityViolationException: PreparedStatementCallback; 错误: 在字段 "code" 中空值违反了非空约束
+  详细：失败, 行包含(1, 文件库1, File, C:\Users\forer\Downloads\filesite, 0, /, null, null, 主动, UTF-8, 0, null).; nested exception is org.postgresql.util.PSQLException: 错误: 在字段 "code" 中空值违反了非空约束
+  详细：失败, 行包含(1, 文件库1, File, C:\Users\forer\Downloads\filesite, 0, /, null, null, 主动, UTF-8, 0, null).
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:246)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:72)
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1442)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:632)
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:892)
+	at com.maxtree.automotive.dashboard.service.SiteService.insert(SiteService.java:114)
+	at com.maxtree.automotive.dashboard.view.admin.EditSiteWindow.lambda$open$ab6bbb19$1(EditSiteWindow.java:439)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.vaadin.event.ListenerMethod.receiveEvent(ListenerMethod.java:499)
+	at com.vaadin.event.EventRouter.fireEvent(EventRouter.java:273)
+	at com.vaadin.event.EventRouter.fireEvent(EventRouter.java:237)
+	at com.vaadin.server.AbstractClientConnector.fireEvent(AbstractClientConnector.java:1014)
+	at com.vaadin.ui.Button.fireClick(Button.java:384)
+	at com.vaadin.ui.Button$1.click(Button.java:57)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.vaadin.server.ServerRpcManager.applyInvocation(ServerRpcManager.java:155)
+	at com.vaadin.server.ServerRpcManager.applyInvocation(ServerRpcManager.java:116)
+	at com.vaadin.server.communication.ServerRpcHandler.handleInvocation(ServerRpcHandler.java:445)
+	at com.vaadin.server.communication.ServerRpcHandler.handleInvocations(ServerRpcHandler.java:410)
+	at com.vaadin.server.communication.ServerRpcHandler.handleRpc(ServerRpcHandler.java:274)
+	at com.vaadin.server.communication.UidlRequestHandler.synchronizedHandleRequest(UidlRequestHandler.java:90)
+	at com.vaadin.server.SynchronizedRequestHandler.handleRequest(SynchronizedRequestHandler.java:40)
+	at com.vaadin.server.VaadinService.handleRequest(VaadinService.java:1601)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:445)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:750)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:99)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:109)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:92)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:109)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.HiddenHttpMethodFilter.doFilterInternal(HiddenHttpMethodFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:109)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:200)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:109)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:202)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:96)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:490)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:139)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:408)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:853)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1587)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: org.postgresql.util.PSQLException: 错误: 在字段 "code" 中空值违反了非空约束
+  详细：失败, 行包含(1, 文件库1, File, C:\Users\forer\Downloads\filesite, 0, /, null, null, 主动, UTF-8, 0, null).
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2468)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2211)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:309)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:446)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:370)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:149)
+	at org.postgresql.jdbc.PgPreparedStatement.executeUpdate(PgPreparedStatement.java:124)
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61)
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java)
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$1(JdbcTemplate.java:893)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:616)
+	... 64 common frames omitted
+2019-08-21 06:33:15.730 [http-nio-8787-exec-9] INFO  c.maxtree.automotive.dashboard.service.SiteService - Update result:1
+2019-08-21 06:33:21.899 [http-nio-8787-exec-8] INFO  c.maxtree.automotive.dashboard.service.SiteService - updateSiteUsers batch update has done.
+2019-08-21 06:33:59.274 [http-nio-8787-exec-8] INFO  c.maxtree.automotive.dashboard.service.UserService - Created an user.Affected id=4
+2019-08-21 06:33:59.274 [http-nio-8787-exec-8] INFO  c.maxtree.automotive.dashboard.service.UserService - Created an userprofile.Affected id=4
+2019-08-21 06:34:16.243 [http-nio-8787-exec-8] INFO  c.maxtree.automotive.dashboard.service.UserService - Created an user.Affected id=5
+2019-08-21 06:34:16.243 [http-nio-8787-exec-8] INFO  c.maxtree.automotive.dashboard.service.UserService - Created an userprofile.Affected id=5
+2019-08-21 06:34:34.898 [http-nio-8787-exec-8] INFO  c.maxtree.automotive.dashboard.service.UserService - Created an user.Affected id=6
+2019-08-21 06:34:34.898 [http-nio-8787-exec-8] INFO  c.maxtree.automotive.dashboard.service.UserService - Created an userprofile.Affected id=6
+2019-08-21 06:34:47.598 [http-nio-8787-exec-4] INFO  c.maxtree.automotive.dashboard.service.UserService - Delete from ROLEMEMBER.Affected row 0
+2019-08-21 06:34:47.606 [http-nio-8787-exec-4] INFO  c.maxtree.automotive.dashboard.service.UserService - Delete from USERPROFILES.Affected row 1
+2019-08-21 06:34:47.606 [http-nio-8787-exec-4] INFO  c.maxtree.automotive.dashboard.service.UserService - Delete from USERS.Affected row 1
+2019-08-21 06:35:02.857 [http-nio-8787-exec-4] INFO  c.maxtree.automotive.dashboard.service.UserService - Created an user.Affected id=7
+2019-08-21 06:35:02.857 [http-nio-8787-exec-4] INFO  c.maxtree.automotive.dashboard.service.UserService - Created an userprofile.Affected id=7
+2019-08-21 06:35:15.725 [http-nio-8787-exec-1] INFO  c.maxtree.automotive.dashboard.service.UserService - Batch update has done.
+2019-08-21 06:35:21.110 [http-nio-8787-exec-10] INFO  c.maxtree.automotive.dashboard.service.UserService - Batch update has done.
+2019-08-21 06:35:28.067 [http-nio-8787-exec-1] INFO  c.maxtree.automotive.dashboard.service.UserService - Batch update has done.
+2019-08-21 06:36:08.947 [http-nio-8787-exec-10] INFO  c.m.automotive.dashboard.service.BusinessService - updateMaterials has done.
+2019-08-21 06:36:08.951 [http-nio-8787-exec-10] INFO  c.m.automotive.dashboard.service.BusinessService - updateMaterials2 has done.
+2019-08-21 06:36:31.537 [http-nio-8787-exec-4] INFO  c.m.automotive.dashboard.service.BusinessService - updateMaterials has done.
+2019-08-21 06:36:31.537 [http-nio-8787-exec-4] INFO  c.m.automotive.dashboard.service.BusinessService - updateMaterials2 has done.
+2019-08-21 06:36:50.923 [http-nio-8787-exec-4] INFO  c.m.automotive.dashboard.service.BusinessService - updateMaterials has done.
+2019-08-21 06:36:50.927 [http-nio-8787-exec-4] INFO  c.m.automotive.dashboard.service.BusinessService - updateMaterials2 has done.
+2019-08-21 06:37:32.325 [http-nio-8787-exec-1] INFO  c.m.a.dashboard.view.admin.RowItemWithIcon - root
+2019-08-21 06:37:32.341 [http-nio-8787-exec-2] INFO  com.vaadin.spring.server.SpringUIProvider - Checking the application context for Vaadin UIs
+2019-08-21 06:37:32.345 [http-nio-8787-exec-2] INFO  com.vaadin.spring.server.SpringUIProvider - Found Vaadin UI [com.maxtree.automotive.dashboard.DashboardUI]
+2019-08-21 06:37:32.577 [http-nio-8787-exec-8] INFO  com.vaadin.spring.navigator.SpringViewProvider - Looking up SpringViews
+2019-08-21 06:37:32.577 [http-nio-8787-exec-8] WARN  com.vaadin.spring.navigator.SpringViewProvider - No SpringViews found
+2019-08-21 06:37:39.186 [http-nio-8787-exec-4] INFO  com.maxtree.automotive.dashboard.DashboardUI - 4a
+2019-08-21 06:37:42.135 [http-nio-8787-exec-10] INFO  com.maxtree.automotive.dashboard.DashboardUI - 4a
+2019-08-21 06:37:42.143 [http-nio-8787-exec-9] INFO  com.vaadin.spring.server.SpringUIProvider - Checking the application context for Vaadin UIs
+2019-08-21 06:37:42.143 [http-nio-8787-exec-9] INFO  com.vaadin.spring.server.SpringUIProvider - Found Vaadin UI [com.maxtree.automotive.dashboard.DashboardUI]
+2019-08-21 06:37:42.355 [http-nio-8787-exec-3] INFO  com.vaadin.spring.navigator.SpringViewProvider - Looking up SpringViews
+2019-08-21 06:37:42.355 [http-nio-8787-exec-3] WARN  com.vaadin.spring.navigator.SpringViewProvider - No SpringViews found
+2019-08-21 06:37:50.627 [http-nio-8787-exec-7] INFO  com.maxtree.automotive.dashboard.DashboardUI - root
+2019-08-21 06:38:32.134 [http-nio-8787-exec-8] INFO  c.maxtree.automotive.dashboard.service.RoleService - updateRoleUsers batch has done.
+2019-08-21 06:38:38.563 [http-nio-8787-exec-1] INFO  c.maxtree.automotive.dashboard.service.RoleService - updateRoleUsers batch has done.
+2019-08-21 06:38:47.838 [http-nio-8787-exec-10] INFO  c.maxtree.automotive.dashboard.service.RoleService - updateRoleUsers batch has done.
+2019-08-21 06:38:56.557 [http-nio-8787-exec-7] INFO  c.maxtree.automotive.dashboard.service.RoleService - updateRoleUsers batch has done.
+2019-08-21 06:39:15.930 [http-nio-8787-exec-9] INFO  com.vaadin.spring.server.SpringUIProvider - Checking the application context for Vaadin UIs
+2019-08-21 06:39:15.934 [http-nio-8787-exec-9] INFO  com.vaadin.spring.server.SpringUIProvider - Found Vaadin UI [com.maxtree.automotive.dashboard.DashboardUI]
+2019-08-21 06:39:15.986 [http-nio-8787-exec-5] INFO  com.vaadin.spring.navigator.SpringViewProvider - Looking up SpringViews
+2019-08-21 06:39:15.986 [http-nio-8787-exec-5] WARN  com.vaadin.spring.navigator.SpringViewProvider - No SpringViews found
+2019-08-21 06:39:24.435 [http-nio-8787-exec-9] INFO  com.maxtree.automotive.dashboard.DashboardUI - 4a
+2019-08-21 06:39:51.451 [http-nio-8787-exec-4] INFO  com.maxtree.automotive.dashboard.DashboardUI - 4a
+2019-08-21 06:39:51.459 [http-nio-8787-exec-8] INFO  com.vaadin.spring.server.SpringUIProvider - Checking the application context for Vaadin UIs
+2019-08-21 06:39:51.459 [http-nio-8787-exec-8] INFO  com.vaadin.spring.server.SpringUIProvider - Found Vaadin UI [com.maxtree.automotive.dashboard.DashboardUI]
+2019-08-21 06:39:51.683 [http-nio-8787-exec-1] INFO  com.vaadin.spring.navigator.SpringViewProvider - Looking up SpringViews
+2019-08-21 06:39:51.683 [http-nio-8787-exec-1] WARN  com.vaadin.spring.navigator.SpringViewProvider - No SpringViews found
+2019-08-21 06:39:57.902 [http-nio-8787-exec-8] INFO  com.maxtree.automotive.dashboard.DashboardUI - root
+2019-08-21 06:46:49.298 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Logger enabled: Entering main 你好
+
+
+2019-08-21 06:46:49.686 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Starting TB4Application on DESKTOP-O28860S with PID 2920 (C:\Users\forer\Downloads\TrackBe4\target\classes started by forer in C:\Users\forer\Downloads\TrackBe4)
+2019-08-21 06:46:49.686 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - No active profile set, falling back to default profiles: default
+2019-08-21 06:46:50.323 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-08-21 06:46:50.475 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 144ms. Found 1 repository interfaces.
+2019-08-21 06:46:50.543 [main] INFO  o.s.c.annotation.ConfigurationClassPostProcessor - Cannot enhance @Configuration bean definition 'com.vaadin.spring.VaadinConfiguration' since its singleton instance has been created too early. The typical cause is a non-static @Bean method with a BeanDefinitionRegistryPostProcessor return type: Consider declaring such methods as 'static'.
+2019-08-21 06:46:50.819 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$697dc0f9] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-08-21 06:46:51.063 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8787 (http)
+2019-08-21 06:46:51.079 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8787"]
+2019-08-21 06:46:51.083 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2019-08-21 06:46:51.087 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.21]
+2019-08-21 06:46:51.162 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2019-08-21 06:46:51.162 [main] INFO  org.springframework.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1444 ms
+2019-08-21 06:46:51.171 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Registering Vaadin servlet
+2019-08-21 06:46:51.171 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Servlet will be mapped to URLs [/vaadinServlet/*, /VAADIN/*]
+2019-08-21 06:46:51.179 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Setting servlet init parameters
+2019-08-21 06:46:51.179 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Set servlet init parameter [productionMode] = [false]
+2019-08-21 06:46:51.179 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Set servlet init parameter [resourceCacheTime] = [3600]
+2019-08-21 06:46:51.179 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Set servlet init parameter [heartbeatInterval] = [300]
+2019-08-21 06:46:51.179 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Set servlet init parameter [closeIdleSessions] = [false]
+2019-08-21 06:46:51.527 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2019-08-21 06:46:51.619 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2019-08-21 06:46:51.703 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2019-08-21 06:46:51.767 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final}
+2019-08-21 06:46:51.767 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found
+2019-08-21 06:46:51.891 [main] INFO  org.hibernate.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final}
+2019-08-21 06:46:52.091 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL95Dialect
+2019-08-21 06:46:52.274 [main] INFO  o.h.engine.jdbc.env.internal.LobCreatorBuilderImpl - HHH000424: Disabling contextual LOB creation as createClob() method threw error : java.lang.reflect.InvocationTargetException
+2019-08-21 06:46:52.278 [main] INFO  org.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [java.util.UUID] overrides previous : org.hibernate.type.UUIDBinaryType@618db8ad
+2019-08-21 06:46:52.750 [main] WARN  o.h.t.schema.internal.ExceptionHandlerLoggedImpl - GenerationTarget encountered exception accepting command : Error executing DDL "
+    create table customer (
+       id  bigserial not null,
+        first_name varchar(255),
+        last_name varchar(255),
+        primary key (id)
+    )" via JDBC Statement
+org.hibernate.tool.schema.spi.CommandAcceptanceException: Error executing DDL "
+    create table customer (
+       id  bigserial not null,
+        first_name varchar(255),
+        last_name varchar(255),
+        primary key (id)
+    )" via JDBC Statement
+	at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:67)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlString(AbstractSchemaMigrator.java:559)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlStrings(AbstractSchemaMigrator.java:504)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.createTable(AbstractSchemaMigrator.java:277)
+	at org.hibernate.tool.schema.internal.GroupedSchemaMigratorImpl.performTablesMigration(GroupedSchemaMigratorImpl.java:71)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.performMigration(AbstractSchemaMigrator.java:207)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.doMigration(AbstractSchemaMigrator.java:114)
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.performDatabaseAction(SchemaManagementToolCoordinator.java:183)
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.process(SchemaManagementToolCoordinator.java:72)
+	at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:310)
+	at org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:467)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:939)
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:57)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:365)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:390)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:377)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:341)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1837)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1774)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:593)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:515)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:320)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:222)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:318)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1105)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:867)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:549)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:140)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:742)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:389)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:311)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1213)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1202)
+	at com.maxtree.automotive.dashboard.TB4Application.main(TB4Application.java:47)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.boot.maven.AbstractRunMojo$LaunchRunner.run(AbstractRunMojo.java:542)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: org.postgresql.util.PSQLException: 错误: 关系 "customer" 已经存在
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2468)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2211)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:309)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:446)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:370)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:311)
+	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:297)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:274)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:269)
+	at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:95)
+	at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java)
+	at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:54)
+	... 40 common frames omitted
+2019-08-21 06:46:52.754 [main] INFO  o.s.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2019-08-21 06:46:53.194 [main] INFO  o.s.scheduling.concurrent.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor'
+2019-08-21 06:46:53.234 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration$JpaWebMvcConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-08-21 06:46:53.282 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Checking the application context for Vaadin UI mappings
+2019-08-21 06:46:53.282 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Registering Vaadin servlet of type [com.vaadin.spring.server.SpringVaadinServlet]
+2019-08-21 06:46:53.286 [main] INFO  c.v.s.boot.internal.VaadinServletConfiguration - Forwarding @SpringUI URLs from {/=org.springframework.web.servlet.mvc.ServletForwardingController@290faa70}
+2019-08-21 06:46:53.426 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8787"]
+2019-08-21 06:46:53.454 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8787 (http) with context path ''
+2019-08-21 06:46:53.458 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Started TB4Application in 4.1 seconds (JVM running for 24.66)
+2019-08-21 06:46:53.486 [main] INFO  o.h.hql.internal.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory
+2019-08-21 06:46:53.654 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customers found with findAll():
+2019-08-21 06:46:53.654 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - -------------------------------
+2019-08-21 06:46:53.658 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=11, firstName='Jack', lastName='Bauer']
+2019-08-21 06:46:53.658 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=12, firstName='Chloe', lastName='O'Brian']
+2019-08-21 06:46:53.658 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=13, firstName='Kim2222222', lastName='Bauer222222222']
+2019-08-21 06:46:53.658 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=14, firstName='David', lastName='Palmer']
+2019-08-21 06:46:53.658 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=15, firstName='Michelle', lastName='Dessler']
+2019-08-21 06:46:53.658 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - 
+2019-08-21 06:46:53.666 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer found with findByLastName('Bauer'):
+2019-08-21 06:46:53.666 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - --------------------------------------------
+2019-08-21 06:46:53.694 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Customer[id=11, firstName='Jack', lastName='Bauer']
+2019-08-21 06:46:53.694 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - 
+2019-08-21 06:46:53.694 [main] INFO  com.maxtree.automotive.dashboard.TB4Application - Exiting main
+2019-08-21 06:46:55.358 [http-nio-8787-exec-1] WARN  com.vaadin.server.DefaultDeploymentConfiguration - 
+=================================================================
+Vaadin is running in DEBUG MODE.
+Add productionMode=true to web.xml to disable debug features.
+To show debug window, add ?debug to your application URL.
+=================================================================
+2019-08-21 06:46:55.394 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereHandler com.vaadin.server.communication.PushAtmosphereHandler mapped to context-path: /*
+2019-08-21 06:46:55.394 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.server.communication.PushAtmosphereHandler
+2019-08-21 06:46:55.410 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
+2019-08-21 06:46:55.414 [http-nio-8787-exec-1] INFO  org.atmosphere.util.ForkJoinPool - Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
+2019-08-21 06:46:55.418 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
+2019-08-21 06:46:55.422 [http-nio-8787-exec-1] INFO  org.atmosphere.container.JSR356AsyncSupport - JSR 356 Mapping path /{path}
+2019-08-21 06:46:55.434 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installing Default AtmosphereInterceptors
+2019-08-21 06:46:55.434 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
+2019-08-21 06:46:55.434 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
+2019-08-21 06:46:55.434 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
+2019-08-21 06:46:55.434 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
+2019-08-21 06:46:55.434 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
+2019-08-21 06:46:55.434 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
+2019-08-21 06:46:55.434 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
+2019-08-21 06:46:55.438 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
+2019-08-21 06:46:55.438 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
+2019-08-21 06:46:55.438 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
+2019-08-21 06:46:55.438 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
+2019-08-21 06:46:55.438 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
+2019-08-21 06:46:55.438 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Broadcaster Shared List Resources: false
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Broadcaster Polling Wait Time 100
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Shared ExecutorService supported: true
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Async I/O Thread Pool Size: 200
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
+2019-08-21 06:46:55.442 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
+2019-08-21 06:46:55.446 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Invoke AtmosphereInterceptor on WebSocket message true
+2019-08-21 06:46:55.446 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - HttpSession supported: true
+2019-08-21 06:46:55.446 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
+2019-08-21 06:46:55.446 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.21 using javax.servlet/3.0 and jsr356/WebSocket API
+2019-08-21 06:46:55.446 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere Framework 2.4.11.vaadin2 started.
+2019-08-21 06:46:55.446 [http-nio-8787-exec-1] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
+2019-08-21 06:47:09.674 [http-nio-8787-exec-6] INFO  com.vaadin.spring.server.SpringUIProvider - Checking the application context for Vaadin UIs
+2019-08-21 06:47:09.674 [http-nio-8787-exec-6] INFO  com.vaadin.spring.server.SpringUIProvider - Found Vaadin UI [com.maxtree.automotive.dashboard.DashboardUI]
+2019-08-21 06:47:09.730 [http-nio-8787-exec-7] WARN  com.vaadin.server.DefaultDeploymentConfiguration - 
+=================================================================
+Vaadin is running in DEBUG MODE.
+Add productionMode=true to web.xml to disable debug features.
+To show debug window, add ?debug to your application URL.
+=================================================================
+2019-08-21 06:47:09.730 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereHandler com.vaadin.server.communication.PushAtmosphereHandler mapped to context-path: /*
+2019-08-21 06:47:09.730 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.server.communication.PushAtmosphereHandler
+2019-08-21 06:47:09.734 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
+2019-08-21 06:47:09.738 [http-nio-8787-exec-7] INFO  org.atmosphere.util.ForkJoinPool - Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
+2019-08-21 06:47:09.738 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
+2019-08-21 06:47:09.754 [http-nio-8787-exec-7] WARN  org.atmosphere.util.IOUtils - More than one Servlet Mapping defined. WebSocket may not work org.apache.catalina.core.ApplicationServletRegistration@76f23c25
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.container.JSR356AsyncSupport - JSR 356 Mapping path /vaadinServlet
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installing Default AtmosphereInterceptors
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:47:09.758 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Broadcaster Shared List Resources: false
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Broadcaster Polling Wait Time 100
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Shared ExecutorService supported: true
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Async I/O Thread Pool Size: 200
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Invoke AtmosphereInterceptor on WebSocket message true
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - HttpSession supported: true
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.21 using javax.servlet/3.0 and jsr356/WebSocket API
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Atmosphere Framework 2.4.11.vaadin2 started.
+2019-08-21 06:47:09.762 [http-nio-8787-exec-7] INFO  org.atmosphere.cpr.AtmosphereFramework - Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
+2019-08-21 06:47:09.866 [http-nio-8787-exec-2] INFO  com.vaadin.spring.navigator.SpringViewProvider - Looking up SpringViews
+2019-08-21 06:47:09.870 [http-nio-8787-exec-2] WARN  com.vaadin.spring.navigator.SpringViewProvider - No SpringViews found
+2019-08-21 06:47:25.911 [http-nio-8787-exec-2] INFO  com.maxtree.automotive.dashboard.DashboardUI - 4a
+2019-08-21 06:48:36.146 [http-nio-8787-exec-3] INFO  com.vaadin.spring.server.SpringUIProvider - Checking the application context for Vaadin UIs
+2019-08-21 06:48:36.146 [http-nio-8787-exec-3] INFO  com.vaadin.spring.server.SpringUIProvider - Found Vaadin UI [com.maxtree.automotive.dashboard.DashboardUI]
+2019-08-21 06:48:36.394 [http-nio-8787-exec-5] INFO  com.vaadin.spring.navigator.SpringViewProvider - Looking up SpringViews
+2019-08-21 06:48:36.394 [http-nio-8787-exec-5] WARN  com.vaadin.spring.navigator.SpringViewProvider - No SpringViews found
+2019-08-21 06:49:10.793 [http-nio-8787-exec-1] INFO  com.maxtree.automotive.dashboard.DashboardUI - 4a
+2019-08-21 06:49:10.801 [http-nio-8787-exec-10] INFO  com.vaadin.spring.server.SpringUIProvider - Checking the application context for Vaadin UIs
+2019-08-21 06:49:10.805 [http-nio-8787-exec-10] INFO  com.vaadin.spring.server.SpringUIProvider - Found Vaadin UI [com.maxtree.automotive.dashboard.DashboardUI]
+2019-08-21 06:49:11.013 [http-nio-8787-exec-4] INFO  com.vaadin.spring.navigator.SpringViewProvider - Looking up SpringViews
+2019-08-21 06:49:11.013 [http-nio-8787-exec-4] WARN  com.vaadin.spring.navigator.SpringViewProvider - No SpringViews found
+2019-08-21 06:49:20.893 [http-nio-8787-exec-9] INFO  com.maxtree.automotive.dashboard.DashboardUI - root
+2019-08-21 06:49:58.817 [http-nio-8787-exec-4] INFO  com.vaadin.spring.server.SpringUIProvider - Checking the application context for Vaadin UIs
+2019-08-21 06:49:58.817 [http-nio-8787-exec-4] INFO  com.vaadin.spring.server.SpringUIProvider - Found Vaadin UI [com.maxtree.automotive.dashboard.DashboardUI]
+2019-08-21 06:49:58.869 [http-nio-8787-exec-3] INFO  com.vaadin.spring.navigator.SpringViewProvider - Looking up SpringViews
+2019-08-21 06:49:58.869 [http-nio-8787-exec-3] WARN  com.vaadin.spring.navigator.SpringViewProvider - No SpringViews found
+2019-08-21 06:50:07.886 [http-nio-8787-exec-6] INFO  com.maxtree.automotive.dashboard.DashboardUI - 4a
+2019-08-21 06:51:00.106 [http-nio-8787-exec-2] INFO  com.vaadin.spring.navigator.SpringViewProvider - Looking up SpringViews
+2019-08-21 06:51:00.108 [http-nio-8787-exec-2] WARN  com.vaadin.spring.navigator.SpringViewProvider - No SpringViews found
+2019-08-21 07:07:23.490 [http-nio-8787-exec-7] INFO  com.vaadin.spring.navigator.SpringViewProvider - Looking up SpringViews
+2019-08-21 07:07:23.490 [http-nio-8787-exec-7] WARN  com.vaadin.spring.navigator.SpringViewProvider - No SpringViews found
+2019-08-21 07:11:08.208 [http-nio-8787-exec-7] INFO  com.vaadin.spring.navigator.SpringViewProvider - Looking up SpringViews
+2019-08-21 07:11:08.224 [http-nio-8787-exec-7] WARN  com.vaadin.spring.navigator.SpringViewProvider - No SpringViews found

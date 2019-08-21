@@ -260,7 +260,7 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 		
 		w.p.setBatch(trans.getBatch()+"");
 		w.p.setDictionaryCode(dd.getCode());
-		w.p.setSiteCode(trans.getSiteCode());
+		w.p.setSiteUniqueId(trans.getSiteUniqueId());
 		w.p.setUserUniqueId(w.loggedInUser.getUserUniqueId());
 		w.p.setUuid(trans.getUuid());
 		w.p.setVin(trans.getVin());
@@ -283,7 +283,7 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 		w.p.setDocumentUniqueId(doc.getDocumentUniqueId());
 		w.p.setBatch(trans.getBatch()+"");
 		w.p.setDictionaryCode(doc.getDictionarycode());
-		w.p.setSiteCode(trans.getSiteCode());
+		w.p.setSiteUniqueId(trans.getSiteUniqueId());
 		w.p.setUserUniqueId(w.loggedInUser.getUserUniqueId());
 		w.p.setUuid(trans.getUuid());
 		w.p.setVin(trans.getVin());

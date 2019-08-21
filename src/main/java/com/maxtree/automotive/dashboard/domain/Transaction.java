@@ -83,12 +83,12 @@ public class Transaction {
 		this.status = status;
 	}
 
-	public String getSiteCode() {
-		return siteCode;
+	public Integer getSiteUniqueId() {
+		return siteUniqueId;
 	}
 
-	public void setSiteCode(String siteCode) {
-		this.siteCode = siteCode;
+	public void setSiteUniqueId(Integer siteUniqueId) {
+		this.siteUniqueId = siteUniqueId;
 	}
 
 	public String getBusinessCode() {
@@ -195,7 +195,7 @@ public class Transaction {
 		 dateModified,
 		 dateFinished,
 		 status,
-		 siteCode,
+		 siteUniqueId,
 		 businessCode,
 		 communityUniqueId,
 		 companyUniqueId,
@@ -218,7 +218,7 @@ public class Transaction {
 	private Date dateModified; 				// 最后修改日期
 	private Date dateFinished; 				// 完成日期
 	private String status; 					// 业务状态,比如，待上架，待质检
-	private String siteCode; 				// 站点CODE
+	private Integer siteUniqueId; 			// 站点Id
 	private String businessCode;   			// 业务CODE
 	private Integer communityUniqueId = 0; 	// 办理社区ID
 	private Integer companyUniqueId = 0;    // 办理机构ID

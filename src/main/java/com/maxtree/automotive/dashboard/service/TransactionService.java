@@ -149,7 +149,7 @@ public class TransactionService {
 	public int insert(Transaction transaction) {
 		int index = getTableIndex(transaction.getVin());
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-		String INSERT_TRANS_SQL = "INSERT INTO TRANSACTION_"+index+"(BARCODE,PLATETYPE,PLATENUMBER,VIN,DATECREATED,STATUS,SITECODE,BUSINESSCODE,COMMUNITYUNIQUEID,COMPANYUNIQUEID,LOCATIONCODE,DATEMODIFIED,BATCH,UUID,CODE,CREATOR,INDEXNUMBER) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String INSERT_TRANS_SQL = "INSERT INTO TRANSACTION_"+index+"(BARCODE,PLATETYPE,PLATENUMBER,VIN,DATECREATED,STATUS,SITEUNIQUEID,BUSINESSCODE,COMMUNITYUNIQUEID,COMPANYUNIQUEID,LOCATIONCODE,DATEMODIFIED,BATCH,UUID,CODE,CREATOR,INDEXNUMBER) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
 			@Override
@@ -163,7 +163,7 @@ public class TransactionService {
 				java.sql.Timestamp date = new java.sql.Timestamp(millis);
 				ps.setTimestamp(5, date);
 				ps.setString(6, transaction.getStatus());
-				ps.setString(7, transaction.getSiteCode());
+				ps.setInt(7, transaction.getSiteUniqueId());
 				ps.setString(8, transaction.getBusinessCode());
 				ps.setInt(9, transaction.getCommunityUniqueId());
 				ps.setInt(10, transaction.getCompanyUniqueId());

@@ -8,17 +8,18 @@ package com.maxtree.automotive.dashboard;
  */
 public enum PermissionCodes {
 	 
-	A1("A1")
-	,A2("A2")//前台用户
-	,A3("A3")//质检用户
-	,A4("A4")//审档用户
-	,A5("A5")//数据查询用户
-	,A6("A6")//上架下架用户
-	,A7("A7")//只对一级审档业务确认审档
-	,A8("A8")//影像化管理员
-	,A9("A9")//影像化录入
-	,A10("A10")//影像化质检
-	,A11("A11")//终审
+	A1("A1")//社区管理员
+	,A2("A2")//机构管理员
+	,A3("A3")//前台
+	,A4("A4")//质检
+	,A5("A5")//审档
+	,A6("A6")//确认审档
+	,A7("A7")//查询
+	,A8("A8")//上架下架
+	,A9("A9")//影像化管理员
+	,A10("A10")//影像化录入
+	,A11("A11")//影像化质检
+	,A12("A12")//终审
 	,B1("B1")//更改个人资料
 	,B2("B2")//更改密码
 	,C1("C1")//创建用户
@@ -81,12 +82,10 @@ public enum PermissionCodes {
 	,P6("P6")//管理密集架
 	,Q1("Q1")//查看服务器列表
 	,Q2("Q2");//编辑服务器配置信息
-	
+
 	/**
-	 * 
+	 *
 	 * @param code
-	 * @param name
-	 * @param description
 	 */
 	private PermissionCodes(String code) {
 		this.code = code;

@@ -53,33 +53,8 @@ public class EditCommunityWindow extends Window {
 		for(Location l : items1) {
 			p.add(l.getName());
 		}
-		provinceBox.setEmptySelectionAllowed(false);
-		provinceBox.setTextInputAllowed(false);
-		provinceBox.setItems(p);
-		provinceBox.setIcon(VaadinIcons.LOCATION_ARROW);
-		
-		
-		//地级市
-		List<Location> items2 = ui.locationService.findByCategory("地级市");
-		List<String> c = new ArrayList<>();
-		for(Location l : items2) {
-			c.add(l.getName());
-		}
-		cityBox.setTextInputAllowed(false);
-		cityBox.setItems(c);
-		cityBox.setIcon(VaadinIcons.LOCATION_ARROW);
-		
-		//地级市
-		List<Location> items3 = ui.locationService.findByCategory("市、县级市");
-		List<String> d = new ArrayList<>();
-		for(Location l : items3) {
-			d.add(l.getName());
-		}
-		districtBox.setTextInputAllowed(false);
-		districtBox.setItems(d);
-		districtBox.setIcon(VaadinIcons.LOCATION_ARROW);
-		
-		form.addComponents(nameField,descField,provinceBox,cityBox, districtBox);
+
+		form.addComponents(nameField, descField);
 		HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setSizeFull();
 		buttonPane.setSpacing(false);
@@ -115,16 +90,15 @@ public class EditCommunityWindow extends Window {
 		// of nameField, p.setName is automatically called.
 		binder.setBean(community);
 	}
-	
+
+	/**
+	 *
+	 * @param w
+	 * @param h
+	 */
 	private void setComponentSize(int w, int h) {
-		provinceBox.setWidth(w+"px");
-		cityBox.setWidth(w+"px");
-		districtBox.setWidth(w+"px");
 		nameField.setWidth(w+"px");
 		descField.setWidth(w+"px");
-		provinceBox.setHeight(h+"px");
-		cityBox.setHeight(h+"px");
-		districtBox.setHeight(h+"px");
 		nameField.setHeight(h+"px");
 		descField.setHeight(h+"px");
 	}
@@ -160,10 +134,6 @@ public class EditCommunityWindow extends Window {
 			Notifications.warning("社区名不能为空");
 			return false;
 		}
-		else if(provinceBox.getValue()==null) {
-			Notifications.warning("省份不能为空");
-			return false;
-		}
 		if (nameField.getErrorMessage() != null) {
 			nameField.setComponentError(nameField.getErrorMessage());
 			return false;
@@ -181,9 +151,6 @@ public class EditCommunityWindow extends Window {
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
         		w.community.setCommunityDescription(w.descField.getValue()==null?"":w.descField.getValue());
-        		w.community.setProvince(w.provinceBox.getValue());
-        		w.community.setCity(w.cityBox.getValue());
-        		w.community.setDistrict(w.districtBox.getValue());
     			int communityuniqueid = ui.communityService.insert(w.community);
     			w.close();
     			callback.onSuccessful(communityuniqueid);
@@ -205,16 +172,10 @@ public class EditCommunityWindow extends Window {
         w.community.setCommunityUniqueId(c.getCommunityUniqueId());
         w.nameField.setValue(c.getCommunityName());
         w.descField.setValue(c.getCommunityDescription()==null?"":c.getCommunityDescription());
-        w.provinceBox.setSelectedItem(c.getProvince());
-        w.cityBox.setSelectedItem(c.getCity());
-        w.districtBox.setSelectedItem(c.getDistrict());
         w.btnAdd.setCaption("保存");
         w.setCaption("编辑社区");
         w.btnAdd.addClickListener(e -> {
         	if (w.checkEmptyValues()) {
-        		w.community.setProvince(w.provinceBox.getValue());
-        		w.community.setCity(w.cityBox.getValue());
-        		w.community.setDistrict(w.districtBox.getValue());
     			ui.communityService.update(w.community);
     			w.close();
     			callback.onSuccessful();
@@ -226,9 +187,6 @@ public class EditCommunityWindow extends Window {
 	
 	private TextField nameField;
 	private TextField descField;
-	private ComboBox<String> provinceBox = new ComboBox<>("省份:");
-	private ComboBox<String> cityBox = new ComboBox<>("地级市:");
-	private ComboBox<String> districtBox = new ComboBox<>("市、县级市:");
 	private Button btnAdd;
 	private Binder<Community> binder = new Binder<>();
 	private Community community = new Community();

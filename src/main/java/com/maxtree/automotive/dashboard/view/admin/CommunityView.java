@@ -51,7 +51,7 @@ public class CommunityView extends ContentView {
 		main.setSpacing(false);
 		main.setMargin(false);
 		
-		GridColumn[] columns = {new GridColumn("社区名",81), new GridColumn("描述",81), new GridColumn("省份",81),new GridColumn("地级市",81),new GridColumn("市、县级市",81),new GridColumn("机构数",81),new GridColumn("", 20)};
+		GridColumn[] columns = {new GridColumn("社区名",240), new GridColumn("描述",240), new GridColumn("机构数",80),new GridColumn("", 20)};
 		List<CustomGridRow> data = new ArrayList<>();
 		List<Community> list = ui.communityService.findAll();
 		for (Community c : list) {
@@ -216,7 +216,7 @@ public class CommunityView extends ContentView {
 			});
 			menu.open(e.getClientX(), e.getClientY());
 		});
-		return new Object[] {community.getCommunityName(),community.getCommunityDescription(),community.getProvince(),community.getCity(),community.getDistrict(),community.getCompanies().size(),img,community.getCommunityUniqueId()};
+		return new Object[] {community.getCommunityName(),community.getCommunityDescription(), community.getCompanies().size(),img,community.getCommunityUniqueId()};
 	}
 	
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();

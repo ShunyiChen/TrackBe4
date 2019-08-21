@@ -116,7 +116,7 @@ public class CaptureServlet extends HttpServlet {
 				
 				Site site = null;
 				String sql = "SELECT * FROM SITE WHERE CODE=?";
-				List<Site> results = jdbcTemplate.query(sql, new Object[] {p.getSiteCode()}, new BeanPropertyRowMapper<Site>(Site.class));
+				List<Site> results = jdbcTemplate.query(sql, new Object[] {p.getSiteUniqueId()}, new BeanPropertyRowMapper<Site>(Site.class));
 				if (results.size() > 0) {
 					site = results.get(0);
 				}

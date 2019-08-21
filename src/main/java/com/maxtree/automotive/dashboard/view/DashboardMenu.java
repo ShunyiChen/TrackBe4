@@ -171,66 +171,64 @@ public final class DashboardMenu extends CustomComponent {
         for (final DashboardViewType view : DashboardViewType.values()) {
         	// 前台录入check
         	if (view == DashboardViewType.INPUT) {
-        		if(!user.isPermitted(PermissionCodes.A2)) {
+        		if(!user.isPermitted(PermissionCodes.A3)) {
             		continue;
             	}
         	} 
         	// 质检
         	else if (view == DashboardViewType.QUALITY) {
-        		if(!user.isPermitted(PermissionCodes.A3)) {
+        		if(!user.isPermitted(PermissionCodes.A4)) {
             		continue;
             	}
         	}
         	// 审档
         	else if (view == DashboardViewType.CHECK) {
-        		if(!user.isPermitted(PermissionCodes.A4)) {
+        		if(!user.isPermitted(PermissionCodes.A5)) {
             		continue;
             	}
         	}
         	// 确认审档
         	else if (view == DashboardViewType.DOUBLECHECK) {
-        		if(!user.isPermitted(PermissionCodes.A7)) {
+        		if(!user.isPermitted(PermissionCodes.A6)) {
             		continue;
             	}
         	}
         	// 查询数据
         	else if (view == DashboardViewType.SEARCH) {
-        		if(!user.isPermitted(PermissionCodes.A5)) {
+        		if(!user.isPermitted(PermissionCodes.A7)) {
             		continue;
             	}
         	}
         	// 上架下架
         	else if (view == DashboardViewType.SHELF) {
-        		if(!user.isPermitted(PermissionCodes.A6)) {
+        		if(!user.isPermitted(PermissionCodes.A8)) {
             		continue;
             	}
         	}
         	// 影像化管理员
         	else if (view == DashboardViewType.IMAGING_MANAGER) {
-        		if(!user.isPermitted(PermissionCodes.A8)) {
+        		if(!user.isPermitted(PermissionCodes.A9)) {
             		continue;
             	}
         	}
         	// 影像化录入
         	else if (view == DashboardViewType.IMAGING_INPUT) {
-        		if(!user.isPermitted(PermissionCodes.A9)) {
+        		if(!user.isPermitted(PermissionCodes.A10)) {
             		continue;
             	}
         	}
         	// 影像化质检
         	else if (view == DashboardViewType.IMAGING_QUALITY) {
-        		if(!user.isPermitted(PermissionCodes.A10)) {
+        		if(!user.isPermitted(PermissionCodes.A11)) {
             		continue;
             	}
         	}
         	//终审
         	else if (view == DashboardViewType.FINAL_CHECK) {
-        		if(!user.isPermitted(PermissionCodes.A11)) {
+        		if(!user.isPermitted(PermissionCodes.A12)) {
             		continue;
             	}
         	}
-        	
-        	
         	// 保存首个界面名称
         	Object firstView = VaadinSession.getCurrent().getAttribute(user.getUserUniqueId()+"");
         	if (firstView == null) {

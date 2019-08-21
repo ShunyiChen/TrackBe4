@@ -52,7 +52,7 @@ public class CompanyView extends ContentView {
 		main.setSpacing(false);
 		main.setMargin(false);
 		
-		GridColumn[] columns = {new GridColumn("机构名",81), new GridColumn("地点",81), new GridColumn("社区",81), new GridColumn("库房名称",81), new GridColumn("质检支持",81),new GridColumn("类别",81),new GridColumn("员工数",82),new GridColumn("", 20)}; 
+		GridColumn[] columns = {new GridColumn("机构名",121), new GridColumn("社区",121), new GridColumn("库房名称",81), new GridColumn("质检支持",81),new GridColumn("类别",81),new GridColumn("员工数",82),new GridColumn("", 20)};
 		List<CustomGridRow> data = new ArrayList<>();
 		List<Company> list = ui.companyService.findAll();
 		for (Company c : list) {
@@ -241,7 +241,7 @@ public class CompanyView extends ContentView {
 			menu.open(e.getClientX(), e.getClientY());
 		});
 		
-		return new Object[] {company.getCompanyName(),company.getAddress(),company.getCommunityName(),company.getStorehouseName(), company.getQcsupport()?"支持":"不支持", company.getCategory(), company.getEmployees().size(),img,company.getCompanyUniqueId()};
+		return new Object[] {company.getCompanyName(),company.getCommunityName(),company.getStorehouseName(), company.getQcsupport()?"支持":"不支持", company.getCategory(), company.getEmployees().size(),img,company.getCompanyUniqueId()};
 	}
 	
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();

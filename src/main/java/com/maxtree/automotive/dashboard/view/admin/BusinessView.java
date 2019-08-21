@@ -202,7 +202,7 @@ public class BusinessView extends ContentView {
 		if (materialStr.length() > 0) {
 			materialStr.delete(materialStr.length() - 1, materialStr.length());
 		}
-		materialStr.append("选录：\n");
+		materialStr.append("\n选录：\n");
 		for (DataDictionary item : business.getOptionalItems()) {
 			materialStr.append(item.getItemName());
 			materialStr.append(",");

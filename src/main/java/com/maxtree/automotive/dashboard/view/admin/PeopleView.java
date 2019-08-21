@@ -18,10 +18,7 @@ import com.vaadin.contextmenu.MenuItem;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 
 /**
  * 
@@ -104,6 +101,12 @@ public class PeopleView extends ContentView {
 		Image img = new Image(null, new ThemeResource("img/adminmenu/menu.png"));
 		img.addStyleName("PeopleView_menuImage");
 		img.addClickListener(e->{
+			if(user.getUserName().equalsIgnoreCase("root")) {
+				Notification notification = new Notification("提示：", "无权更改root用户", Notification.Type.WARNING_MESSAGE);
+				notification.setDelayMsec(2000);
+				notification.show(Page.getCurrent());
+				return;
+			}
 			ContextMenu menu = new ContextMenu(img, true);
 			menu.addItem("分配角色", new Command() {
 				/**

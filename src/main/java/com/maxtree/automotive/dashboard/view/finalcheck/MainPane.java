@@ -87,7 +87,7 @@ public class MainPane extends VerticalLayout implements ImageViewIF {
 		rows.removeAllComponents();
 		allDocs = ui.documentService.findAllDocument1(trans.getVin(), trans.getUuid());
 		infoGrid.setValues(trans);
-		site = ui.siteService.findByCode(trans.getSiteCode());
+		site = ui.siteService.findById(trans.getSiteUniqueId());
 		for (Document doc : allDocs) {
 			ByteArrayInputStream is = new ByteArrayInputStream(doc.getThumbnail());
 			Thumbnail thumbnail = new Thumbnail(doc.getAlias(), is);

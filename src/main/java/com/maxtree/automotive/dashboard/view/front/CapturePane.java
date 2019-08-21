@@ -138,7 +138,7 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 	private void generateNewHTML() throws IOException {
 		// 读取原来的html模板
 		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		User user = ui.userService.getUserByUserName(username);
+		loggedinUser = ui.userService.getUserByUserName(username);
 		String everything = "";
 		File template;
 		if(settings.getValue().equals("无锡华通H6-1")) {
@@ -154,7 +154,7 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 		String line = br.readLine();
 		while (line != null) {
 			if (line.contains("var userUniqueId = \"\";")) {
-				line = line.replace("var userUniqueId = \"\";", "var userUniqueId = \""+user.getUserUniqueId()+"\";");
+				line = line.replace("var userUniqueId = \"\";", "var userUniqueId = \""+loggedinUser.getUserUniqueId()+"\";");
 			}
 			// System.out.println(line);
 			sb.append(line);
@@ -166,7 +166,7 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 		in.close();
 		
 		// 动态生成新的html
-		OutputStreamWriter oStreamWriter = new OutputStreamWriter(new FileOutputStream(new File("devices/hello/" + user.getUserUniqueId() + ".html")), "utf-8");
+		OutputStreamWriter oStreamWriter = new OutputStreamWriter(new FileOutputStream(new File("devices/hello/" + loggedinUser.getUserUniqueId() + ".html")), "utf-8");
 		oStreamWriter.append(everything);
 		oStreamWriter.close();
 	}

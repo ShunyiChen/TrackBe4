@@ -148,12 +148,12 @@ public final class DashboardUI extends UI {
 		} else {
 			String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
 			User user = userService.getUserByUserName(username);
-			if(user.isPermitted(PermissionCodes.A1)) {
+			if(user.isPermitted(PermissionCodes.A1)
+			   || user.isPermitted(PermissionCodes.A2)) {
 				setContent(new AdminMainView());
 				removeStyleName("loginview");
 				
-			} else if (user.isPermitted(PermissionCodes.A2)
-					|| user.isPermitted(PermissionCodes.A3)
+			} else if (user.isPermitted(PermissionCodes.A3)
 					|| user.isPermitted(PermissionCodes.A4)
 					|| user.isPermitted(PermissionCodes.A5)
 					|| user.isPermitted(PermissionCodes.A6)
@@ -161,8 +161,8 @@ public final class DashboardUI extends UI {
 					|| user.isPermitted(PermissionCodes.A8)
 					|| user.isPermitted(PermissionCodes.A9)
 					|| user.isPermitted(PermissionCodes.A10)
-					|| user.isPermitted(PermissionCodes.A11)) {
-				
+					|| user.isPermitted(PermissionCodes.A11)
+					|| user.isPermitted(PermissionCodes.A12)) {
 				MainView mainView = new MainView();
 				setContent(mainView);
 				removeStyleName("loginview");

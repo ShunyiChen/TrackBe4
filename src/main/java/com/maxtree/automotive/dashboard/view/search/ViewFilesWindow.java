@@ -92,7 +92,7 @@ public class ViewFilesWindow extends Window implements ImageViewIF{
 				allDocs.addAll(list1);
 //				allDocs.addAll(list2);
 				if(list1.size() > 0) {
-					Site site = ui.siteService.findByCode(trans.getSiteCode());
+					Site site = ui.siteService.findById(trans.getSiteUniqueId());
 					imgStage.display(site, list1.get(index));
 					ViewFilesWindow.this.setCaption("查看原文-"+list1.get(index).getAlias());
 				}
@@ -102,7 +102,7 @@ public class ViewFilesWindow extends Window implements ImageViewIF{
 					Thumbnail thumbnail = new Thumbnail(bis);
 					thumbnail.addLayoutClickListener(e->{
 						index = allDocs.indexOf(d);
-						Site site = ui.siteService.findByCode(trans.getSiteCode());
+						Site site = ui.siteService.findById(trans.getSiteUniqueId());
 						imgStage.display(site, d);
 						ViewFilesWindow.this.setCaption("查看原文-"+d.getAlias());
 					});
@@ -139,7 +139,7 @@ public class ViewFilesWindow extends Window implements ImageViewIF{
 		if(index < 0) {
 			index = allDocs.size() - 1;
 		}
-		Site site = ui.siteService.findByCode(trans.getSiteCode());
+		Site site = ui.siteService.findById(trans.getSiteUniqueId());
 		imgStage.display(site, allDocs.get(index));
 		setCaption("查看原文-"+allDocs.get(index).getAlias());
 	}
@@ -150,7 +150,7 @@ public class ViewFilesWindow extends Window implements ImageViewIF{
 		if(index > allDocs.size()-1) {
 			index = 0;
 		}
-		Site site = ui.siteService.findByCode(trans.getSiteCode());
+		Site site = ui.siteService.findById(trans.getSiteUniqueId());
 		imgStage.display(site, allDocs.get(index));
 		setCaption("查看原文-"+allDocs.get(index).getAlias());
 	}

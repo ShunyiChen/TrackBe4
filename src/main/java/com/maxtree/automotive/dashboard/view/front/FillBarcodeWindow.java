@@ -223,7 +223,7 @@ public class FillBarcodeWindow extends Window {
 			copy.setTransactionUniqueId(trans.getTransactionUniqueId());
 			copy.setBatch(trans.getBatch());
 			copy.setCode(dd.getCode());
-			copy.setSiteCode(trans.getSiteCode());
+			copy.setSiteUniqueId(trans.getSiteUniqueId());
 			copy.setUuid(trans.getUuid());
 			copy.setVin(trans.getVin());
 			
@@ -243,7 +243,7 @@ public class FillBarcodeWindow extends Window {
 			if(removable.getDocumentUniqueId() > 0) {
 				ui.documentService.deleteById(removable.getDocumentUniqueId(), trans.getVin());
 				
-				Site site = ui.siteService.findByCode(trans.getSiteCode());
+				Site site = ui.siteService.findById(trans.getSiteUniqueId());
 				
 				try {
 					fileSystem.deleteFile(site, removable.getFileFullPath());

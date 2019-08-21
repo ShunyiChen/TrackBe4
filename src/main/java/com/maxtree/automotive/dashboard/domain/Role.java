@@ -26,14 +26,6 @@ public class Role {
 		this.roleName = roleName;
 	}
 
-	public String getRoleType() {
-		return roleType;
-	}
-
-	public void setRoleType(String roleType) {
-		this.roleType = roleType;
-	}
-
 	public List<Permission> getPermissions() {
 		return permissions;
 	}
@@ -44,14 +36,10 @@ public class Role {
 
 	@Override
 	public String toString() {
-		// return String.format(
-		// "Role[roleUniqueId=%d, roleName='%s']",
-		// roleUniqueId, roleName);
 		return roleName;
 	}
 
 	private Integer roleUniqueId = 0; // Role unique Id
 	private String roleName; // Role name
-	private String roleType; // Role type
 	private List<Permission> permissions;
 }

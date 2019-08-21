@@ -62,24 +62,6 @@ public class SiteService {
 
 	/**
 	 * 
-	 * @param siteCode
-	 * @return
-	 */
-	public Site findByCode(String siteCode) {
-		String sql = "SELECT * FROM SITE WHERE CODE=?";
-		List<Site> results = jdbcTemplate.query(sql, new Object[] {siteCode}, new BeanPropertyRowMapper<Site>(Site.class));
-		if (results.size() > 0) {
-			Site site = results.get(0);
-			SiteCapacity siteCapacity = getSiteCapacity(site.getSiteUniqueId());
-			site.setSiteCapacity(siteCapacity);
-			return site;
-		}
-		return new Site();
-	}
-	
-	
-	/**
-	 * 
 	 * @param siteUniqueId
 	 * @return
 	 */
@@ -127,7 +109,7 @@ public class SiteService {
 	 * @return
 	 */
 	public Site insert(Site site) {
-		String INSERT_TRANS_SQL = "INSERT INTO SITE(SITENAME,SITETYPE,HOSTADDR,PORT,DEFAULTREMOTEDIRECTORY,USERNAME,PASSWORD,MODE,CHARSET,RUNNINGSTATUS,CODE) VALUES(?,?,?,?,?,?,?,?,?,?,?)";
+		String INSERT_TRANS_SQL = "INSERT INTO SITE(SITENAME,SITETYPE,HOSTADDR,PORT,DEFAULTREMOTEDIRECTORY,USERNAME,PASSWORD,MODE,CHARSET,RUNNINGSTATUS) VALUES(?,?,?,?,?,?,?,?,?,?)";
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
 
@@ -144,7 +126,6 @@ public class SiteService {
 				ps.setString(8, site.getMode());
 				ps.setString(9, site.getCharset());
 				ps.setInt(10, site.getRunningStatus());
-				ps.setString(11, site.getCode());//快捷编码
 				return ps;
 			}
 		}, keyHolder);
@@ -174,7 +155,7 @@ public class SiteService {
 	 * @return
 	 */
 	public Site update(Site site) {
-		String sql = "UPDATE SITE SET SITENAME=?,SITETYPE=?,HOSTADDR=?,PORT=?,DEFAULTREMOTEDIRECTORY=?,USERNAME=?,PASSWORD=?,MODE=?,CHARSET=?,RUNNINGSTATUS=?,CODE=? WHERE SITEUNIQUEID=?";
+		String sql = "UPDATE SITE SET SITENAME=?,SITETYPE=?,HOSTADDR=?,PORT=?,DEFAULTREMOTEDIRECTORY=?,USERNAME=?,PASSWORD=?,MODE=?,CHARSET=?,RUNNINGSTATUS=? WHERE SITEUNIQUEID=?";
 	 	int opt = jdbcTemplate.update(sql, new Object[] {
 	 			site.getSiteName(),
 	 			site.getSiteType(),
@@ -186,7 +167,6 @@ public class SiteService {
 	 			site.getMode(),
 	 			site.getCharset(),
 	 			site.getRunningStatus(),
-	 			site.getCode(),
 	 			site.getSiteUniqueId()
 	 			});
 	 
@@ -229,11 +209,11 @@ public class SiteService {
 		});
 		log.info("UserSites batch update has done.");
 	}
- 
+
 	/**
-	 * 
+	 *
 	 * @param siteUniqueId
-	 * @param users
+	 * @param communities
 	 */
 	public void updateSiteCommunities(int siteUniqueId, List<Community> communities) {
 		String sql = "DELETE FROM COMMUNITYSITES WHERE SITEUNIQUEID = ?";

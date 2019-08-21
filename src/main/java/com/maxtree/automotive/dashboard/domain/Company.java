@@ -66,6 +66,14 @@ public class Company {
 		this.category = category;
 	}
 
+	public Integer getParentUniqueId() {
+		return parentUniqueId;
+	}
+
+	public void setParentUniqueId(Integer parentUniqueId) {
+		this.parentUniqueId = parentUniqueId;
+	}
+
 	public List<User> getEmployees() {
 		return employees;
 	}
@@ -94,6 +102,7 @@ public class Company {
 	private String storehouseName; // 库房名称
 	private Boolean qcsupport = false; // 质检支持
 	private String category; // 车管所/二手车/4S店
+	private Integer parentUniqueId; //父机构ID
 
 	private List<User> employees;//非字段
 	private String communityName;//非字段

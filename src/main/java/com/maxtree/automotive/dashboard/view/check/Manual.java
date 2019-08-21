@@ -235,7 +235,7 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 		//左侧组件
 		leftTree.setSelectionMode(SelectionMode.SINGLE);
 		leftTree.setSizeFull();
-    	site = ui.siteService.findByCode(transaction.getSiteCode());
+    	site = ui.siteService.findById(transaction.getSiteUniqueId());
     	leftRoot.setAlias("当前业务材料");
         leftTreeData.addItem(null, leftRoot);
         List<Document> primaryDocs = ui.documentService.findAllDocument1(transaction.getVin(),transaction.getUuid());

@@ -1,7 +1,5 @@
 package com.maxtree.automotive.dashboard.servlet;
 
-import com.maxtree.automotive.dashboard.domain.Site;
-
 /**
  * 上传入参
  * 
@@ -77,13 +75,13 @@ public class UploadInDTO {
 	public void setDictionaryCode(String dictionaryCode) {
 		this.dictionaryCode = dictionaryCode;
 	}
-	
-	public String getSiteCode() {
-		return siteCode;
+
+	public int getSiteUniqueId() {
+		return siteUniqueId;
 	}
 
-	public void setSiteCode(String siteCode) {
-		this.siteCode = siteCode;
+	public void setSiteUniqueId(int siteUniqueId) {
+		this.siteUniqueId = siteUniqueId;
 	}
 
 	public Integer getDocumentUniqueId() {
@@ -96,8 +94,8 @@ public class UploadInDTO {
 
 	@Override
 	public String toString() {
-		return String.format("UploadParameters[userUniqueId=%d,vin='%s',batch='%s',siteID=%d, uuid='%s',dictionaryCode='%s',siteCode='%s']",
-				userUniqueId,vin,batch,siteID,uuid,dictionaryCode,siteCode);
+		return String.format("UploadParameters[userUniqueId=%d,vin='%s',batch='%s',siteID=%d, uuid='%s',dictionaryCode='%s',siteUniqueId='%s']",
+				userUniqueId,vin,batch,siteID,uuid,dictionaryCode,siteUniqueId);
 	}
 
 	private int userUniqueId;
@@ -106,6 +104,6 @@ public class UploadInDTO {
 	private int siteID;
 	private String uuid;
 	private String dictionaryCode;
-	private String siteCode;
+	private int siteUniqueId;
 	private Integer documentUniqueId = null;
 }
