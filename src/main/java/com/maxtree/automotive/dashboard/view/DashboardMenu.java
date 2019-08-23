@@ -395,8 +395,6 @@ public final class DashboardMenu extends CustomComponent {
     		finalCheckBadge.setVisible(count > 0);
     	}
     }
-    
-    
 
     @Subscribe
     public void updateUserName(final DashboardEvent.ProfileUpdatedEvent event) {

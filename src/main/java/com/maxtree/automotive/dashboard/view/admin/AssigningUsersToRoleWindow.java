@@ -64,7 +64,6 @@ public class AssigningUsersToRoleWindow extends Window {
 		title.addComponents(img, Box.createHorizontalBox(5), roleName);
 		title.setComponentAlignment(img, Alignment.MIDDLE_LEFT);
 		title.setComponentAlignment(roleName, Alignment.MIDDLE_LEFT);
-		
 		HorizontalLayout hlayout = new HorizontalLayout();
 		hlayout.setSizeFull();
 		hlayout.setSpacing(false);
@@ -73,11 +72,7 @@ public class AssigningUsersToRoleWindow extends Window {
 		List<User> allUsers = null;
 		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
 		User operator = ui.userService.getUserByUserName(username);
-		if (operator.getUserName().equals("system")) {
-			allUsers = ui.userService.findAll(true);
-		} else {
-			allUsers = ui.userService.findAll(operator);
-		}
+		allUsers = ui.userService.findAll(operator);
 		
 		select = new TwinColSelect<>(null, allUsers);
 		select.setWidth("100%");

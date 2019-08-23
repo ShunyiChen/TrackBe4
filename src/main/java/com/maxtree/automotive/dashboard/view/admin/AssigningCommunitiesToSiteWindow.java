@@ -9,9 +9,12 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Site;
+import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -61,8 +64,10 @@ public class AssigningCommunitiesToSiteWindow extends Window {
 		hlayout.setSizeFull();
 		hlayout.setSpacing(false);
 		hlayout.setMargin(false);
-		
-		List<Community> allCommunities = ui.communityService.findAll();
+
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		User loggedInUser = ui.userService.getUserByUserName(username);
+		List<Community> allCommunities = ui.communityService.findAll(loggedInUser);
 		
 		select = new TwinColSelect<>(null, allCommunities);
 		select.setWidth("100%");

@@ -142,17 +142,18 @@ public class EditBroadCastWindow extends Window {
 	}
 	
 	private void initNames() {
-		List<Community> lstCommunities = ui.communityService.findAll();
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		User loggedInUser = ui.userService.getUserByUserName(username);
+		List<Community> lstCommunities = ui.communityService.findAll(loggedInUser);
 		for (Community community : lstCommunities) {
 			list.add(new Name(community.getCommunityUniqueId(), Name.COMMUNITY, community.getCommunityName(), "../VAADIN/themes/dashboard/img/broadcast/community.png"));
 		}
 		
-		List<Company> lstCompanies = ui.companyService.findAll();
+		List<Company> lstCompanies = ui.companyService.findAll(loggedInUser);
 		for (Company company : lstCompanies) {
 			list.add(new Name(company.getCompanyUniqueId(), Name.COMPANY, company.getCompanyName(), "../VAADIN/themes/dashboard/img/broadcast/company.png"));
 		}
-		
-		List<User> lstUsers = ui.userService.findAll(true);
+		List<User> lstUsers = ui.userService.findAll(loggedInUser);
 		for (User user : lstUsers) {
 			list.add(new Name(user.getUserUniqueId(), Name.USER, user.getUserName(), "../VAADIN/themes/dashboard/img/broadcast/individual.png"));
 		}

@@ -71,8 +71,9 @@ public class EditUserWindow extends Window {
 		firstNameField.setIcon(VaadinIcons.TEXT_LABEL);
 		lastNameField = new TextField("姓:");
 		lastNameField.setIcon(VaadinIcons.FACEBOOK);
-		
-		List<Company> companies = ui.companyService.findAll();
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		User loggedInUser = ui.userService.getUserByUserName(username);
+		List<Company> companies = ui.companyService.findAll(loggedInUser);
 		companySelector.setCaption("所在机构:");
 		companySelector.setEmptySelectionAllowed(true);
 		companySelector.setTextInputAllowed(false);

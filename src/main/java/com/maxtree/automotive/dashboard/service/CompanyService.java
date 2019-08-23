@@ -3,8 +3,10 @@ package com.maxtree.automotive.dashboard.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.maxtree.automotive.dashboard.PermissionCodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,16 +56,26 @@ public class CompanyService {
 	 * 
 	 * @return
 	 */
-	public List<Company> findAll() {
-		String sql = "SELECT A.*,B.COMMUNITYNAME AS COMMUNITYNAME FROM COMPANIES AS A INNER JOIN COMMUNITIES AS B ON A.COMMUNITYUNIQUEID=B.COMMUNITYUNIQUEID ORDER BY A.COMPANYUNIQUEID";
-		List<Company> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<Company>(Company.class));
-		
+	public List<Company> findAll(User loggedInUser) {
+		List<Company> results = new ArrayList<>();
+		if(!loggedInUser.isRootUser()) {
+			if(loggedInUser.isPermitted(PermissionCodes.A1)) {
+				String sql = "SELECT A.*,B.COMMUNITYNAME AS COMMUNITYNAME FROM COMPANIES AS A INNER JOIN COMMUNITIES AS B ON A.COMMUNITYUNIQUEID=B.COMMUNITYUNIQUEID AND A.COMMUNITYUNIQUEID=? ORDER BY A.COMPANYUNIQUEID";
+				results = jdbcTemplate.query(sql, new Object[]{loggedInUser.getCommunityUniqueId()}, new BeanPropertyRowMapper<Company>(Company.class));
+			}
+			else if(loggedInUser.isPermitted(PermissionCodes.A2)) {
+				String sql = "SELECT A.*,B.COMMUNITYNAME AS COMMUNITYNAME FROM COMPANIES AS A INNER JOIN COMMUNITIES AS B ON A.COMMUNITYUNIQUEID=B.COMMUNITYUNIQUEID AND A.COMMUNITYUNIQUEID=? AND A.COMPANYUNIQUEID=? ORDER BY A.COMPANYUNIQUEID";
+				results = jdbcTemplate.query(sql, new Object[]{loggedInUser.getCommunityUniqueId(), loggedInUser.getCompanyUniqueId()}, new BeanPropertyRowMapper<Company>(Company.class));
+			}
+		} else {
+			String sql = "SELECT A.*,B.COMMUNITYNAME AS COMMUNITYNAME FROM COMPANIES AS A INNER JOIN COMMUNITIES AS B ON A.COMMUNITYUNIQUEID=B.COMMUNITYUNIQUEID ORDER BY A.COMPANYUNIQUEID";
+			results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<Company>(Company.class));
+		}
 		for (Company company : results) {
-			sql = "SELECT * FROM USERS WHERE COMPANYUNIQUEID=? ORDER BY COMPANYUNIQUEID";
+			String sql = "SELECT * FROM USERS WHERE COMPANYUNIQUEID=? ORDER BY COMPANYUNIQUEID";
 			List<User> users = jdbcTemplate.query(sql, new Object[] {company.getCompanyUniqueId()}, new BeanPropertyRowMapper<User>(User.class));
 			company.setEmployees(users);
 		}
-		
 		return results;
 	}
 	
@@ -93,10 +105,10 @@ public class CompanyService {
 		int companyuniqueid  = keyHolder.getKey().intValue(); 
 		return companyuniqueid;
 	}
-	
+
 	/**
-	 * 
-	 * @param Community
+	 *
+	 * @param company
 	 */
 	public void update(Company company) {
 		// 更新机构内的用户

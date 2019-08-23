@@ -139,6 +139,20 @@ public class User {
 		DataObject dataObj = CacheManager.getInstance().getPermissionCache().get(userUniqueId);
 		return dataObj.isPermitted(code.code) || "root".equals(userName);
 	}
+
+	public boolean isRootUser() {
+		return "root".equalsIgnoreCase(userName);
+	}
+
+	/**
+	 * Is the same person
+	 *
+	 * @param user
+	 * @return
+	 */
+	public boolean isSamePerson(User user) {
+		return userName.equals(user.getUserName());
+	}
 	
 	private Integer userUniqueId = 0;	// 用户ID
 	private String userName; 			// 用户名

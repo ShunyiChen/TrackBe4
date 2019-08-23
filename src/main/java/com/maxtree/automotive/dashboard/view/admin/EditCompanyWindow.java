@@ -3,6 +3,9 @@ package com.maxtree.automotive.dashboard.view.admin;
 import java.util.Arrays;
 import java.util.List;
 
+import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.service.AuthService;
+import com.vaadin.server.VaadinSession;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.Callback;
@@ -57,7 +60,9 @@ public class EditCompanyWindow extends Window {
 		form.setSpacing(false);
 		form.setMargin(false);
 		form.setSizeFull();
-		communities = ui.communityService.findAll();
+		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+		User loggedInUser = ui.userService.getUserByUserName(username);
+		communities = ui.communityService.findAll(loggedInUser);
 		communitySelector.setEmptySelectionAllowed(true);
 		communitySelector.setTextInputAllowed(false);
 		communitySelector.setIcon(VaadinIcons.GROUP);
@@ -190,7 +195,6 @@ public class EditCompanyWindow extends Window {
 	 * @return
 	 */
 	private boolean checkEmptyValues() {
-		
 		if (StringUtils.isEmpty(company.getCompanyName())) {
 			Notifications.warning("公司名不能为空");
 			return false;

@@ -73,11 +73,11 @@
             <version>2.0.0</version>
         </dependency>
     <!-- https://mvnrepository.com/artifact/org.vaadin.addons/autocomplete -->
-<dependency>
-    <groupId>org.vaadin.addons</groupId>
-    <artifactId>autocomplete</artifactId>
-    <version>0.2.4</version>
-</dependency>
+		<dependency>
+			<groupId>org.vaadin.addons</groupId>
+			<artifactId>autocomplete</artifactId>
+			<version>0.2.4</version>
+		</dependency>
 
         <!-- Addons -->
         <!-- https://mvnrepository.com/artifact/com.wcs.wcslib/wcslib-vaadin-widget-multifileupload -->
@@ -126,7 +126,6 @@
 	         <version>6.5.1</version>
 	         <systemPath>${project.basedir}/lib/jasperreports-6.5.1.jar</systemPath>
 	    </dependency>
-	    
 	    <!-- DB builder  -->
 	    <dependency>
 	         <groupId>com.maxtree</groupId>
@@ -135,9 +134,7 @@
 	         <version>0.0.1-SNAPSHOT</version>
 	         <systemPath>${project.basedir}/lib/tb4builder-0.0.1-SNAPSHOT.jar</systemPath>
 	    </dependency>
-	    
-	    
-	    
+
 	    
 	    <!-- barcode generator -->
 	    <!-- https://mvnrepository.com/artifact/net.sourceforge.barbecue/barbecue -->
@@ -211,7 +208,6 @@
 			<artifactId>commons-collections</artifactId>
 			<version>3.2.2</version>
 		</dependency>
-
 		<dependency>
 			<groupId>commons-digester</groupId>
 			<artifactId>commons-digester</artifactId>
@@ -342,7 +338,22 @@
                 </exclusion>
             </exclusions>
 		</dependency>
-		
+		<!-- Spring boot MVC
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+			<scope>test</scope>
+		</dependency>
+		-->
 		<!-- Apache ftpserver -->
 		<!-- https://mvnrepository.com/artifact/org.apache.ftpserver/ftpserver-core -->
 		<dependency>
@@ -385,21 +396,12 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
-        
-		<!-- postgresql 
-		<dependency>
-		    <groupId>postgresql</groupId>
-		    <artifactId>postgresql</artifactId>
-		    <version>9.1-901-1.jdbc4</version>
-		</dependency>
-		-->
 		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>42.2.6</version>
 		</dependency>
-
 		<!-- spring data jpa -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -413,6 +415,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
 		</dependency>
 	</dependencies>
 

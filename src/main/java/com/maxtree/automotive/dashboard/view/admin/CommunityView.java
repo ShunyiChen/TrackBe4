@@ -53,7 +53,7 @@ public class CommunityView extends ContentView {
 		
 		GridColumn[] columns = {new GridColumn("社区名",240), new GridColumn("描述",240), new GridColumn("机构数",80),new GridColumn("", 20)};
 		List<CustomGridRow> data = new ArrayList<>();
-		List<Community> list = ui.communityService.findAll();
+		List<Community> list = ui.communityService.findAll(loggedInUser);
 		for (Community c : list) {
 			Object[] rowData = generateOneRow(c);
 			data.add(new CustomGridRow(rowData));

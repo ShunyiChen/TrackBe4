@@ -49,10 +49,15 @@ public class PeopleView extends ContentView {
 		
 		GridColumn[] columns = {new GridColumn("用户名",130), new GridColumn("机构",120), new GridColumn("社区",120),new GridColumn("角色"),new GridColumn("", 20)}; 
 		List<CustomGridRow> data = new ArrayList<>();
-		List<User> users = ui.userService.findAll(false);
+		List<User> users = ui.userService.findAll(loggedInUser);
 		for(User user : users) {
 			Object[] rowData = generateOneRow(user);
-			data.add(new CustomGridRow(rowData));
+			CustomGridRow row = new CustomGridRow(rowData);
+			row.addLayoutClickListener(e -> {
+				if(e.isDoubleClick())
+					edit(user);
+			});
+			data.add(row);
 		}
 		grid = new CustomGrid("用户列表",columns, data);
 		
@@ -67,7 +72,12 @@ public class PeopleView extends ContentView {
 							int userUniqueId = (int) objects[0];
 							User user = ui.userService.findById(userUniqueId);
 							Object[] rowData = generateOneRow(user);
-							grid.insertRow(new CustomGridRow(rowData));
+							CustomGridRow row = new CustomGridRow(rowData);
+							row.addLayoutClickListener(e -> {
+								if(e.isDoubleClick())
+									edit(user);
+							});
+							grid.insertRow(row);
 						}
 					};
 					EditUserWindow.open(callback);
@@ -97,21 +107,31 @@ public class PeopleView extends ContentView {
 		if (roles.toString().endsWith(",")) {
 			roles.deleteCharAt(roles.length() -1);
 		}
-
 		Image img = new Image(null, new ThemeResource("img/adminmenu/menu.png"));
 		img.addStyleName("PeopleView_menuImage");
 		img.addClickListener(e->{
-			if(user.getUserName().equalsIgnoreCase("root")) {
-				Notification notification = new Notification("提示：", "无权更改root用户", Notification.Type.WARNING_MESSAGE);
-				notification.setDelayMsec(2000);
-				notification.show(Page.getCurrent());
-				return;
+			//对更改用户权限限制
+			if(!loggedInUser.isRootUser() && !user.isSamePerson(loggedInUser)) {
+				if(user.isPermitted(PermissionCodes.A1)) {
+					if(loggedInUser.isPermitted(PermissionCodes.A1) || loggedInUser.isPermitted(PermissionCodes.A2)) {
+						Notification notification = new Notification("提示：", "无权更改"+user.getUserName()+"用户", Notification.Type.WARNING_MESSAGE);
+						notification.setDelayMsec(2000);
+						notification.show(Page.getCurrent());
+						return;
+					}
+				}
+				if(user.isPermitted(PermissionCodes.A2)) {
+					if(loggedInUser.isPermitted(PermissionCodes.A2)) {
+						Notification notification = new Notification("提示：", "无权更改"+user.getUserName()+"用户", Notification.Type.WARNING_MESSAGE);
+						notification.setDelayMsec(2000);
+						notification.show(Page.getCurrent());
+						return;
+					}
+				}
 			}
 			ContextMenu menu = new ContextMenu(img, true);
 			menu.addItem("分配角色", new Command() {
-				/**
-				 * 
-				 */
+				/** */
 				private static final long serialVersionUID = 1L;
 
 				@Override
@@ -132,9 +152,7 @@ public class PeopleView extends ContentView {
 				}
 			});
 			menu.addItem("分配业务类型", new Command() {
-				/**
-				 * 
-				 */
+				/** */
 				private static final long serialVersionUID = 1L;
 
 				@Override
@@ -146,9 +164,7 @@ public class PeopleView extends ContentView {
 			});
 			menu.addSeparator();
 			menu.addItem("重置密码", new Command() {
-				/**
-				 * 
-				 */
+				/** */
 				private static final long serialVersionUID = 1L;
 
 				@Override
@@ -160,39 +176,21 @@ public class PeopleView extends ContentView {
 			});
 			menu.addSeparator();
 			menu.addItem("编辑", new Command() {
-				/**
-				 * 
-				 */
+				/**  */
 				private static final long serialVersionUID = 1L;
 
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
-					if (loggedInUser.isPermitted(PermissionCodes.C2)) {
-						Callback callback = new Callback() {
-
-							@Override
-							public void onSuccessful() {
-								User newUser = ui.userService.findById(user.getUserUniqueId());
-								Object[] rowData = generateOneRow(newUser);
-								grid.setValueAt(new CustomGridRow(rowData), newUser.getUserUniqueId());
-							}
-						};
-						EditUserWindow.edit(user, callback);
-					} else {
-						Notifications.warning("没有权限。");
-					}
+					edit(user);
 				}
 			});
 			menu.addItem("从列表删除", new Command() {
-				/**
-				 * 
-				 */
+				/** */
 				private static final long serialVersionUID = 1L;
 
 				@Override
 				public void menuSelected(MenuItem selectedItem) {
 					if (loggedInUser.isPermitted(PermissionCodes.C3)) {
-						
 						Callback event = new Callback() {
 							@Override
 							public void onSuccessful() {
@@ -200,16 +198,12 @@ public class PeopleView extends ContentView {
 								grid.deleteRow(user.getUserUniqueId());
 							}
 						};
-						
 						MessageBox.showMessage("提示", "请确定是否要删除用户"+user.getUserName()+"。", MessageBox.WARNING, event, "删除");
 					} else {
 						Notifications.warning("没有权限。");
 					}
-					
 				}
 			});
-			
-			
 			menu.open(e.getClientX(), e.getClientY());
 		});
 		
@@ -219,6 +213,33 @@ public class PeopleView extends ContentView {
 		ImageWithString photoWithName = new ImageWithString(photo, user.getUserName());
 		
 		return new Object[] {photoWithName, user.getCompanyName(), user.getCommunityName(), roles.toString(), img, user.getUserUniqueId()};
+	}
+
+	/**
+	 * Edit user
+	 *
+	 * @param editedUser
+	 */
+	private void edit(User editedUser) {
+		if (loggedInUser.isPermitted(PermissionCodes.C2)) {
+			Callback callback = new Callback() {
+
+				@Override
+				public void onSuccessful() {
+					User newUser = ui.userService.findById(editedUser.getUserUniqueId());
+					Object[] rowData = generateOneRow(newUser);
+					CustomGridRow row = new CustomGridRow(rowData);
+					row.addLayoutClickListener(e->{
+						if(e.isDoubleClick())
+							edit(newUser);
+					});
+					grid.setValueAt(row, newUser.getUserUniqueId());
+				}
+			};
+			EditUserWindow.edit(editedUser, callback);
+		} else {
+			Notifications.warning("没有权限。");
+		}
 	}
 	
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();

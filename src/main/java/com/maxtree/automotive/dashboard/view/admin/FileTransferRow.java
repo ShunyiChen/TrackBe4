@@ -52,6 +52,6 @@ public class FileTransferRow extends FlexTableRow {
 	}
 	
 	private RowItemWithTitle manageSite = new RowItemWithTitle("管理站点");
-	private RowItemWithTitle manageEmbeddedServer = new RowItemWithTitle("管理内嵌服务器");
+	private RowItemWithTitle manageEmbeddedServer = new RowItemWithTitle("管理FTP服务器");
 	private AdminMainView rootView;
 }

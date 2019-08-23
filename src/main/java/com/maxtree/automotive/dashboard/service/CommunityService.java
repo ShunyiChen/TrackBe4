@@ -59,14 +59,22 @@ public class CommunityService {
 		}
 		return new Community();
 	}
-	
+
 	/**
-	 * 
+	 * Find all communities
+	 *
+	 * @param loggedInUser
 	 * @return
 	 */
-	public List<Community> findAll() {
-		String sql = "SELECT * FROM COMMUNITIES ORDER BY COMMUNITYUNIQUEID";
-		List<Community> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<Community>(Community.class));
+	public List<Community> findAll(User loggedInUser) {
+		List<Community> results;
+		if(!loggedInUser.isRootUser()) {
+			String sql = "SELECT * FROM COMMUNITIES WHERE COMMUNITYUNIQUEID=? ORDER BY COMMUNITYUNIQUEID";
+		 	results = jdbcTemplate.query(sql, new Object[]{loggedInUser.getCommunityUniqueId()}, new BeanPropertyRowMapper<>(Community.class));
+		} else {
+			String sql = "SELECT * FROM COMMUNITIES ORDER BY COMMUNITYUNIQUEID";
+	 		results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Community.class));
+		}
 		for (Community c : results) {
 			populateAssignedCompanies(c);
 		}

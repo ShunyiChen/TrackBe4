@@ -89,11 +89,10 @@ public class UserService {
 		}
 		return new User();
 	}
-	
+
 	/**
-	 * Get user object by user uniqueID
-	 * 
- 	 * @param username
+	 *
+	 * @param userUniqueId
 	 * @return
 	 * @throws EmptyResultDataAccessException
 	 */
@@ -194,13 +193,26 @@ public class UserService {
 	 * 
 	 * @return
 	 */
-	public List<User> findAll(boolean systemIncluded) {
-		String sql = "SELECT A.*,B.COMMUNITYNAME AS COMMUNITYNAME FROM USERS AS A LEFT JOIN COMMUNITIES AS B ON A.COMMUNITYUNIQUEID=B.COMMUNITYUNIQUEID WHERE A.USERNAME <> 'system' ORDER BY A.USERUNIQUEID";
-		if (systemIncluded) {
-			sql = "SELECT A.*,B.COMMUNITYNAME AS COMMUNITYNAME FROM USERS AS A LEFT JOIN COMMUNITIES AS B ON A.COMMUNITYUNIQUEID=B.COMMUNITYUNIQUEID ORDER BY A.USERUNIQUEID";
+	public List<User> findAll(User loggedinUser) {
+//		String sql = "SELECT A.*,B.COMMUNITYNAME AS COMMUNITYNAME FROM USERS AS A LEFT JOIN COMMUNITIES AS B ON A.COMMUNITYUNIQUEID=B.COMMUNITYUNIQUEID WHERE A.USERNAME <> 'system' ORDER BY A.USERUNIQUEID";
+//		if (systemIncluded) {
+//		String sql = "SELECT A.*,B.COMMUNITYNAME AS COMMUNITYNAME FROM USERS AS A LEFT JOIN COMMUNITIES AS B ON A.COMMUNITYUNIQUEID=B.COMMUNITYUNIQUEID ORDER BY A.USERUNIQUEID";
+//		}
+		List<User> lstUsers = new ArrayList<>();
+		if(loggedinUser.getUserName().equalsIgnoreCase("root")) {
+			String sql = "SELECT * FROM USERS ORDER BY USERUNIQUEID";
+			lstUsers = jdbcTemplate.query(sql, new Object[] {}, new BeanPropertyRowMapper<User>(User.class));
+
+		} else {
+			if(loggedinUser.isPermitted(PermissionCodes.A1)) {
+				String sql = "SELECT * FROM USERS WHERE COMMUNITYUNIQUEID = ? AND UPPER(USERNAME) <> 'ROOT' ORDER BY USERUNIQUEID";
+				lstUsers = jdbcTemplate.query(sql, new Object[] {loggedinUser.getCommunityUniqueId()}, new BeanPropertyRowMapper<User>(User.class));
+			}
+			else if(loggedinUser.isPermitted(PermissionCodes.A2)) {
+				String sql = "SELECT * FROM USERS WHERE COMMUNITYUNIQUEID = ? AND COMPANYUNIQUEID = ? AND UPPER(USERNAME) <> 'ROOT' ORDER BY USERUNIQUEID";
+				lstUsers = jdbcTemplate.query(sql, new Object[] {loggedinUser.getCommunityUniqueId(), loggedinUser.getCompanyUniqueId()}, new BeanPropertyRowMapper<User>(User.class));
+			}
 		}
-		List<User> lstUsers = jdbcTemplate.query(sql, new Object[] {}, new BeanPropertyRowMapper<User>(User.class));
-		
 		if (lstUsers.size() > 0) {
 			for (User user : lstUsers) {
 				List<Role> roles = getRoles(user);
@@ -212,37 +224,36 @@ public class UserService {
 		return lstUsers;
 	}
 	
-	/**
-	 * 按权限获取用户列表
-	 * 
-	 * @param operator
-	 * @return
-	 */
-	public List<User> findAll(User operator) {
-		String sql = "";
-		List<User> lstUsers = null;
-		if (operator.isPermitted(PermissionCodes.O1)) {
-			sql = "SELECT A.* FROM USERS AS A LEFT JOIN USERPROFILES B ON A.USERUNIQUEID=B.USERUNIQUEID WHERE A.USERNAME <> ? AND A.COMMUNITYUNIQUEID=? OR B.CREATEDBY=? ORDER BY A.USERUNIQUEID";
-			lstUsers = jdbcTemplate.query(sql, new Object[] {"system",operator.getCommunityUniqueId(),operator.getUserName()}, new BeanPropertyRowMapper<User>(User.class));
-		} else if (operator.isPermitted(PermissionCodes.O2)) {
-			sql = "SELECT A.* FROM USERS AS A LEFT JOIN USERPROFILES B ON A.USERUNIQUEID=B.USERUNIQUEID WHERE A.USERNAME <> ? AND A.COMPANYUNIQUEID=? OR B.CREATEDBY=? ORDER BY A.USERUNIQUEID";
-			lstUsers = jdbcTemplate.query(sql, new Object[] {"system",operator.getCompanyUniqueId(),operator.getUserName()}, new BeanPropertyRowMapper<User>(User.class));
-		}
-		if (lstUsers == null) 
-			lstUsers = new ArrayList<User>();
-		
-		if (lstUsers.size() > 0) {
-			for (User user : lstUsers) {
-				List<Role> roles = getRoles(user);
-				user.setRoles(roles);
-				UserProfile profile = getUserProfile(user.getUserUniqueId());
-				user.setProfile(profile);
-			}
-		}
-		return lstUsers;
-	}
-	
-	
+//	/**
+//	 * 按权限获取用户列表
+//	 *
+//	 * @param operator
+//	 * @return
+//	 */
+//	public List<User> findAll(User operator) {
+//		String sql = "";
+//		List<User> lstUsers = null;
+//		if (operator.isPermitted(PermissionCodes.O1)) {
+//			sql = "SELECT A.* FROM USERS AS A LEFT JOIN USERPROFILES B ON A.USERUNIQUEID=B.USERUNIQUEID WHERE A.USERNAME <> ? AND A.COMMUNITYUNIQUEID=? OR B.CREATEDBY=? ORDER BY A.USERUNIQUEID";
+//			lstUsers = jdbcTemplate.query(sql, new Object[] {"system",operator.getCommunityUniqueId(),operator.getUserName()}, new BeanPropertyRowMapper<User>(User.class));
+//		} else if (operator.isPermitted(PermissionCodes.O2)) {
+//			sql = "SELECT A.* FROM USERS AS A LEFT JOIN USERPROFILES B ON A.USERUNIQUEID=B.USERUNIQUEID WHERE A.USERNAME <> ? AND A.COMPANYUNIQUEID=? OR B.CREATEDBY=? ORDER BY A.USERUNIQUEID";
+//			lstUsers = jdbcTemplate.query(sql, new Object[] {"system",operator.getCompanyUniqueId(),operator.getUserName()}, new BeanPropertyRowMapper<User>(User.class));
+//		}
+//		if (lstUsers == null)
+//			lstUsers = new ArrayList<User>();
+//
+//		if (lstUsers.size() > 0) {
+//			for (User user : lstUsers) {
+//				List<Role> roles = getRoles(user);
+//				user.setRoles(roles);
+//				UserProfile profile = getUserProfile(user.getUserUniqueId());
+//				user.setProfile(profile);
+//			}
+//		}
+//		return lstUsers;
+//	}
+
 	/**
 	 * 
 	 * @param u
@@ -361,10 +372,11 @@ public class UserService {
 				profile.getCreatedBy(), profile.getDateCreated(), profile.getDateLastModified(), profile.getLastLogon(),profile.getSex(),
 				profile.getEmail(),profile.getLocation(), profile.getPhone(), profile.getFirstName(), profile.getLastName(),profile.getUserProfileUniqueId());
 	}
-	
+
 	/**
-	 * 
-	 * @param u
+	 *
+	 * @param userUniqueId
+	 * @param plaintext
 	 */
 	public void updatePassword(int userUniqueId, String plaintext) {
 		String newHashed = PasswordSecurity.hashPassword(plaintext);
@@ -406,7 +418,8 @@ public class UserService {
 	 * @return
 	 */
 	public boolean exist(String newUserName, String oldUserName) {
-		String sql = "SELECT * FROM USERS WHERE USERNAME=? AND USERNAME NOT IN (?)";
+		newUserName = newUserName.toUpperCase();
+		String sql = "SELECT * FROM USERS WHERE UPPER(USERNAME)=? AND USERNAME NOT IN (?)";
 		List<User> lstUSERs = jdbcTemplate.query(sql, new Object[] {newUserName, oldUserName}, new BeanPropertyRowMapper<User>(User.class));
 		return lstUSERs.size() > 0 || newUserName.equalsIgnoreCase("root");
 	}

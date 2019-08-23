@@ -37,7 +37,6 @@ import com.vaadin.server.SessionInitListener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.Position;
-import com.vaadin.shared.communication.PushMode;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.server.SpringVaadinServlet;
 import com.vaadin.ui.Notification;
@@ -187,7 +186,6 @@ public final class DashboardUI extends UI {
 		if (StringUtils.isEmpty(event.getUserName()) || StringUtils.isEmpty(event.getPassword())) {
 			LOGGER.info(event.getUserName(),LoggingWrapper.LOGIN,"Incorrect username or password.");
 			smoothNotification("用户名或密码不能为空", "请重新输入用户名和密码。");
-			
 		} else {
 			User user = userService.getUserByUserName(event.getUserName());
 			if (user.getUserName() != null) {
@@ -210,7 +208,6 @@ public final class DashboardUI extends UI {
 				LOGGER.info(event.getUserName(),LoggingWrapper.LOGIN,"The username["+event.getUserName()+"] does not exist.");
 				smoothNotification("用户不存在", "用户名"+event.getUserName()+"不存在，请重新输入用户名和密码。");
 			}
-			
 		}
 
 		// user = authenticationService.authenticate(event.getUserName(),

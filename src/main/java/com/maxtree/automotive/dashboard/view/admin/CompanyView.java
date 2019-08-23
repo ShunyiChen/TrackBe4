@@ -54,7 +54,7 @@ public class CompanyView extends ContentView {
 		
 		GridColumn[] columns = {new GridColumn("机构名",121), new GridColumn("社区",121), new GridColumn("库房名称",81), new GridColumn("质检支持",81),new GridColumn("类别",81),new GridColumn("员工数",82),new GridColumn("", 20)};
 		List<CustomGridRow> data = new ArrayList<>();
-		List<Company> list = ui.companyService.findAll();
+		List<Company> list = ui.companyService.findAll(loggedInUser);
 		for (Company c : list) {
 			Object[] rowData = generateOneRow(c);
 			data.add(new CustomGridRow(rowData));
