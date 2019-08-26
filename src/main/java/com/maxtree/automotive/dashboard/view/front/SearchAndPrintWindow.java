@@ -1,43 +1,31 @@
 package com.maxtree.automotive.dashboard.view.front;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import com.maxtree.automotive.dashboard.service.AuthService;
-import org.springframework.util.StringUtils;
-
 import com.maxtree.automotive.dashboard.Callback;
-import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.LocationCode;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
 import com.maxtree.automotive.dashboard.domain.Business;
-import com.maxtree.automotive.dashboard.domain.Car;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
-import com.vaadin.event.ShortcutListener;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.event.ShortcutListener;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 public class SearchAndPrintWindow extends Window {
 
@@ -114,7 +102,7 @@ public class SearchAndPrintWindow extends Window {
       	grid.addColumn(Transaction::getVin).setCaption("车辆识别代号");
       	grid.addColumn(Transaction::getStatus).setCaption("状态");
       	grid.addColumn(Transaction::getBusinessName).setCaption("业务名称");
-      	grid.addColumn(Transaction::getCreator).setCaption("录入者");
+//      	grid.addColumn(Transaction::getCreator).setCaption("录入者");
       	grid.addColumn(Transaction::getDateCreated).setCaption("录入时间");
       	
       	btnChoose.addStyleName(ValoTheme.BUTTON_PRIMARY);
@@ -153,21 +141,21 @@ public class SearchAndPrintWindow extends Window {
       	    		PrintingFiletagsWindow.open("车辆和文件标签-打印预览",trans,options);
       	    	}
       	    	else {
-      	    		Business bus = ui.businessService.findByCode(trans.getBusinessCode());
-      	    		if(bus.getCheckLevel().equals("无")) {
-      	    			// 非审档业务
-      	    			List<String> options = Arrays.asList("车辆标签", "文件标签");
-      	    			PrintingFiletagsWindow.open("文件标签-打印预览",trans,options);
-      	    		}
-      	    		else if(bus.getCheckLevel().equals("一级审档")
-      	    				|| bus.getCheckLevel().equals("二级审档")) {//一级审档
-          	    		Callback callback = new Callback() {
-    						@Override
-    						public void onSuccessful() {
-    						}
-    					};
-      	    			PrintingResultsWindow.open("审核结果单-打印预览", trans, callback);
-      	    		}
+//      	    		Business bus = ui.businessService.findByCode(trans.getBusinessCode());
+//      	    		if(bus.getCheckLevel().equals("无")) {
+//      	    			// 非审档业务
+//      	    			List<String> options = Arrays.asList("车辆标签", "文件标签");
+//      	    			PrintingFiletagsWindow.open("文件标签-打印预览",trans,options);
+//      	    		}
+//      	    		else if(bus.getCheckLevel().equals("一级审档")
+//      	    				|| bus.getCheckLevel().equals("二级审档")) {//一级审档
+//          	    		Callback callback = new Callback() {
+//    						@Override
+//    						public void onSuccessful() {
+//    						}
+//    					};
+//      	    			PrintingResultsWindow.open("审核结果单-打印预览", trans, callback);
+//      	    		}
       	    	}
       	    } else {
       	    	Notifications.warning("请至少选择一条记录。");
@@ -180,18 +168,18 @@ public class SearchAndPrintWindow extends Window {
     		Notifications.warning("条形码不能为空");
     		return;
     	}
-		LocationCode localCodes = new LocationCode(ui.locationService);
-		String locationCode = localCodes.getCompleteLocationCode(community);
-    	Car car = ui.carService.findByBarcode(barCodeField.getValue());
-    	if(car == null) {
-    		//参数为-1，则表示不分页
-    		List<Transaction> items = ui.transactionService.search_by_keyword(-1, 0, barCodeField.getValue(), locationCode);
-        	grid.setItems(items);
-    	}
-    	else {
-    		List<Transaction> items = ui.transactionService.findForList(car.getVin(),barCodeField.getValue(),0);
-        	grid.setItems(items);
-    	}
+//		LocationCode localCodes = new LocationCode(ui.locationService);
+//		String locationCode = localCodes.getCompleteLocationCode(community);
+//    	Car car = ui.carService.findByBarcode(barCodeField.getValue());
+//    	if(car == null) {
+//    		//参数为-1，则表示不分页
+//    		List<Transaction> items = ui.transactionService.search_by_keyword(-1, 0, barCodeField.getValue(), locationCode);
+//        	grid.setItems(items);
+//    	}
+//    	else {
+//    		List<Transaction> items = ui.transactionService.findForList(car.getVin(),barCodeField.getValue(),0);
+//        	grid.setItems(items);
+//    	}
 	}
 
 	/**

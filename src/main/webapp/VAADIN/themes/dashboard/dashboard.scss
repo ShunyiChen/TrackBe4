@@ -25,8 +25,7 @@ $view-padding: round($v-unit-size / 1.5) !default;
 
 // Slight adjustment to menu background-color
 // 更改主题颜色
-$valo-menu-background-color: #0068D5;//深灰
-//$valo-menu-background-color: #3367D6;//Chrome蓝色
+$valo-menu-background-color: rgb(63,81,181);
 
 @mixin dashboard {
   @include valo;

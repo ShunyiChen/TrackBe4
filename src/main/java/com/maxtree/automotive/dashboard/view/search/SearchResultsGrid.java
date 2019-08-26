@@ -40,13 +40,13 @@ public class SearchResultsGrid extends VerticalLayout {
 		grid.addColumn(Transaction::getPlateNumber).setCaption("号码号牌");
 		grid.addColumn(Transaction::getVin).setCaption("车辆识别代码");
 		grid.addColumn(Transaction::getBusinessName).setCaption("业务类型");
-		grid.addColumn(Transaction::getBatch).setCaption("批次号");
+//		grid.addColumn(Transaction::getBatch).setCaption("批次号");
 		grid.addColumn(Transaction::getCode).setCaption("上架号");
 		grid.addColumn(Transaction::getIndexNumber).setCaption("业务顺序号");
 		grid.addColumn(Transaction::getDateCreated).setCaption("创建日期");
 		grid.addColumn(Transaction::getDateModified).setCaption("最后修改日期");
-		grid.addColumn(Transaction::getDateFinished).setCaption("办结日期");
-		grid.addColumn(Transaction::getCreator).setCaption("录入人");
+//		grid.addColumn(Transaction::getDateFinished).setCaption("办结日期");
+//		grid.addColumn(Transaction::getCreator).setCaption("录入人");
 		grid.addColumn(Transaction::getStatus).setCaption("状态");
         
 		// Set the selection mode
@@ -113,7 +113,7 @@ public class SearchResultsGrid extends VerticalLayout {
 					}
 				};
 				int index = ui.transactionService.getTableIndex(trans.getVin());
-				MessageBox.showMessage("记录信息", "表索引："+index+" ID:"+trans.getTransactionUniqueId()+" UUID:"+trans.getUuid(), onOK);
+//				MessageBox.showMessage("记录信息", "表索引："+index+" ID:"+trans.getTransactionUniqueId()+" UUID:"+trans.getUuid(), onOK);
 			}
 		});
 		

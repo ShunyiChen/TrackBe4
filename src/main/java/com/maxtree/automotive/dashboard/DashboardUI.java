@@ -90,15 +90,11 @@ public final class DashboardUI extends UI {
 	@Autowired
 	public ImagingService imagingService;
 	@Autowired
-	public SystemSettingsService settingsService;
-	@Autowired
 	public BusinessStateService businessStateService;
 	@Autowired
 	public EmbeddedServerService embeddedServerService;
 	@Autowired
 	public CarService carService;
-	@Autowired
-	public LocationService locationService;
 	@Autowired
 	public CompanyCategoryService companyCategoryService;
 	@Autowired

@@ -1,12 +1,6 @@
 package com.maxtree.automotive.dashboard.view.imaging;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.LocationCode;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.data.Yaml;
@@ -20,19 +14,14 @@ import com.vaadin.event.ShortcutListener;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Grid;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 
@@ -134,20 +123,20 @@ public class QuickQueryWindow extends Window {
 	 * 按车牌号查询
 	 */
 	private void doSearch() {
-		LocationCode localCodes = new LocationCode(ui.locationService);
-		String locationCode = localCodes.getCompleteLocationCode(community);
-		if(plateField.getValue() != null) {
-			if(plateField.getValue().length() == 5 || plateField.getValue().length() == 6) {
-				List<Transaction> rs = ui.transactionService.search_by_keyword(20, 0, plateField.getValue(),locationCode);
-				setPerPageData(rs);
-			}
-			else {
-				Notifications.warning("请输入车牌号的后5位或后6位查询。");
-			}
-		}
-		else {
-			Notifications.warning("请输入车牌号的后5位或后6位查询。");
-		}
+//		LocationCode localCodes = new LocationCode(ui.locationService);
+//		String locationCode = localCodes.getCompleteLocationCode(community);
+//		if(plateField.getValue() != null) {
+//			if(plateField.getValue().length() == 5 || plateField.getValue().length() == 6) {
+//				List<Transaction> rs = ui.transactionService.search_by_keyword(20, 0, plateField.getValue(),locationCode);
+//				setPerPageData(rs);
+//			}
+//			else {
+//				Notifications.warning("请输入车牌号的后5位或后6位查询。");
+//			}
+//		}
+//		else {
+//			Notifications.warning("请输入车牌号的后5位或后6位查询。");
+//		}
 	}
 	
 	/**

@@ -5,7 +5,6 @@ import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Community;
-import com.maxtree.automotive.dashboard.domain.Location;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.data.Binder;
@@ -47,13 +46,6 @@ public class EditCommunityWindow extends Window {
 		nameField.focus();
 		descField = new TextField("描述:");
 		descField.setIcon(VaadinIcons.DEINDENT);
-		//省份
-		List<Location> items1 = ui.locationService.findByCategory("省份");
-		List<String> p = new ArrayList<>();
-		for(Location l : items1) {
-			p.add(l.getName());
-		}
-
 		form.addComponents(nameField, descField);
 		HorizontalLayout buttonPane = new HorizontalLayout();
 		buttonPane.setSizeFull();

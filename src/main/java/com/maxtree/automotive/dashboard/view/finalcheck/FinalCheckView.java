@@ -232,28 +232,28 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
     		Notifications.warning("没有可提交的业务。");
     	}
     	else {
-    		Business business = ui.businessService.findByCode(trans.getBusinessCode());
-    		if(business.getName().contains("注册登记")) {
-    			trans.setStatus(ui.state().getName("B18"));
-    		}
-    		else if("无".equals(business.getCheckLevel())) {
-    			trans.setStatus(ui.state().getName("B18"));
-    		}
-    		else if(business.getCheckLevel().equals("一级审档")) {
-    			trans.setStatus(ui.state().getName("B18"));
-    		}
-    		else if(business.getCheckLevel().equals("二级审档")) {
-    			trans.setStatus(ui.state().getName("B18"));
-    		}
-    		
-    		trans.setDateModified(new Date());
-    		ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), trans.getStatus());
-    		
-    		track(trans.getStatus());
-    		
-    		//清空舞台
-        	cleanStage();
-        	Notifications.bottomWarning("提交成功！已改为待入库状态。");
+//    		Business business = ui.businessService.findByCode(trans.getBusinessCode());
+//    		if(business.getName().contains("注册登记")) {
+//    			trans.setStatus(ui.state().getName("B18"));
+//    		}
+//    		else if("无".equals(business.getCheckLevel())) {
+//    			trans.setStatus(ui.state().getName("B18"));
+//    		}
+//    		else if(business.getCheckLevel().equals("一级审档")) {
+//    			trans.setStatus(ui.state().getName("B18"));
+//    		}
+//    		else if(business.getCheckLevel().equals("二级审档")) {
+//    			trans.setStatus(ui.state().getName("B18"));
+//    		}
+//
+//    		trans.setDateModified(new Date());
+//    		ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), trans.getStatus());
+//
+//    		track(trans.getStatus());
+//
+//    		//清空舞台
+//        	cleanStage();
+//        	Notifications.bottomWarning("提交成功！已改为待入库状态。");
     	}
     }
     
@@ -264,7 +264,7 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
     private void track(String status) {
     	// 插入移行表
 		Transition transition = new Transition();
-		transition.setTransactionUUID(trans.getUuid());
+//		transition.setTransactionUUID(trans.getUuid());
 		transition.setVin(trans.getVin());
 		transition.setActivity(status);
 		transition.setComments(null);

@@ -1,53 +1,25 @@
 package com.maxtree.automotive.dashboard.view.finalcheck;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.List;
-
-import com.maxtree.automotive.dashboard.service.AuthService;
-import org.yaml.snakeyaml.reader.UnicodeReader;
-
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
-import com.maxtree.automotive.dashboard.domain.DataDictionary;
-import com.maxtree.automotive.dashboard.domain.Document;
-import com.maxtree.automotive.dashboard.domain.SystemSettings;
-import com.maxtree.automotive.dashboard.domain.Transaction;
-import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.domain.*;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.maxtree.automotive.dashboard.servlet.CaptureServlet;
 import com.maxtree.automotive.dashboard.servlet.UploadInDTO;
 import com.maxtree.automotive.dashboard.servlet.UploadOutDTO;
 import com.vaadin.event.UIEvents;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.BrowserFrame;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.Upload;
-import com.vaadin.ui.Upload.FailedEvent;
-import com.vaadin.ui.Upload.FailedListener;
-import com.vaadin.ui.Upload.FinishedEvent;
-import com.vaadin.ui.Upload.FinishedListener;
-import com.vaadin.ui.Upload.ProgressListener;
-import com.vaadin.ui.Upload.Receiver;
-import com.vaadin.ui.Upload.StartedEvent;
-import com.vaadin.ui.Upload.StartedListener;
-import com.vaadin.ui.Upload.SucceededEvent;
-import com.vaadin.ui.Upload.SucceededListener;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import com.vaadin.ui.*;
+import com.vaadin.ui.Upload.*;
 import com.vaadin.ui.Window.CloseListener;
 import com.vaadin.ui.themes.ValoTheme;
+import org.yaml.snakeyaml.reader.UnicodeReader;
+
+import java.io.*;
+import java.util.List;
 
 /**
  * 
@@ -85,24 +57,24 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 		main.setSpacing(false);
 		main.setSizeFull();
 		link.addStyleName(ValoTheme.BUTTON_LINK);
-		settings = ui.settingsService.findByName("高拍仪");
-		if("无".equals(settings.getValue())) {
-			Upload upload = new Upload(null, this);
-			upload.setButtonCaption("选择文件");
-			upload.setButtonStyleName("upload-button");
-			upload.setImmediateMode(true);
-			upload.addSucceededListener(this);
-//			this.setContent(upload);
-			
-			main.addComponent(upload);
-		}
-		else {
-			browser.setSizeFull();
-//			this.setContent(browser);
-			main.addComponent(browser);
-			main.setComponentAlignment(browser, Alignment.TOP_CENTER);
-			main.setExpandRatio(browser, 1);
-		}
+//		settings = ui.settingsService.findByName("高拍仪");
+//		if("无".equals(settings.getValue())) {
+//			Upload upload = new Upload(null, this);
+//			upload.setButtonCaption("选择文件");
+//			upload.setButtonStyleName("upload-button");
+//			upload.setImmediateMode(true);
+//			upload.addSucceededListener(this);
+////			this.setContent(upload);
+//
+//			main.addComponent(upload);
+//		}
+//		else {
+//			browser.setSizeFull();
+////			this.setContent(browser);
+//			main.addComponent(browser);
+//			main.setComponentAlignment(browser, Alignment.TOP_CENTER);
+//			main.setExpandRatio(browser, 1);
+//		}
 		
 		this.setContent(main);
 		this.addCloseListener(this);
@@ -119,13 +91,13 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
 		User loggedInUser = ui.userService.getUserByUserName(username);
 		String everything = "";
-		File template;
-		if(settings.getValue().equals("无锡华通H6-1")) {
-			template = new File("devices/templates/HtmlDemo3.html");//无锡华通H6-1
-		}
-		else {
-			template = new File("devices/templates/Sample_CamOCX_HTML_Device_IE.html");//维山VSA305FD
-		}
+		File template = null;
+//		if(settings.getValue().equals("无锡华通H6-1")) {
+//			template = new File("devices/templates/HtmlDemo3.html");//无锡华通H6-1
+//		}
+//		else {
+//			template = new File("devices/templates/Sample_CamOCX_HTML_Device_IE.html");//维山VSA305FD
+//		}
 //		File template = new File("devices/templates/TempHtml.html"); // 选择本地图片上传
 		FileInputStream in = new FileInputStream(template);
 		BufferedReader br = new BufferedReader(new UnicodeReader(in));
@@ -258,11 +230,11 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 		w.displayCamera();
 		w.callback = callback;
 		
-		w.p.setBatch(trans.getBatch()+"");
+//		w.p.setBatch(trans.getBatch()+"");
 		w.p.setDictionaryCode(dd.getCode());
 		w.p.setSiteUniqueId(trans.getSiteUniqueId());
 		w.p.setUserUniqueId(w.loggedInUser.getUserUniqueId());
-		w.p.setUuid(trans.getUuid());
+//		w.p.setUuid(trans.getUuid());
 		w.p.setVin(trans.getVin());
 		CaptureServlet.IN_DTOs.put(w.loggedInUser.getUserUniqueId(), w.p);
 	}
@@ -281,11 +253,11 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 		w.callback = callback;
  
 		w.p.setDocumentUniqueId(doc.getDocumentUniqueId());
-		w.p.setBatch(trans.getBatch()+"");
+//		w.p.setBatch(trans.getBatch()+"");
 		w.p.setDictionaryCode(doc.getDictionarycode());
 		w.p.setSiteUniqueId(trans.getSiteUniqueId());
 		w.p.setUserUniqueId(w.loggedInUser.getUserUniqueId());
-		w.p.setUuid(trans.getUuid());
+//		w.p.setUuid(trans.getUuid());
 		w.p.setVin(trans.getVin());
 		CaptureServlet.IN_DTOs.put(w.loggedInUser.getUserUniqueId(), w.p);
 	}
@@ -295,7 +267,6 @@ public class PopupCaptureWindow extends Window implements CloseListener, Receive
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private User loggedInUser;
 	private BrowserFrame browser = new BrowserFrame(null);
-	private SystemSettings settings;
 	private Button link = new Button();
 	private Transaction trans;
 	private List<DataDictionary> list;

@@ -155,26 +155,26 @@ public class TransactionService {
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 				PreparedStatement ps = con.prepareStatement(INSERT_TRANS_SQL, new String[] { "transactionuniqueid" });
-				ps.setString(1, transaction.getBarcode());
-				ps.setString(2, transaction.getPlateType());
-				ps.setString(3, transaction.getPlateNumber());
-				ps.setString(4, transaction.getVin());
-				long millis = System.currentTimeMillis();
-				java.sql.Timestamp date = new java.sql.Timestamp(millis);
-				ps.setTimestamp(5, date);
-				ps.setString(6, transaction.getStatus());
-				ps.setInt(7, transaction.getSiteUniqueId());
-				ps.setString(8, transaction.getBusinessCode());
-				ps.setInt(9, transaction.getCommunityUniqueId());
-				ps.setInt(10, transaction.getCompanyUniqueId());
-				ps.setString(11, transaction.getLocationCode());
-				java.sql.Timestamp modifyDate = new java.sql.Timestamp(transaction.getDateModified().getTime());
-				ps.setTimestamp(12, modifyDate);
-				ps.setInt(13, transaction.getBatch());
-				ps.setString(14, transaction.getUuid());
-				ps.setString(15, transaction.getCode());
-				ps.setString(16, transaction.getCreator());
-				ps.setInt(17, transaction.getIndexNumber());
+//				ps.setString(1, transaction.getBarcode());
+//				ps.setString(2, transaction.getPlateType());
+//				ps.setString(3, transaction.getPlateNumber());
+//				ps.setString(4, transaction.getVin());
+//				long millis = System.currentTimeMillis();
+//				java.sql.Timestamp date = new java.sql.Timestamp(millis);
+//				ps.setTimestamp(5, date);
+//				ps.setString(6, transaction.getStatus());
+//				ps.setInt(7, transaction.getSiteUniqueId());
+//				ps.setString(8, transaction.getBusinessCode());
+//				ps.setInt(9, transaction.getCommunityUniqueId());
+//				ps.setInt(10, transaction.getCompanyUniqueId());
+//				ps.setString(11, transaction.getLocationCode());
+//				java.sql.Timestamp modifyDate = new java.sql.Timestamp(transaction.getDateModified().getTime());
+//				ps.setTimestamp(12, modifyDate);
+//				ps.setInt(13, transaction.getBatch());
+//				ps.setString(14, transaction.getUuid());
+//				ps.setString(15, transaction.getCode());
+//				ps.setString(16, transaction.getCreator());
+//				ps.setInt(17, transaction.getIndexNumber());
 				return ps;
 			}
 		}, keyHolder);

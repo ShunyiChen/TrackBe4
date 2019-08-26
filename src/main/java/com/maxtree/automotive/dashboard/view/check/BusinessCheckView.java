@@ -425,77 +425,77 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
      * @param comments
      */
     private void accept(String comments) {
-    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
-    	if (business.getCheckLevel().equals("一级审档")) {
-    		//1.删除锁定队列
-    		int serial = 2; //1:质检 2:审档 3:确认审档
-    		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());
-        	try {
-    			ui.queueService.delete(queue.getQueueUniqueId(), serial);
-    		} catch (DataException e) {
-    			log.info(e.getMessage());
-    		}
-        	//2.更改状态
-        	editableTrans.setStatus(ui.state().getName("B5"));
-        	editableTrans.setDateModified(new Date());
-    		ui.transactionService.update(editableTrans);
-    		//3.记录跟踪
-    		track(ui.state().getName("B5"),comments);//form意思是打开并编辑
-    		//4.提交确认审档队列
-    		Queue newQueue = new Queue();
-    		newQueue.setUuid(editableTrans.getUuid());
-    		newQueue.setVin(editableTrans.getVin());
-    		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-    		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-    		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-    	    serial = 3;// 1:质检队列，2：审档队列 3：确认审档队列
-    		ui.queueService.create(newQueue, serial);
-    		// 5.清空舞台
-        	cleanStage();
-        	// 6.提示信息
-        	Notifications.bottomWarning("提交成功！已添加到队列中等待复审。");
-        	
-        	removeImageWindows();
-    	}
-    	else if (business.getCheckLevel().equals("二级审档")) {
-        	
-        	//1.删除锁定队列
-    		int serial = 2; //1:质检 2:审档 3:确认审档
-    		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());
-        	try {
-    			ui.queueService.delete(queue.getQueueUniqueId(), serial);
-    		} catch (DataException e) {
-    			log.info(e.getMessage());
-    		}
-        	//2.更改状态
-        	editableTrans.setStatus(ui.state().getName("B14"));
-        	editableTrans.setDateModified(new Date());
-    		ui.transactionService.update(editableTrans);
-    		//3.记录跟踪
-    		track(ui.state().getName("B14"),comments);
-    		
-    		//4.发信给前台
-    		String plate = Yaml.readSystemConfiguration().getLicenseplate();
-    		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
-    		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
-    		String subject = loggedInUser.getUserName()+"通过了审档";
-    		String content = plate+" "+editableTrans.getPlateNumber()+","+comments;
-    		Message newMessage = messageSystem.createNewMessage(loggedInUser,subject,content,matedata);
-
-    		Set<Name> names = new HashSet<Name>();
-    		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
-    		names.add(target);
-    		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.INPUT.getViewName());
-    		// 更新消息轮询的缓存
-    		CacheManager.getInstance().getNotificationsCache().refresh(receiver.getUserUniqueId());
-    		
-    		// 5.清空
-    		cleanStage();
-    		// 6.提示信息
-    		Notifications.bottomWarning("提交成功！已完成审档待补充。");
-    		
-    		removeImageWindows();
-    	}
+//    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
+//    	if (business.getCheckLevel().equals("一级审档")) {
+//    		//1.删除锁定队列
+//    		int serial = 2; //1:质检 2:审档 3:确认审档
+//    		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());
+//        	try {
+//    			ui.queueService.delete(queue.getQueueUniqueId(), serial);
+//    		} catch (DataException e) {
+//    			log.info(e.getMessage());
+//    		}
+//        	//2.更改状态
+//        	editableTrans.setStatus(ui.state().getName("B5"));
+//        	editableTrans.setDateModified(new Date());
+//    		ui.transactionService.update(editableTrans);
+//    		//3.记录跟踪
+//    		track(ui.state().getName("B5"),comments);//form意思是打开并编辑
+//    		//4.提交确认审档队列
+//    		Queue newQueue = new Queue();
+//    		newQueue.setUuid(editableTrans.getUuid());
+//    		newQueue.setVin(editableTrans.getVin());
+//    		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+//    		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+//    		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+//    	    serial = 3;// 1:质检队列，2：审档队列 3：确认审档队列
+//    		ui.queueService.create(newQueue, serial);
+//    		// 5.清空舞台
+//        	cleanStage();
+//        	// 6.提示信息
+//        	Notifications.bottomWarning("提交成功！已添加到队列中等待复审。");
+//
+//        	removeImageWindows();
+//    	}
+//    	else if (business.getCheckLevel().equals("二级审档")) {
+//
+//        	//1.删除锁定队列
+//    		int serial = 2; //1:质检 2:审档 3:确认审档
+//    		Queue queue = ui.queueService.getLockedQueue(serial, loggedInUser.getUserUniqueId());
+//        	try {
+//    			ui.queueService.delete(queue.getQueueUniqueId(), serial);
+//    		} catch (DataException e) {
+//    			log.info(e.getMessage());
+//    		}
+//        	//2.更改状态
+//        	editableTrans.setStatus(ui.state().getName("B14"));
+//        	editableTrans.setDateModified(new Date());
+//    		ui.transactionService.update(editableTrans);
+//    		//3.记录跟踪
+//    		track(ui.state().getName("B14"),comments);
+//
+//    		//4.发信给前台
+//    		String plate = Yaml.readSystemConfiguration().getLicenseplate();
+//    		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
+//    		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
+//    		String subject = loggedInUser.getUserName()+"通过了审档";
+//    		String content = plate+" "+editableTrans.getPlateNumber()+","+comments;
+//    		Message newMessage = messageSystem.createNewMessage(loggedInUser,subject,content,matedata);
+//
+//    		Set<Name> names = new HashSet<Name>();
+//    		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
+//    		names.add(target);
+//    		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.INPUT.getViewName());
+//    		// 更新消息轮询的缓存
+//    		CacheManager.getInstance().getNotificationsCache().refresh(receiver.getUserUniqueId());
+//
+//    		// 5.清空
+//    		cleanStage();
+//    		// 6.提示信息
+//    		Notifications.bottomWarning("提交成功！已完成审档待补充。");
+//
+//    		removeImageWindows();
+//    	}
     }
     
     /**
@@ -521,64 +521,47 @@ public class BusinessCheckView extends Panel implements View, FrontendViewIF{
      * @param comments
      */
     private void reject(String comments) {
-    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
-    	// 1.删除锁定队列
-		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		User loginUser = ui.userService.getUserByUserName(username);
-		int serial = 2; //1:质检 2:审档 3:确认审档
-		Queue queue = ui.queueService.getLockedQueue(serial, loginUser.getUserUniqueId());
-    	try {
-			ui.queueService.delete(queue.getQueueUniqueId(), serial);
-		} catch (DataException e) {
-			e.printStackTrace();
-		}
-    	// 2.更改状态
-    	editableTrans.setStatus(ui.state().getName("B16")); //审档不合格
-		editableTrans.setDateModified(new Date());
-		ui.transactionService.update(editableTrans);
-		//3.记录跟踪
-		track(ui.state().getName("B16"),comments);
-		
-		//4.发信给前台
-		String plate = Yaml.readSystemConfiguration().getLicenseplate();
-		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
-		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
-		String subject = loggedInUser.getUserName()+"退回了一笔业务";
-		String content = plate+" "+editableTrans.getPlateNumber()+",审档不合格,"+comments;
-		Message newMessage = messageSystem.createNewMessage(loggedInUser,subject,content,matedata);
-
-		Set<Name> names = new HashSet<Name>();
-		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
-		names.add(target);
-		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.INPUT.getViewName());
-		// 更新消息轮询的缓存
-		CacheManager.getInstance().getNotificationsCache().refresh(receiver.getUserUniqueId());
-		// 5.清空
-		cleanStage();
-		// 6.提示信息
-		Notifications.bottomWarning("提交成功！已经退回到前台更改。");
-		
-		removeImageWindows();
+//    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
+//    	// 1.删除锁定队列
+//		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//		User loginUser = ui.userService.getUserByUserName(username);
+//		int serial = 2; //1:质检 2:审档 3:确认审档
+//		Queue queue = ui.queueService.getLockedQueue(serial, loginUser.getUserUniqueId());
+//    	try {
+//			ui.queueService.delete(queue.getQueueUniqueId(), serial);
+//		} catch (DataException e) {
+//			e.printStackTrace();
+//		}
+//    	// 2.更改状态
+//    	editableTrans.setStatus(ui.state().getName("B16")); //审档不合格
+//		editableTrans.setDateModified(new Date());
+//		ui.transactionService.update(editableTrans);
+//		//3.记录跟踪
+//		track(ui.state().getName("B16"),comments);
+//
+//		//4.发信给前台
+//		String plate = Yaml.readSystemConfiguration().getLicenseplate();
+//		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
+//		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
+//		String subject = loggedInUser.getUserName()+"退回了一笔业务";
+//		String content = plate+" "+editableTrans.getPlateNumber()+",审档不合格,"+comments;
+//		Message newMessage = messageSystem.createNewMessage(loggedInUser,subject,content,matedata);
+//
+//		Set<Name> names = new HashSet<Name>();
+//		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
+//		names.add(target);
+//		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.INPUT.getViewName());
+//		// 更新消息轮询的缓存
+//		CacheManager.getInstance().getNotificationsCache().refresh(receiver.getUserUniqueId());
+//		// 5.清空
+//		cleanStage();
+//		// 6.提示信息
+//		Notifications.bottomWarning("提交成功！已经退回到前台更改。");
+//
+//		removeImageWindows();
     }
     
-    /**
-     * 
-     * @param status
-     * @param comments
-     * @return
-     */
-    private int track(String status, String comments) {
-    	// 插入记录转换表
-		Transition transition = new Transition();
-		transition.setTransactionUUID(editableTrans.getUuid());
-		transition.setVin(editableTrans.getVin());
-		transition.setActivity(status);
-		transition.setComments(comments);
-		transition.setOperator(loggedInUser.getUserName());
-		transition.setDateCreated(new Date());
-		int transitionUniqueId = ui.transitionService.insert(transition, editableTrans.getVin());
-		return transitionUniqueId;
-    }
+
     
     @Override
 	public void updateUnreadCount() {

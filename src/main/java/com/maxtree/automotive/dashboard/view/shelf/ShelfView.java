@@ -325,7 +325,7 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     private void track(String status, Transaction trans) {
     	// 插入移行表
 		Transition transition = new Transition();
-		transition.setTransactionUUID(trans.getUuid());
+//		transition.setTransactionUUID(trans.getUuid());
 		transition.setVin(trans.getVin());
 		transition.setActivity(status);
 		transition.setComments(null);

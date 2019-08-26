@@ -425,52 +425,52 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
      * @param comments
      */
     private void accept(String comments) {
-    	//1.取同社区内的影像化管理员
-    	User receiver = ui.userService.findImagingAdmin(loggedInUser.getCommunityUniqueId());
-		if (receiver.getUserUniqueId() == 0) {
-			Notifications.warning("无法找到影像化管理员，请联系系统管理员进行设置。");
-			return;
-		}
-    	//2.取业务类型
-    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
-    	//3.更改状态
-    	if (business.getName().contains("注册登记")) {
-    		editableTrans.setStatus(ui.state().getName("B2"));
-    	}
-    	else if("无".equals(business.getCheckLevel())) {
-    		editableTrans.setStatus(ui.state().getName("B2"));
-    	}
-    	else if(business.getCheckLevel().equals("一级审档")) {
-    		editableTrans.setStatus(ui.state().getName("B4"));
-    	}
-    	else if(business.getCheckLevel().equals("二级审档")) {
-    		editableTrans.setStatus(ui.state().getName("B4"));
-    	}
-    	editableTrans.setDateModified(new Date());
-		ui.transactionService.update(editableTrans);
-    	
-		//4.记录跟踪
-		track(editableTrans.getStatus(), comments);
-		// 自动删除消息
-		if(removeMessage != null)
-			removeMessage.onSuccessful();
-		//5.给影像化管理员发信
-		Imaging img = ui.imagingService.findByPlateNumber(editableTrans.getPlateNumber());
-		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
-		String subject = loggedInUser.getUserName()+"通过了质检";
-		String content = editableTrans.getPlateNumber()+","+comments;
-		
-		Message newMessage = messageSystem.createNewMessage(loggedInUser, subject, content, matedata);
-		Set<Name> names = new HashSet<Name>();
-		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
-		names.add(target);
-		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_MANAGER.getViewName());
-		// 更新消息轮询的缓存
-		CacheManager.getInstance().getNotificationsCache().refresh(receiver.getUserUniqueId());
-		// 5.清空
-		cleanStage();
-		// 6.提示信息
-		Notifications.bottomWarning("提交成功,已完成影像化质检。");
+//    	//1.取同社区内的影像化管理员
+//    	User receiver = ui.userService.findImagingAdmin(loggedInUser.getCommunityUniqueId());
+//		if (receiver.getUserUniqueId() == 0) {
+//			Notifications.warning("无法找到影像化管理员，请联系系统管理员进行设置。");
+//			return;
+//		}
+//    	//2.取业务类型
+//    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
+//    	//3.更改状态
+//    	if (business.getName().contains("注册登记")) {
+//    		editableTrans.setStatus(ui.state().getName("B2"));
+//    	}
+//    	else if("无".equals(business.getCheckLevel())) {
+//    		editableTrans.setStatus(ui.state().getName("B2"));
+//    	}
+//    	else if(business.getCheckLevel().equals("一级审档")) {
+//    		editableTrans.setStatus(ui.state().getName("B4"));
+//    	}
+//    	else if(business.getCheckLevel().equals("二级审档")) {
+//    		editableTrans.setStatus(ui.state().getName("B4"));
+//    	}
+//    	editableTrans.setDateModified(new Date());
+//		ui.transactionService.update(editableTrans);
+//
+//		//4.记录跟踪
+//		track(editableTrans.getStatus(), comments);
+//		// 自动删除消息
+//		if(removeMessage != null)
+//			removeMessage.onSuccessful();
+//		//5.给影像化管理员发信
+//		Imaging img = ui.imagingService.findByPlateNumber(editableTrans.getPlateNumber());
+//		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
+//		String subject = loggedInUser.getUserName()+"通过了质检";
+//		String content = editableTrans.getPlateNumber()+","+comments;
+//
+//		Message newMessage = messageSystem.createNewMessage(loggedInUser, subject, content, matedata);
+//		Set<Name> names = new HashSet<Name>();
+//		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
+//		names.add(target);
+//		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_MANAGER.getViewName());
+//		// 更新消息轮询的缓存
+//		CacheManager.getInstance().getNotificationsCache().refresh(receiver.getUserUniqueId());
+//		// 5.清空
+//		cleanStage();
+//		// 6.提示信息
+//		Notifications.bottomWarning("提交成功,已完成影像化质检。");
     }
     
     /**
@@ -479,57 +479,37 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
      * @param comments
      */
     private void reject(String comments) {
-    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
-    	//1.更改状态
-    	editableTrans.setStatus(ui.state().getName("B15"));//质检不合格
-    	editableTrans.setDateModified(new Date());
-		ui.transactionService.update(editableTrans);
-		//2.记录跟踪
-		track(ui.state().getName("B15"),comments);
-		// 自动删除消息
-		if(removeMessage != null)
-			removeMessage.onSuccessful();
-		//3.发信给前台
-		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
-		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
-		String subject = loggedInUser.getUserName()+"退回了一笔业务";
-		String plate = Yaml.readSystemConfiguration().getLicenseplate();
-		String content = plate+" "+ editableTrans.getPlateNumber()+",质检不合格,"+comments;
-		
-		Message newMessage = messageSystem.createNewMessage(loggedInUser, subject, content, matedata);
-		Set<Name> names = new HashSet<Name>();
-		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
-		names.add(target);
-		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_INPUT.getViewName());
-		// 更新消息轮询的缓存
-		CacheManager.getInstance().getNotificationsCache().refresh(receiver.getUserUniqueId());
-		// 5.清空
-		cleanStage();
-		// 6.提示信息
-		Notifications.bottomWarning("提交成功！已退回到前台更正。");
+//    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
+//    	//1.更改状态
+//    	editableTrans.setStatus(ui.state().getName("B15"));//质检不合格
+//    	editableTrans.setDateModified(new Date());
+//		ui.transactionService.update(editableTrans);
+//		//2.记录跟踪
+//		track(ui.state().getName("B15"),comments);
+//		// 自动删除消息
+//		if(removeMessage != null)
+//			removeMessage.onSuccessful();
+//		//3.发信给前台
+//		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
+//		User receiver = ui.userService.getUserByUserName(editableTrans.getCreator());
+//		String subject = loggedInUser.getUserName()+"退回了一笔业务";
+//		String plate = Yaml.readSystemConfiguration().getLicenseplate();
+//		String content = plate+" "+ editableTrans.getPlateNumber()+",质检不合格,"+comments;
+//
+//		Message newMessage = messageSystem.createNewMessage(loggedInUser, subject, content, matedata);
+//		Set<Name> names = new HashSet<Name>();
+//		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
+//		names.add(target);
+//		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_INPUT.getViewName());
+//		// 更新消息轮询的缓存
+//		CacheManager.getInstance().getNotificationsCache().refresh(receiver.getUserUniqueId());
+//		// 5.清空
+//		cleanStage();
+//		// 6.提示信息
+//		Notifications.bottomWarning("提交成功！已退回到前台更正。");
     }
     
-    /**
-     * 
-     * @param status
-     * @param comments
-     * @return
-     */
-    private int track(String status, String comments) {
-    	// 插入移行表
-		Transition transition = new Transition();
-		transition.setTransactionUUID(editableTrans.getUuid());
-		transition.setVin(editableTrans.getVin());
-		transition.setActivity(status);
-		transition.setComments(comments);
-		transition.setOperator(loggedInUser.getUserName());
-		transition.setDateCreated(new Date());
-		int transitionUniqueId = ui.transitionService.insert(transition,editableTrans.getVin());
-		
-		return transitionUniqueId;
-    }
-    
-    
+
     @Override
 	public void updateUnreadCount() {
 		List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());

@@ -1,7 +1,6 @@
 @mixin dashboard-admin-view {
    	.searchpane {
-        //background-color: #3367D6;//Chrome蓝色
-        background-color: #0068D5;//深灰色
+        background-color: rgb(63,81,181);//谷歌蓝色
         height:56px !important;
         width:100%;
         white-space: 20px;
@@ -39,7 +38,7 @@
         caret-color:white;
         font-size: 15px;
         font-weight: bold;
-        color: #0068D5;
+        color: rgb(63,81,181);//谷歌蓝色
          -webkit-input-placeholder: white;
          -moz-placeholder: white;
     }
@@ -47,8 +46,7 @@
     .SearchToolBar_outerField{
         cursor: text;
         justify-content: center;
-//        background-color: #2850A7;//搜索文本Chrome背景颜色
-        background-color: #0051A6;
+        background-color: rgb(63,81,181);//谷歌蓝色
         height:40px;
         width:680px;
         border-radius: 2px;
@@ -338,7 +336,7 @@ box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
     }
     
     .SearchToolBar{
-        background-color: #0068D5;
+        background-color:white;// rgb(63,81,181);//谷歌蓝色
     }
     
     .NavigationBar{
@@ -629,7 +627,7 @@ box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
     }
     .NotificationsManagementWindow_buttons_selected{
         color: white;
-        background-color: #0366D6;
+        background-color:  rgb(63,81,181);//谷歌蓝色
         border-radius: 2px;
         cursor: pointer;
     }
@@ -712,7 +710,7 @@ box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
         border-color:deepskyblue;
         border-width: 2px;
         padding: 1px;
-        box-shadow:0 0 8px rgba(0,91,155,0.8);
+        box-shadow:0 0 8px rgba(63,81,181,0.8);//谷歌蓝色
         cursor:pointer;
     }
     
@@ -728,10 +726,10 @@ box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);
     }
     
     .v-window-AboutTB4 {
-      background-color: rgb(0,104,213) !important;
+      background-color: rgba(63,81,181,0.8) !important;
     }
     div.v-window-AboutTB4 .v-window-contents {
-      background: rgb(0,104,213);
+      background: rgba(63,81,181,0.8);
     }
     
     .AboutTB4 .v-label{

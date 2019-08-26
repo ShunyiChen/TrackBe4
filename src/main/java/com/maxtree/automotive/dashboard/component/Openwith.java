@@ -195,21 +195,21 @@ public class Openwith extends Window {
   	    		PrintingFiletagsWindow.open("车辆和文件标签-打印预览",trans,options);
   	    	}
   	    	else {
-  	    		Business bus = ui.businessService.findByCode(trans.getBusinessCode());
-  	    		if(bus.getCheckLevel().equals("无")) {
-  	    			// 非审档业务
-  	    			List<String> options = Arrays.asList("文件标签");
-  	    			PrintingFiletagsWindow.open("文件标签-打印预览",trans,options);
-  	    		}
-  	    		else if(bus.getCheckLevel().equals("一级审档")
-  	    				|| bus.getCheckLevel().equals("二级审档")) {//一级审档
-      	    		Callback callback = new Callback() {
-						@Override
-						public void onSuccessful() {
-						}
-					};
-  	    			PrintingResultsWindow.open("审核结果单-打印预览", trans, callback);
-  	    		}
+//  	    		Business bus = ui.businessService.findByCode(trans.getBusinessCode());
+//  	    		if(bus.getCheckLevel().equals("无")) {
+//  	    			// 非审档业务
+//  	    			List<String> options = Arrays.asList("文件标签");
+//  	    			PrintingFiletagsWindow.open("文件标签-打印预览",trans,options);
+//  	    		}
+//  	    		else if(bus.getCheckLevel().equals("一级审档")
+//  	    				|| bus.getCheckLevel().equals("二级审档")) {//一级审档
+//      	    		Callback callback = new Callback() {
+//						@Override
+//						public void onSuccessful() {
+//						}
+//					};
+//  	    			PrintingResultsWindow.open("审核结果单-打印预览", trans, callback);
+//  	    		}
   	    	}
 		});
 		close.addClickListener(e->{

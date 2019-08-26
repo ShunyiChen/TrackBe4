@@ -6,10 +6,8 @@ import com.maxtree.automotive.dashboard.service.AuthService;
 import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.LocationCode;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Community;
-import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
@@ -45,7 +43,7 @@ public class ControlsLayout extends HorizontalLayout {
 		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
 		User loggedInUser = ui.userService.getUserByUserName(username);
 		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
-		localCodes = new LocationCode(ui.locationService);
+//		localCodes = new LocationCode(ui.locationService);
 		this.setWidthUndefined();
 		numField.setWidth("73px");
 		this.addComponents(first, previous, numField, next, last, currentPageIndexLabel, pageSizeLabel, sizePerPageLabel);
@@ -91,8 +89,8 @@ public class ControlsLayout extends HorizontalLayout {
 			Notifications.warning("查询关键字不能为空。");
 			return;
 		}
-		String locationCode = localCodes.getCompleteLocationCode(community);
-		pageCount = ui.transactionService.search_by_keyword_pagingcount(sizePerPage, grid.getKeyword(),grid.getTenantName(),locationCode);
+//		String locationCode = localCodes.getCompleteLocationCode(community);
+//		pageCount = ui.transactionService.search_by_keyword_pagingcount(sizePerPage, grid.getKeyword(),grid.getTenantName(),locationCode);
 		pageSizeLabel.setValue("总共"+pageCount+"页");
 		first();
 	}
@@ -102,14 +100,14 @@ public class ControlsLayout extends HorizontalLayout {
 	 */
 	private void first() {
 		if (grid != null) {
-			String locationCode = localCodes.getCompleteLocationCode(community);
-			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage, 0, grid.getKeyword(),locationCode);
-			grid.setPerPageData(items);
-			
-			// Update inputs
-			currentPageIndex = 1;
-			numField.setValue(currentPageIndex+"");
-			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
+//			String locationCode = localCodes.getCompleteLocationCode(community);
+//			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage, 0, grid.getKeyword(),locationCode);
+//			grid.setPerPageData(items);
+//
+//			// Update inputs
+//			currentPageIndex = 1;
+//			numField.setValue(currentPageIndex+"");
+//			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
 		}
 	}
 	
@@ -117,65 +115,65 @@ public class ControlsLayout extends HorizontalLayout {
 	 * 
 	 */
 	private void previous() {
-		if (grid != null) {
-			currentPageIndex -= 1;
-			if (currentPageIndex < 1) {
-				currentPageIndex = 1;
-			}
-			String locationCode = localCodes.getCompleteLocationCode(community);
-			int offset = (currentPageIndex - 1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(),locationCode);
-			grid.setPerPageData(items);
-			
-			// Update inputs
-			numField.setValue(currentPageIndex+"");
-			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
-		}
+//		if (grid != null) {
+//			currentPageIndex -= 1;
+//			if (currentPageIndex < 1) {
+//				currentPageIndex = 1;
+//			}
+//			String locationCode = localCodes.getCompleteLocationCode(community);
+//			int offset = (currentPageIndex - 1) * sizePerPage;
+//			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(),locationCode);
+//			grid.setPerPageData(items);
+//
+//			// Update inputs
+//			numField.setValue(currentPageIndex+"");
+//			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
+//		}
 	}
 	
 	/**
 	 * 
 	 */
 	private void next() {
-		if (grid != null) {
-			currentPageIndex++;
-			if (currentPageIndex > pageCount) {
-				currentPageIndex = pageCount;
-			}
-			String locationCode = localCodes.getCompleteLocationCode(community);
-			int offset = (currentPageIndex -1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(),locationCode);
-			grid.setPerPageData(items);
-			// Update inputs
-			numField.setValue(currentPageIndex+"");
-			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
-		}
+//		if (grid != null) {
+//			currentPageIndex++;
+//			if (currentPageIndex > pageCount) {
+//				currentPageIndex = pageCount;
+//			}
+//			String locationCode = localCodes.getCompleteLocationCode(community);
+//			int offset = (currentPageIndex -1) * sizePerPage;
+//			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(),locationCode);
+//			grid.setPerPageData(items);
+//			// Update inputs
+//			numField.setValue(currentPageIndex+"");
+//			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
+//		}
 	}
 	
 	/**
 	 * 
 	 */
 	private void last() {
-		if (grid != null) {
-			String locationCode = localCodes.getCompleteLocationCode(community);
-			currentPageIndex = pageCount;
-			int offset = (currentPageIndex -1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(), locationCode);
-			grid.setPerPageData(items);
-			// Update inputs
-			numField.setValue(currentPageIndex+"");
-			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
-		}
+//		if (grid != null) {
+//			String locationCode = localCodes.getCompleteLocationCode(community);
+//			currentPageIndex = pageCount;
+//			int offset = (currentPageIndex -1) * sizePerPage;
+//			List<Transaction> items = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(), locationCode);
+//			grid.setPerPageData(items);
+//			// Update inputs
+//			numField.setValue(currentPageIndex+"");
+//			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
+//		}
 	}
 	
 	/**
 	 * 
 	 */
 	private void jumpTo() {
-		String locationCode = localCodes.getCompleteLocationCode(community);
-		int offset = (currentPageIndex - 1) * sizePerPage;
-		List<Transaction> data = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(),locationCode);
-		grid.setPerPageData(data);
+//		String locationCode = localCodes.getCompleteLocationCode(community);
+//		int offset = (currentPageIndex - 1) * sizePerPage;
+//		List<Transaction> data = ui.transactionService.search_by_keyword(sizePerPage,offset,grid.getKeyword(),locationCode);
+//		grid.setPerPageData(data);
 	}
 	
 	private int pageCount;
@@ -193,5 +191,4 @@ public class ControlsLayout extends HorizontalLayout {
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private User loggedInUser;
 	private Community community;
-	private LocationCode localCodes;
 }

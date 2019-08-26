@@ -16,7 +16,6 @@ import org.springframework.util.StringUtils;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.LocationCode;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -394,8 +393,8 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	editableTrans = transaction;
     	this.deletableMessageUniqueId = deletableMessageUniqueId;//删除提醒用
     	editableSite = ui.siteService.findById(editableTrans.getSiteUniqueId());
-    	uuid = editableTrans.getUuid();
-    	batch = editableTrans.getBatch();
+//    	uuid = editableTrans.getUuid();
+//    	batch = editableTrans.getBatch();
     	vin = editableTrans.getVin();
     	
     	int companyUniqueId = loggedInUser.getCompanyUniqueId();
@@ -428,7 +427,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     	resetComponents();
     	
     	basicInfoPane.populateFields(editableTrans);
-    	businessTypePane.populate(editableTrans.getBusinessCode());
+//    	businessTypePane.populate(editableTrans.getBusinessCode());
     	
     	capturePane.displayImage();
     	
@@ -453,21 +452,21 @@ public final class FrontView extends Panel implements View,InputViewIF {
     		PrintingFiletagsWindow.open("车辆和文件标签-打印预览",trans,options);
     	}
     	else {
-    		Business bus = ui.businessService.findByCode(trans.getBusinessCode());
-    		if(bus.getCheckLevel().equals("无")) {
-    			// 非审档业务
-    			List<String> options = Arrays.asList("文件标签");
-    			PrintingFiletagsWindow.open("文件标签-打印预览",trans,options);
-    		}
-    		else if(bus.getCheckLevel().equals("一级审档")
-    				|| bus.getCheckLevel().equals("二级审档")) {//一级审档
-    		Callback callback = new Callback() {
-				@Override
-				public void onSuccessful() {
-				}
-			};
-    			PrintingResultsWindow.open("审核结果单-打印预览", trans, callback);
-    		}
+//    		Business bus = ui.businessService.findByCode(trans.getBusinessCode());
+//    		if(bus.getCheckLevel().equals("无")) {
+//    			// 非审档业务
+//    			List<String> options = Arrays.asList("文件标签");
+//    			PrintingFiletagsWindow.open("文件标签-打印预览",trans,options);
+//    		}
+//    		else if(bus.getCheckLevel().equals("一级审档")
+//    				|| bus.getCheckLevel().equals("二级审档")) {//一级审档
+//    		Callback callback = new Callback() {
+//				@Override
+//				public void onSuccessful() {
+//				}
+//			};
+//    			PrintingResultsWindow.open("审核结果单-打印预览", trans, callback);
+//    		}
     	}
     }
     
@@ -475,351 +474,351 @@ public final class FrontView extends Panel implements View,InputViewIF {
      * 
      */
     public void newTransaction() {
-    	LocationCode localCodes = new LocationCode(ui.locationService);
-    	if(!StringUtils.isEmpty(exception)) {
-    		Notifications.warning(exception);
-    		return;
-    	}
-    	if(editableTrans == null) {
-    		Notifications.warning("提交异常。");
-    		return;
-    	}
-    	//如果是新车注册业务，则需验证业务流水号
-    	if(businessTypePane.getSelected() == null || !basicInfoPane.emptyChecks(businessTypePane.getSelected().getName().contains("注册登记"))) {
-			Notifications.warning("有效性验证失败。");
-			return;
-    	}
-    	if (fileGrid.validationFails()) {
-			Notifications.warning("请将必录材料上传完整。");
-			return;
-    	}
-    	
-    	Community community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
-    	//4大流程
-    	//新车注册流程
-    	if (businessTypePane.getSelected().getName().contains("注册登记")) {
-    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
-        	editableTrans.setDateCreated(new Date());
-        	editableTrans.setDateModified(new Date());
-        	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
-        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
-        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setBatch(batch);
-        	editableTrans.setUuid(uuid);
-        	editableTrans.setCreator(loggedInUser.getUserName());
-        	editableTrans.setIndexNumber(1);
-        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
-        	// 如果不支持质检
-        	if(!editableCompany.getQcsupport()) {
-        		// 获取社区内的车管所
-        		Company com = ui.communityService.findDMVByCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-        		if(com == null) {
-        			Notifications.warning("当前社区不存在车管所，请联系管理员进行设置。");
-        			return;
-        		}
-        		
-        		FrameNumber frame = ui.frameService.getNewCode(com.getStorehouseName());
-        		if(StringUtils.isEmpty(frame.getCode())) {
-        			Notifications.warning("没有可用的上架号，请联系管理员设置库房（注册登记）。");
-        			return;
-        		} else {
-        			//跳过质检，完成逻辑上架
-        			editableTrans.setCode(frame.getCode()+"");//上架号
-        			ui.frameService.updateVIN(basicInfoPane.getVIN(), frame.getCode());
-        		}
-        		
-        		editableTrans.setStatus(ui.state().getName("B2"));
-        		int transactionUniqueId = ui.transactionService.insert(editableTrans);
-        		//更新车辆信息
-        		updateCar(editableTrans);
-        		
-        		//操作记录
-        		track(ui.state().getName("B2"));
-        		
-        		//清空舞台
-            	cleanStage();
-            	Notifications.bottomWarning("提交成功！已完成逻辑上架。");
-            	
-            	//立刻打印
-        		printNow(transactionUniqueId,basicInfoPane.getVIN());
-            	
-        	}
-        	// 提交给质检队列
-        	else {
-        		editableTrans.setStatus(ui.state().getName("B7"));
-        		int transactionUniqueId = ui.transactionService.insert(editableTrans);
-        		
-        		//更新车辆信息
-        		updateCar(editableTrans);
-        		
-        		// 添加到质检队列
-        		Queue newQueue = new Queue();
-        		newQueue.setUuid(editableTrans.getUuid());
-        		newQueue.setVin(editableTrans.getVin());
-        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-        		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
-        		ui.queueService.create(newQueue, serial);
-        		
-        		//操作记录
-        		track(ui.state().getName("B7"));
-        		
-        		// 清空舞台
-            	cleanStage();
-            	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
-            	
-            	//立刻打印
-        		printNow(transactionUniqueId,basicInfoPane.getVIN());
-        	}
-    	}
-    	
-    	// 非审档流程
-    	else if ("无".equals(businessTypePane.getSelected().getCheckLevel())) {
-    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
-    		editableTrans.setDateCreated(new Date());
-        	editableTrans.setDateModified(new Date());
-        	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
-        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
-        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setBatch(batch);
-        	editableTrans.setUuid(uuid);
-        	editableTrans.setCreator(loggedInUser.getUserName());
-        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
-        	editableTrans.setIndexNumber(indexNumber + 1);
-        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
-        	
-        	//如果不支持质检
-        	if(!editableCompany.getQcsupport()) {
-        		// 新车注册首个上架号
-        		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
-        		if(StringUtils.isEmpty(firstCode)) {
-        			Notifications.warning("没有可用的上架号或新车注册业务不存在(非审档)。");
-        			return;
-        		} else {
-        			//跳过质检，完成逻辑上架
-        			editableTrans.setCode(firstCode+"");//上架号
-        		}
-        		editableTrans.setStatus(ui.state().getName("B2"));
-        		int transactionUniqueId = ui.transactionService.insert(editableTrans);
-        		
-        		//更新车辆信息
-        		updateCar(editableTrans);
-        		
-        		//操作记录
-        		track(ui.state().getName("B2"));
-        		
-        		//清空舞台
-            	cleanStage();
-            	Notifications.bottomWarning("提交成功！已完成逻辑上架。");
-            	
-            	//立刻打印
-        		printNow(transactionUniqueId,basicInfoPane.getVIN());
-        	}
-        	// 提交给质检队列
-        	else {
-        		editableTrans.setStatus(ui.state().getName("B7"));
-        		int transactionUniqueId = ui.transactionService.insert(editableTrans);
-        		
-        		//更新车辆信息
-        		updateCar(editableTrans);
-        		
-        		// 添加到质检队列
-        		Queue newQueue = new Queue();
-        		newQueue.setUuid(editableTrans.getUuid());
-        		newQueue.setVin(editableTrans.getVin());
-        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-        		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
-        		ui.queueService.create(newQueue, serial);
-        		
-        		//操作记录
-        		track(ui.state().getName("B7"));
-        		
-        		// 清空舞台
-            	cleanStage();
-            	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
-            	
-            	//立刻打印
-        		printNow(transactionUniqueId,basicInfoPane.getVIN());
-        	}
-    	}
-    	
-    	// 需要审档（一级）流程
-    	else if (businessTypePane.getSelected().getCheckLevel().equals("一级审档")) {
-    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
-    		editableTrans.setDateCreated(new Date());
-        	editableTrans.setDateModified(new Date());
-        	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
-        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
-        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setBatch(batch);
-        	editableTrans.setUuid(uuid);
-        	editableTrans.setCreator(loggedInUser.getUserName());
-        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
-        	editableTrans.setIndexNumber(indexNumber + 1);
-        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
-        	// 如果不支持质检
-        	if(!editableCompany.getQcsupport()) {
-        		// 新车注册首个上架号
-        		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
-        		if(StringUtils.isEmpty(firstCode)) {
-        			Notifications.warning("没有可用的上架号或新车注册业务不存在(一级审档)。");
-        			return;
-        		} else {
-        			//跳过质检，完成逻辑上架
-        			editableTrans.setCode(firstCode+"");//上架号
-        		}
-        		editableTrans.setStatus(ui.state().getName("B4"));
-        		ui.transactionService.insert(editableTrans);
-        		
-        		//更新车辆信息
-        		updateCar(editableTrans);
-        		
-        		// 插入待审档队列
-        		Queue newQueue = new Queue();
-        		newQueue.setUuid(editableTrans.getUuid());
-        		newQueue.setVin(editableTrans.getVin());
-        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-        		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
-        		ui.queueService.create(newQueue, serial);
-        		
-        		//操作记录
-        		track(ui.state().getName("B4"));
-        		
-        		//清空舞台
-            	cleanStage();
-            	Notifications.bottomWarning("提交成功！已提交到队列中等待审档。");
-        	}
-        	// 提交给质检队列
-        	else {
-        		editableTrans.setStatus(ui.state().getName("B7"));
-        		ui.transactionService.insert(editableTrans);
-        		
-        		//更新车辆信息
-        		updateCar(editableTrans);
-        		
-        		// 添加到质检队列
-        		Queue newQueue = new Queue();
-        		newQueue.setUuid(editableTrans.getUuid());
-        		newQueue.setVin(editableTrans.getVin());
-        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-        		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
-        		ui.queueService.create(newQueue, serial);
-        		
-        		//操作记录
-        		track(ui.state().getName("B7"));
-        		
-        		// 清空舞台
-            	cleanStage();
-            	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
-        	}
-    	}
-    	
-    	// 需要审档（二级）流程
-    	else if (businessTypePane.getSelected().getCheckLevel().equals("二级审档")) {
-    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
-    		editableTrans.setDateCreated(new Date());
-        	editableTrans.setDateModified(new Date());
-        	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
-        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
-        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setBatch(batch);
-        	editableTrans.setUuid(uuid);
-        	editableTrans.setCreator(loggedInUser.getUserName());
-        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
-        	editableTrans.setIndexNumber(indexNumber + 1);
-        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
-        	//如果不支持质检
-        	if(!editableCompany.getQcsupport()) {
-        		// 新车注册首个上架号
-        		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
-        		if(StringUtils.isEmpty(firstCode)) {
-        			Notifications.warning("没有可用的上架号或新车注册业务不存在(二级审档)。");
-        			return;
-        		} else {
-        			//跳过质检，完成逻辑上架
-        			editableTrans.setCode(firstCode+"");//上架号
-        		}
-        		editableTrans.setStatus(ui.state().getName("B4"));
-        		ui.transactionService.insert(editableTrans);
-        		
-        		//更新车辆信息
-        		updateCar(editableTrans);
-        		
-        		// 判断是不是车管所用户
-            	boolean belongsToDMV = ui.companyService.isDMV(loggedInUser.getCompanyUniqueId());
-            	// 如果是车管所录入的，则需要车管所审档
-            	if(belongsToDMV) {
-            		// 插入待审档队列
-            		Queue newQueue = new Queue();
-            		newQueue.setUuid(editableTrans.getUuid());
-            		newQueue.setVin(editableTrans.getVin());
-            		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-            		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-            		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-            		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
-            		ui.queueService.create(newQueue, serial);
-            	}
-            	else {
-            		Company com = ui.communityService.findDMVByCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-            		if(com == null) {
-            			Notifications.warning("当前社区不存在车管所，请联系管理员进行设置。");
-            			return;
-            		}
-            		// 插入待审档队列
-            		Queue newQueue = new Queue();
-            		newQueue.setUuid(editableTrans.getUuid());
-            		newQueue.setVin(editableTrans.getVin());
-            		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-            		newQueue.setCompanyUniqueId(com.getCompanyUniqueId());
-            		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-            		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
-            		ui.queueService.create(newQueue, serial);
-            	}
-        		
-        		//操作记录
-        		track(ui.state().getName("B4"));
-        		
-        		//清空舞台
-            	cleanStage();
-            	Notifications.bottomWarning("提交成功！已提交到队列中等待审档。");
-        	}
-        	// 提交给质检队列
-        	else {
-        		editableTrans.setStatus(ui.state().getName("B7"));
-        		ui.transactionService.insert(editableTrans);
-        		
-        		//更新车辆信息
-        		updateCar(editableTrans);
-        		
-        		// 添加到质检队列
-        		Queue newQueue = new Queue();
-        		newQueue.setUuid(editableTrans.getUuid());
-        		newQueue.setVin(editableTrans.getVin());
-        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
-        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-        		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
-        		ui.queueService.create(newQueue, serial);
-        		
-        		//操作记录
-        		track(ui.state().getName("B7"));
-        		
-        		// 清空舞台
-            	cleanStage();
-            	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
-        	}
-    	}
+//    	LocationCode localCodes = new LocationCode(ui.locationService);
+//    	if(!StringUtils.isEmpty(exception)) {
+//    		Notifications.warning(exception);
+//    		return;
+//    	}
+//    	if(editableTrans == null) {
+//    		Notifications.warning("提交异常。");
+//    		return;
+//    	}
+//    	//如果是新车注册业务，则需验证业务流水号
+//    	if(businessTypePane.getSelected() == null || !basicInfoPane.emptyChecks(businessTypePane.getSelected().getName().contains("注册登记"))) {
+//			Notifications.warning("有效性验证失败。");
+//			return;
+//    	}
+//    	if (fileGrid.validationFails()) {
+//			Notifications.warning("请将必录材料上传完整。");
+//			return;
+//    	}
+//
+//    	Community community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
+//    	//4大流程
+//    	//新车注册流程
+//    	if (businessTypePane.getSelected().getName().contains("注册登记")) {
+//    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
+//        	editableTrans.setDateCreated(new Date());
+//        	editableTrans.setDateModified(new Date());
+//        	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
+//        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
+//        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+//        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+//        	editableTrans.setBatch(batch);
+//        	editableTrans.setUuid(uuid);
+//        	editableTrans.setCreator(loggedInUser.getUserName());
+//        	editableTrans.setIndexNumber(1);
+//        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
+//        	// 如果不支持质检
+//        	if(!editableCompany.getQcsupport()) {
+//        		// 获取社区内的车管所
+//        		Company com = ui.communityService.findDMVByCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+//        		if(com == null) {
+//        			Notifications.warning("当前社区不存在车管所，请联系管理员进行设置。");
+//        			return;
+//        		}
+//
+//        		FrameNumber frame = ui.frameService.getNewCode(com.getStorehouseName());
+//        		if(StringUtils.isEmpty(frame.getCode())) {
+//        			Notifications.warning("没有可用的上架号，请联系管理员设置库房（注册登记）。");
+//        			return;
+//        		} else {
+//        			//跳过质检，完成逻辑上架
+//        			editableTrans.setCode(frame.getCode()+"");//上架号
+//        			ui.frameService.updateVIN(basicInfoPane.getVIN(), frame.getCode());
+//        		}
+//
+//        		editableTrans.setStatus(ui.state().getName("B2"));
+//        		int transactionUniqueId = ui.transactionService.insert(editableTrans);
+//        		//更新车辆信息
+//        		updateCar(editableTrans);
+//
+//        		//操作记录
+//        		track(ui.state().getName("B2"));
+//
+//        		//清空舞台
+//            	cleanStage();
+//            	Notifications.bottomWarning("提交成功！已完成逻辑上架。");
+//
+//            	//立刻打印
+//        		printNow(transactionUniqueId,basicInfoPane.getVIN());
+//
+//        	}
+//        	// 提交给质检队列
+//        	else {
+//        		editableTrans.setStatus(ui.state().getName("B7"));
+//        		int transactionUniqueId = ui.transactionService.insert(editableTrans);
+//
+//        		//更新车辆信息
+//        		updateCar(editableTrans);
+//
+//        		// 添加到质检队列
+//        		Queue newQueue = new Queue();
+//        		newQueue.setUuid(editableTrans.getUuid());
+//        		newQueue.setVin(editableTrans.getVin());
+//        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+//        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+//        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+//        		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
+//        		ui.queueService.create(newQueue, serial);
+//
+//        		//操作记录
+//        		track(ui.state().getName("B7"));
+//
+//        		// 清空舞台
+//            	cleanStage();
+//            	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
+//
+//            	//立刻打印
+//        		printNow(transactionUniqueId,basicInfoPane.getVIN());
+//        	}
+//    	}
+//
+//    	// 非审档流程
+//    	else if ("无".equals(businessTypePane.getSelected().getCheckLevel())) {
+//    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
+//    		editableTrans.setDateCreated(new Date());
+//        	editableTrans.setDateModified(new Date());
+//        	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
+//        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
+//        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+//        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+//        	editableTrans.setBatch(batch);
+//        	editableTrans.setUuid(uuid);
+//        	editableTrans.setCreator(loggedInUser.getUserName());
+//        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
+//        	editableTrans.setIndexNumber(indexNumber + 1);
+//        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
+//
+//        	//如果不支持质检
+//        	if(!editableCompany.getQcsupport()) {
+//        		// 新车注册首个上架号
+//        		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
+//        		if(StringUtils.isEmpty(firstCode)) {
+//        			Notifications.warning("没有可用的上架号或新车注册业务不存在(非审档)。");
+//        			return;
+//        		} else {
+//        			//跳过质检，完成逻辑上架
+//        			editableTrans.setCode(firstCode+"");//上架号
+//        		}
+//        		editableTrans.setStatus(ui.state().getName("B2"));
+//        		int transactionUniqueId = ui.transactionService.insert(editableTrans);
+//
+//        		//更新车辆信息
+//        		updateCar(editableTrans);
+//
+//        		//操作记录
+//        		track(ui.state().getName("B2"));
+//
+//        		//清空舞台
+//            	cleanStage();
+//            	Notifications.bottomWarning("提交成功！已完成逻辑上架。");
+//
+//            	//立刻打印
+//        		printNow(transactionUniqueId,basicInfoPane.getVIN());
+//        	}
+//        	// 提交给质检队列
+//        	else {
+//        		editableTrans.setStatus(ui.state().getName("B7"));
+//        		int transactionUniqueId = ui.transactionService.insert(editableTrans);
+//
+//        		//更新车辆信息
+//        		updateCar(editableTrans);
+//
+//        		// 添加到质检队列
+//        		Queue newQueue = new Queue();
+//        		newQueue.setUuid(editableTrans.getUuid());
+//        		newQueue.setVin(editableTrans.getVin());
+//        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+//        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+//        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+//        		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
+//        		ui.queueService.create(newQueue, serial);
+//
+//        		//操作记录
+//        		track(ui.state().getName("B7"));
+//
+//        		// 清空舞台
+//            	cleanStage();
+//            	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
+//
+//            	//立刻打印
+//        		printNow(transactionUniqueId,basicInfoPane.getVIN());
+//        	}
+//    	}
+//
+//    	// 需要审档（一级）流程
+//    	else if (businessTypePane.getSelected().getCheckLevel().equals("一级审档")) {
+//    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
+//    		editableTrans.setDateCreated(new Date());
+//        	editableTrans.setDateModified(new Date());
+//        	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
+//        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
+//        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+//        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+//        	editableTrans.setBatch(batch);
+//        	editableTrans.setUuid(uuid);
+//        	editableTrans.setCreator(loggedInUser.getUserName());
+//        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
+//        	editableTrans.setIndexNumber(indexNumber + 1);
+//        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
+//        	// 如果不支持质检
+//        	if(!editableCompany.getQcsupport()) {
+//        		// 新车注册首个上架号
+//        		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
+//        		if(StringUtils.isEmpty(firstCode)) {
+//        			Notifications.warning("没有可用的上架号或新车注册业务不存在(一级审档)。");
+//        			return;
+//        		} else {
+//        			//跳过质检，完成逻辑上架
+//        			editableTrans.setCode(firstCode+"");//上架号
+//        		}
+//        		editableTrans.setStatus(ui.state().getName("B4"));
+//        		ui.transactionService.insert(editableTrans);
+//
+//        		//更新车辆信息
+//        		updateCar(editableTrans);
+//
+//        		// 插入待审档队列
+//        		Queue newQueue = new Queue();
+//        		newQueue.setUuid(editableTrans.getUuid());
+//        		newQueue.setVin(editableTrans.getVin());
+//        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+//        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+//        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+//        		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
+//        		ui.queueService.create(newQueue, serial);
+//
+//        		//操作记录
+//        		track(ui.state().getName("B4"));
+//
+//        		//清空舞台
+//            	cleanStage();
+//            	Notifications.bottomWarning("提交成功！已提交到队列中等待审档。");
+//        	}
+//        	// 提交给质检队列
+//        	else {
+//        		editableTrans.setStatus(ui.state().getName("B7"));
+//        		ui.transactionService.insert(editableTrans);
+//
+//        		//更新车辆信息
+//        		updateCar(editableTrans);
+//
+//        		// 添加到质检队列
+//        		Queue newQueue = new Queue();
+//        		newQueue.setUuid(editableTrans.getUuid());
+//        		newQueue.setVin(editableTrans.getVin());
+//        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+//        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+//        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+//        		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
+//        		ui.queueService.create(newQueue, serial);
+//
+//        		//操作记录
+//        		track(ui.state().getName("B7"));
+//
+//        		// 清空舞台
+//            	cleanStage();
+//            	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
+//        	}
+//    	}
+//
+//    	// 需要审档（二级）流程
+//    	else if (businessTypePane.getSelected().getCheckLevel().equals("二级审档")) {
+//    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
+//    		editableTrans.setDateCreated(new Date());
+//        	editableTrans.setDateModified(new Date());
+//        	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
+//        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
+//        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+//        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+//        	editableTrans.setBatch(batch);
+//        	editableTrans.setUuid(uuid);
+//        	editableTrans.setCreator(loggedInUser.getUserName());
+//        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
+//        	editableTrans.setIndexNumber(indexNumber + 1);
+//        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
+//        	//如果不支持质检
+//        	if(!editableCompany.getQcsupport()) {
+//        		// 新车注册首个上架号
+//        		String firstCode = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
+//        		if(StringUtils.isEmpty(firstCode)) {
+//        			Notifications.warning("没有可用的上架号或新车注册业务不存在(二级审档)。");
+//        			return;
+//        		} else {
+//        			//跳过质检，完成逻辑上架
+//        			editableTrans.setCode(firstCode+"");//上架号
+//        		}
+//        		editableTrans.setStatus(ui.state().getName("B4"));
+//        		ui.transactionService.insert(editableTrans);
+//
+//        		//更新车辆信息
+//        		updateCar(editableTrans);
+//
+//        		// 判断是不是车管所用户
+//            	boolean belongsToDMV = ui.companyService.isDMV(loggedInUser.getCompanyUniqueId());
+//            	// 如果是车管所录入的，则需要车管所审档
+//            	if(belongsToDMV) {
+//            		// 插入待审档队列
+//            		Queue newQueue = new Queue();
+//            		newQueue.setUuid(editableTrans.getUuid());
+//            		newQueue.setVin(editableTrans.getVin());
+//            		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+//            		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+//            		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+//            		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
+//            		ui.queueService.create(newQueue, serial);
+//            	}
+//            	else {
+//            		Company com = ui.communityService.findDMVByCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+//            		if(com == null) {
+//            			Notifications.warning("当前社区不存在车管所，请联系管理员进行设置。");
+//            			return;
+//            		}
+//            		// 插入待审档队列
+//            		Queue newQueue = new Queue();
+//            		newQueue.setUuid(editableTrans.getUuid());
+//            		newQueue.setVin(editableTrans.getVin());
+//            		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+//            		newQueue.setCompanyUniqueId(com.getCompanyUniqueId());
+//            		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+//            		int serial = 2;// 1:质检队列，2：审档队列，3：确认审档队列
+//            		ui.queueService.create(newQueue, serial);
+//            	}
+//
+//        		//操作记录
+//        		track(ui.state().getName("B4"));
+//
+//        		//清空舞台
+//            	cleanStage();
+//            	Notifications.bottomWarning("提交成功！已提交到队列中等待审档。");
+//        	}
+//        	// 提交给质检队列
+//        	else {
+//        		editableTrans.setStatus(ui.state().getName("B7"));
+//        		ui.transactionService.insert(editableTrans);
+//
+//        		//更新车辆信息
+//        		updateCar(editableTrans);
+//
+//        		// 添加到质检队列
+//        		Queue newQueue = new Queue();
+//        		newQueue.setUuid(editableTrans.getUuid());
+//        		newQueue.setVin(editableTrans.getVin());
+//        		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
+//        		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+//        		newQueue.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+//        		int serial = 1;// 1:代表质检取队列，2：代表审档取队列
+//        		ui.queueService.create(newQueue, serial);
+//
+//        		//操作记录
+//        		track(ui.state().getName("B7"));
+//
+//        		// 清空舞台
+//            	cleanStage();
+//            	Notifications.bottomWarning("提交成功！已提交到队列中等待质检。");
+//        	}
+//    	}
     }
     
     /**
@@ -878,7 +877,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		// 添加到质检队列
         		Queue newQueue = new Queue();
-        		newQueue.setUuid(editableTrans.getUuid());
+//        		newQueue.setUuid(editableTrans.getUuid());
         		newQueue.setVin(editableTrans.getVin());
         		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
         		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
@@ -916,7 +915,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		// 添加到质检队列
         		Queue newQueue = new Queue();
-        		newQueue.setUuid(editableTrans.getUuid());
+//        		newQueue.setUuid(editableTrans.getUuid());
         		newQueue.setVin(editableTrans.getVin());
         		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
         		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
@@ -945,7 +944,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		// 插入待审档队列
         		Queue newQueue = new Queue();
-        		newQueue.setUuid(editableTrans.getUuid());
+//        		newQueue.setUuid(editableTrans.getUuid());
         		newQueue.setVin(editableTrans.getVin());
         		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
         		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
@@ -966,7 +965,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		// 添加到质检队列
         		Queue newQueue = new Queue();
-        		newQueue.setUuid(editableTrans.getUuid());
+//        		newQueue.setUuid(editableTrans.getUuid());
         		newQueue.setVin(editableTrans.getVin());
         		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
         		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
@@ -993,7 +992,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		// 插入待审档队列
         		Queue newQueue = new Queue();
-        		newQueue.setUuid(editableTrans.getUuid());
+//        		newQueue.setUuid(editableTrans.getUuid());
         		newQueue.setVin(editableTrans.getVin());
         		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
         		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
@@ -1014,7 +1013,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
         		
         		// 添加到质检队列
         		Queue newQueue = new Queue();
-        		newQueue.setUuid(editableTrans.getUuid());
+//        		newQueue.setUuid(editableTrans.getUuid());
         		newQueue.setVin(editableTrans.getVin());
         		newQueue.setLockedByUser(0);	// 默认为0标识任何人都可以取，除非被某人锁定
         		newQueue.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());

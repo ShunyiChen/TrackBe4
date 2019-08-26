@@ -1,40 +1,15 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
-import java.util.Date;
-
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
-import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.PermissionCodes;
-import com.maxtree.automotive.dashboard.TB4Application;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
-import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.Test;
-import com.maxtree.automotive.dashboard.domain.SystemSettings;
-import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
-import com.maxtree.automotive.dashboard.view.Commands;
-import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.Page;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.AbsoluteLayout;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
-
+import com.vaadin.ui.*;
 import de.schlichtherle.license.LicenseContent;
+
+import java.util.Date;
 
 public class AdminMainView extends AbsoluteLayout {
 	/**

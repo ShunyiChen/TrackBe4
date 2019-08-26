@@ -51,30 +51,6 @@ public class Transaction {
 		this.vin = vin;
 	}
 
-	public Date getDateCreated() {
-		return dateCreated;
-	}
-
-	public void setDateCreated(Date dateCreated) {
-		this.dateCreated = dateCreated;
-	}
-
-	public Date getDateModified() {
-		return dateModified;
-	}
-
-	public void setDateModified(Date dateModified) {
-		this.dateModified = dateModified;
-	}
-
-	public Date getDateFinished() {
-		return dateFinished;
-	}
-
-	public void setDateFinished(Date dateFinished) {
-		this.dateFinished = dateFinished;
-	}
-
 	public String getStatus() {
 		return status;
 	}
@@ -83,20 +59,44 @@ public class Transaction {
 		this.status = status;
 	}
 
+	public String getBusinessName() {
+		return businessName;
+	}
+
+	public void setBusinessName(String businessName) {
+		this.businessName = businessName;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public Integer getIndexNumber() {
+		return indexNumber;
+	}
+
+	public void setIndexNumber(Integer indexNumber) {
+		this.indexNumber = indexNumber;
+	}
+
+	public String getDomicilePlace() {
+		return domicilePlace;
+	}
+
+	public void setDomicilePlace(String domicilePlace) {
+		this.domicilePlace = domicilePlace;
+	}
+
 	public Integer getSiteUniqueId() {
 		return siteUniqueId;
 	}
 
 	public void setSiteUniqueId(Integer siteUniqueId) {
 		this.siteUniqueId = siteUniqueId;
-	}
-
-	public String getBusinessCode() {
-		return businessCode;
-	}
-
-	public void setBusinessCode(String businessCode) {
-		this.businessCode = businessCode;
 	}
 
 	public Integer getCommunityUniqueId() {
@@ -115,97 +115,52 @@ public class Transaction {
 		this.companyUniqueId = companyUniqueId;
 	}
 
-	public Integer getBatch() {
-		return batch;
+	public String getCreateBy() {
+		return createBy;
 	}
 
-	public void setBatch(Integer batch) {
-		this.batch = batch;
-	}
-	
-	public String getUuid() {
-		return uuid;
+	public void setCreateBy(String createBy) {
+		this.createBy = createBy;
 	}
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-	
-	public String getCode() {
-		return code;
+	public Date getDateCreated() {
+		return dateCreated;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setDateCreated(Date dateCreated) {
+		this.dateCreated = dateCreated;
 	}
 
-	public Site getSite() {
-		return site;
+	public Date getDateModified() {
+		return dateModified;
 	}
 
-	public void setSite(Site site) {
-		this.site = site;
-	}
-	
-	public String getLocationCode() {
-		return locationCode;
-	}
-
-	public void setLocationCode(String locationCode) {
-		this.locationCode = locationCode;
-	}
-
-	public String getCreator() {
-		return creator;
-	}
-
-	public void setCreator(String creator) {
-		this.creator = creator;
-	}
-
-	public Integer getIndexNumber() {
-		return indexNumber;
-	}
-
-	public void setIndexNumber(Integer indexNumber) {
-		this.indexNumber = indexNumber;
-	}
-
-	public String getBusinessName() {
-		return businessName;
-	}
-
-	public void setBusinessName(String businessName) {
-		this.businessName = businessName;
+	public void setDateModified(Date dateModified) {
+		this.dateModified = dateModified;
 	}
 
 	@Override
 	public String toString() {
 		 return String.format(
 		 "Transaction[transactionUniqueId=%d, barcode='%s', plateType='%s',plateNumber='%s',vin='%s', "
-		 + "dateCreated='%s', dateModified='%s', dateFinished='%s', status='%s',siteCode='%s',"
-		 + "businessCode='%s', communityUniqueID='%d',companyUniqueId='%d',locationCode='%s',"
-		 + "batch='%s', uuid='%s',code='%s',creator='%s',indexNumber='%d',businessName='%s']",
+		 +"'status='%s',businessName='%s',code='%s',indexNumber='%d',domicilePlace='%s',siteUniqueId='%d', communityUniqueID='%d',companyUniqueId='%d',"
+		 + "createBy='%s', dateCreated='%s',dateModified='%s']",
 		 transactionUniqueId,
 		 barcode,
 		 plateType,
 		 plateNumber,
 		 vin,
-		 dateCreated,
-		 dateModified,
-		 dateFinished,
 		 status,
+		 businessName,
+		 code,
+		 indexNumber,
+  		 domicilePlace,
 		 siteUniqueId,
-		 businessCode,
 		 communityUniqueId,
 		 companyUniqueId,
-		 locationCode,
-		 batch,
-		 uuid,
-		 code,
-		 creator,
-		 indexNumber,
-		 businessName
+		 createBy,
+		 dateCreated,
+		 dateModified
 		);
 	}
 
@@ -214,20 +169,15 @@ public class Transaction {
 	private String plateType; 				// 号牌种类
 	private String plateNumber; 			// 号码号牌
 	private String vin; 					// 车辆识别代码
-	private Date dateCreated; 				// 创建日期
-	private Date dateModified; 				// 最后修改日期
-	private Date dateFinished; 				// 完成日期
 	private String status; 					// 业务状态,比如，待上架，待质检
+	private String businessName;			// 业务名称
+	private String code;                 	// 上架号
+	private Integer indexNumber = 0; 		// 业务顺序号（记录先后顺序的）
+	private String domicilePlace;			// 户籍所在地（大连市,）
 	private Integer siteUniqueId; 			// 站点Id
-	private String businessCode;   			// 业务CODE
 	private Integer communityUniqueId = 0; 	// 办理社区ID
 	private Integer companyUniqueId = 0;    // 办理机构ID
-	private String locationCode;   			// 车辆所在地地点CODE
-	private Integer batch = 0;			 	// 批次号
-	private String uuid;					// 文件挂接UUID
-	private String code;                 	// 上架号
-	private Site site;						// 文件站点
-	private String creator;					// 录入人用户名
-	private Integer indexNumber = 0; 		// 业务顺序号
-	private String businessName;			// 业务名称
+	private String createBy;			    // 录入人用户名
+	private Date dateCreated; 				// 创建日期
+	private Date dateModified; 				// 最后修改日期
 }

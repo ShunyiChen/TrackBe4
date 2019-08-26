@@ -3,7 +3,6 @@ package com.maxtree.automotive.dashboard.view.shelf;
 import java.util.List;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.LocationCode;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Community;
@@ -40,7 +39,7 @@ public class DownGrid extends VerticalLayout {
 		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
 		User loggedInUser = ui.userService.getUserByUserName(username);
 		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
-		localCodes = new LocationCode(ui.locationService);
+//		localCodes = new LocationCode(ui.locationService);
 		this.setSpacing(false);
 		this.setMargin(false);
 		this.setSizeFull();
@@ -71,7 +70,7 @@ public class DownGrid extends VerticalLayout {
 		grid.setSizeFull();
 		grid.addColumn(Transaction::getCode).setCaption("上架号");
 		grid.addColumn(Transaction::getBarcode).setCaption("条形码");
-		grid.addColumn(Transaction::getBusinessCode).setCaption("业务类型");
+//		grid.addColumn(Transaction::getBusinessCode).setCaption("业务类型");
 		grid.addColumn(Transaction::getStatus).setCaption("业务状态");
         
 		// Set the selection mode
@@ -113,9 +112,9 @@ public class DownGrid extends VerticalLayout {
 	public void execute() {
 		// 按车牌号查询
 		if (keyword.length() == 5 || keyword.length() == 6) {
-			 String locationCode = localCodes.getCompleteLocationCode(community);
-			 List<Transaction> rs = ui.transactionService.search_by_keyword(-1, 0, keyword, locationCode);
-			 grid.setItems(rs);
+//			 String locationCode = localCodes.getCompleteLocationCode(community);
+//			 List<Transaction> rs = ui.transactionService.search_by_keyword(-1, 0, keyword, locationCode);
+//			 grid.setItems(rs);
 		} else {
 			Notifications.warning("请输入车牌号的后5位或后6位查询。");
 		}
@@ -129,7 +128,7 @@ public class DownGrid extends VerticalLayout {
 	}
 	
 	private Community community;
-	private LocationCode localCodes;
+//	private LocationCode localCodes;
 	private User loggedInUser;
 	private String keyword;
 	private List<Transaction> allData;

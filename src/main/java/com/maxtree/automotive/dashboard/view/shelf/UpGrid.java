@@ -3,7 +3,6 @@ package com.maxtree.automotive.dashboard.view.shelf;
 import java.util.List;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.LocationCode;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Transaction;
@@ -30,7 +29,7 @@ public class UpGrid extends VerticalLayout {
 		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
 		loggedInUser = ui.userService.getUserByUserName(username);
 		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
-		localCodes = new LocationCode(ui.locationService);
+//		localCodes = new LocationCode(ui.locationService);
 		this.setSpacing(false);
 		this.setMargin(false);
 		this.setSizeFull();
@@ -39,7 +38,7 @@ public class UpGrid extends VerticalLayout {
 		grid.addColumn(Transaction::getPlateType).setCaption("号牌种类");
 		grid.addColumn(Transaction::getPlateNumber).setCaption("号码号牌");
 		grid.addColumn(Transaction::getVin).setCaption("车辆识别代码");
-		grid.addColumn(Transaction::getBusinessCode).setCaption("业务类型");
+//		grid.addColumn(Transaction::getBusinessCode).setCaption("业务类型");
 		grid.addColumn(Transaction::getStatus).setCaption("业务状态");
         
 		// Set the selection mode
@@ -74,9 +73,9 @@ public class UpGrid extends VerticalLayout {
 	public void execute() {
 		// 按车牌号后5位或后6位查询
 		if (keyword.length() == 5 || keyword.length() == 6) {
-			 String locationCode = localCodes.getCompleteLocationCode(community);
-			 List<Transaction> rs = ui.transactionService.search_by_keyword(-1,0,keyword,locationCode);
-			 grid.setItems(rs);
+//			 String locationCode = localCodes.getCompleteLocationCode(community);
+//			 List<Transaction> rs = ui.transactionService.search_by_keyword(-1,0,keyword,locationCode);
+//			 grid.setItems(rs);
 		} else {
 			Notifications.warning("请输入车牌号的后5位或后6位查询。");
 		}
@@ -87,7 +86,6 @@ public class UpGrid extends VerticalLayout {
 	}
 	
 	private Community community;
-	private LocationCode localCodes;
 	private User loggedInUser;
 	private String keyword;
 	private List<Transaction> allData;

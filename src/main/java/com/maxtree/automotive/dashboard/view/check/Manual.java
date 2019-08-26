@@ -184,11 +184,11 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 			Document businessDoc = new Document();
 			businessDoc.setAlias(trans.getBusinessName());
 			rightTreeData.addItem(rightRoot, businessDoc);
-			List<Document> primaryDocs = ui.documentService.findAllDocument1(trans.getVin(),trans.getUuid());
+//			List<Document> primaryDocs = ui.documentService.findAllDocument1(trans.getVin(),trans.getUuid());
 //	    	List<Document> secondaryDocs = ui.documentService.findAllDocument2(trans.getVin(),trans.getUuid());
-	        for (Document d : primaryDocs) {
-	        	rightTreeData.addItem(businessDoc, d);
-	        }
+//	        for (Document d : primaryDocs) {
+//	        	rightTreeData.addItem(businessDoc, d);
+//	        }
 //	        for (Document d : secondaryDocs) {
 //	        	rightTreeData.addItem(businessDoc, d);
 //	        }
@@ -238,11 +238,11 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
     	site = ui.siteService.findById(transaction.getSiteUniqueId());
     	leftRoot.setAlias("当前业务材料");
         leftTreeData.addItem(null, leftRoot);
-        List<Document> primaryDocs = ui.documentService.findAllDocument1(transaction.getVin(),transaction.getUuid());
+//        List<Document> primaryDocs = ui.documentService.findAllDocument1(transaction.getVin(),transaction.getUuid());
 //    	List<Document> secondaryDocs = ui.documentService.findAllDocument2(transaction.getVin(),transaction.getUuid());
-        for (Document d : primaryDocs) {
-        	leftTreeData.addItem(leftRoot, d);
-        }
+//        for (Document d : primaryDocs) {
+//        	leftTreeData.addItem(leftRoot, d);
+//        }
 //        for (Document d : secondaryDocs) {
 //        	leftTreeData.addItem(leftRoot, d);
 //        }

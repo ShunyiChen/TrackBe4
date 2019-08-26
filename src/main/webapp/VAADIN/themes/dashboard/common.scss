@@ -333,7 +333,7 @@
 //        color: #666666;
     }
     .v-menubar-popup .v-menubar-menuitem-selected {
-        background-color: #3367D6;
+        background-color: rgba(63,81,181,0.8) !important;//谷歌蓝色
         background-image: none;
     }
     .v-button:hover:after {

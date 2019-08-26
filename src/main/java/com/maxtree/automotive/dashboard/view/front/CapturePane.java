@@ -22,7 +22,6 @@ import org.yaml.snakeyaml.reader.UnicodeReader;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
-import com.maxtree.automotive.dashboard.domain.SystemSettings;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
@@ -79,19 +78,19 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 		int height = UI.getCurrent().getPage().getBrowserWindowHeight() - 173;
 		this.setWidth("100%");
 		this.setHeight(height+"px");
-		settings = ui.settingsService.findByName("高拍仪");
-		if("无".equals(settings.getValue())) {
-			Upload upload = new Upload(null, this);
-			upload.setButtonCaption("选择文件");
-			upload.setButtonStyleName("upload-button");
-			upload.setImmediateMode(true);
-			upload.addSucceededListener(this);
-			this.setContent(upload);
-		}
-		else {
-			browser.setSizeFull();
-			this.setContent(browser);
-		}
+//		settings = ui.settingsService.findByName("高拍仪");
+//		if("无".equals(settings.getValue())) {
+//			Upload upload = new Upload(null, this);
+//			upload.setButtonCaption("选择文件");
+//			upload.setButtonStyleName("upload-button");
+//			upload.setImmediateMode(true);
+//			upload.addSucceededListener(this);
+//			this.setContent(upload);
+//		}
+//		else {
+//			browser.setSizeFull();
+//			this.setContent(browser);
+//		}
 	}
 	
 	/**
@@ -140,13 +139,13 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
 		loggedinUser = ui.userService.getUserByUserName(username);
 		String everything = "";
-		File template;
-		if(settings.getValue().equals("无锡华通H6-1")) {
-			template = new File("devices/templates/HtmlDemo3.html");//无锡华通H6-1
-		}
-		else {
-			template = new File("devices/templates/Sample_CamOCX_HTML_Device_IE.html");//维山VSA305FD
-		}
+		File template = null;
+//		if(settings.getValue().equals("无锡华通H6-1")) {
+//			template = new File("devices/templates/HtmlDemo3.html");//无锡华通H6-1
+//		}
+//		else {
+//			template = new File("devices/templates/Sample_CamOCX_HTML_Device_IE.html");//维山VSA305FD
+//		}
 //		File template = new File("devices/templates/TempHtml.html"); // 选择本地图片上传
 		FileInputStream in = new FileInputStream(template);
 		BufferedReader br = new BufferedReader(new UnicodeReader(in));
@@ -256,5 +255,4 @@ public class CapturePane extends Panel implements Receiver, SucceededListener, P
 	private Site site = null;
 	private String targetPath = null;
 	private UploadInDTO p = null;
-	private SystemSettings settings;
 }

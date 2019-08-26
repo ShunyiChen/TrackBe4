@@ -124,8 +124,8 @@ public class PrintingFiletagsWindow extends Window {
     			PrintableBean bean = new PrintableBean();
     			bean.setPlateType(trans.getPlateType());//号码种类
     			bean.setPlateNum(trans.getPlateNumber());//号牌号码
-    			Business business = ui.businessService.findByCode(trans.getBusinessCode());
-    			bean.setBusType(business.getName());//业务类型
+//    			Business business = ui.businessService.findByCode(trans.getBusinessCode());
+//    			bean.setBusType(business.getName());//业务类型
     			bean.setShelvesNum(trans.getCode()); //上架号
     			bean.setIndex(trans.getIndexNumber()); //索引号
     			bean.setCode(trans.getBarcode()); //流水号
@@ -198,7 +198,7 @@ public class PrintingFiletagsWindow extends Window {
 		        opener.extend(btnOk);
 		        
 				// Update status
-				ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), ui.state().getName("B19"));
+//				ui.transactionService.updateStatus(trans.getVin(), trans.getUuid(), ui.state().getName("B19"));
 				
 				FinalCheck finalCheck = new FinalCheck();
 				finalCheck.setBarcode(trans.getBarcode());

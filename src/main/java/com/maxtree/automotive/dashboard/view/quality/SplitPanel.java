@@ -42,11 +42,11 @@ public class SplitPanel extends Panel implements ImageViewIF {
     	
         // Couple of childless root items
         treeData.addItem(null, root);
-        List<Document> primaryDocs = ui.documentService.findAllDocument1(transaction.getVin(),transaction.getUuid());
+//        List<Document> primaryDocs = ui.documentService.findAllDocument1(transaction.getVin(),transaction.getUuid());
 //    	List<Document> secondaryDocs = ui.documentService.findAllDocument2(transaction.getVin(),transaction.getUuid());
-        for (Document d : primaryDocs) {
-        	treeData.addItem(root, d);
-        }
+//        for (Document d : primaryDocs) {
+//        	treeData.addItem(root, d);
+//        }
 //        for (Document d : secondaryDocs) {
 //        	treeData.addItem(root, d);
 //        }

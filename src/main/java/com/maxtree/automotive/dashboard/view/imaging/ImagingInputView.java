@@ -19,7 +19,6 @@ import org.springframework.util.StringUtils;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.LocationCode;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
@@ -33,7 +32,6 @@ import com.maxtree.automotive.dashboard.domain.Car;
 import com.maxtree.automotive.dashboard.domain.Community;
 import com.maxtree.automotive.dashboard.domain.Company;
 import com.maxtree.automotive.dashboard.domain.FrameNumber;
-import com.maxtree.automotive.dashboard.domain.Location;
 import com.maxtree.automotive.dashboard.domain.Message;
 import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.Site;
@@ -541,8 +539,8 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	editableTrans = transaction;
     	this.deletableMessageUniqueId = deletableMessageUniqueId;
     	editableSite = ui.siteService.findById(editableTrans.getSiteUniqueId());
-    	uuid = editableTrans.getUuid();
-    	batch = editableTrans.getBatch();
+//    	uuid = editableTrans.getUuid();
+//    	batch = editableTrans.getBatch();
     	vin = editableTrans.getVin();
     	
     	int companyUniqueId = loggedInUser.getCompanyUniqueId();
@@ -575,7 +573,7 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	resetComponents();
     	
     	basicInfoPane.populateFields(editableTrans);
-    	businessTypePane.populate(editableTrans.getBusinessCode());
+//    	businessTypePane.populate(editableTrans.getBusinessCode());
     	
     	callback.onSuccessful();
     }
@@ -587,121 +585,108 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
     	this.exception = exception;
     }
 
-	/**
-	 *
-	 * @return
-	 */
-	private Map<String, String> getLocationMap() {
-    	List<Location> list = ui.locationService.findAll();
-    	HashMap<String, String> map = new HashMap<>();
-    	for(Location l : list) {
-    		map.put(l.getName(), l.getCode());
-    	}
-    	return map;
-    }
-    
     /**
      * 
      */
     public void newTransaction() {
-    	if(!StringUtils.isEmpty(exception)) {
-    		Notifications.warning(exception);
-    		return;
-    	}
-    	else if(editableTrans == null) {
-    		Notifications.warning("提交异常。");
-    		return;
-    	}
-    	//如果是新车注册业务则需要验证业务流水号
-    	if(!basicInfoPane.emptyChecks(businessTypePane.getSelected().getName().contains("注册登记"))) {
-			Notifications.warning("有效性验证失败。");
-			return;
-    	}
-    	if (fileGrid.validationFails()) {
-			Notifications.warning("请将必录材料上传完整。");
-			return;
-    	}
-    	Community community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
-    	LocationCode localCodes = new LocationCode(ui.locationService);
-    	Map<String, String> l = getLocationMap();
-    	//新车注册流程
-    	if (businessTypePane.getSelected().getName().contains("注册登记")) {
-    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
-        	editableTrans.setDateCreated(new Date());
-        	editableTrans.setDateModified(new Date());
-			editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
-        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
-        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setBatch(batch);
-        	editableTrans.setUuid(uuid);
-        	editableTrans.setCreator(loggedInUser.getUserName());
-        	editableTrans.setIndexNumber(1);
-        	editableTrans.setStatus(ui.state().getName("B7"));
-        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
-        	
-        	// 获得社区内的全部机构
-    		List<Company> companies = ui.communityService.findAllCompanies(loggedInUser.getCommunityUniqueId());
-    		Company com = null;
-    		for(int i = 0; i < companies.size(); i++) {
-    			com = companies.get(i);
-    			if (com.getCategory().trim().equals("车管所")) {
-    				break;
-    			}
-    		}
-    		FrameNumber frame = ui.frameService.getNewCode(com.getStorehouseName());
-    		if(StringUtils.isEmpty(frame.getCode())) {
-    			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
-    			return;
-    		} else {
-    			//跳过质检，完成逻辑上架
-    			editableTrans.setCode(frame.getCode()+"");//上架号
-    			ui.frameService.updateVIN(basicInfoPane.getVIN(), frame.getCode());
-    		}
-    		ui.transactionService.insert(editableTrans);
-    		//更改车辆信息
-    		updateCar(editableTrans);
-    		//操作记录
-    		track(ui.state().getName("B7"));
-    		// 清空舞台
-        	cleanStage();
-        	Notifications.bottomWarning("提交成功！等待质检检查。");
-    	}
-    	else {
-    		// 取新车注册上架号
-    		String code = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
-    		if(StringUtils.isEmpty(code)) {
-    			Notifications.warning("上架号不存在！请录入注册登记业务,确保先生成上架号。");
-    			return;
-    		}
-    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
-    		editableTrans.setDateCreated(new Date());
-        	editableTrans.setDateModified(new Date());
-        	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
-        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
-        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-        	editableTrans.setUuid(uuid);
-        	editableTrans.setCode(code);
-        	editableTrans.setCreator(loggedInUser.getUserName());
-        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
-        	editableTrans.setIndexNumber(indexNumber + 1);
-        	editableTrans.setStatus(ui.state().getName("B7"));
-        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
-        	
-    		ui.transactionService.insert(editableTrans);
-    		
-    		//更改车辆信息
-    		updateCar(editableTrans);
-    		
-    		//操作记录
-    		track(ui.state().getName("B7"));
-    		
-    		// 清空舞台
-        	cleanStage();
-        	
-        	Notifications.bottomWarning("提交成功！等待质检检查。");
-    	}
+//    	if(!StringUtils.isEmpty(exception)) {
+//    		Notifications.warning(exception);
+//    		return;
+//    	}
+//    	else if(editableTrans == null) {
+//    		Notifications.warning("提交异常。");
+//    		return;
+//    	}
+//    	//如果是新车注册业务则需要验证业务流水号
+//    	if(!basicInfoPane.emptyChecks(businessTypePane.getSelected().getName().contains("注册登记"))) {
+//			Notifications.warning("有效性验证失败。");
+//			return;
+//    	}
+//    	if (fileGrid.validationFails()) {
+//			Notifications.warning("请将必录材料上传完整。");
+//			return;
+//    	}
+//    	Community community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
+//    	LocationCode localCodes = new LocationCode(ui.locationService);
+//    	Map<String, String> l = new HashMap<>();
+//    	//新车注册流程
+//    	if (businessTypePane.getSelected().getName().contains("注册登记")) {
+//    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
+//        	editableTrans.setDateCreated(new Date());
+//        	editableTrans.setDateModified(new Date());
+//			editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
+//        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
+//        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+//        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+//        	editableTrans.setBatch(batch);
+//        	editableTrans.setUuid(uuid);
+//        	editableTrans.setCreator(loggedInUser.getUserName());
+//        	editableTrans.setIndexNumber(1);
+//        	editableTrans.setStatus(ui.state().getName("B7"));
+//        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
+//
+//        	// 获得社区内的全部机构
+//    		List<Company> companies = ui.communityService.findAllCompanies(loggedInUser.getCommunityUniqueId());
+//    		Company com = null;
+//    		for(int i = 0; i < companies.size(); i++) {
+//    			com = companies.get(i);
+//    			if (com.getCategory().trim().equals("车管所")) {
+//    				break;
+//    			}
+//    		}
+//    		FrameNumber frame = ui.frameService.getNewCode(com.getStorehouseName());
+//    		if(StringUtils.isEmpty(frame.getCode())) {
+//    			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
+//    			return;
+//    		} else {
+//    			//跳过质检，完成逻辑上架
+//    			editableTrans.setCode(frame.getCode()+"");//上架号
+//    			ui.frameService.updateVIN(basicInfoPane.getVIN(), frame.getCode());
+//    		}
+//    		ui.transactionService.insert(editableTrans);
+//    		//更改车辆信息
+//    		updateCar(editableTrans);
+//    		//操作记录
+//    		track(ui.state().getName("B7"));
+//    		// 清空舞台
+//        	cleanStage();
+//        	Notifications.bottomWarning("提交成功！等待质检检查。");
+//    	}
+//    	else {
+//    		// 取新车注册上架号
+//    		String code = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
+//    		if(StringUtils.isEmpty(code)) {
+//    			Notifications.warning("上架号不存在！请录入注册登记业务,确保先生成上架号。");
+//    			return;
+//    		}
+//    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
+//    		editableTrans.setDateCreated(new Date());
+//        	editableTrans.setDateModified(new Date());
+//        	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
+//        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
+//        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+//        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+//        	editableTrans.setUuid(uuid);
+//        	editableTrans.setCode(code);
+//        	editableTrans.setCreator(loggedInUser.getUserName());
+//        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
+//        	editableTrans.setIndexNumber(indexNumber + 1);
+//        	editableTrans.setStatus(ui.state().getName("B7"));
+//        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
+//
+//    		ui.transactionService.insert(editableTrans);
+//
+//    		//更改车辆信息
+//    		updateCar(editableTrans);
+//
+//    		//操作记录
+//    		track(ui.state().getName("B7"));
+//
+//    		// 清空舞台
+//        	cleanStage();
+//
+//        	Notifications.bottomWarning("提交成功！等待质检检查。");
+//    	}
     }
     
     /**
@@ -757,27 +742,27 @@ public final class ImagingInputView extends Panel implements View,InputViewIF {
 	 * @param deletableMessageUniqueId
 	 */
 	private void replyMessage(int deletableMessageUniqueId) {
-    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
-    	Message msg = ui.messagingService.findById(deletableMessageUniqueId);
-    	//发消息给影像化质检
-		User receiver = ui.userService.findById(msg.getCreatorUniqueId());
-		if (receiver.getUserUniqueId() == 0) {
-			Notifications.warning("没有找到消息接收者");
-			return;
-		}
-		
-		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
-		String subject = loggedInUser.getUserName()+"修改了一笔业务";
-		String plate = Yaml.readSystemConfiguration().getLicenseplate();
-		String content = plate+" "+editableTrans.getPlateNumber()+",已完成修改，请再检查一遍。";
-		Message newMessage = messageSystem.createNewMessage(loggedInUser,subject,content,matedata);
-		
-		Set<Name> names = new HashSet<Name>();
-		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
-		names.add(target);
-		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_QUALITY.getViewName());
-		// 更新消息轮询的缓存
-		CacheManager.getInstance().getNotificationsCache().refresh(receiver.getUserUniqueId());
+//    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
+//    	Message msg = ui.messagingService.findById(deletableMessageUniqueId);
+//    	//发消息给影像化质检
+//		User receiver = ui.userService.findById(msg.getCreatorUniqueId());
+//		if (receiver.getUserUniqueId() == 0) {
+//			Notifications.warning("没有找到消息接收者");
+//			return;
+//		}
+//
+//		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
+//		String subject = loggedInUser.getUserName()+"修改了一笔业务";
+//		String plate = Yaml.readSystemConfiguration().getLicenseplate();
+//		String content = plate+" "+editableTrans.getPlateNumber()+",已完成修改，请再检查一遍。";
+//		Message newMessage = messageSystem.createNewMessage(loggedInUser,subject,content,matedata);
+//
+//		Set<Name> names = new HashSet<Name>();
+//		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
+//		names.add(target);
+//		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_QUALITY.getViewName());
+//		// 更新消息轮询的缓存
+//		CacheManager.getInstance().getNotificationsCache().refresh(receiver.getUserUniqueId());
     }
     
     /**

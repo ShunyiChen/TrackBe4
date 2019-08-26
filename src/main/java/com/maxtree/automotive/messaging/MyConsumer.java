@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MyConsumer {
+
     @KafkaListener(topics = "mytopic")
     public void listen(ConsumerRecord<?,String> record) {
         String value = record.value();

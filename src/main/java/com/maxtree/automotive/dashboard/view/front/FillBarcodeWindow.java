@@ -221,10 +221,10 @@ public class FillBarcodeWindow extends Window {
 			
 			Transaction copy = new Transaction();
 			copy.setTransactionUniqueId(trans.getTransactionUniqueId());
-			copy.setBatch(trans.getBatch());
+//			copy.setBatch(trans.getBatch());
 			copy.setCode(dd.getCode());
 			copy.setSiteUniqueId(trans.getSiteUniqueId());
-			copy.setUuid(trans.getUuid());
+//			copy.setUuid(trans.getUuid());
 			copy.setVin(trans.getVin());
 			
 			PopupCaptureWindow.open(copy,dd,callback);
@@ -239,18 +239,18 @@ public class FillBarcodeWindow extends Window {
 	 */
 	private void cancel() {
 		if(!StringUtils.isEmpty(link.getCaption())) {
-			Document removable = ui.documentService.find(dd.getCode(), trans.getUuid(), trans.getVin());
-			if(removable.getDocumentUniqueId() > 0) {
-				ui.documentService.deleteById(removable.getDocumentUniqueId(), trans.getVin());
-				
-				Site site = ui.siteService.findById(trans.getSiteUniqueId());
-				
-				try {
-					fileSystem.deleteFile(site, removable.getFileFullPath());
-				} catch (FileException e) {
-					e.printStackTrace();
-				}
-			}
+//			Document removable = ui.documentService.find(dd.getCode(), trans.getUuid(), trans.getVin());
+//			if(removable.getDocumentUniqueId() > 0) {
+//				ui.documentService.deleteById(removable.getDocumentUniqueId(), trans.getVin());
+//
+//				Site site = ui.siteService.findById(trans.getSiteUniqueId());
+//
+//				try {
+//					fileSystem.deleteFile(site, removable.getFileFullPath());
+//				} catch (FileException e) {
+//					e.printStackTrace();
+//				}
+//			}
 		}
 		close();
 		
@@ -259,16 +259,16 @@ public class FillBarcodeWindow extends Window {
 	
 	private void fill() {
 		if(check()) {
-			Business business = ui.businessService.findByCode(trans.getBusinessCode());
-    		if(business.getCheckLevel().equals("一级审档")) {
-    			trans.setStatus(ui.state().getName("B2"));
-    		}
-    		else if(business.getCheckLevel().equals("二级审档")) {
-    			trans.setStatus(ui.state().getName("B2"));
-    		}
-			trans.setBarcode(barcode.getValue());
-			ui.transactionService.update(trans);
-			close();
+//			Business business = ui.businessService.findByCode(trans.getBusinessCode());
+//    		if(business.getCheckLevel().equals("一级审档")) {
+//    			trans.setStatus(ui.state().getName("B2"));
+//    		}
+//    		else if(business.getCheckLevel().equals("二级审档")) {
+//    			trans.setStatus(ui.state().getName("B2"));
+//    		}
+//			trans.setBarcode(barcode.getValue());
+//			ui.transactionService.update(trans);
+//			close();
 		}
 //		ui.setPollInterval(config.getInterval());
 	}
