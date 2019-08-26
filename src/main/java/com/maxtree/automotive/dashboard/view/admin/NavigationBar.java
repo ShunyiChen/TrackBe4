@@ -1,5 +1,6 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
+import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Hr;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
@@ -56,6 +57,9 @@ public class NavigationBar extends Panel {
 	    	main.addComponent(item);
 	    	main.setComponentAlignment(item, Alignment.TOP_LEFT);
 	    }
+
+		Hr hr2 = new Hr();
+		main.addComponents(Box.createVerticalBox(3), hr2);
 	    /// exit system item
 		ExitRow exitRow = new ExitRow(view);
 		HorizontalLayout item = menuItem(exitRow);

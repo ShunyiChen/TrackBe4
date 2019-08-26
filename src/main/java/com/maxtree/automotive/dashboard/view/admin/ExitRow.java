@@ -1,8 +1,5 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
-import com.vaadin.server.Page;
-import com.vaadin.server.VaadinSession;
-
 public class ExitRow extends FlexTableRow {
 
     /**
