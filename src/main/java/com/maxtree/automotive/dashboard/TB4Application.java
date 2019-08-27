@@ -42,6 +42,8 @@ public class TB4Application extends SpringBootServletInitializer implements Comm
     	
         SpringApplication.run(TB4Application.class, args);
 
+        System.out.println("Started.");
+
         LOGGER.info("Exiting main");
     }
 
