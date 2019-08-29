@@ -189,12 +189,11 @@ public class CustomGrid extends VerticalLayout {
 	private void addRow(CustomGridRow row) {
 		addRow(row, null);
 	}
-	
+
 	/**
-	 * 
-	 * @param rowData   最后一个元素存放entityId
-	 * @param keyword   查询用的关键字
-	 * @return
+	 *
+	 * @param row
+	 * @param index
 	 */
     private void addRow(CustomGridRow row, Integer index) {
 		int i = 0;
@@ -295,13 +294,22 @@ public class CustomGrid extends VerticalLayout {
 		scrollPanel.setScrollTop(scrollPanelHeight);
 		refreshRowColor();
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param rowData
-	 * @param id
+	 * @param entityId
 	 */
 	public void setValueAt(CustomGridRow rowData, int entityId) {
+		setValueAtLongId(rowData, (long) entityId);
+	}
+
+	/**
+	 *
+	 * @param rowData
+	 * @param entityId
+	 */
+	public void setValueAtLongId(CustomGridRow rowData, Long entityId) {
 		int count = dataGrid.getComponentCount();
 		for(int i = 0; i < count; i++) {
 			CustomGridRow row = (CustomGridRow) dataGrid.getComponent(i);
@@ -319,11 +327,14 @@ public class CustomGrid extends VerticalLayout {
 		refreshRowColor();
 	}
 
+	public void deleteRow(int entityId) {
+		deleteRowByLong((long) entityId);
+	}
 	/**
 	 * 
 	 * @param entityId
 	 */
-	public void deleteRow(int entityId) {
+	public void deleteRowByLong(Long entityId) {
 		int count = dataGrid.getComponentCount();
 		for(int i = 0; i < count; i++) {
 			CustomGridRow row = (CustomGridRow) dataGrid.getComponent(i);

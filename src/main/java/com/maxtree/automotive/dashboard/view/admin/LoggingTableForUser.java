@@ -1,15 +1,13 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
-import com.maxtree.automotive.dashboard.domain.Logging;
+import com.maxtree.automotive.dashboard.jpa.entity.Logging;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.shared.ui.grid.ColumnResizeMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -39,21 +37,16 @@ public class LoggingTableForUser extends VerticalLayout {
 
         grid.addColumn(Logging::getIpAddress, new BoldLastNameRenderer())
                 .setCaption("IP地址").setWidth(210);
-//                .setExpandRatio(2);
 
         grid.addColumn(Logging::getActionName, new BoldLastNameRenderer())
                 .setCaption("事件名").setWidth(410);
-//                .setExpandRatio(2);
 
         grid.addColumn(Logging::getDetails, new BoldLastNameRenderer())
                 .setCaption("详细内容").setWidth(820);
-//                .setExpandRatio(2);
-
         setMargin(false);
 
         grid.setWidth("99%");
         grid.setHeight("99%");
-//        grid.setColumnResizeMode(ColumnResizeMode.S);
         pages = createPageSizeBox();
         HorizontalLayout searchFields = searchFields();
         HorizontalLayout pagingFooter = pagingFooter(1);
@@ -69,6 +62,7 @@ public class LoggingTableForUser extends VerticalLayout {
 
     private HorizontalLayout searchFields() {
         float h = 27.0f;
+        float w = 150f;
         HorizontalLayout layout = new HorizontalLayout();
         layout.setWidthUndefined();
         layout.setMargin(new MarginInfo(true, false,false,false));
@@ -79,18 +73,22 @@ public class LoggingTableForUser extends VerticalLayout {
         Label title2 = new Label("用户名", ContentMode.HTML);
         TextField userNameField = new TextField();
         userNameField.setHeight(h, Unit.PIXELS);
+        userNameField.setWidth(w, Unit.PIXELS);
 
         Label title3 = new Label("IP地址", ContentMode.HTML);
         TextField ipField = new TextField();
         ipField.setHeight(h, Unit.PIXELS);
+        ipField.setWidth(w, Unit.PIXELS);
 
         Label title4 = new Label("事件名称", ContentMode.HTML);
         TextField actionNameField = new TextField();
         actionNameField.setHeight(h, Unit.PIXELS);
+        actionNameField.setWidth(w, Unit.PIXELS);
 
         Label title5 = new Label("详细内容", ContentMode.HTML);
         TextField detailsField = new TextField();
         detailsField.setHeight(h, Unit.PIXELS);
+        detailsField.setWidth(w, Unit.PIXELS);
 
         Button btnClear = new Button("清除", VaadinIcons.DEL_A);
         btnClear.setHeight(h, Unit.PIXELS);

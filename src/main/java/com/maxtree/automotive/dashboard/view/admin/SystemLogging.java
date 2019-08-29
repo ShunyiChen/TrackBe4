@@ -3,15 +3,14 @@ package com.maxtree.automotive.dashboard.view.admin;
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.*;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.HorizontalSplitPanel;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Tree;
+import com.vaadin.ui.*;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class SystemLogging extends HorizontalSplitPanel {
 
@@ -46,9 +45,36 @@ public class SystemLogging extends HorizontalSplitPanel {
             return VaadinIcons.FILE;
         });
         tree.addSelectionListener(e ->{
-            readLogFile( e.getFirstSelectedItem().get());
+            String item = null;
+            if(e.getFirstSelectedItem().isPresent()) {
+                item = e.getFirstSelectedItem().get();
+                readLogFile(item);
+            }
         });
+        com.vaadin.contextmenu.ContextMenu menu2 = new com.vaadin.contextmenu.ContextMenu(tree, true);
+        menu2.addItem("导出文件", new com.vaadin.contextmenu.Menu.Command() {
+            /**
+             *
+             */
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+                Set<String> set = tree.getSelectedItems();
+                List<String> list = new ArrayList<String>(set);
+                String selectedFile = list.get(0);
+                sendConvertedFileToUser(selectedFile);
+            }
+        });
+
         return tree;
+    }
+
+    private void sendConvertedFileToUser(final String filename) {
+        // 在本地下载并打开
+        UI ui = UI.getCurrent();
+        Resource resource = new FileResource(new File("logs/"+filename));
+        ui.getPage().open(resource, "log/"+filename, false);
     }
 
     private void readLogFile(String fileName) {

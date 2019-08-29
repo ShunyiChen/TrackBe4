@@ -10,13 +10,11 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.DoubleField;
 import com.maxtree.automotive.dashboard.component.EmptyValidator;
-import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.SiteCapacity;
-import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
-import com.maxtree.trackbe4.filesystem.TB4FileSystem;
+import com.maxtree.automotive.vfs.VFSUtils;
 import com.vaadin.data.Binder;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.validator.StringLengthValidator;
@@ -143,7 +141,7 @@ public class EditSiteWindow extends Window {
 		});
 		btnTest.addClickListener(e -> {
 			UI.getCurrent().access(() -> {
-				boolean testConn = new TB4FileSystem().testConnection(site);
+				boolean testConn = new VFSUtils().testConnection(site);
 				if (testConn) {
 					Notification notification = new Notification("测试：", "连接成功", Type.HUMANIZED_MESSAGE);
 					notification.setDelayMsec(2000);
@@ -485,7 +483,7 @@ public class EditSiteWindow extends Window {
         	UI.getCurrent().access(() -> {
         		
         		if (w.checkEmptyValues()) {
-            		boolean testConnect = new TB4FileSystem().testConnection(site);
+            		boolean testConnect = new VFSUtils().testConnection(site);
             		if (testConnect) {
             			w.site.setRunningStatus(site.getRunningStatus());
             		}

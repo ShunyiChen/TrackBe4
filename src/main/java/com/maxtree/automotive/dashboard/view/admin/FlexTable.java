@@ -111,7 +111,6 @@ public class FlexTable extends Panel{
 		FileTransferRow fileTransfer = new FileTransferRow(view);
 		DataDictionaryRow DD = new DataDictionaryRow(view);
 		DeviceRow device = new DeviceRow(view);
-		MessgeRow notification = new MessgeRow(view);
 		AboutSystemRow aboutSys = new AboutSystemRow(view);
 		
 		data.add(people);
@@ -119,7 +118,6 @@ public class FlexTable extends Panel{
 		data.add(fileTransfer);
 		data.add(DD);
 		data.add(device);
-		data.add(notification);
 		data.add(aboutSys);
 	}
 	

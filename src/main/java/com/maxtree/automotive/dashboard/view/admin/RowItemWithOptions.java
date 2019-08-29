@@ -1,9 +1,8 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.UI;
+import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.*;
 
 /**
  * 
@@ -31,23 +30,19 @@ public class RowItemWithOptions extends FlexTableRowItem {
 		selector.setItems(options);
 		selector.setSelectedItem(options[0]);
 		selector.addStyleName("RowItemWithOptions_selector");
-//		selector.addValueChangeListener(e->{
-//			SystemSettings device = new SystemSettings();
-//			device.setName("高拍仪");
-//			device.setValue(e.getValue());
-//			device.setComments("");
-//			ui.settingsService.update(device);
-//		});
-//		SystemSettings settings = ui.settingsService.findByName("高拍仪");
-//		selector.setSelectedItem(settings.getValue());
-		
+		selector.addSelectionListener(e -> {
+			System.out.println(e.getSelectedItem().get()+"================");
+		});
 		this.removeAllComponents();
-		this.addComponents(name, selector);
+		this.addComponents(name, selector, arrowIcon);
 		this.setComponentAlignment(name, Alignment.MIDDLE_LEFT);
 		this.setComponentAlignment(selector, Alignment.MIDDLE_RIGHT);
+		this.setComponentAlignment(arrowIcon, Alignment.MIDDLE_RIGHT);
+		this.setExpandRatio(name, 1);
+		this.setExpandRatio(selector, 0);
+		this.setExpandRatio(arrowIcon, 0);
 	}
 
-	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private ComboBox<String> selector = new ComboBox<>();
 	private String[] options;
 }

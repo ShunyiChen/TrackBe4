@@ -31,7 +31,7 @@ import com.maxtree.automotive.dashboard.domain.RoleMember;
 import com.maxtree.automotive.dashboard.domain.RoleRight;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.domain.UserProfile;
-import com.maxtree.automotive.dashboard.security.PasswordSecurity;
+import com.maxtree.automotive.utils.PasswordSecurity;
 
 @Component
 public class UserService {

@@ -17,7 +17,7 @@ import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.automotive.dashboard.view.ImageViewIF;
-import com.maxtree.trackbe4.filesystem.TB4FileSystem;
+import com.maxtree.automotive.vfs.VFSUtils;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.server.Page.Styles;
@@ -315,7 +315,7 @@ public class ImageStage extends VerticalLayout implements ClickListener {
 	 */
 	private void document2Image(Site site, Document document) {
 		try {
-			FileObject fileObj = new TB4FileSystem().resolveFile(site, document.getFileFullPath());
+			FileObject fileObj = new VFSUtils().resolveFile(site, document.getFileFullPath());
 			com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
 				/**
 				 * 

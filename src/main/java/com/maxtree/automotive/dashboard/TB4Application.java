@@ -1,5 +1,9 @@
 package com.maxtree.automotive.dashboard;
 
+import com.maxtree.automotive.dashboard.jpa.entity.Camera;
+import com.maxtree.automotive.dashboard.jpa.entity.Logging;
+import com.maxtree.automotive.dashboard.jpa.repository.CameraRepository;
+import com.maxtree.automotive.dashboard.jpa.repository.LoggingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +13,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.maxtree.automotive.dashboard.service.LoggingService;
 
 @ServletComponentScan
 @SpringBootApplication
@@ -28,23 +32,25 @@ public class TB4Application extends SpringBootServletInitializer implements Comm
     
     @Autowired
     JdbcTemplate jdbcTemplate;
-    
+
     @Autowired
-    public LoggingService loggingService;
-    
+    public CameraRepository cameraRepository;
+
+    @Autowired
+    public LoggingRepository loggingRepository;
+
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(TB4Application.class);
     }
     
     public static void main(String args[]) {
-        LOGGER.info("Logger enabled: Entering main {}\n\n","你好");
+        LOGGER.info("\n\n{}\n\n","Welcome!欢迎！ようこそ！");
     	
         SpringApplication.run(TB4Application.class, args);
 
-        System.out.println("Started.");
-
-        LOGGER.info("Exiting main");
+        System.out.println("Application is started!");
+        LOGGER.info("Application is started!");
     }
 
     @Override
@@ -52,8 +58,18 @@ public class TB4Application extends SpringBootServletInitializer implements Comm
     	app = this;
     }
 
+    @Bean
+    public CommandLineRunner demo() {
+        return (args) -> {
+            Iterable<Camera> iter = cameraRepository.findAll();
+            iter.forEach(e -> {
+                System.out.println("e="+e.getName());
+            });
+        };
+    }
+
     public static final String PERMISSION_DENIED_MESSAGE = "没有权限。";
     public static final String NAME = "TrackBe4";
-	public static final String VERSION = "1.1.0";
+	public static final String VERSION = "2.0.0 Alpha";
 	public static final String BUILD_ID = "20190823";
 }

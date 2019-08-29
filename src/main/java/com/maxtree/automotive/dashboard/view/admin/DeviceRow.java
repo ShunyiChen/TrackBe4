@@ -17,7 +17,10 @@ public class DeviceRow extends FlexTableRow {
 	}
 	
 	private void initComponents() {
-		this.addComponents(HighqualityShooting);
+		this.addComponents(rowItemWithOptions);
+		rowItemWithOptions.addLayoutClickListener(e -> {
+			rootView.forward(new DeviceView("管理高拍仪", rootView));
+		});
 	}
 
 	@Override
@@ -40,6 +43,6 @@ public class DeviceRow extends FlexTableRow {
 		return "device.png";
 	}
 	
-	private RowItemWithOptions HighqualityShooting = new RowItemWithOptions("高拍仪设备", new String[] {"无","无锡华通H6-1","维山VSA305FD"});
+	private RowItemWithOptions rowItemWithOptions = new RowItemWithOptions("高拍仪设备", new String[] {"无","无锡华通H6-1","维山VSA305FD"});
 	private AdminMainView rootView;
 }

@@ -117,7 +117,6 @@ public class AdminMainView extends AbsoluteLayout {
 		communityLayout.setVisible(false);
 		storehouseLayout.setVisible(false);
 		dataLayout.setVisible(false);
-		messageLayout.setVisible(false);
 		systemLayout.setVisible(false);
 		helpLayout.setVisible(false);
 	}
@@ -130,7 +129,6 @@ public class AdminMainView extends AbsoluteLayout {
 		communityLayout.setVisible(true);
 		storehouseLayout.setVisible(true);
 		dataLayout.setVisible(true);
-		messageLayout.setVisible(true);
 		systemLayout.setVisible(true);
 		helpLayout.setVisible(true);
 	}
@@ -172,8 +170,6 @@ public class AdminMainView extends AbsoluteLayout {
 	private VerticalLayout storehouseLayout;
 	// 数据
 	private VerticalLayout dataLayout;
-	// 消息
-	private VerticalLayout messageLayout;
 	// 系统
 	private VerticalLayout systemLayout;
 	// 帮助

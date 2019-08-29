@@ -17,7 +17,7 @@ import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.automotive.dashboard.view.ImageViewIF;
 import com.maxtree.automotive.dashboard.view.quality.ImageStage;
-import com.maxtree.trackbe4.filesystem.TB4FileSystem;
+import com.maxtree.automotive.vfs.VFSUtils;
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.event.ShortcutListener;
@@ -336,7 +336,7 @@ public class Manual extends VerticalLayout implements ImageViewIF,ClickListener 
 	private void addPictureForComparison(Site site, Document doc, boolean isHistory) {
 		if (doc.getFileFullPath() != null) {
 			try {
-				FileObject fobj = new TB4FileSystem().resolveFile(site, doc.getFileFullPath());
+				FileObject fobj = new VFSUtils().resolveFile(site, doc.getFileFullPath());
 				ImageWindow imageWindow = new ImageWindow(isHistory?"历史记录-"+doc.getAlias():doc.getAlias(), fobj, 1.0f);
 				tool.setEditingWindow(imageWindow);
 				imageWindow.addFocusListener(e -> {

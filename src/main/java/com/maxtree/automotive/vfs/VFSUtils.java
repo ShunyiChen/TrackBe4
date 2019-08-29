@@ -1,4 +1,4 @@
-package com.maxtree.trackbe4.filesystem;
+package com.maxtree.automotive.vfs;
 
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -22,10 +22,10 @@ import com.vaadin.ui.UI;
  *
  */
 @Component
-public class TB4FileSystem {
+public class VFSUtils {
 
 	
-	private static final Logger log = LoggerFactory.getLogger(TB4FileSystem.class);
+	private static final Logger log = LoggerFactory.getLogger(VFSUtils.class);
 	
 	/**
 	 * 
@@ -237,7 +237,7 @@ public class TB4FileSystem {
 ////            System.out.println(" " + baseName + "  --  " + new String(baseName.getBytes("iso-8859-1"),"UTF-8"));  
 //		}
 		
-		TB4FileSystem sys = new TB4FileSystem();
+		VFSUtils sys = new VFSUtils();
 		Site site = new Site();
 		site.setSiteType("FTP");
 		site.setUserName("chens");

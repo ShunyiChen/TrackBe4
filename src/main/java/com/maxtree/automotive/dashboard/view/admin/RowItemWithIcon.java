@@ -1,7 +1,6 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.component.LoggingWrapper;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.service.AuthService;
 import com.vaadin.icons.VaadinIcons;
@@ -54,7 +53,7 @@ public class RowItemWithIcon extends FlexTableRowItem {
 		btnExit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		btnExit.setDescription("退出系统");
 		btnExit.addClickListener(e->{
-			LOGGER.info(username, LoggingWrapper.LOGIN, "You have logged out successfully..");
+			LOGGER.info(username, "You have logged out successfully..");
 			ui.authService.logOut();
 		});
 	}
@@ -74,5 +73,4 @@ public class RowItemWithIcon extends FlexTableRowItem {
 	
 	private Image imageIcon;
 	private Button btnExit = new Button();
-//	private LoggingWrapper loggingWrapper = new LoggingWrapper(RowItemWithIcon.class);
 }

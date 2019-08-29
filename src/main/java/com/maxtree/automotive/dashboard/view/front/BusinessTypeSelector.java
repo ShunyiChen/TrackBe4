@@ -31,7 +31,7 @@ import com.maxtree.automotive.dashboard.servlet.UploadInDTO;
 import com.maxtree.automotive.dashboard.servlet.UploadOutDTO;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.InputViewIF;
-import com.maxtree.trackbe4.filesystem.TB4FileSystem;
+import com.maxtree.automotive.vfs.VFSUtils;
 import com.maxtree.trackbe4.messagingsystem.Name;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.event.UIEvents;
@@ -478,7 +478,7 @@ public class BusinessTypeSelector extends FormLayout implements SingleSelectionL
 	private List<Business> data;
 	private ComboBox<Business> selector;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
-	private TB4FileSystem fileSystem = new TB4FileSystem();
+	private VFSUtils fileSystem = new VFSUtils();
 	private UIEvents.PollListener pollListener;
 	private TB4MessagingSystem messageSystem = new TB4MessagingSystem();
 }

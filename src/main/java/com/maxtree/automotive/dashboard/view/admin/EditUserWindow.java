@@ -14,7 +14,7 @@ import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.domain.UserProfile;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
-import com.maxtree.automotive.dashboard.security.PasswordSecurity;
+import com.maxtree.automotive.utils.PasswordSecurity;
 import com.vaadin.data.Binder;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.data.validator.StringLengthValidator;

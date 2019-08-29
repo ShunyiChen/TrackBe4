@@ -21,8 +21,8 @@ public class FlexTableRowItem extends HorizontalLayout {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
-	 * @param data1
+	 *
+	 * @param title
 	 */
 	public FlexTableRowItem(String title) {
 		this.title = title;

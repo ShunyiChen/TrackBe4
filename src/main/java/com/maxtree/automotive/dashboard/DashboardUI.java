@@ -12,11 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import com.google.common.eventbus.Subscribe;
-import com.maxtree.automotive.dashboard.component.LoggingWrapper;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
-import com.maxtree.automotive.dashboard.security.PasswordSecurity;
 import com.maxtree.automotive.dashboard.view.LoginView;
 import com.maxtree.automotive.dashboard.view.MainView;
 import com.maxtree.automotive.dashboard.view.admin.AdminMainView;
@@ -97,9 +95,7 @@ public final class DashboardUI extends UI {
 	public CarService carService;
 	@Autowired
 	public CompanyCategoryService companyCategoryService;
-	@Autowired
-	public LoggingService loggingService;
-	
+
 	
 	private StateHelper state = null;
 	/*
@@ -180,56 +176,31 @@ public final class DashboardUI extends UI {
 	@Subscribe
 	public void userLoginRequested(final DashboardEvent.UserLoginRequestedEvent event) {
 		if (StringUtils.isEmpty(event.getUserName()) || StringUtils.isEmpty(event.getPassword())) {
-			LOGGER.info(event.getUserName(),LoggingWrapper.LOGIN,"Incorrect username or password.");
+			LOGGER.info(event.getUserName(),"登录","Incorrect username or password.");
 			smoothNotification("用户名或密码不能为空", "请重新输入用户名和密码。");
 		} else {
 			User user = userService.getUserByUserName(event.getUserName());
 			if (user.getUserName() != null) {
 				
 				if (user.getActivated() == 0) {
-					LOGGER.info(event.getUserName(),LoggingWrapper.LOGIN,"User["+event.getUserName()+"] not found.");
+					LOGGER.info(event.getUserName(),"登录","User["+event.getUserName()+"] not found.");
 					smoothNotification("该账号尚未激活", "当前用户没有被激活，请联系管理员进行设置。");
 					
 				} else {
 					boolean successful = authService.login(event.getUserName(), event.getPassword(), event.isRememberMe());// PasswordSecurity.check(event.getPassword(), user.getHashed());
 					if (successful) {
-						LOGGER.info(user.getUserName(), LoggingWrapper.LOGIN, "Login is sucessful.");
+						LOGGER.info(user.getUserName(), "登录", "Login is sucessful.");
 						updateContent();
 					} else {
-						LOGGER.info(user.getUserName(), LoggingWrapper.LOGIN, "Incorrect password.");
+						LOGGER.info(user.getUserName(), "登录", "Incorrect password.");
 						smoothNotification("密码错误", "请重新输入密码，如果忘记密码请联系管理员重置密码。");
 					}
 				}
 			} else {
-				LOGGER.info(event.getUserName(),LoggingWrapper.LOGIN,"The username["+event.getUserName()+"] does not exist.");
+				LOGGER.info(event.getUserName(),"登录","The username["+event.getUserName()+"] does not exist.");
 				smoothNotification("用户不存在", "用户名"+event.getUserName()+"不存在，请重新输入用户名和密码。");
 			}
 		}
-
-		// user = authenticationService.authenticate(event.getUserName(),
-		// event.getPassword());
-		// if (user != null) {
-		// VaadinSession.getCurrent().setAttribute(Usr.class.getName(), user);
-		// updateContent();
-		// } else {
-		//
-//		 Notification notification = new Notification(
-//		 "UserName or Password is wrong.");
-//		 notification
-//		 .setDescription("<span> That account doesn't exist. Enter a different account
-//		 or get a new one..</span>");
-//		 notification.setHtmlContentAllowed(true);
-//		 notification.setStyleName("tray dark small closable login-help");
-//		 notification.setPosition(Position.BOTTOM_CENTER);
-//		 notification.setDelayMsec(5000);
-//		 notification.show(Page.getCurrent());
-		//
-		// }
-
-		// Usr user = getDataProvider().authenticate(event.getUserName(),
-		// event.getPassword());
-		// VaadinSession.getCurrent().setAttribute(Usr.class.getName(), user);
-		// updateContent();
 	}
 	
 	private void smoothNotification(String title, String message) {
@@ -245,7 +216,7 @@ public final class DashboardUI extends UI {
 	@Subscribe
 	public void userLoggedOut(final DashboardEvent.UserLoggedOutEvent event) {
 		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		LOGGER.info(username, LoggingWrapper.LOGIN,"You have logged out successfully.");
+		LOGGER.info(username, "登录","You have logged out successfully.");
 		
 		// When the user logs out, current VaadinSession gets closed and the
 		// page gets reloaded on the login screen. Do notice the this doesn't
@@ -262,13 +233,6 @@ public final class DashboardUI extends UI {
 			window.close();
 		}
 	}
-
-//	/**
-//	 * @return An instance for accessing the (dummy) services layer.
-//	 */
-//	public static DataProvider getDataProvider() {
-//		return ((DashboardUI) getCurrent()).dataProvider;
-//	}
 
 	public static DashboardEventBus getDashboardEventbus() {
 		return ((DashboardUI) getCurrent()).dashboardEventbus;
@@ -310,5 +274,4 @@ public final class DashboardUI extends UI {
 		return state;
 	}
 	
-	private LoggingWrapper loggingWrapper = new LoggingWrapper(DashboardUI.class);
 }

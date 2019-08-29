@@ -11,14 +11,13 @@ import java.util.List;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
-import com.maxtree.automotive.dashboard.domain.Business;
 import com.maxtree.automotive.dashboard.domain.FinalCheck;
 import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.exception.ReportException;
 import com.maxtree.automotive.dashboard.service.AuthService;
 import com.maxtree.tb4beans.PrintableBean;
-import com.maxtree.trackbe4.reports.TB4Reports;
+import com.maxtree.automotive.report.ReportUtils;
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.Extension;
 import com.vaadin.server.StreamResource;
@@ -207,7 +206,7 @@ public class PrintingFiletagsWindow extends Window {
 			}
 		};
 		try {
-			new TB4Reports().jasperToPDF(beans, loggedInUser.getUserUniqueId(), templateFileName, callback);
+			new ReportUtils().jasperToPDF(beans, loggedInUser.getUserUniqueId(), templateFileName, callback);
 		} catch (ReportException e1) {
 			e1.printStackTrace();
 		}
@@ -218,7 +217,7 @@ public class PrintingFiletagsWindow extends Window {
 	 */
 	private void deleteReportFiles() {
 		System.gc();
-		new TB4Reports().deleteReportFiles("reports/generates/" + loggedInUser.getUserUniqueId());
+		new ReportUtils().deleteReportFiles("reports/generates/" + loggedInUser.getUserUniqueId());
 	}
 	
 	/**

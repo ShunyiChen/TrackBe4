@@ -33,7 +33,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import com.maxtree.automotive.dashboard.domain.Document;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.service.DocumentService;
-import com.maxtree.trackbe4.filesystem.TB4FileSystem;
+import com.maxtree.automotive.vfs.VFSUtils;
 
 import net.coobird.thumbnailator.Thumbnails;
 
@@ -191,7 +191,7 @@ public class UploadFileServlet extends HttpServlet {
 	 */
 	public static void inputstreamtofile(InputStream ins, String fileFullPath, Site site) {
 		try {
-			TB4FileSystem vfs2 = new TB4FileSystem();
+			VFSUtils vfs2 = new VFSUtils();
 			OutputStream os = vfs2.receiveUpload(site, fileFullPath);
 			int bytesRead = 0;
 			byte[] buffer = new byte[8192];

@@ -1,4 +1,4 @@
-package com.maxtree.trackbe4.reports;
+package com.maxtree.automotive.report;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
@@ -37,9 +37,9 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * @author chens
  *
  */
-public class TB4Reports {
+public class ReportUtils {
 
-	private static final Logger log = LoggerFactory.getLogger(TB4Reports.class);
+	private static final Logger log = LoggerFactory.getLogger(ReportUtils.class);
 
 	/**
 	 * Export Report To Html File

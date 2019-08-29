@@ -41,11 +41,5 @@ public class LoggingWindow extends Window {
         UI.getCurrent().addWindow(w);
         w.center();
         w.setWindowMode(WindowMode.MAXIMIZED);
-//        UI.getCurrent().access(new Runnable() {
-//            @Override
-//            public void run() {
-//                w.loggingTable.query(Paging.ROWS_PER_PAGE, 0, null, null);
-//            }
-//        });
     }
 }

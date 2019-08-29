@@ -1,4 +1,4 @@
-package com.maxtree.automotive.dashboard.security;
+package com.maxtree.automotive.utils;
 
 import org.mindrot.jbcrypt.BCrypt;
 

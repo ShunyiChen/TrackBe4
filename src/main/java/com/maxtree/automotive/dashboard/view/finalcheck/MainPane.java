@@ -18,7 +18,7 @@ import com.maxtree.automotive.dashboard.view.ImageViewIF;
 import com.maxtree.automotive.dashboard.view.front.Thumbnail;
 import com.maxtree.automotive.dashboard.view.quality.ConfirmInformationGrid;
 import com.maxtree.automotive.dashboard.view.quality.ImageStage;
-import com.maxtree.trackbe4.filesystem.TB4FileSystem;
+import com.maxtree.automotive.vfs.VFSUtils;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.Menu.Command;
 import com.vaadin.contextmenu.MenuItem;
@@ -275,7 +275,7 @@ public class MainPane extends VerticalLayout implements ImageViewIF {
 	}
 	
 	private Transaction trans;
-	private TB4FileSystem fileSystem = new TB4FileSystem();
+	private VFSUtils fileSystem = new VFSUtils();
 	private User loginUser;
 	private Site site;
 	private int index = 0;

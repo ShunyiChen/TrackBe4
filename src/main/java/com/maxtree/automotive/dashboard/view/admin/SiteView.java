@@ -13,7 +13,7 @@ import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.domain.Site;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.service.AuthService;
-import com.maxtree.trackbe4.filesystem.TB4FileSystem;
+import com.maxtree.automotive.vfs.VFSUtils;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.Menu.Command;
 import com.vaadin.contextmenu.MenuItem;
@@ -139,7 +139,7 @@ public class SiteView extends ContentView {
 					public void menuSelected(MenuItem selectedItem) {
 						if (loggedInUser.isPermitted(PermissionCodes.K6)) {
 							UI.getCurrent().access(() -> {
-								boolean testTrue = new TB4FileSystem().testConnection(site);
+								boolean testTrue = new VFSUtils().testConnection(site);
 								if (testTrue) {
 									site.setRunningStatus(RunningStatus.RUNNING);
 									ui.siteService.update(site);
@@ -193,7 +193,7 @@ public class SiteView extends ContentView {
 				public void menuSelected(MenuItem selectedItem) {
 					if (loggedInUser.isPermitted(PermissionCodes.K6)) {
 						UI.getCurrent().access(() -> {
-							boolean testTrue = new TB4FileSystem().testConnection(site);
+							boolean testTrue = new VFSUtils().testConnection(site);
 							if (testTrue) {
 								Notification notification = new Notification("测试：", "连接成功", Type.HUMANIZED_MESSAGE);
 								notification.setDelayMsec(2000);

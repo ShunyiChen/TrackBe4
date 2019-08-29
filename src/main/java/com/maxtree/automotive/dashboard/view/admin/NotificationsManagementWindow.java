@@ -10,6 +10,7 @@ import com.maxtree.automotive.dashboard.domain.Notification;
 import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.service.AuthService;
 import com.maxtree.automotive.dashboard.view.InputViewIF;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Alignment;
@@ -21,6 +22,7 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * 
@@ -47,7 +49,7 @@ public class NotificationsManagementWindow extends Window {
 	
 	private void initComponents() {
 		this.setModal(true);
-		this.setResizable(false);
+		this.setResizable(true);
 		this.setCaption("显示通知列表");
 		this.setWidth("980px");
 		this.setHeight("525px");
@@ -63,7 +65,17 @@ public class NotificationsManagementWindow extends Window {
 		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
 		loggedInUser = ui.userService.getUserByUserName(username);
 		progressBar.setIndeterminate(true);
-		Button markAllAsRead = new Button("全部标记已读");
+		Button send = new Button("发通知", VaadinIcons.FILE_ADD);
+		Button delete = new Button("删除", VaadinIcons.DEL_A);
+		Button markAllAsRead = new Button("全部标记已读", VaadinIcons.ADJUST);
+
+//		send.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+//		send.addStyleName(ValoTheme.BUTTON_PRIMARY);
+
+		send.setWidth("75px");
+		delete.setWidth("60px");
+		markAllAsRead.setWidth("110px");
+
 		markAllAsRead.addClickListener(e->{
 			ui.messagingService.allMarkAsRead(loggedInUser.getUserUniqueId());
 			if(unread.isSelected()) {
@@ -95,10 +107,14 @@ public class NotificationsManagementWindow extends Window {
 		navigationBar.setMargin(false);
 		navigationBar.addStyleName("NotificationsManagementWindow_navigationBar");
 		buttonGroup.add(unread);
-		buttonGroup.add(all);
-		navigationBar.addComponents(unread,all);
+		buttonGroup.add(received);
+		buttonGroup.add(sent);
+		buttonGroup.add(deleted);
+		navigationBar.addComponents(unread, received, sent, deleted);
 		navigationBar.setComponentAlignment(unread, Alignment.TOP_CENTER);
-		navigationBar.setComponentAlignment(all, Alignment.TOP_CENTER);
+		navigationBar.setComponentAlignment(received, Alignment.TOP_CENTER);
+		navigationBar.setComponentAlignment(sent, Alignment.TOP_CENTER);
+		navigationBar.setComponentAlignment(deleted, Alignment.TOP_CENTER);
 		HorizontalLayout hlayout = new HorizontalLayout();
 		hlayout.setWidth("100%");
 		hlayout.setHeight("100%");
@@ -110,11 +126,12 @@ public class NotificationsManagementWindow extends Window {
 		hlayout.setExpandRatio(table, 1);
         tabSheet.addTab(hlayout, "通知");
 		main.addComponent(tabSheet,"top:15px; left:10px;");
+
+		main.addComponent(send,"top:10px; right:190px;");
+		main.addComponent(delete,"top:10px; right:125px;");
 		main.addComponent(markAllAsRead,"top:10px; right:10px;");
 		this.setContent(main);
-		
 		ui.access(new Runnable() {
-
 			@Override
 			public void run() {
 				loadUnreaded(10, 1);
@@ -127,16 +144,18 @@ public class NotificationsManagementWindow extends Window {
 			loadUnreaded(10, 1);
 			
 		});
-		all.addLayoutClickListener(e->{
-			if(all.isSelected()) {
+		received.addLayoutClickListener(e->{
+			if(received.isSelected()) {
 				return;
 			}
 			loadAll(10, 1);
 		});
 	}
-	
+
 	/**
-	 * 
+	 *
+	 * @param limit
+	 * @param offset
 	 */
 	private void loadUnreaded(int limit, int offset) {
 		showProgressBar();
@@ -168,9 +187,11 @@ public class NotificationsManagementWindow extends Window {
 		};
 		t.start();
 	}
-	
+
 	/**
-	 * 
+	 *
+	 * @param limit
+	 * @param offset
 	 */
 	private void loadAll(int limit, int offset) {
 		showProgressBar();
@@ -181,7 +202,7 @@ public class NotificationsManagementWindow extends Window {
 					@Override
 					public void run() {
 						for (NavigationButton b : buttonGroup) {
-							if (b == all) {
+							if (b == received) {
 								b.select();
 							} else {
 								b.deselect();
@@ -236,7 +257,7 @@ public class NotificationsManagementWindow extends Window {
 		} else {
 			List<Notification> notificationList = ui.messagingService.findAllNotificationsByPaging(loggedInUser.getUserUniqueId(),false,viewName,limit,offset);
 			table.setItems(notificationList);
-			all.setUnreadCount(notificationList.size());
+			received.setUnreadCount(notificationList.size());
 			hideProgressbar.onSuccessful();
 		}
 	}
@@ -277,8 +298,10 @@ public class NotificationsManagementWindow extends Window {
 		w.center();
 	}
 	
-	private NavigationButton unread = new NavigationButton("未读",0);
-	private NavigationButton all = new NavigationButton("全部消息",0);
+	private NavigationButton unread = new NavigationButton("未读通知",0);
+	private NavigationButton received = new NavigationButton("已接收通知",0);
+	private NavigationButton sent = new NavigationButton("已发送通知",0);
+	private NavigationButton deleted = new NavigationButton("已删除通知",0);
 	private User loggedInUser;
 	private ProgressBar progressBar = new ProgressBar(0.0f);
 	private List<NavigationButton> buttonGroup = new ArrayList<>();
