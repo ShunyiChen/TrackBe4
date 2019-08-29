@@ -10,13 +10,14 @@ import com.maxtree.automotive.dashboard.view.imaging.ImagingManagerView;
 import com.maxtree.automotive.dashboard.view.imaging.ImagingInputView;
 import com.maxtree.automotive.dashboard.view.imaging.ImagingQualityView;
 import com.maxtree.automotive.dashboard.view.finalcheck.FinalCheckView;
+import com.maxtree.automotive.dashboard.view.user.frontdesk.FrontdeskView;
 import com.vaadin.navigator.View;
 import com.vaadin.server.Resource;
 import com.vaadin.icons.VaadinIcons;
 
 public enum DashboardViewType {
     
-	INPUT("扫描录入", FrontView.class, VaadinIcons.HOME, true),
+	INPUT("前台录入", FrontdeskView.class, VaadinIcons.HOME, true),
 	QUALITY("质量检查", QCView.class, VaadinIcons.SPLIT, true),
     CHECK("业务审核", BusinessCheckView.class, VaadinIcons.TABLE, true),
 	SEARCH("车辆查询", SearchView.class, VaadinIcons.SEARCH, true),

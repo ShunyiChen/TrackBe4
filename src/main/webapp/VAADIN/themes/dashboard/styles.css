@@ -13707,13 +13707,13 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .valo-menu {
 	height: 100%;
-	background-color: #0068D5;
-	background-image: -webkit-linear-gradient(right, #005ec1 0%, #0068D5 9px);
-	background-image: linear-gradient(to left,#005ec1 0%, #0068D5 9px);
-	color: #7db3ec;
+	background-color: #3f51b5;
+	background-image: -webkit-linear-gradient(right, #3a4aa6 0%, #3f51b5 9px);
+	background-image: linear-gradient(to left,#3a4aa6 0%, #3f51b5 9px);
+	color: #a4acd5;
 	font-size: 14px;
 	line-height: 30px;
-	border-right: 1px solid #0052a8;
+	border-right: 1px solid #313f8e;
 	white-space: nowrap;
 }
 
@@ -13727,7 +13727,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-part {
-	border-left: 1px solid #005aba;
+	border-left: 1px solid #37469e;
 	height: 100%;
 	padding-bottom: 37px;
 	overflow: auto;
@@ -13890,13 +13890,13 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-subtitle {
-	color: #489aef;
+	color: #828dca;
 	margin: 7px 0 7px 19px;
-	border-bottom: 1px solid #267edb;
+	border-bottom: 1px solid #5b6bc0;
 }
 
 .dashboard .valo-menu-subtitle [class*="badge"] {
-	color: #6aa9e8;
+	color: #73a7e3;
 }
 
 .dashboard .valo-menuitems {
@@ -13927,11 +13927,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-item [class*="badge"] {
-	color: #6aa9e8;
+	color: #73a7e3;
 }
 
 .dashboard .valo-menu-item.selected {
-	background: #0061c6;
+	background: #3b4caa;
 }
 
 .dashboard .valo-menu-item.selected .v-icon {
@@ -13962,7 +13962,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-item [class*="badge"] {
-	background-color: #0074ef;
+	background-color: #4d5ec1;
 	-webkit-transition: background-color 300ms;
 	-moz-transition: background-color 300ms;
 	transition: background-color 300ms;
@@ -13975,7 +13975,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-part.large-icons {
-	background-color: #0068D5;
+	background-color: #3f51b5;
 	min-width: 74px;
 	max-width: 111px;
 }
@@ -14006,7 +14006,7 @@ div.v-layout.v-horizontal.v-widget {
 	border: none;
 	text-overflow: ellipsis;
 	overflow: hidden;
-	background: #0059b6;
+	background: #37479e;
 	font-size: 13px;
 	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
 }
@@ -14025,7 +14025,7 @@ div.v-layout.v-horizontal.v-widget {
 	line-height: 1;
 	padding: 12px;
 	text-align: center;
-	border-top: 1px solid #0f71d7;
+	border-top: 1px solid #4a5bb9;
 }
 
 .dashboard .valo-menu-part.large-icons .valo-menu-item:first-child {
@@ -14050,7 +14050,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-part.large-icons .valo-menu-item.selected {
-	background: #0061c6;
+	background: #3b4caa;
 }
 
 .dashboard .valo-menu-part.large-icons .valo-menu-item.selected .v-icon {
@@ -14058,7 +14058,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-part.large-icons .valo-menu-item.selected [class*="badge"] {
-	border-color: #0061c6;
+	border-color: #3b4caa;
 }
 
 .dashboard .valo-menu-part.large-icons .valo-menu-item [class*="badge"] {
@@ -14066,7 +14066,7 @@ div.v-layout.v-horizontal.v-widget {
 	padding-right: 4px;
 	top: 7px;
 	right: 7px;
-	border: 2px solid #0068D5;
+	border: 2px solid #3f51b5;
 }
 
 .dashboard .valo-menu-logo {
@@ -14092,7 +14092,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part {
-	background-color: #0068D5;
+	background-color: #3f51b5;
 	min-width: 74px;
 	max-width: 111px;
 }
@@ -14123,7 +14123,7 @@ div.v-layout.v-horizontal.v-widget {
 	border: none;
 	text-overflow: ellipsis;
 	overflow: hidden;
-	background: #0059b6;
+	background: #37479e;
 	font-size: 13px;
 	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
 }
@@ -14142,7 +14142,7 @@ div.v-layout.v-horizontal.v-widget {
 	line-height: 1;
 	padding: 12px;
 	text-align: center;
-	border-top: 1px solid #0f71d7;
+	border-top: 1px solid #4a5bb9;
 }
 
 .dashboard .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part .valo-menu-item:first-child {
@@ -14167,7 +14167,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part .valo-menu-item.selected {
-	background: #0061c6;
+	background: #3b4caa;
 }
 
 .dashboard .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part .valo-menu-item.selected .v-icon {
@@ -14175,7 +14175,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part .valo-menu-item.selected [class*="badge"] {
-	border-color: #0061c6;
+	border-color: #3b4caa;
 }
 
 .dashboard .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part .valo-menu-item [class*="badge"] {
@@ -14183,7 +14183,7 @@ div.v-layout.v-horizontal.v-widget {
 	padding-right: 4px;
 	top: 7px;
 	right: 7px;
-	border: 2px solid #0068D5;
+	border: 2px solid #3f51b5;
 }
 
 .dashboard .valo-menu-responsive[width-range~="0-800px"] {
@@ -14253,13 +14253,13 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .valo-menu-responsive[width-range~="0-800px"] .valo-menuitems {
 	height: 100%;
-	background-color: #0068D5;
-	background-image: -webkit-linear-gradient(right, #005ec1 0%, #0068D5 9px);
-	background-image: linear-gradient(to left,#005ec1 0%, #0068D5 9px);
-	color: #7db3ec;
+	background-color: #3f51b5;
+	background-image: -webkit-linear-gradient(right, #3a4aa6 0%, #3f51b5 9px);
+	background-image: linear-gradient(to left,#3a4aa6 0%, #3f51b5 9px);
+	color: #a4acd5;
 	font-size: 14px;
 	line-height: 30px;
-	border-right: 1px solid #0052a8;
+	border-right: 1px solid #313f8e;
 	white-space: nowrap;
 	position: fixed;
 	z-index: 9000;
@@ -14315,10 +14315,10 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .v-ui[width-range~="0-800px"] .valo-menu-title {
-	background-color: #0068D5;
-	background-image: -webkit-linear-gradient(top, #0070d8 2%, #005bc8 98%);
-	background-image: linear-gradient(to bottom,#0070d8 2%, #005bc8 98%);
-	border-bottom-color: #0052a8;
+	background-color: #3f51b5;
+	background-image: -webkit-linear-gradient(top, #4457ba 2%, #3647a8 98%);
+	background-image: linear-gradient(to bottom,#4457ba 2%, #3647a8 98%);
+	border-bottom-color: #313f8e;
 }
 
 .dashboard .v-ui[width-range~="0-800px"] .valo-menu .v-menubar-user-menu {
@@ -14566,7 +14566,7 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	padding-top: 20px;
-	background-color: #0068D5;
+	background-color: #3f51b5;
 }
 
 .dashboard .v-ios7 .v-ui  > .v-widget, .dashboard .v-ios8 .v-ui  > .v-widget {
@@ -14620,7 +14620,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .v-menubar-popup .v-menubar-menuitem-selected {
-	background-color: #3367D6;
+	background-color: rgba(63, 81, 181, 0.8) !important;
 	background-image: none;
 }
 
@@ -15577,7 +15577,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .searchpane {
-	background-color: #0068D5;
+	background-color: #3f51b5;
 	height: 56px !important;
 	width: 100%;
 	white-space: 20px;
@@ -15613,7 +15613,7 @@ div.v-layout.v-horizontal.v-widget {
 	caret-color: white;
 	font-size: 15px;
 	font-weight: bold;
-	color: #0068D5;
+	color: white;
 	-webkit-input-placeholder: white;
 	-moz-placeholder: white;
 }
@@ -15621,7 +15621,7 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .SearchToolBar_outerField {
 	cursor: text;
 	justify-content: center;
-	background-color: #0051A6;
+	background-color: #c1c1c1;
 	height: 40px;
 	width: 680px;
 	border-radius: 2px;
@@ -15659,19 +15659,19 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard *::-webkit-input-placeholder {
-	color: #BECAE4;
+	color: #a2a2a2;
 }
 
 .dashboard *:-moz-placeholder {
-	color: #BECAE4;
+	color: #a2a2a2;
 }
 
 .dashboard *::-moz-placeholder {
-	color: #BECAE4;
+	color: #a2a2a2;
 }
 
 .dashboard *:-ms-input-placeholder {
-	color: #BECAE4;
+	color: #a2a2a2;
 }
 
 .dashboard .v-menubar-menuitem:hover {
@@ -15882,7 +15882,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .SearchToolBar {
-	background-color: #0068D5;
+	background-color: #3f51b5;
 }
 
 .dashboard .NavigationBar {
@@ -16191,7 +16191,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .NotificationsManagementWindow_buttons_selected {
 	color: white;
-	background-color: #0366D6;
+	background-color: #3f51b5;
 	border-radius: 2px;
 	cursor: pointer;
 }
@@ -16285,7 +16285,7 @@ div.v-layout.v-horizontal.v-widget {
 	border-color: deepskyblue;
 	border-width: 2px;
 	padding: 1px;
-	box-shadow: 0 0 8px rgba(0, 91, 155, 0.8);
+	box-shadow: 0 0 8px rgba(63, 81, 181, 0.8);
 	cursor: pointer;
 }
 
@@ -16301,11 +16301,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .v-window-AboutTB4 {
-	background-color: #0068d5 !important;
+	background-color: rgba(63, 81, 181, 0.8) !important;
 }
 
 .dashboard div.v-window-AboutTB4 .v-window-contents {
-	background: #0068d5;
+	background: rgba(63, 81, 181, 0.8);
 }
 
 .dashboard .AboutTB4 .v-label {
@@ -16343,4 +16343,16 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .LoggingTableRow_menu {
 	cursor: pointer;
+}
+
+.dashboard .FrontdeskView {
+	margin: 0;
+	padding: 0;
+}
+
+.dashboard .FrontdeskView_toolbar {
+	background-color: #3f51b5;
+	height: 56px;
+	width: 100%;
+	box-shadow: 2px 4px 6px grey;
 }

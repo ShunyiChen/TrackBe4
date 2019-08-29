@@ -90,7 +90,7 @@ public final class DashboardMenu extends CustomComponent {
     }
 
     private Component buildTitle() {
-        Label logo = new Label("<font size=\"2px\" face=\"Microsoft YaHei\" color=\"white\">TrackBe4 <strong>控制面板</strong></font>", ContentMode.HTML);
+        Label logo = new Label("<font size=\"2px\" face=\"Microsoft YaHei\" color=\"white\">TrackBe4</font>", ContentMode.HTML);
         logo.setSizeUndefined();
         HorizontalLayout logoWrapper = new HorizontalLayout(logo);
         logoWrapper.setComponentAlignment(logo, Alignment.MIDDLE_CENTER);
@@ -417,8 +417,10 @@ public final class DashboardMenu extends CustomComponent {
             this.view = view;
             setPrimaryStyleName("valo-menu-item");
             setIcon(view.getIcon());
-            setCaption(view.getViewName().substring(0, 1).toUpperCase()
-                    + view.getViewName().substring(1));
+//            setCaption(view.getViewName().substring(0, 1).toUpperCase()
+//                    + view.getViewName().substring(1));
+            this.setWidth("30px");
+
             DashboardEventBus.register(this);
             addClickListener(new ClickListener() {
                 @Override

@@ -8,6 +8,9 @@
 @import "views/reports";
 @import "views/admin";
 
+
+@import "user/frontdesk/frontdesk";
+
 // Optimize the CSS output，如果有问题则注释掉
 $v-included-components: remove($v-included-components, accordion);
 //$v-included-components: remove($v-included-components, colorpicker);
@@ -37,4 +40,6 @@ $valo-menu-background-color: rgb(63,81,181);
   @include dashboard-transactions-view;
   @include dashboard-reports-view;
   @include dashboard-admin-view;
+
+  @include frontdesk-view;
 }

@@ -1,0 +1,17 @@
+@mixin frontdesk-view {
+    .FrontdeskView {
+        margin: 0;
+        padding: 0;
+    }
+    .FrontdeskView_toolbar  {
+        background-color: rgb(63,81,181);//谷歌蓝色
+        height:56px ;
+        width:100%;
+        box-shadow: 2px 4px 6px grey;
+
+//        position: fixed;
+//        @include animation(animate-in-scale-up 500ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
+ 
+    }
+ 
+}

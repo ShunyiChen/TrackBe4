@@ -114,13 +114,13 @@ public final class FrontView extends Panel implements View,InputViewIF {
         ui.access(new Runnable() {
             @Override
             public void run() {
-            	
+
             	Callback2 verifyEvent = new Callback2() {
 					@Override
 					public void onSuccessful(Object... objects) {
 						// fails
 						if (objects[0].equals("")) {
-							
+
 							LicenseHasExpiredWindow.open("您的许可证已经过期，请联系管理员及时更新许可证文件。", new Callback() {
 
 								@Override
@@ -128,14 +128,14 @@ public final class FrontView extends Panel implements View,InputViewIF {
 									DashboardEventBus.post(new DashboardEvent.UserLoggedOutEvent());
 								}
 				        	});
-							
+
 						} else {
-							
+
 							LicenseContent content = (LicenseContent) objects[0];
 					        long endTimes = content.getNotAfter().getTime();
 					        long times = new Date().getTime();
 					        long minusTimes = endTimes - times;
-							
+
 					        int remainingDays = (int) (minusTimes / (1000 * 60 * 60 * 24));
 					        if (remainingDays <= 15) {
 					        	LicenseHasExpiredWindow.open("您的授权证书有效期剩余 "+remainingDays+" 天，请联系管理员及时更新许可文件。", null);
@@ -173,7 +173,7 @@ public final class FrontView extends Panel implements View,InputViewIF {
     private Component buildHeader() {
         HorizontalLayout header = new HorizontalLayout();
         header.addStyleName("viewheader");
-        titleLabel = new Label("扫描录入");
+        titleLabel = new Label("前台录入");
         titleLabel.setId(TITLE_ID);
         titleLabel.setSizeUndefined();
         titleLabel.addStyleName(ValoTheme.LABEL_H1);
