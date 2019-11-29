@@ -35,7 +35,8 @@
 
   .v-ui[width-range~="801px-"] {
     .valo-menu {
-      @include animation(valo-animate-in-slide-right 700ms 700ms backwards);
+      @include animation(valo-animate-in-slide-right 200ms 200ms backwards);
+      // @include animation(valo-animate-in-slide-right 700ms 700ms forwards);
     }
 
     .valo-menu-title {

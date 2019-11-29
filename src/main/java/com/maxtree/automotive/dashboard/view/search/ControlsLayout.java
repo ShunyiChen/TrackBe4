@@ -7,8 +7,6 @@ import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.domain.Community;
-import com.maxtree.automotive.dashboard.domain.User;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -40,9 +38,9 @@ public class ControlsLayout extends HorizontalLayout {
 	}
 	
 	private void initComponents() {
-		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		User loggedInUser = ui.userService.getUserByUserName(username);
-		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
+//		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//		User loggedInUser = ui.userService.getUserByUserName(username);
+//		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
 //		localCodes = new LocationCode(ui.locationService);
 		this.setWidthUndefined();
 		numField.setWidth("73px");
@@ -85,14 +83,14 @@ public class ControlsLayout extends HorizontalLayout {
 	 * 
 	 */
 	public void execute() {
-		if(StringUtils.isEmpty(grid.getKeyword().trim())) {
-			Notifications.warning("查询关键字不能为空。");
-			return;
-		}
-//		String locationCode = localCodes.getCompleteLocationCode(community);
-//		pageCount = ui.transactionService.search_by_keyword_pagingcount(sizePerPage, grid.getKeyword(),grid.getTenantName(),locationCode);
-		pageSizeLabel.setValue("总共"+pageCount+"页");
-		first();
+//		if(StringUtils.isEmpty(grid.getKeyword().trim())) {
+//			Notifications.warning("查询关键字不能为空。");
+//			return;
+//		}
+////		String locationCode = localCodes.getCompleteLocationCode(community);
+////		pageCount = ui.transactionService.search_by_keyword_pagingcount(sizePerPage, grid.getKeyword(),grid.getTenantName(),locationCode);
+//		pageSizeLabel.setValue("总共"+pageCount+"页");
+//		first();
 	}
 	
 	/**
@@ -189,6 +187,5 @@ public class ControlsLayout extends HorizontalLayout {
 	private Label pageSizeLabel = new Label();
 	private Label sizePerPageLabel = new Label();
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
-	private User loggedInUser;
-	private Community community;
+
 }

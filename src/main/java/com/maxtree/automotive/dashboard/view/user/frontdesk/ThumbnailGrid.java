@@ -1,0 +1,195 @@
+package com.maxtree.automotive.dashboard.view.user.frontdesk;
+
+import java.util.HashMap;
+import java.util.Iterator;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.vaadin.event.MouseEvents.ClickEvent;
+import com.vaadin.event.MouseEvents.ClickListener;
+import com.vaadin.event.ShortcutListener;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+
+/**
+ * 
+ * @author chens
+ *
+ */
+public class ThumbnailGrid extends Panel{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 *
+	 */
+	public ThumbnailGrid() {
+		this.setCaption(null);
+		initComponents();
+	}
+	
+	/**
+	 * 
+	 */
+	private void initComponents() {
+		this.addStyleName("picture-pane");
+		this.addStyleName("my-thumbnailGrid");
+		UI.getCurrent().getPage().addBrowserWindowResizeListener(e->{
+			int height = UI.getCurrent().getPage().getBrowserWindowHeight() - 73;
+			this.setHeight(height+"px");
+		});
+		
+		int height = UI.getCurrent().getPage().getBrowserWindowHeight() - 73;
+		this.setWidth("100%");
+		this.setHeight(height+"px");
+		vLayout.setMargin(false);
+		vLayout.setSpacing(true);
+		vLayout.setWidth("100%");
+		vLayout.setHeightUndefined();
+    	setContent(vLayout);
+    	ShortcutListener upListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_UP, null) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void handleAction(Object sender, Object target) {
+				ThumbnailRow row = (ThumbnailRow) vLayout.getComponent(index);
+				row.deselected();
+				if (index > 0) {
+					index--;
+				} else {
+					index = vLayout.getComponentCount() - 1;
+				}
+				row = (ThumbnailRow) vLayout.getComponent(index);
+				row.selected();
+				
+				int pixels = (int) (140*index);
+				ThumbnailGrid.this.setScrollTop(pixels);
+				
+//				UploadInDTO inDto = new UploadInDTO(view.loggedInUser().getUserUniqueId(), view.vin(), view.batch()+"", view.editableSite().getSiteUniqueId(),view.uuid(),row.getDataDictionary().getCode());
+//				UploadFileServlet.IN_DTOs.put(view.loggedInUser().getUserUniqueId(), inDto);
+//				System.out.println("up! current is "+index+"   pixels="+pixels+"  "+inDto.getDictionaryCode());
+			}
+		};
+		ShortcutListener downListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_DOWN,
+				null) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void handleAction(Object sender, Object target) {
+				ThumbnailRow row = (ThumbnailRow) vLayout.getComponent(index);
+				row.deselected();
+				if (index < vLayout.getComponentCount() - 1) {
+					index++;
+				} else {
+					index = 0;
+				}
+				row = (ThumbnailRow) vLayout.getComponent(index);
+				row.selected();
+				int pixels = (int) (140*index);
+				ThumbnailGrid.this.setScrollTop(pixels);
+//				UploadInDTO inDto = new UploadInDTO(view.loggedInUser().getUserUniqueId(), view.vin(), view.batch()+"", view.editableSite().getSiteUniqueId(),view.uuid(),row.getDataDictionary().getCode());
+//				UploadFileServlet.IN_DTOs.put(view.loggedInUser().getUserUniqueId(), inDto);
+//				System.out.println("down! current is "+index+"  pixels="+pixels+"  "+inDto.getDictionaryCode());
+			}
+		};
+    	this.addShortcutListener(upListener);
+    	this.addShortcutListener(downListener);
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	private ClickListener actionListener() {
+		return new ClickListener() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void click(ClickEvent event) {
+				// 上一个
+				ThumbnailRow previous = (ThumbnailRow) vLayout.getComponent(index);
+				previous.deselected();
+				
+				index = vLayout.getComponentIndex(event.getComponent());
+				ThumbnailRow row = (ThumbnailRow) event.getComponent();
+				row.selected();
+				
+//				UploadInDTO inDto = new UploadInDTO(view.loggedInUser().getUserUniqueId(), view.vin(), view.batch()+"", view.editableSite().getSiteUniqueId(),view.uuid(),row.getDataDictionary().getCode());
+//				UploadFileServlet.IN_DTOs.put(view.loggedInUser().getUserUniqueId(), inDto);
+//				System.out.println("put! current is "+index+"   "+inDto.getDictionaryCode());
+			}
+		};
+	}
+	
+	/**
+	 * Remove all rows
+	 */
+	public void removeAllRows() {
+		vLayout.removeAllComponents();
+		mapRows.clear();
+		index = 0;
+	}
+	
+	/**
+	 * Add a new Row
+	 * 
+	 * @param row
+	 */
+	public void addRow(ThumbnailRow row) {
+		row.addActionListener(actionListener());
+		vLayout.addComponents(row);
+		vLayout.setComponentAlignment(row, Alignment.TOP_LEFT);
+//		mapRows.put(row.getDataDictionary().getCode(), row);
+	}
+	
+	/**
+	 * 验证失败返回true,否则返回false
+	 * 
+	 * @return
+	 */
+	public boolean validationFails() {
+		Iterator<String> iter = mapRows.keySet().iterator();
+		while(iter.hasNext()) {
+			String key = iter.next();
+			ThumbnailRow row = mapRows.get(key);
+			if(row.isRequired()) {
+				if(!row.hasThumbnailUploaded()) {
+					
+					System.out.println("row====="+key);
+					
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Iterator<Component> getThumbnailRows() {
+		return vLayout.iterator();
+	}
+	
+	private static final Logger log = LoggerFactory.getLogger(ThumbnailGrid.class);
+	private VerticalLayout vLayout = new VerticalLayout();
+	public HashMap<String, ThumbnailRow> mapRows = new HashMap<>();
+	private int index = 0;
+}

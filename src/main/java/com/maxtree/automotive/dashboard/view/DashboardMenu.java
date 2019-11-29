@@ -5,7 +5,6 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.PermissionCodes;
 import com.maxtree.automotive.dashboard.component.ChangePasswordWindow;
 import com.maxtree.automotive.dashboard.component.ProfilePreferencesWindow;
-import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.service.AuthService;
@@ -99,48 +98,48 @@ public final class DashboardMenu extends CustomComponent {
         return logoWrapper;
     }
 
-    private User getCurrentUser() {
-        String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-        User loggedInUser = ui.userService.getUserByUserName(username);
-        return loggedInUser;
-    }
+//    private User getCurrentUser() {
+//        String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//        User loggedInUser = ui.userService.getUserByUserName(username);
+//        return loggedInUser;
+//    }
 
     private Component buildUserMenu() {
         final MenuBar settings = new MenuBar();
         settings.addStyleName("user-menu");
         settings.addStyleName("v-menubar-menuitem:hover");
-        final User user = getCurrentUser();
+//        final User user = getCurrentUser();
         
-        Resource res = new ThemeResource(user.getProfile().getPicture());
-        settingsItem = settings.addItem("", res, null);
-        // new ThemeResource("img/profile-pic-300px.jpg"), null);
-        updateUserName(null);
-        settingsItem.addItem("编辑个人资料", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-                ProfilePreferencesWindow.open(user, false);
-            }
-        });
-        settingsItem.addItem("首选项", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-                ProfilePreferencesWindow.open(user, true);
-            }
-        });
-        settingsItem.addItem("修改密码", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-            	ChangePasswordWindow.open(user);
-            }
-        });
-        
-        settingsItem.addSeparator();
-        settingsItem.addItem("退 出", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-                DashboardEventBus.post(new DashboardEvent.UserLoggedOutEvent());
-            }
-        });
+//        Resource res = new ThemeResource(user.getProfile().getPicture());
+//        settingsItem = settings.addItem("", res, null);
+//        // new ThemeResource("img/profile-pic-300px.jpg"), null);
+//        updateUserName(null);
+//        settingsItem.addItem("编辑个人资料", new Command() {
+//            @Override
+//            public void menuSelected(final MenuItem selectedItem) {
+//                ProfilePreferencesWindow.open(user, false);
+//            }
+//        });
+//        settingsItem.addItem("首选项", new Command() {
+//            @Override
+//            public void menuSelected(final MenuItem selectedItem) {
+//                ProfilePreferencesWindow.open(user, true);
+//            }
+//        });
+//        settingsItem.addItem("修改密码", new Command() {
+//            @Override
+//            public void menuSelected(final MenuItem selectedItem) {
+//            	ChangePasswordWindow.open(user);
+//            }
+//        });
+//
+//        settingsItem.addSeparator();
+//        settingsItem.addItem("退 出", new Command() {
+//            @Override
+//            public void menuSelected(final MenuItem selectedItem) {
+//                DashboardEventBus.post(new DashboardEvent.UserLoggedOutEvent());
+//            }
+//        });
         return settings;
     }
 
@@ -166,117 +165,121 @@ public final class DashboardMenu extends CustomComponent {
         CssLayout menuItemsLayout = new CssLayout();
         menuItemsLayout.addStyleName("valo-menuitems");
         // 不同角色登录不同界面
-        String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-        User user = ui.userService.getUserByUserName(username);
-        for (final DashboardViewType view : DashboardViewType.values()) {
-        	// 前台录入check
-        	if (view == DashboardViewType.INPUT) {
-        		if(!user.isPermitted(PermissionCodes.A3)) {
-            		continue;
-            	}
-        	} 
-        	// 质检
-        	else if (view == DashboardViewType.QUALITY) {
-        		if(!user.isPermitted(PermissionCodes.A4)) {
-            		continue;
-            	}
-        	}
-        	// 审档
-        	else if (view == DashboardViewType.CHECK) {
-        		if(!user.isPermitted(PermissionCodes.A5)) {
-            		continue;
-            	}
-        	}
-        	// 确认审档
-        	else if (view == DashboardViewType.DOUBLECHECK) {
-        		if(!user.isPermitted(PermissionCodes.A6)) {
-            		continue;
-            	}
-        	}
-        	// 查询数据
-        	else if (view == DashboardViewType.SEARCH) {
-        		if(!user.isPermitted(PermissionCodes.A7)) {
-            		continue;
-            	}
-        	}
-        	// 上架下架
-        	else if (view == DashboardViewType.SHELF) {
-        		if(!user.isPermitted(PermissionCodes.A8)) {
-            		continue;
-            	}
-        	}
-        	// 影像化管理员
-        	else if (view == DashboardViewType.IMAGING_MANAGER) {
-        		if(!user.isPermitted(PermissionCodes.A9)) {
-            		continue;
-            	}
-        	}
-        	// 影像化录入
-        	else if (view == DashboardViewType.IMAGING_INPUT) {
-        		if(!user.isPermitted(PermissionCodes.A10)) {
-            		continue;
-            	}
-        	}
-        	// 影像化质检
-        	else if (view == DashboardViewType.IMAGING_QUALITY) {
-        		if(!user.isPermitted(PermissionCodes.A11)) {
-            		continue;
-            	}
-        	}
-        	//终审
-        	else if (view == DashboardViewType.FINAL_CHECK) {
-        		if(!user.isPermitted(PermissionCodes.A12)) {
-            		continue;
-            	}
-        	}
-        	// 保存首个界面名称
-        	Object firstView = VaadinSession.getCurrent().getAttribute(user.getUserUniqueId()+"");
-        	if (firstView == null) {
-        		VaadinSession.getCurrent().setAttribute(user.getUserUniqueId()+"", view.getViewName());
-        	}
-            Component menuItemComponent = new ValoMenuItemButton(view);
-            if (view == DashboardViewType.INPUT) {
-                inputBadge = new Label();
-                menuItemComponent = buildBadgeWrapper(menuItemComponent, inputBadge);
-            }
-            else if (view == DashboardViewType.QUALITY) {
-            	qualityBadge = new Label();
-                menuItemComponent = buildBadgeWrapper(menuItemComponent, qualityBadge);
-            }
-            else if (view == DashboardViewType.CHECK) {
-            	checkBadge = new Label();
-                menuItemComponent = buildBadgeWrapper(menuItemComponent, checkBadge);
-            }
-            else if (view == DashboardViewType.DOUBLECHECK) {
-            	doubleCheckBadge = new Label();
-                menuItemComponent = buildBadgeWrapper(menuItemComponent, doubleCheckBadge);
-            }
-            else if (view == DashboardViewType.SEARCH) {
-            	searchBadge = new Label();
-                menuItemComponent = buildBadgeWrapper(menuItemComponent, searchBadge);
-            }
-            else if (view == DashboardViewType.SHELF) {
-            	shelfBadge = new Label();
-                menuItemComponent = buildBadgeWrapper(menuItemComponent, shelfBadge);
-            }
-            else if (view == DashboardViewType.IMAGING_MANAGER) {
-            	imagingAdminBadge = new Label();
-                menuItemComponent = buildBadgeWrapper(menuItemComponent, imagingAdminBadge);
-            }
-            else if (view == DashboardViewType.IMAGING_INPUT) {
-            	imagingInputBadge = new Label();
-                menuItemComponent = buildBadgeWrapper(menuItemComponent, imagingInputBadge);
-            }
-            else if (view == DashboardViewType.IMAGING_QUALITY) {
-            	imagingQualityBadge = new Label();
-                menuItemComponent = buildBadgeWrapper(menuItemComponent, imagingQualityBadge);
-            }
-            else if (view == DashboardViewType.FINAL_CHECK) {
-            	finalCheckBadge = new Label();
-                menuItemComponent = buildBadgeWrapper(menuItemComponent, finalCheckBadge);
-            }
-            menuItemsLayout.addComponent(menuItemComponent);
-        }
+//        String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//        User user = ui.userService.getUserByUserName(username);
+//        for (final DashboardViewType view : DashboardViewType.values()) {
+//        	// 前台录入check
+//        	if (view == DashboardViewType.INPUT) {
+//        		if(!user.isPermitted(PermissionCodes.A3)) {
+//            		continue;
+//            	}
+//        	}
+//        	// 质检
+//        	else if (view == DashboardViewType.QUALITY) {
+//        		if(!user.isPermitted(PermissionCodes.A4)) {
+//            		continue;
+//            	}
+//        	}
+//        	// 审档
+//        	else if (view == DashboardViewType.CHECK) {
+//        		if(!user.isPermitted(PermissionCodes.A5)) {
+//            		continue;
+//            	}
+//        	}
+//        	// 确认审档
+//        	else if (view == DashboardViewType.DOUBLECHECK) {
+//        		if(!user.isPermitted(PermissionCodes.A6)) {
+//            		continue;
+//            	}
+//        	}
+//        	// 查询数据
+//        	else if (view == DashboardViewType.SEARCH) {
+//        		if(!user.isPermitted(PermissionCodes.A7)) {
+//            		continue;
+//            	}
+//        	}
+//        	// 上架下架
+//        	else if (view == DashboardViewType.SHELF) {
+//        		if(!user.isPermitted(PermissionCodes.A8)) {
+//            		continue;
+//            	}
+//        	}
+//        	// 影像化管理员
+//        	else if (view == DashboardViewType.IMAGING_MANAGER) {
+//        		if(!user.isPermitted(PermissionCodes.A9)) {
+//            		continue;
+//            	}
+//        	}
+//        	// 影像化录入
+//        	else if (view == DashboardViewType.IMAGING_INPUT) {
+//        		if(!user.isPermitted(PermissionCodes.A10)) {
+//            		continue;
+//            	}
+//        	}
+//        	// 影像化质检
+//        	else if (view == DashboardViewType.IMAGING_QUALITY) {
+//        		if(!user.isPermitted(PermissionCodes.A11)) {
+//            		continue;
+//            	}
+//        	}
+//        	//终审
+//        	else if (view == DashboardViewType.FINAL_CHECK) {
+//        		if(!user.isPermitted(PermissionCodes.A12)) {
+//            		continue;
+//            	}
+//        	}
+//        	// 保存首个界面名称
+//        	Object firstView = VaadinSession.getCurrent().getAttribute(user.getUserUniqueId()+"");
+//        	if (firstView == null) {
+//        		VaadinSession.getCurrent().setAttribute(user.getUserUniqueId()+"", view.getViewName());
+//        	}
+//            Component menuItemComponent = new ValoMenuItemButton(view);
+//            if (view == DashboardViewType.TODO_LIST) {
+//                Label label = new Label();
+//                menuItemComponent = buildBadgeWrapper(menuItemComponent, label);
+//            }
+//            if (view == DashboardViewType.INPUT) {
+//                inputBadge = new Label();
+//                menuItemComponent = buildBadgeWrapper(menuItemComponent, inputBadge);
+//            }
+//            else if (view == DashboardViewType.QUALITY) {
+//            	qualityBadge = new Label();
+//                menuItemComponent = buildBadgeWrapper(menuItemComponent, qualityBadge);
+//            }
+//            else if (view == DashboardViewType.CHECK) {
+//            	checkBadge = new Label();
+//                menuItemComponent = buildBadgeWrapper(menuItemComponent, checkBadge);
+//            }
+//            else if (view == DashboardViewType.DOUBLECHECK) {
+//            	doubleCheckBadge = new Label();
+//                menuItemComponent = buildBadgeWrapper(menuItemComponent, doubleCheckBadge);
+//            }
+//            else if (view == DashboardViewType.SEARCH) {
+//            	searchBadge = new Label();
+//                menuItemComponent = buildBadgeWrapper(menuItemComponent, searchBadge);
+//            }
+//            else if (view == DashboardViewType.SHELF) {
+//            	shelfBadge = new Label();
+//                menuItemComponent = buildBadgeWrapper(menuItemComponent, shelfBadge);
+//            }
+//            else if (view == DashboardViewType.IMAGING_MANAGER) {
+//            	imagingAdminBadge = new Label();
+//                menuItemComponent = buildBadgeWrapper(menuItemComponent, imagingAdminBadge);
+//            }
+//            else if (view == DashboardViewType.IMAGING_INPUT) {
+//            	imagingInputBadge = new Label();
+//                menuItemComponent = buildBadgeWrapper(menuItemComponent, imagingInputBadge);
+//            }
+//            else if (view == DashboardViewType.IMAGING_QUALITY) {
+//            	imagingQualityBadge = new Label();
+//                menuItemComponent = buildBadgeWrapper(menuItemComponent, imagingQualityBadge);
+//            }
+//            else if (view == DashboardViewType.FINAL_CHECK) {
+//            	finalCheckBadge = new Label();
+//                menuItemComponent = buildBadgeWrapper(menuItemComponent, finalCheckBadge);
+//            }
+//            menuItemsLayout.addComponent(menuItemComponent);
+//        }
         return menuItemsLayout;
     }
 
@@ -398,8 +401,8 @@ public final class DashboardMenu extends CustomComponent {
 
     @Subscribe
     public void updateUserName(final DashboardEvent.ProfileUpdatedEvent event) {
-        User user = getCurrentUser();
-        settingsItem.setText(user.getProfile().getFirstName() + " " + user.getProfile().getLastName());
+//        User user = getCurrentUser();
+//        settingsItem.setText(user.getProfile().getFirstName() + " " + user.getProfile().getLastName());
     }
 
     @Subscribe
@@ -417,9 +420,10 @@ public final class DashboardMenu extends CustomComponent {
             this.view = view;
             setPrimaryStyleName("valo-menu-item");
             setIcon(view.getIcon());
+            setCaption(view.getViewName());
 //            setCaption(view.getViewName().substring(0, 1).toUpperCase()
 //                    + view.getViewName().substring(1));
-            this.setWidth("30px");
+//            this.setWidth("30px");
 
             DashboardEventBus.register(this);
             addClickListener(new ClickListener() {

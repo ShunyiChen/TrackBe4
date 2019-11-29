@@ -2,11 +2,7 @@ package com.maxtree.automotive.dashboard.view.imaging;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
-import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.data.Yaml;
-import com.maxtree.automotive.dashboard.domain.Community;
-import com.maxtree.automotive.dashboard.domain.Transaction;
-import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.service.AuthService;
@@ -15,13 +11,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.*;
-import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.themes.ValoTheme;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * 
@@ -39,9 +29,9 @@ public class QuickQueryWindow extends Window {
 	 * 
 	 */
 	public QuickQueryWindow() {
-		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		loggedInUser = ui.userService.getUserByUserName(username);
-		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
+//		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//		loggedInUser = ui.userService.getUserByUserName(username);
+//		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
 		this.setWidth("700px");
 		this.setHeight("450px");
 		this.setModal(true);
@@ -75,22 +65,22 @@ public class QuickQueryWindow extends Window {
 		toolbar.setComponentAlignment(plateField, Alignment.MIDDLE_LEFT);
 		toolbar.setComponentAlignment(btnSearch, Alignment.MIDDLE_LEFT);
 		
-		grid.setSizeFull();
-		grid.addColumn(Transaction::getPlateType).setCaption("号牌种类");
-		grid.addColumn(Transaction::getPlateNumber).setCaption("号码号牌");
-		grid.addColumn(Transaction::getVin).setCaption("车辆识别代码");
-		grid.addColumn(Transaction::getBusinessName).setCaption("业务名称");
-		grid.addColumn(Transaction::getStatus).setCaption("状态");
-		// Set the selection mode
-        grid.setSelectionMode(SelectionMode.SINGLE);
-        grid.addItemClickListener(e->{
-        	if(e.getMouseEventDetails().isDoubleClick()) {
-        		close();
-            	Set<Transaction> set = new HashSet<>();
-            	set.add(e.getItem());
-    			callback.onSuccessful(new ArrayList<Transaction>(set));
-        	}
-        });
+//		grid.setSizeFull();
+//		grid.addColumn(Transaction::getPlateType).setCaption("号牌种类");
+//		grid.addColumn(Transaction::getPlateNumber).setCaption("号码号牌");
+//		grid.addColumn(Transaction::getVin).setCaption("车辆识别代码");
+//		grid.addColumn(Transaction::getBusinessName).setCaption("业务名称");
+//		grid.addColumn(Transaction::getStatus).setCaption("状态");
+//		// Set the selection mode
+//        grid.setSelectionMode(SelectionMode.SINGLE);
+//        grid.addItemClickListener(e->{
+//        	if(e.getMouseEventDetails().isDoubleClick()) {
+//        		close();
+//            	Set<Transaction> set = new HashSet<>();
+//            	set.add(e.getItem());
+//    			callback.onSuccessful(new ArrayList<Transaction>(set));
+//        	}
+//        });
 		
 		// 按钮
 		HorizontalLayout subButtonPane = new HorizontalLayout();
@@ -103,9 +93,9 @@ public class QuickQueryWindow extends Window {
 		subButtonPane.setComponentAlignment(btnOK, Alignment.BOTTOM_CENTER);
 		btnOK.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 		
-		mainLayout.addComponents(toolbar,grid,subButtonPane);
+//		mainLayout.addComponents(toolbar,grid,subButtonPane);
 		mainLayout.setExpandRatio(toolbar, 0);
-		mainLayout.setExpandRatio(grid, 1);
+//		mainLayout.setExpandRatio(grid, 1);
 		mainLayout.setExpandRatio(subButtonPane, 0);
 		mainLayout.setComponentAlignment(subButtonPane, Alignment.BOTTOM_RIGHT);
 		
@@ -143,9 +133,9 @@ public class QuickQueryWindow extends Window {
 	 * 
 	 * @param perPageData
 	 */
-	private void setPerPageData(List<Transaction> perPageData) {
-    	grid.setItems(perPageData);
-    }
+//	private void setPerPageData(List<Transaction> perPageData) {
+//    	grid.setItems(perPageData);
+//    }
 	
 	/**
 	 * 
@@ -156,23 +146,23 @@ public class QuickQueryWindow extends Window {
         QuickQueryWindow w = new QuickQueryWindow();
         w.callback = callback;
         w.btnOK.addClickListener(e -> {
-			Set<Transaction> set = w.grid.getSelectedItems();
-			if (set.size() > 0) {
-				w.close();
-				callback.onSuccessful(new ArrayList<Transaction>(set));
-			}
-			else {
-				Notifications.warning("请选择一行记录。");
-			}
+//			Set<Transaction> set = w.grid.getSelectedItems();
+//			if (set.size() > 0) {
+//				w.close();
+//				callback.onSuccessful(new ArrayList<Transaction>(set));
+//			}
+//			else {
+//				Notifications.warning("请选择一行记录。");
+//			}
 		});
         UI.getCurrent().addWindow(w);
         w.center();
     }
 	
-	private Community community;
-	private User loggedInUser;
+//	private Community community;
+//	private User loggedInUser;
 	private ResultCallback callback;
-	private Grid<Transaction> grid = new Grid<>();
+//	private Grid<Transaction> grid = new Grid<>();
 	private TextField plateField = new TextField();
 	private VerticalLayout mainLayout =null;
 	private Button btnSearch = new Button();

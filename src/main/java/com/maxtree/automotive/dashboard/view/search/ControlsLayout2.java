@@ -6,7 +6,6 @@ import org.springframework.util.StringUtils;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -80,9 +79,9 @@ public class ControlsLayout2 extends HorizontalLayout {
 	 * 
 	 */
 	public void execute() {
-		pageCount = ui.transactionService.search_by_platetype_and_platenumber_vin_pagingcount(sizePerPage, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getTenantName());
-		pageSizeLabel.setValue("总共"+pageCount+"页");
-		first();
+//		pageCount = ui.transactionService.search_by_platetype_and_platenumber_vin_pagingcount(sizePerPage, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getTenantName());
+//		pageSizeLabel.setValue("总共"+pageCount+"页");
+//		first();
 	}
 	
 	
@@ -90,15 +89,15 @@ public class ControlsLayout2 extends HorizontalLayout {
 	 * 
 	 */
 	private void first() {
-		if (grid != null) {
-			List<Transaction> items = ui.transactionService.search_by_platetype_and_platenumber_vin(sizePerPage, 0, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getTenantName()); 
-			grid.setPerPageData(items);
-			
-			// Update inputs
-			currentPageIndex = 1;
-			numField.setValue(currentPageIndex+"");
-			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
-		}
+//		if (grid != null) {
+//			List<Transaction> items = ui.transactionService.search_by_platetype_and_platenumber_vin(sizePerPage, 0, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getTenantName());
+//			grid.setPerPageData(items);
+//
+//			// Update inputs
+//			currentPageIndex = 1;
+//			numField.setValue(currentPageIndex+"");
+//			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
+//		}
 	}
 	
 	/**
@@ -106,17 +105,17 @@ public class ControlsLayout2 extends HorizontalLayout {
 	 */
 	private void previous() {
 		if (grid != null) {
-			currentPageIndex -= 1;
-			if (currentPageIndex < 1) {
-				currentPageIndex = 1;
-			}
-			int offset = (currentPageIndex - 1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.search_by_platetype_and_platenumber_vin(sizePerPage, offset, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getTenantName()); 
-			grid.setPerPageData(items);
-			
-			// Update inputs
-			numField.setValue(currentPageIndex+"");
-			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
+//			currentPageIndex -= 1;
+//			if (currentPageIndex < 1) {
+//				currentPageIndex = 1;
+//			}
+//			int offset = (currentPageIndex - 1) * sizePerPage;
+//			List<Transaction> items = ui.transactionService.search_by_platetype_and_platenumber_vin(sizePerPage, offset, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getTenantName());
+//			grid.setPerPageData(items);
+//
+//			// Update inputs
+//			numField.setValue(currentPageIndex+"");
+//			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
 		 
 		}
 	}
@@ -130,12 +129,12 @@ public class ControlsLayout2 extends HorizontalLayout {
 			if (currentPageIndex > pageCount) {
 				currentPageIndex = pageCount;
 			}
-			int offset = (currentPageIndex -1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.search_by_platetype_and_platenumber_vin(sizePerPage, offset, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getTenantName()); 
-			grid.setPerPageData(items);
-			// Update inputs
-			numField.setValue(currentPageIndex+"");
-			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
+//			int offset = (currentPageIndex -1) * sizePerPage;
+//			List<Transaction> items = ui.transactionService.search_by_platetype_and_platenumber_vin(sizePerPage, offset, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getTenantName());
+//			grid.setPerPageData(items);
+//			// Update inputs
+//			numField.setValue(currentPageIndex+"");
+//			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
 		}
 	}
 	
@@ -146,8 +145,8 @@ public class ControlsLayout2 extends HorizontalLayout {
 		if (grid != null) {
 			currentPageIndex = pageCount;
 			int offset = (currentPageIndex -1) * sizePerPage;
-			List<Transaction> items = ui.transactionService.search_by_platetype_and_platenumber_vin(sizePerPage, offset, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getTenantName()); 
-			grid.setPerPageData(items);
+//			List<Transaction> items = ui.transactionService.search_by_platetype_and_platenumber_vin(sizePerPage, offset, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getTenantName());
+//			grid.setPerPageData(items);
 			// Update inputs
 			numField.setValue(currentPageIndex+"");
 			currentPageIndexLabel.setValue("第"+currentPageIndex+"页 ，");
@@ -159,8 +158,8 @@ public class ControlsLayout2 extends HorizontalLayout {
 	 */
 	private void jumpTo() {
 		int offset = (currentPageIndex - 1) * sizePerPage;
-		List<Transaction> data = ui.transactionService.search_by_platetype_and_platenumber_vin(sizePerPage, offset, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getTenantName());
-		grid.setPerPageData(data);
+//		List<Transaction> data = ui.transactionService.search_by_platetype_and_platenumber_vin(sizePerPage, offset, grid.getPlateType(), grid.getPlateNumber(), grid.getVin(), grid.getTenantName());
+//		grid.setPerPageData(data);
 	}
 	
 	private int pageCount;

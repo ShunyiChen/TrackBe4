@@ -11,20 +11,21 @@ import com.maxtree.automotive.dashboard.view.imaging.ImagingInputView;
 import com.maxtree.automotive.dashboard.view.imaging.ImagingQualityView;
 import com.maxtree.automotive.dashboard.view.finalcheck.FinalCheckView;
 import com.maxtree.automotive.dashboard.view.user.frontdesk.FrontdeskView;
+import com.maxtree.automotive.dashboard.view.user.todolist.ToDoListView;
 import com.vaadin.navigator.View;
 import com.vaadin.server.Resource;
 import com.vaadin.icons.VaadinIcons;
 
 public enum DashboardViewType {
-    
+    TODO_LIST("代办任务", ToDoListView.class, VaadinIcons.AT, true),
 	INPUT("前台录入", FrontdeskView.class, VaadinIcons.HOME, true),
 	QUALITY("质量检查", QCView.class, VaadinIcons.SPLIT, true),
-    CHECK("业务审核", BusinessCheckView.class, VaadinIcons.TABLE, true),
+//    CHECK("业务审核", BusinessCheckView.class, VaadinIcons.TABLE, true),
 	SEARCH("车辆查询", SearchView.class, VaadinIcons.SEARCH, true),
 	DOUBLECHECK("确认审档", DoubleCheckView.class, VaadinIcons.ADD_DOCK, true),
 	SHELF("上架下架", ShelfView.class, VaadinIcons.ROCKET, true),
 	IMAGING_MANAGER("影像管理", ImagingManagerView.class, VaadinIcons.STORAGE, true),
-	IMAGING_INPUT("影像录入", ImagingInputView.class, VaadinIcons.PENCIL, true),
+//	IMAGING_INPUT("影像录入", ImagingInputView.class, VaadinIcons.PENCIL, true),
 	IMAGING_QUALITY("影像质检", ImagingQualityView.class, VaadinIcons.CLIPBOARD_CHECK, true),
 	FINAL_CHECK("最终审档", FinalCheckView.class, VaadinIcons.CAR, true);
 	

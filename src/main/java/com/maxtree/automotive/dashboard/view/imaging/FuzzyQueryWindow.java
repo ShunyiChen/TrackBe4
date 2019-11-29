@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.data.Yaml;
-import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.event.ShortcutListener;
@@ -85,13 +84,13 @@ public class FuzzyQueryWindow extends Window {
 		grid.keyword = plateField.getValue();
 		grid.controls.recount();
 		
-		List<Imaging> rs = ui.imagingService.findAll(20, 0, grid.keyword);
-		grid.setPerPageData(rs);
+//		List<Imaging> rs = ui.imagingService.findAll(20, 0, grid.keyword);
+//		grid.setPerPageData(rs);
 	}
-	
+
 	/**
-	 * 
-	 * @param callback
+	 *
+	 * @param grid
 	 */
 	public static void open(TodoListGrid grid) {
         DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());

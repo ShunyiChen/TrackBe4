@@ -14326,9 +14326,9 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .v-ui[width-range~="801px-"] .valo-menu {
-	-webkit-animation: valo-animate-in-slide-right 700ms 700ms backwards;
-	-moz-animation: valo-animate-in-slide-right 700ms 700ms backwards;
-	animation: valo-animate-in-slide-right 700ms 700ms backwards;
+	-webkit-animation: valo-animate-in-slide-right 200ms 200ms backwards;
+	-moz-animation: valo-animate-in-slide-right 200ms 200ms backwards;
+	animation: valo-animate-in-slide-right 200ms 200ms backwards;
 }
 
 .dashboard .v-ui[width-range~="801px-"] .valo-menu-title {
@@ -14977,20 +14977,16 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .ThumbnailRow-border {
-	border-radius: 5px;
-	border-style: dashed;
-	border-color: #A4A4A2;
-	border-width: 2px;
 	padding: 5px;
 }
 
 .dashboard .ThumbnailRow-border-selected {
 	border-radius: 5px;
 	border-style: solid;
-	border-color: deepskyblue;
+	border-color: #3f51b5;
 	border-width: 2px;
 	padding: 5px;
-	box-shadow: 0 0 8px rgba(0, 191, 255, 0.8);
+	box-shadow: 0 0 8px rgba(63, 81, 181, 0.8);
 }
 
 .dashboard .Thumbnail {
@@ -16354,5 +16350,21 @@ div.v-layout.v-horizontal.v-widget {
 	background-color: #3f51b5;
 	height: 56px;
 	width: 100%;
+	box-shadow: 2px 4px 6px grey;
+}
+
+.dashboard .my-img-button {
+	cursor: pointer;
+}
+
+.dashboard .my-formLayout {
+	background-color: #e0e0e0;
+	box-shadow: 2px 4px 6px grey;
+	padding-right: 10px;
+	padding-bottom: 10px;
+}
+
+.dashboard .my-thumbnailGrid {
+	background-color: white;
 	box-shadow: 2px 4px 6px grey;
 }

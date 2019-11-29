@@ -16,6 +16,8 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.regex.Pattern;
+
 
 @ServletComponentScan
 @SpringBootApplication
@@ -48,6 +50,10 @@ public class TB4Application extends SpringBootServletInitializer implements Comm
         LOGGER.info("\n\n{}\n\n","Welcome!欢迎！ようこそ！");
     	
         SpringApplication.run(TB4Application.class, args);
+
+//        String pattern = ".*辽[Bb].*";
+//        boolean matches = Pattern.matches(pattern, "辽B B8K57");
+//        System.out.println(matches);
 
         System.out.println("Application is started!");
         LOGGER.info("Application is started!");

@@ -5,9 +5,6 @@ import java.util.List;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.domain.Community;
-import com.maxtree.automotive.dashboard.domain.Transaction;
-import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.service.AuthService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
@@ -36,9 +33,9 @@ public class DownGrid extends VerticalLayout {
 	}
 	
 	private void initComponents() {
-		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		User loggedInUser = ui.userService.getUserByUserName(username);
-		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
+//		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//		User loggedInUser = ui.userService.getUserByUserName(username);
+//		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
 //		localCodes = new LocationCode(ui.locationService);
 		this.setSpacing(false);
 		this.setMargin(false);
@@ -67,36 +64,36 @@ public class DownGrid extends VerticalLayout {
 		info.setComponentAlignment(plateVIN, Alignment.MIDDLE_LEFT);
 		
 		
-		grid.setSizeFull();
-		grid.addColumn(Transaction::getCode).setCaption("上架号");
-		grid.addColumn(Transaction::getBarcode).setCaption("条形码");
-//		grid.addColumn(Transaction::getBusinessCode).setCaption("业务类型");
-		grid.addColumn(Transaction::getStatus).setCaption("业务状态");
-        
-		// Set the selection mode
-        grid.setSelectionMode(SelectionMode.SINGLE);
-        grid.addItemClickListener(e->{
-        	editableTrans = e.getItem();
-        	plateType.setValue(editableTrans.getPlateType());
-        	plateNumber.setValue(editableTrans.getPlateNumber());
-        	plateVIN.setValue(editableTrans.getVin());
-        });
-        this.addComponents(info, grid);
-        this.setExpandRatio(info, 0);
-        this.setExpandRatio(grid, 1);
+//		grid.setSizeFull();
+//		grid.addColumn(Transaction::getCode).setCaption("上架号");
+//		grid.addColumn(Transaction::getBarcode).setCaption("条形码");
+////		grid.addColumn(Transaction::getBusinessCode).setCaption("业务类型");
+//		grid.addColumn(Transaction::getStatus).setCaption("业务状态");
+//
+//		// Set the selection mode
+//        grid.setSelectionMode(SelectionMode.SINGLE);
+//        grid.addItemClickListener(e->{
+//        	editableTrans = e.getItem();
+//        	plateType.setValue(editableTrans.getPlateType());
+//        	plateNumber.setValue(editableTrans.getPlateNumber());
+//        	plateVIN.setValue(editableTrans.getVin());
+//        });
+//        this.addComponents(info, grid);
+//        this.setExpandRatio(info, 0);
+//        this.setExpandRatio(grid, 1);
 	}
 	
-	public void setItems(List<Transaction> data) {
-		grid.setItems(data);
-	}
-	
-	public void setAllData(List<Transaction> allData) {
-    	this.allData = allData;
-    }
-	
-	public List<Transaction> getAllData() {
-    	return allData;
-    }
+//	public void setItems(List<Transaction> data) {
+//		grid.setItems(data);
+//	}
+//
+//	public void setAllData(List<Transaction> allData) {
+//    	this.allData = allData;
+//    }
+//
+//	public List<Transaction> getAllData() {
+//    	return allData;
+//    }
 	
 	public String getKeyword() {
 		return keyword;
@@ -123,19 +120,19 @@ public class DownGrid extends VerticalLayout {
 	/**
 	 * 
 	 */
-	public void clearSortOrder() {
-		grid.clearSortOrder();
-	}
+//	public void clearSortOrder() {
+//		grid.clearSortOrder();
+//	}
 	
-	private Community community;
+//	private Community community;
 //	private LocationCode localCodes;
-	private User loggedInUser;
+//	private User loggedInUser;
 	private String keyword;
-	private List<Transaction> allData;
-	private Grid<Transaction> grid = new Grid<>();
+//	private List<Transaction> allData;
+//	private Grid<Transaction> grid = new Grid<>();
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
 	private TextField plateType = new TextField();
 	private TextField plateNumber = new TextField();
 	private TextField plateVIN = new TextField();
-	public Transaction editableTrans = null;
+//	public Transaction editableTrans = null;
 }

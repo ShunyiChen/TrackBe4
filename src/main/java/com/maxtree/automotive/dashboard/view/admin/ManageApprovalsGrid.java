@@ -88,7 +88,6 @@ public class ManageApprovalsGrid extends VerticalLayout {
 	
 	/**
 	 * 
-	 * @param business
 	 * @return
 	 */
 	private HorizontalLayout createDataRow() {

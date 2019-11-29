@@ -6,21 +6,11 @@ import java.util.List;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.cache.CacheManager;
 import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
 import com.maxtree.automotive.dashboard.component.Notifications;
 import com.maxtree.automotive.dashboard.component.NotificationsButton;
 import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
-import com.maxtree.automotive.dashboard.data.SystemConfiguration;
-import com.maxtree.automotive.dashboard.data.Yaml;
-import com.maxtree.automotive.dashboard.domain.Business;
-import com.maxtree.automotive.dashboard.domain.Community;
-import com.maxtree.automotive.dashboard.domain.FinalCheck;
-import com.maxtree.automotive.dashboard.domain.Notification;
-import com.maxtree.automotive.dashboard.domain.Transaction;
-import com.maxtree.automotive.dashboard.domain.Transition;
-import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.service.AuthService;
@@ -68,9 +58,9 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
 	private static final long serialVersionUID = 1L;
 
 	public FinalCheckView() {
-		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		User loggedInUser = ui.userService.getUserByUserName(username);
-		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
+//		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//		User loggedInUser = ui.userService.getUserByUserName(username);
+//		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
 		addStyleName(ValoTheme.PANEL_BORDERLESS);
         setSizeFull();
         DashboardEventBus.register(this);
@@ -151,19 +141,19 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
 	}
 	
 	private void startPolling() {
-		SystemConfiguration sc = Yaml.readSystemConfiguration();
-		ui.setPollInterval(sc.getInterval());
-		ui.addPollListener(new UIEvents.PollListener() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void poll(UIEvents.PollEvent event) {
-				updateUnreadCount();
-			}
-		});
+//		SystemConfiguration sc = Yaml.readSystemConfiguration();
+//		ui.setPollInterval(sc.getInterval());
+//		ui.addPollListener(new UIEvents.PollListener() {
+//			/**
+//			 *
+//			 */
+//			private static final long serialVersionUID = 1L;
+//
+//			@Override
+//			public void poll(UIEvents.PollEvent event) {
+//				updateUnreadCount();
+//			}
+//		});
 	}
 	
     private Component buildHeader() {
@@ -188,11 +178,11 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
         submit.addClickListener(e->{
         	submit();
         });
-        HorizontalLayout tools = new HorizontalLayout(inputlabel,searchField,searchButton,submit,notificationsButton);
-        tools.setComponentAlignment(inputlabel, Alignment.MIDDLE_RIGHT);
-        tools.setComponentAlignment(searchField, Alignment.MIDDLE_RIGHT);
-        tools.addStyleName("toolbar");
-        header.addComponent(tools);
+//        HorizontalLayout tools = new HorizontalLayout(inputlabel,searchField,searchButton,submit,notificationsButton);
+//        tools.setComponentAlignment(inputlabel, Alignment.MIDDLE_RIGHT);
+//        tools.setComponentAlignment(searchField, Alignment.MIDDLE_RIGHT);
+//        tools.addStyleName("toolbar");
+//        header.addComponent(tools);
         
         return header;
     }
@@ -201,15 +191,15 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
      * 
      */
     private void doSearch() {
-    	String barcode = searchField.getValue();
-    	FinalCheck car = ui.transactionService.findFinalCheck(barcode);
-    	if(car == null) {
-    		Notifications.warning("找不到该车辆。");
-    		cleanStage();
-    		return;
-    	}
-    	trans = ui.transactionService.findByBarcode(barcode, car.getVin());
-    	mainPage.load(trans);
+//    	String barcode = searchField.getValue();
+//    	FinalCheck car = ui.transactionService.findFinalCheck(barcode);
+//    	if(car == null) {
+//    		Notifications.warning("找不到该车辆。");
+//    		cleanStage();
+//    		return;
+//    	}
+//    	trans = ui.transactionService.findByBarcode(barcode, car.getVin());
+//    	mainPage.load(trans);
     	resetComponents();
     	
 //    	LocationCode locationCode = new LocationCode(ui.locationService);
@@ -228,10 +218,10 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
      * 
      */
     private void submit() {
-    	if(trans == null) {
-    		Notifications.warning("没有可提交的业务。");
-    	}
-    	else {
+//    	if(trans == null) {
+//    		Notifications.warning("没有可提交的业务。");
+//    	}
+//    	else {
 //    		Business business = ui.businessService.findByCode(trans.getBusinessCode());
 //    		if(business.getName().contains("注册登记")) {
 //    			trans.setStatus(ui.state().getName("B18"));
@@ -254,7 +244,7 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
 //    		//清空舞台
 //        	cleanStage();
 //        	Notifications.bottomWarning("提交成功！已改为待入库状态。");
-    	}
+//    	}
     }
     
     /**
@@ -263,14 +253,14 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
      */
     private void track(String status) {
     	// 插入移行表
-		Transition transition = new Transition();
-//		transition.setTransactionUUID(trans.getUuid());
-		transition.setVin(trans.getVin());
-		transition.setActivity(status);
-		transition.setComments(null);
-		transition.setOperator(loggedInUser.getUserName());
-		transition.setDateCreated(new Date());
-		ui.transitionService.insert(transition, trans.getVin());
+//		Transition transition = new Transition();
+////		transition.setTransactionUUID(trans.getUuid());
+//		transition.setVin(trans.getVin());
+//		transition.setActivity(status);
+//		transition.setComments(null);
+//		transition.setOperator(loggedInUser.getUserName());
+//		transition.setDateCreated(new Date());
+//		ui.transitionService.insert(transition, trans.getVin());
     }
     
     @Override
@@ -282,20 +272,20 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
      * 
      */
     private void buildSearchBar() {
-    	searchField.setPlaceholder("请输入业务流水号");
-    	searchField.setHeight("30px");
-    	ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER, null) {
- 			/**
- 			 * 
- 			 */
- 			private static final long serialVersionUID = 1L;
-
- 			@Override
- 			public void handleAction(Object sender, Object target) {
- 				doSearch();
- 			}
- 		};
-    	searchField.addShortcutListener(enterListener);
+//    	searchField.setPlaceholder("请输入业务流水号");
+//    	searchField.setHeight("30px");
+//    	ShortcutListener enterListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ENTER, null) {
+// 			/**
+// 			 *
+// 			 */
+// 			private static final long serialVersionUID = 1L;
+//
+// 			@Override
+// 			public void handleAction(Object sender, Object target) {
+// 				doSearch();
+// 			}
+// 		};
+//    	searchField.addShortcutListener(enterListener);
     }
     
     /**
@@ -319,17 +309,17 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
     
     private void buildNotificationsButton() {
         notificationsButton = new NotificationsButton();
-    	notificationsButton.addClickListener(new ClickListener() {
-            /**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-            public void buttonClick(final ClickEvent event) {
-                popup.open(event);
-            }
-        });
+//    	notificationsButton.addClickListener(new ClickListener() {
+//            /**
+//			 *
+//			 */
+//			private static final long serialVersionUID = 1L;
+//
+//			@Override
+//            public void buttonClick(final ClickEvent event) {
+//                popup.open(event);
+//            }
+//        });
     }
     
     private Component buildSparklines() {
@@ -342,17 +332,17 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
 	
 	@Override
 	public void updateUnreadCount() {
-		List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
-    	int unreadCount = 0;
-		for (Notification n : notifications) {
-			if (n.getViewName().equals(DashboardViewType.FINAL_CHECK.getViewName())
-					|| n.getViewName().equals("")) {
-				unreadCount++;
-			}
-		}
-		// 更新通知未读数
-		notificationsButton.setUnreadCount(unreadCount);
-		DashboardMenu.getInstance().finalCheckCount(unreadCount);
+//		List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
+//    	int unreadCount = 0;
+//		for (Notification n : notifications) {
+//			if (n.getViewName().equals(DashboardViewType.FINAL_CHECK.getViewName())
+//					|| n.getViewName().equals("")) {
+//				unreadCount++;
+//			}
+//		}
+//		// 更新通知未读数
+//		notificationsButton.setUnreadCount(unreadCount);
+//		DashboardMenu.getInstance().finalCheckCount(unreadCount);
 	}
 
 	@Override
@@ -368,18 +358,18 @@ public class FinalCheckView extends Panel implements View, FrontendViewIF {
 	 */
 	private void resetComponents() {
 		main.removeAllComponents();
-    	main.setHeightUndefined();
-    	main.addComponent(mainPage);
-    	main.setComponentAlignment(mainPage, Alignment.TOP_CENTER);
-    	main.setExpandRatio(mainPage, 1);
+//    	main.setHeightUndefined();
+//    	main.addComponent(mainPage);
+//    	main.setComponentAlignment(mainPage, Alignment.TOP_CENTER);
+//    	main.setExpandRatio(mainPage, 1);
 	}
 	
-	private Transaction trans = null;
-	private TextField searchField = new TextField();
-	private MainPane mainPage = new MainPane();
-	private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.DOUBLECHECK.getViewName());
-	private User loggedInUser;
-	private Community community;
+//	private Transaction trans = null;
+//	private TextField searchField = new TextField();
+//	private MainPane mainPage = new MainPane();
+//	private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.DOUBLECHECK.getViewName());
+//	private User loggedInUser;
+//	private Community community;
 	private Button submit = new Button("提交");
 	private NotificationsButton notificationsButton;
 	private Window notificationsWindow;

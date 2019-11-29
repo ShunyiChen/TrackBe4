@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import com.google.common.eventbus.Subscribe;
-import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.view.LoginView;
@@ -52,52 +51,11 @@ public final class DashboardUI extends UI {
 	// define the logger
 	private static final Logger LOGGER = LoggerFactory.getLogger(DashboardUI.class);
 	@Autowired
-	public RoleService roleService;
-	@Autowired
-	public UserService userService;
-	@Autowired
 	public AuthService authService;
-	@Autowired
-	public BusinessService businessService;
-	@Autowired
-	public TransactionService transactionService;
-	@Autowired
-	public SiteService siteService;
-	@Autowired
-	public PermissionService permissionService;
-	@Autowired
-	public PermissionCategoryService permissionCategoryService;
-	@Autowired
-	public DocumentService documentService;
-	@Autowired
-	public QueueService queueService;
-	@Autowired
-	public CommunityService communityService;
-	@Autowired
-	public CompanyService companyService;
-	@Autowired
-	public DataItemService dataItemService;
-	@Autowired
-	public MessagingService messagingService;
-	@Autowired
-	public FrameNumberService frameService;
-	@Autowired
-	public TransitionService transitionService;
-	@Autowired
-	public FeedbackService feedbackService;
-	@Autowired
-	public ImagingService imagingService;
-	@Autowired
-	public BusinessStateService businessStateService;
-	@Autowired
-	public EmbeddedServerService embeddedServerService;
-	@Autowired
-	public CarService carService;
-	@Autowired
-	public CompanyCategoryService companyCategoryService;
 
-	
-	private StateHelper state = null;
+	public MainView mainView;
+//	private User user = null;
+
 	/*
 	 * This field stores an access to the dummy backend layer. In real applications
 	 * you most likely gain access to your beans trough lookup or injection; and not
@@ -133,44 +91,41 @@ public final class DashboardUI extends UI {
 	 * Otherwise login view is shown.
 	 */
 	private void updateContent() {
-		if (!AuthService.isAuthenticated()) {
-			setContent(new LoginView());
-			addStyleName("loginview");
-		} else {
-			String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-			User user = userService.getUserByUserName(username);
-			if(user.isPermitted(PermissionCodes.A1)
-			   || user.isPermitted(PermissionCodes.A2)) {
-				setContent(new AdminMainView());
-				removeStyleName("loginview");
-				
-			} else if (user.isPermitted(PermissionCodes.A3)
-					|| user.isPermitted(PermissionCodes.A4)
-					|| user.isPermitted(PermissionCodes.A5)
-					|| user.isPermitted(PermissionCodes.A6)
-					|| user.isPermitted(PermissionCodes.A7)
-					|| user.isPermitted(PermissionCodes.A8)
-					|| user.isPermitted(PermissionCodes.A9)
-					|| user.isPermitted(PermissionCodes.A10)
-					|| user.isPermitted(PermissionCodes.A11)
-					|| user.isPermitted(PermissionCodes.A12)) {
-				MainView mainView = new MainView();
-				setContent(mainView);
-				removeStyleName("loginview");
-				String firstViewName = (String) VaadinSession.getCurrent().getAttribute(user.getUserUniqueId()+"");
-				getNavigator().navigateTo(firstViewName);
-				
-			} else {
-				Notification notification = new Notification("提示：", "当前用户没有登录权限,请联系管理员进行设置。", Type.WARNING_MESSAGE);
-				notification.setDelayMsec(2000);
-				notification.show(Page.getCurrent());
-				
-				notification.addCloseListener(e -> {
-					DashboardEventBus.post(new DashboardEvent.UserLoggedOutEvent());
-				});
-				
-			}
-		}
+//		if (!AuthService.isAuthenticated()) {
+//			setContent(new LoginView());
+//			addStyleName("loginview");
+//		} else {
+//			String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//			user = userService.getUserByUserName(username);
+//			if(user.isPermitted(PermissionCodes.A1)
+//			   || user.isPermitted(PermissionCodes.A2)) {
+//				setContent(new AdminMainView());
+//				removeStyleName("loginview");
+//
+//			} else if (user.isPermitted(PermissionCodes.A3)
+//					|| user.isPermitted(PermissionCodes.A4)
+//					|| user.isPermitted(PermissionCodes.A5)
+//					|| user.isPermitted(PermissionCodes.A6)
+//					|| user.isPermitted(PermissionCodes.A7)
+//					|| user.isPermitted(PermissionCodes.A8)
+//					|| user.isPermitted(PermissionCodes.A9)
+//					|| user.isPermitted(PermissionCodes.A10)
+//					|| user.isPermitted(PermissionCodes.A11)
+//					|| user.isPermitted(PermissionCodes.A12)) {
+//				mainView = new MainView();
+//				setContent(mainView);
+//				removeStyleName("loginview");
+//				String firstViewName = (String) VaadinSession.getCurrent().getAttribute(user.getUserUniqueId()+"");
+//				getNavigator().navigateTo(firstViewName);
+//			} else {
+//				Notification notification = new Notification("提示：", "当前用户没有登录权限,请联系管理员进行设置。", Type.WARNING_MESSAGE);
+//				notification.setDelayMsec(2000);
+//				notification.show(Page.getCurrent());
+//				notification.addCloseListener(e -> {
+//					DashboardEventBus.post(new DashboardEvent.UserLoggedOutEvent());
+//				});
+//			}
+//		}
 	}
 
 	@Subscribe
@@ -179,27 +134,27 @@ public final class DashboardUI extends UI {
 			LOGGER.info(event.getUserName(),"登录","Incorrect username or password.");
 			smoothNotification("用户名或密码不能为空", "请重新输入用户名和密码。");
 		} else {
-			User user = userService.getUserByUserName(event.getUserName());
-			if (user.getUserName() != null) {
-				
-				if (user.getActivated() == 0) {
-					LOGGER.info(event.getUserName(),"登录","User["+event.getUserName()+"] not found.");
-					smoothNotification("该账号尚未激活", "当前用户没有被激活，请联系管理员进行设置。");
-					
-				} else {
-					boolean successful = authService.login(event.getUserName(), event.getPassword(), event.isRememberMe());// PasswordSecurity.check(event.getPassword(), user.getHashed());
-					if (successful) {
-						LOGGER.info(user.getUserName(), "登录", "Login is sucessful.");
-						updateContent();
-					} else {
-						LOGGER.info(user.getUserName(), "登录", "Incorrect password.");
-						smoothNotification("密码错误", "请重新输入密码，如果忘记密码请联系管理员重置密码。");
-					}
-				}
-			} else {
-				LOGGER.info(event.getUserName(),"登录","The username["+event.getUserName()+"] does not exist.");
-				smoothNotification("用户不存在", "用户名"+event.getUserName()+"不存在，请重新输入用户名和密码。");
-			}
+//			User user = userService.getUserByUserName(event.getUserName());
+//			if (user.getUserName() != null) {
+//
+//				if (user.getActivated() == 0) {
+//					LOGGER.info(event.getUserName(),"登录","User["+event.getUserName()+"] not found.");
+//					smoothNotification("该账号尚未激活", "当前用户没有被激活，请联系管理员进行设置。");
+//
+//				} else {
+//					boolean successful = authService.login(event.getUserName(), event.getPassword(), event.isRememberMe());// PasswordSecurity.check(event.getPassword(), user.getHashed());
+//					if (successful) {
+//						LOGGER.info(user.getUserName(), "登录", "Login is sucessful.");
+//						updateContent();
+//					} else {
+//						LOGGER.info(user.getUserName(), "登录", "Incorrect password.");
+//						smoothNotification("密码错误", "请重新输入密码，如果忘记密码请联系管理员重置密码。");
+//					}
+//				}
+//			} else {
+//				LOGGER.info(event.getUserName(),"登录","The username["+event.getUserName()+"] does not exist.");
+//				smoothNotification("用户不存在", "用户名"+event.getUserName()+"不存在，请重新输入用户名和密码。");
+//			}
 		}
 	}
 	
@@ -215,16 +170,16 @@ public final class DashboardUI extends UI {
 
 	@Subscribe
 	public void userLoggedOut(final DashboardEvent.UserLoggedOutEvent event) {
-		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		LOGGER.info(username, "登录","You have logged out successfully.");
-		
-		// When the user logs out, current VaadinSession gets closed and the
-		// page gets reloaded on the login screen. Do notice the this doesn't
-		// invalidate the current HttpSession.
-//		VaadinSession.getCurrent().close();
-//		Page.getCurrent().reload();
-
-		authService.logOut();
+//		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//		LOGGER.info(username, "登录","You have logged out successfully.");
+//
+//		// When the user logs out, current VaadinSession gets closed and the
+//		// page gets reloaded on the login screen. Do notice the this doesn't
+//		// invalidate the current HttpSession.
+////		VaadinSession.getCurrent().close();
+////		Page.getCurrent().reload();
+//
+//		authService.logOut();
 	}
 
 	@Subscribe
@@ -262,16 +217,19 @@ public final class DashboardUI extends UI {
 		};
 	}
 	
-	/**
-	 * 返回业务状态
-	 * 
-	 * @return
-	 */
-	public StateHelper state() {
-		if(state == null) {
-			state = new StateHelper();
-		}
-		return state;
-	}
-	
+//	/**
+//	 * 返回业务状态
+//	 *
+//	 * @return
+//	 */
+//	public StateHelper state() {
+//		if(state == null) {
+//			state = new StateHelper();
+//		}
+//		return state;
+//	}
+
+//	public User getLoggedInUser() {
+//		return user;
+//	}
 }

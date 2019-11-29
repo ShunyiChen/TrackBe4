@@ -1,8 +1,10 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
-import com.maxtree.automotive.dashboard.DashboardUI;
-import com.vaadin.server.ThemeResource;
+import com.maxtree.automotive.dashboard.TB4Application;
+import com.maxtree.automotive.dashboard.jpa.entity.Camera;
 import com.vaadin.ui.*;
+
+import java.util.List;
 
 /**
  * 
@@ -16,7 +18,7 @@ public class RowItemWithOptions extends FlexTableRowItem {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public RowItemWithOptions(String title, String[] options) {
+	public RowItemWithOptions(String title, List<Camera> options) {
 		super(title);
 		this.options = options;
 		initComponents();
@@ -28,11 +30,25 @@ public class RowItemWithOptions extends FlexTableRowItem {
 		selector.setEmptySelectionAllowed(false);
 		selector.setTextInputAllowed(false);
 		selector.setItems(options);
-		selector.setSelectedItem(options[0]);
+		for(Camera c : options) {
+			if(c.getEnable() != null && c.getEnable()) {
+				selector.setSelectedItem(c);
+			}
+		}
 		selector.addStyleName("RowItemWithOptions_selector");
 		selector.addSelectionListener(e -> {
-			System.out.println(e.getSelectedItem().get()+"================");
+			Iterable<Camera> iter = TB4Application.getInstance().cameraRepository.findAll();
+			iter.forEach(c -> {
+				if(c.getId() == e.getValue().getId()) {
+					c.setEnable(true);
+				}
+				else {
+					c.setEnable(false);
+				}
+				TB4Application.getInstance().cameraRepository.save(c);
+			});
 		});
+		selector.addFocusListener(e->{});
 		this.removeAllComponents();
 		this.addComponents(name, selector, arrowIcon);
 		this.setComponentAlignment(name, Alignment.MIDDLE_LEFT);
@@ -43,6 +59,6 @@ public class RowItemWithOptions extends FlexTableRowItem {
 		this.setExpandRatio(arrowIcon, 0);
 	}
 
-	private ComboBox<String> selector = new ComboBox<>();
-	private String[] options;
+	private ComboBox<Camera> selector = new ComboBox<>();
+	private List<Camera> options;
 }

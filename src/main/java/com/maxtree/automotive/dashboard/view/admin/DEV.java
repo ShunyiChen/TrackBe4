@@ -65,7 +65,7 @@ public class DEV extends Window {
 		
 		add.addClickListener(e->{
 			run.setEnabled(true);
-			bench.newSQLScript();
+//			bench.newSQLScript();
 		});
 		run.addClickListener(e->{
 			run.setEnabled(false);
@@ -76,12 +76,12 @@ public class DEV extends Window {
 					run.setEnabled(true);
 				}
 			};
-			try {
-				bench.run(callback);
-			} catch (SQLException e1) {
-				bench.throwException(e1);
-				run.setEnabled(true);
-			}
+//			try {
+//				bench.run(callback);
+//			} catch (SQLException e1) {
+//				bench.throwException(e1);
+//				run.setEnabled(true);
+//			}
 		});
 		toolbar.addComponents(add,Box.createHorizontalBox(5),run);
 		

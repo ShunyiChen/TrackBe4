@@ -1,42 +1,21 @@
 package com.maxtree.automotive.dashboard.view.imaging;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import com.maxtree.automotive.dashboard.service.AuthService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.cache.CacheManager;
-import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
-import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.component.NotificationsButton;
-import com.maxtree.automotive.dashboard.component.NotificationsPopup;
-import com.maxtree.automotive.dashboard.component.Test;
+import com.maxtree.automotive.dashboard.component.*;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
-import com.maxtree.automotive.dashboard.domain.Business;
-import com.maxtree.automotive.dashboard.domain.Imaging;
-import com.maxtree.automotive.dashboard.domain.Message;
-import com.maxtree.automotive.dashboard.domain.Notification;
-import com.maxtree.automotive.dashboard.domain.Transaction;
-import com.maxtree.automotive.dashboard.domain.Transition;
-import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.FrontendViewIF;
-import com.maxtree.automotive.dashboard.view.front.SearchAndPrintWindow;
 import com.maxtree.automotive.dashboard.view.quality.ConfirmInformationGrid;
 import com.maxtree.automotive.dashboard.view.quality.FeedbackWindow;
 import com.maxtree.automotive.dashboard.view.quality.SplitPanel;
-import com.maxtree.trackbe4.messagingsystem.Name;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
@@ -47,20 +26,16 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-
 import de.schlichtherle.license.LicenseContent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -95,8 +70,8 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
         main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
         root.addComponents(main);
         root.setExpandRatio(main, 7.0f);
-		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		loggedInUser = ui.userService.getUserByUserName(username);
+//		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//		loggedInUser = ui.userService.getUserByUserName(username);
         // All the open sub-windows should be closed whenever the root layout
         // gets clicked.
         root.addLayoutClickListener(new LayoutClickListener() {
@@ -319,8 +294,8 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     	main.setSpacing(false);
     	main.setMargin(false);
     	main.removeAllComponents();
-    	confirmInformationGrid = new ConfirmInformationGrid(editableTrans);
-    	splitPanel = new SplitPanel(editableTrans);
+//    	confirmInformationGrid = new ConfirmInformationGrid(editableTrans);
+//    	splitPanel = new SplitPanel(editableTrans);
 	    main.addComponents(confirmInformationGrid,splitPanel);
 	    main.setExpandRatio(splitPanel, 1);
     }
@@ -336,14 +311,14 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     	btnQuery.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
     	btnQuery.setDescription("按车牌号查询");
     	btnQuery.addClickListener(e -> {
-    		ResultCallback callback = new ResultCallback() {
-				@Override
-				public void onSuccessful(List<Transaction> results) {
-					editableTrans = results.get(0);
-					resetComponents();
-				}
-    		};
-    		QuickQueryWindow.open(callback);
+//    		ResultCallback callback = new ResultCallback() {
+//				@Override
+//				public void onSuccessful(List<Transaction> results) {
+//					editableTrans = results.get(0);
+//					resetComponents();
+//				}
+//    		};
+//    		QuickQueryWindow.open(callback);
         });
     }
     
@@ -358,11 +333,11 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
         btnCommit.addStyleName("icon-edit");
         btnCommit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
         btnCommit.addClickListener(e -> {
-        	if (editableTrans == null) {
-        		Notifications.warning("暂无可提交的信息。");
-        	} else {
-        		commitTransaction();
-        	}
+//        	if (editableTrans == null) {
+//        		Notifications.warning("暂无可提交的信息。");
+//        	} else {
+//        		commitTransaction();
+//        	}
         });
     }
     
@@ -394,30 +369,30 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
      * @return
      */
     private void buildNotificationsButton() {
-        notificationsButton = new NotificationsButton();
-    	notificationsButton.addClickListener(new ClickListener() {
-            @Override
-            public void buttonClick(final ClickEvent event) {
-                popup.open(event);
-            }
-        });
+//        notificationsButton = new NotificationsButton();
+//    	notificationsButton.addClickListener(new ClickListener() {
+//            @Override
+//            public void buttonClick(final ClickEvent event) {
+//                popup.open(event);
+//            }
+//        });
     }
     
     public void commitTransaction() {
-		Callback2 accept = new Callback2() {
-
-			@Override
-			public void onSuccessful(Object... objects) {
-				accept(objects[0].toString());
-			}
-		};
-		Callback2 reject = new Callback2() {
-			@Override
-			public void onSuccessful(Object... objects) {
-				reject(objects[0].toString());
-			}
-		};
-		FeedbackWindow.open(accept, reject);
+//		Callback2 accept = new Callback2() {
+//
+//			@Override
+//			public void onSuccessful(Object... objects) {
+//				accept(objects[0].toString());
+//			}
+//		};
+//		Callback2 reject = new Callback2() {
+//			@Override
+//			public void onSuccessful(Object... objects) {
+//				reject(objects[0].toString());
+//			}
+//		};
+//		FeedbackWindow.open(accept, reject);
     }
     
     /**
@@ -512,17 +487,17 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 
     @Override
 	public void updateUnreadCount() {
-		List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
-		int unreadCount = 0;
-		for (Notification n : notifications) {
-			if (n.getViewName().equals(DashboardViewType.IMAGING_QUALITY.getViewName())
-					|| n.getViewName().equals("")) {
-				unreadCount++;
-			}
-		}
+//		List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
+//		int unreadCount = 0;
+//		for (Notification n : notifications) {
+//			if (n.getViewName().equals(DashboardViewType.IMAGING_QUALITY.getViewName())
+//					|| n.getViewName().equals("")) {
+//				unreadCount++;
+//			}
+//		}
 		
-		notificationsButton.setUnreadCount(unreadCount);
-		DashboardMenu.getInstance().imagingQualityCount(unreadCount);
+//		notificationsButton.setUnreadCount(unreadCount);
+//		DashboardMenu.getInstance().imagingQualityCount(unreadCount);
 	}
     
    	@Override
@@ -532,14 +507,11 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
 		main.addComponents(blankLabel);
 		main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
 		
-		editableTrans = null;
    	}
     
    	public static final String EDIT_ID = "dashboard-edit";
     public static final String TITLE_ID = "dashboard-title";
     private Callback removeMessage;
-    private Transaction editableTrans = null; 	//可编辑的编辑transaction
-   	private User loggedInUser;	//登录用户
     private Label titleLabel;
     private VerticalLayout root;
     private VerticalLayout main = new VerticalLayout();
@@ -550,6 +522,6 @@ public class ImagingQualityView extends Panel implements View, FrontendViewIF{
     private Button btnCommit = new Button();
     private NotificationsButton notificationsButton;
     private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
-    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.IMAGING_QUALITY.getViewName());
+//    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.IMAGING_QUALITY.getViewName());
     private TB4MessagingSystem messageSystem = new TB4MessagingSystem();
 }

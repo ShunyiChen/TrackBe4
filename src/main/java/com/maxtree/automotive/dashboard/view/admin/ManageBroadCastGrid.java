@@ -11,9 +11,6 @@ import com.maxtree.automotive.dashboard.TB4Application;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.MessageBox;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.domain.Message;
-import com.maxtree.automotive.dashboard.domain.MessageRecipient;
-import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.service.AuthService;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.contextmenu.ContextMenu;
@@ -32,231 +29,231 @@ import com.vaadin.ui.VerticalLayout;
 
 public class ManageBroadCastGrid extends VerticalLayout {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	public ManageBroadCastGrid() {
-		this.setSpacing(false);
-		this.setMargin(false);
-		this.setWidth("90%");
-		this.setHeightUndefined();
-		// 表头
-		HorizontalLayout header = createGridHeader();
-		// 表体
-		Panel body = createGridBody();
-		Button addButton = new Button("新建消息");
-		addButton.addStyleName("grid-button-without-border");
-		addButton.addClickListener(e-> {
-			String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-			User loginUser = ui.userService.getUserByUserName(username);
-			if (loginUser.isPermitted(PermissionCodes.L1)) {
-				Callback callback = new Callback() {
-
-					@Override
-					public void onSuccessful() {
-						refreshTable();
-					}
-				};
-//				EditBroadCastWindow.open(callback);
-			} else {
-        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
-        	}
-		});
-		
-		this.addComponents(header, body, Box.createVerticalBox(15), addButton);
-		this.setComponentAlignment(header, Alignment.TOP_CENTER);
-		this.setComponentAlignment(body, Alignment.TOP_CENTER);
-		this.setComponentAlignment(addButton, Alignment.TOP_RIGHT);
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	private HorizontalLayout createGridHeader() {
-		HorizontalLayout header = new HorizontalLayout();
-		header.setMargin(false);
-		header.setSpacing(false);
-		header.setWidth("100%");
-		header.setHeight("50px");
-		header.addStyleName("grid-header-line");
-		Label columnSubject = new Label("消息标题");
-		columnSubject.addStyleName("grid-title");
-		Label columnSentTo = new Label("发送至");
-		columnSentTo.addStyleName("grid-title");
-		Label columnDate = new Label("发送时间");
-		columnDate.addStyleName("grid-title");
-		Label columnSent = new Label("发送次数");
-		columnSent.addStyleName("grid-title");
-		Label columnRead = new Label("读取率");
-		columnRead.addStyleName("grid-title");
-		header.addComponents(columnSubject, columnSentTo, columnDate, columnSent, columnRead);
-		header.setComponentAlignment(columnSubject, Alignment.MIDDLE_LEFT);
-		header.setComponentAlignment(columnSentTo, Alignment.MIDDLE_LEFT);
-		header.setComponentAlignment(columnDate, Alignment.MIDDLE_LEFT);
-		header.setComponentAlignment(columnSent, Alignment.MIDDLE_LEFT);
-		header.setComponentAlignment(columnRead, Alignment.MIDDLE_LEFT);
-		return header;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	private Panel createGridBody() {
-		Panel gridPanel = new Panel();
-		gridPanel.addStyleName("grid-body-without-border");
-		gridPanel.setHeight("340px");
-		tableBody = new VerticalLayout(); 
-		tableBody.setMargin(false);
-		tableBody.setSpacing(false);
-		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		User loginUser = ui.userService.getUserByUserName(username);
-		List<Message> data = ui.messagingService.findAll(loginUser.getUserUniqueId());
-		for (Message m : data) {
-			HorizontalLayout row1 = createDataRow(m);
-			tableBody.addComponents(row1);
-			tableBody.setComponentAlignment(row1, Alignment.MIDDLE_LEFT);
-		}
-		gridPanel.setContent(tableBody);
-		return gridPanel;
-	}
-	
-	/**
-	 * Greate one new row
-	 * @param message
-	 * @return
-	 */
-	private HorizontalLayout createDataRow(Message message) {
-		HorizontalLayout row = new HorizontalLayout();
-		row.setSpacing(false);
-		row.setMargin(false);
-		row.setWidthUndefined();
-		row.setHeightUndefined();
-		row.addStyleName("grid-header-line");
-		
-//		MessageBodyParser parser = new MessageBodyParser();
-//		Map<String, String> map = parser.json2Map(message.getMessageBody());
-		StringBuilder names = new StringBuilder();
-		List<MessageRecipient> recipients = ui.messagingService.findRecipientsByMessageId(message.getMessageUniqueId());
-		for (MessageRecipient mr : recipients) {
-			names.append(mr.getRecipientName());
-			names.append(";");
-		}
-		Label columnSubject = new Label(message.getSubject());
-		Label columnSentTo = new Label(names.toString());
-		Label columnDate = new Label(format.format(message.getDateCreated()));
-		Label columnSent = new Label(message.getSentTimes()+"");
-		Label columnRead = new Label(message.getReadRate()+"%");
-		
-		Image moreImg = new Image(null, new ThemeResource("img/adminmenu/more.png"));
-		moreImg.addStyleName("mycursor");
-		moreImg.addClickListener(e -> {
-			// Create a context menu for 'someComponent'
-			ContextMenu menu = new ContextMenu(moreImg, true);
-			 
-			menu.addItem("设置定时发送", new Command() {
-				@Override
-				public void menuSelected(MenuItem selectedItem) {
-
-					String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-					User loginUser = ui.userService.getUserByUserName(username);
-					if (loginUser.isPermitted(PermissionCodes.L3)) {
-						Callback callback = new Callback() {
-
-							@Override
-							public void onSuccessful() {
-								refreshTable();
-							}
-						};
-						FrequencySettingsWindow.open(message, callback);
-					}
-					else {
-		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
-		        	}
-					
-				}
-			});
-			
-			menu.addSeparator();
-			menu.addItem("编辑", new Command() {
-				@Override
-				public void menuSelected(MenuItem selectedItem) {
-					Callback callback = new Callback() {
-
-						@Override
-						public void onSuccessful() {
-							refreshTable();
-						}
-					};
-					EditBroadCastWindow.edit(message, callback);
-				}
-			});
-			menu.addItem("从列表删除", new Command() {
-				@Override
-				public void menuSelected(MenuItem selectedItem) {
-					String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-					User loginUser = ui.userService.getUserByUserName(username);
-					if (loginUser.isPermitted(PermissionCodes.L4)) {
-						
-						Callback event = new Callback() {
-							@Override
-							public void onSuccessful() {
-								
-								Timer timer = TB4MessagingSystem.SCHEDULED.get(message.getMessageUniqueId());
-								if (timer != null) {
-									timer.cancel();
-								}
-								
-								ui.messagingService.markAsDeleted(message.getMessageUniqueId());
-								refreshTable();
-							}
-						};
-						
-						MessageBox.showMessage("提示", "请确定是否删除当前消息。", MessageBox.WARNING, event, "删除");
-					}
-					else {
-		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
-		        	}
-				}
-			});
-			menu.open(e.getClientX(), e.getClientY());
-		});
-		
-		columnSubject.setWidth("112px");
-		columnSentTo.setWidth("113px");
-		columnDate.setWidth("145px");
-		columnSent.setWidth("95px");
-		columnRead.setWidth("66px");
-		row.addComponents(columnSubject, columnSentTo, columnDate, columnSent, columnRead ,moreImg);
-		row.setComponentAlignment(columnSubject, Alignment.MIDDLE_LEFT);
-		row.setComponentAlignment(columnSentTo, Alignment.MIDDLE_LEFT);
-		row.setComponentAlignment(columnDate, Alignment.MIDDLE_LEFT);
-		row.setComponentAlignment(columnSent, Alignment.MIDDLE_LEFT);
-		row.setComponentAlignment(columnRead, Alignment.MIDDLE_LEFT);
-		row.setComponentAlignment(moreImg, Alignment.MIDDLE_RIGHT);
-		return row;
-	}
-	
-	/**
-	 * 
-	 */
-	private void refreshTable() {
-		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		User loginUser = ui.userService.getUserByUserName(username);
-		tableBody.removeAllComponents();
-		List<Message> data = ui.messagingService.findAll(loginUser.getUserUniqueId());
-		for (Message m : data) {
-			HorizontalLayout row1 = createDataRow(m);
-			tableBody.addComponents(row1);
-			tableBody.setComponentAlignment(row1, Alignment.MIDDLE_LEFT);
-		}
-	}
-	
-	private VerticalLayout tableBody;
-	private DashboardUI ui = (DashboardUI) UI.getCurrent();
-	private String pattern = "yyyy年MM月dd日 HH:mm:ss";
-	private SimpleDateFormat format = new SimpleDateFormat(pattern);
+//	/**
+//	 *
+//	 */
+//	private static final long serialVersionUID = 1L;
+//
+//	public ManageBroadCastGrid() {
+//		this.setSpacing(false);
+//		this.setMargin(false);
+//		this.setWidth("90%");
+//		this.setHeightUndefined();
+//		// 表头
+//		HorizontalLayout header = createGridHeader();
+//		// 表体
+//		Panel body = createGridBody();
+//		Button addButton = new Button("新建消息");
+//		addButton.addStyleName("grid-button-without-border");
+//		addButton.addClickListener(e-> {
+//			String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//			User loginUser = ui.userService.getUserByUserName(username);
+//			if (loginUser.isPermitted(PermissionCodes.L1)) {
+//				Callback callback = new Callback() {
+//
+//					@Override
+//					public void onSuccessful() {
+//						refreshTable();
+//					}
+//				};
+////				EditBroadCastWindow.open(callback);
+//			} else {
+//        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
+//        	}
+//		});
+//
+//		this.addComponents(header, body, Box.createVerticalBox(15), addButton);
+//		this.setComponentAlignment(header, Alignment.TOP_CENTER);
+//		this.setComponentAlignment(body, Alignment.TOP_CENTER);
+//		this.setComponentAlignment(addButton, Alignment.TOP_RIGHT);
+//	}
+//
+//	/**
+//	 *
+//	 * @return
+//	 */
+//	private HorizontalLayout createGridHeader() {
+//		HorizontalLayout header = new HorizontalLayout();
+//		header.setMargin(false);
+//		header.setSpacing(false);
+//		header.setWidth("100%");
+//		header.setHeight("50px");
+//		header.addStyleName("grid-header-line");
+//		Label columnSubject = new Label("消息标题");
+//		columnSubject.addStyleName("grid-title");
+//		Label columnSentTo = new Label("发送至");
+//		columnSentTo.addStyleName("grid-title");
+//		Label columnDate = new Label("发送时间");
+//		columnDate.addStyleName("grid-title");
+//		Label columnSent = new Label("发送次数");
+//		columnSent.addStyleName("grid-title");
+//		Label columnRead = new Label("读取率");
+//		columnRead.addStyleName("grid-title");
+//		header.addComponents(columnSubject, columnSentTo, columnDate, columnSent, columnRead);
+//		header.setComponentAlignment(columnSubject, Alignment.MIDDLE_LEFT);
+//		header.setComponentAlignment(columnSentTo, Alignment.MIDDLE_LEFT);
+//		header.setComponentAlignment(columnDate, Alignment.MIDDLE_LEFT);
+//		header.setComponentAlignment(columnSent, Alignment.MIDDLE_LEFT);
+//		header.setComponentAlignment(columnRead, Alignment.MIDDLE_LEFT);
+//		return header;
+//	}
+//
+//	/**
+//	 *
+//	 * @return
+//	 */
+//	private Panel createGridBody() {
+//		Panel gridPanel = new Panel();
+//		gridPanel.addStyleName("grid-body-without-border");
+//		gridPanel.setHeight("340px");
+//		tableBody = new VerticalLayout();
+//		tableBody.setMargin(false);
+//		tableBody.setSpacing(false);
+//		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//		User loginUser = ui.userService.getUserByUserName(username);
+//		List<Message> data = ui.messagingService.findAll(loginUser.getUserUniqueId());
+//		for (Message m : data) {
+//			HorizontalLayout row1 = createDataRow(m);
+//			tableBody.addComponents(row1);
+//			tableBody.setComponentAlignment(row1, Alignment.MIDDLE_LEFT);
+//		}
+//		gridPanel.setContent(tableBody);
+//		return gridPanel;
+//	}
+//
+//	/**
+//	 * Greate one new row
+//	 * @param message
+//	 * @return
+//	 */
+//	private HorizontalLayout createDataRow(Message message) {
+//		HorizontalLayout row = new HorizontalLayout();
+//		row.setSpacing(false);
+//		row.setMargin(false);
+//		row.setWidthUndefined();
+//		row.setHeightUndefined();
+//		row.addStyleName("grid-header-line");
+//
+////		MessageBodyParser parser = new MessageBodyParser();
+////		Map<String, String> map = parser.json2Map(message.getMessageBody());
+//		StringBuilder names = new StringBuilder();
+//		List<MessageRecipient> recipients = ui.messagingService.findRecipientsByMessageId(message.getMessageUniqueId());
+//		for (MessageRecipient mr : recipients) {
+//			names.append(mr.getRecipientName());
+//			names.append(";");
+//		}
+//		Label columnSubject = new Label(message.getSubject());
+//		Label columnSentTo = new Label(names.toString());
+//		Label columnDate = new Label(format.format(message.getDateCreated()));
+//		Label columnSent = new Label(message.getSentTimes()+"");
+//		Label columnRead = new Label(message.getReadRate()+"%");
+//
+//		Image moreImg = new Image(null, new ThemeResource("img/adminmenu/more.png"));
+//		moreImg.addStyleName("mycursor");
+//		moreImg.addClickListener(e -> {
+//			// Create a context menu for 'someComponent'
+//			ContextMenu menu = new ContextMenu(moreImg, true);
+//
+//			menu.addItem("设置定时发送", new Command() {
+//				@Override
+//				public void menuSelected(MenuItem selectedItem) {
+//
+//					String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//					User loginUser = ui.userService.getUserByUserName(username);
+//					if (loginUser.isPermitted(PermissionCodes.L3)) {
+//						Callback callback = new Callback() {
+//
+//							@Override
+//							public void onSuccessful() {
+//								refreshTable();
+//							}
+//						};
+//						FrequencySettingsWindow.open(message, callback);
+//					}
+//					else {
+//		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
+//		        	}
+//
+//				}
+//			});
+//
+//			menu.addSeparator();
+//			menu.addItem("编辑", new Command() {
+//				@Override
+//				public void menuSelected(MenuItem selectedItem) {
+//					Callback callback = new Callback() {
+//
+//						@Override
+//						public void onSuccessful() {
+//							refreshTable();
+//						}
+//					};
+//					EditBroadCastWindow.edit(message, callback);
+//				}
+//			});
+//			menu.addItem("从列表删除", new Command() {
+//				@Override
+//				public void menuSelected(MenuItem selectedItem) {
+//					String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//					User loginUser = ui.userService.getUserByUserName(username);
+//					if (loginUser.isPermitted(PermissionCodes.L4)) {
+//
+//						Callback event = new Callback() {
+//							@Override
+//							public void onSuccessful() {
+//
+//								Timer timer = TB4MessagingSystem.SCHEDULED.get(message.getMessageUniqueId());
+//								if (timer != null) {
+//									timer.cancel();
+//								}
+//
+//								ui.messagingService.markAsDeleted(message.getMessageUniqueId());
+//								refreshTable();
+//							}
+//						};
+//
+//						MessageBox.showMessage("提示", "请确定是否删除当前消息。", MessageBox.WARNING, event, "删除");
+//					}
+//					else {
+//		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
+//		        	}
+//				}
+//			});
+//			menu.open(e.getClientX(), e.getClientY());
+//		});
+//
+//		columnSubject.setWidth("112px");
+//		columnSentTo.setWidth("113px");
+//		columnDate.setWidth("145px");
+//		columnSent.setWidth("95px");
+//		columnRead.setWidth("66px");
+//		row.addComponents(columnSubject, columnSentTo, columnDate, columnSent, columnRead ,moreImg);
+//		row.setComponentAlignment(columnSubject, Alignment.MIDDLE_LEFT);
+//		row.setComponentAlignment(columnSentTo, Alignment.MIDDLE_LEFT);
+//		row.setComponentAlignment(columnDate, Alignment.MIDDLE_LEFT);
+//		row.setComponentAlignment(columnSent, Alignment.MIDDLE_LEFT);
+//		row.setComponentAlignment(columnRead, Alignment.MIDDLE_LEFT);
+//		row.setComponentAlignment(moreImg, Alignment.MIDDLE_RIGHT);
+//		return row;
+//	}
+//
+//	/**
+//	 *
+//	 */
+//	private void refreshTable() {
+//		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//		User loginUser = ui.userService.getUserByUserName(username);
+//		tableBody.removeAllComponents();
+//		List<Message> data = ui.messagingService.findAll(loginUser.getUserUniqueId());
+//		for (Message m : data) {
+//			HorizontalLayout row1 = createDataRow(m);
+//			tableBody.addComponents(row1);
+//			tableBody.setComponentAlignment(row1, Alignment.MIDDLE_LEFT);
+//		}
+//	}
+//
+//	private VerticalLayout tableBody;
+//	private DashboardUI ui = (DashboardUI) UI.getCurrent();
+//	private String pattern = "yyyy年MM月dd日 HH:mm:ss";
+//	private SimpleDateFormat format = new SimpleDateFormat(pattern);
 }

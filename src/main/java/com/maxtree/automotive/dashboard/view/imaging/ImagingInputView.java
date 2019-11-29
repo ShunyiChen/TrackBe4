@@ -1,55 +1,21 @@
 package com.maxtree.automotive.dashboard.view.imaging;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import com.maxtree.automotive.dashboard.service.AuthService;
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
-
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.cache.CacheManager;
-import com.maxtree.automotive.dashboard.component.LicenseHasExpiredWindow;
-import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.component.NotificationsButton;
-import com.maxtree.automotive.dashboard.component.NotificationsPopup;
-import com.maxtree.automotive.dashboard.component.Test;
-import com.maxtree.automotive.dashboard.data.SystemConfiguration;
-import com.maxtree.automotive.dashboard.data.Yaml;
-import com.maxtree.automotive.dashboard.domain.Business;
-import com.maxtree.automotive.dashboard.domain.Car;
-import com.maxtree.automotive.dashboard.domain.Community;
-import com.maxtree.automotive.dashboard.domain.Company;
-import com.maxtree.automotive.dashboard.domain.FrameNumber;
-import com.maxtree.automotive.dashboard.domain.Message;
-import com.maxtree.automotive.dashboard.domain.Notification;
-import com.maxtree.automotive.dashboard.domain.Site;
-import com.maxtree.automotive.dashboard.domain.Transaction;
-import com.maxtree.automotive.dashboard.domain.Transition;
-import com.maxtree.automotive.dashboard.domain.User;
+import com.maxtree.automotive.dashboard.component.*;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
+import com.maxtree.automotive.dashboard.service.AuthService;
 import com.maxtree.automotive.dashboard.servlet.UploadFileServlet;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
 import com.maxtree.automotive.dashboard.view.DashboardViewType;
 import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.maxtree.automotive.dashboard.view.front.BasicInfoPane;
 import com.maxtree.automotive.dashboard.view.front.BusinessTypePane;
-import com.maxtree.automotive.dashboard.view.front.CapturePane;
 import com.maxtree.automotive.dashboard.view.front.SearchAndPrintWindow;
-import com.maxtree.automotive.dashboard.view.front.ThumbnailGrid;
-import com.maxtree.trackbe4.messagingsystem.Name;
+import com.maxtree.automotive.dashboard.view.user.frontdesk.CameraArea;
+import com.maxtree.automotive.dashboard.view.user.frontdesk.ThumbnailGrid;
 import com.maxtree.trackbe4.messagingsystem.TB4MessagingSystem;
 import com.vaadin.data.Binder;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
@@ -61,20 +27,20 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-
 import de.schlichtherle.license.LicenseContent;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * 
@@ -82,817 +48,800 @@ import de.schlichtherle.license.LicenseContent;
  *
  */
 @SuppressWarnings("serial")
-public final class ImagingInputView extends Panel implements View,InputViewIF {
+public final class ImagingInputView {//} extends Panel implements View,InputViewIF {
     
-	private static final Logger log = LoggerFactory.getLogger(ImagingInputView.class);
-	
-    public ImagingInputView() {
-        addStyleName(ValoTheme.PANEL_BORDERLESS);
-        setSizeFull();
-        DashboardEventBus.register(this);
-        root = new VerticalLayout();
-        root.setWidth("100%");
-        root.setHeight("100%");
-        root.setSpacing(false);
-        root.addStyleName("dashboard-view");
-        setContent(root);
-        Responsive.makeResponsive(root);
-        root.addComponent(buildHeader());
-        root.addComponent(buildSparklines());
-        main.addStyleName("dynamicallyVLayout");
-        main.setWidth("100%");
-        main.setHeight("100%");
-        main.addComponents(blankLabel);
-        main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
-        root.addComponents(main);
-        root.setExpandRatio(main, 7.0f);
-		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		loggedInUser = ui.userService.getUserByUserName(username);
-        // All the open sub-windows should be closed whenever the root layout
-        // gets clicked.
-        root.addLayoutClickListener(new LayoutClickListener() {
-            @Override
-            public void layoutClick(final LayoutClickEvent event) {
-                DashboardEventBus.post(new DashboardEvent.CloseOpenWindowsEvent());
-            }
-        });
-        
-        // 开启轮询事件提醒
-        startPolling();
-        
-        ui.access(new Runnable() {
-            @Override
-            public void run() {
-            	
-            	Callback2 verifyEvent = new Callback2() {
-					@Override
-					public void onSuccessful(Object... objects) {
-						// fails
-						if (objects[0].equals("")) {
-							
-							LicenseHasExpiredWindow.open("您的许可证已经过期，请联系管理员及时更新许可证文件。", new Callback() {
-
-								@Override
-								public void onSuccessful() {
-									DashboardEventBus.post(new DashboardEvent.UserLoggedOutEvent());
-								}
-				        	});
-							
-						} else {
-							
-							LicenseContent content = (LicenseContent) objects[0];
-					        long endTimes = content.getNotAfter().getTime();
-					        long times = new Date().getTime();
-					        long minusTimes = endTimes - times;
-							
-					        int remainingDays = (int) (minusTimes / (1000 * 60 * 60 * 24));
-					        if (remainingDays <= 15) {
-					        	LicenseHasExpiredWindow.open("您的授权证书有效期剩余 "+remainingDays+" 天，请联系管理员及时更新许可文件。", null);
-					        }
-						}
-					}
-				};
-				new Test().verify(verifyEvent);
-            	
-            	
-            }
-        });
-    }
-    
-    /**
-     * 
-     */
-	private void startPolling() {
-		SystemConfiguration sc = Yaml.readSystemConfiguration();
-		ui.setPollInterval(sc.getInterval());
-		ui.addPollListener(new UIEvents.PollListener() {
-			@Override
-			public void poll(UIEvents.PollEvent event) {
-				updateUnreadCount();
-			}
-		});
-	}
-
-    private Component buildSparklines() {
-        CssLayout sparks = new CssLayout();
-        sparks.addStyleName("sparks");
-        sparks.setWidth("100%");
-        Responsive.makeResponsive(sparks);
-        return sparks;
-    }
-
-    private Component buildHeader() {
-        HorizontalLayout header = new HorizontalLayout();
-        header.addStyleName("viewheader");
-        titleLabel = new Label("影像录入");
-        titleLabel.setId(TITLE_ID);
-        titleLabel.setSizeUndefined();
-        titleLabel.addStyleName(ValoTheme.LABEL_H1);
-        titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
-        header.addComponent(titleLabel);
-        buildNotificationsButton();
-        buildAddButton();
-        buildCommitButton();
-        buildPrintButton();
-        HorizontalLayout tools = new HorizontalLayout(btnPrint,btnAdd, btnCommit, notificationsButton);
-        tools.addStyleName("toolbar");
-        header.addComponent(tools);
-        return header;
-    }
-
-//    private void openNotificationsPopup(final ClickEvent event) {
-//    	VerticalLayout mainVLayout = new VerticalLayout();
-//    	mainVLayout.setSpacing(false);
-//        Label title = new Label("事件提醒");
-//        title.addStyleName(ValoTheme.LABEL_H3);
-//        title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
-//        mainVLayout.addComponent(title);
-//        Panel scrollPane = new Panel();
-//    	scrollPane.addStyleName("reminder-scrollpane");
-//    	scrollPane.setHeight("220px");
-//    	scrollPane.setWidth("100%");
-//        VerticalLayout listLayout = new VerticalLayout();
-//        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.IMAGING_INPUT.getViewName());
-//        for (Map<String, Object> m : allMessages) {
-//        	VerticalLayout vLayout = new VerticalLayout();
-//        	vLayout.setMargin(false);
-//        	vLayout.setSpacing(false);
-//        	vLayout.addStyleName("notification-item");
-//            Label timeLabel = new Label();
-//            Label subjectLabel = new Label();
-//            subjectLabel.addStyleName("notification-title");
-//            int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
-//            creatoruniqueid = Integer.parseInt(m.get("creatoruniqueid").toString());
-//            String subject = m.get("subject").toString();
-//            subjectLabel.setValue(subject);
-//            String content = m.get("content").toString();
-//            Label contentLabel = new Label(content);
-//            String matedata = m.get("matedata").toString();
-//            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
-//            contentLabel.addStyleName("notification-content");
-//            Date dateCreated = (Date) m.get("datecreated");
-//            long duration = new Date().getTime() - dateCreated.getTime();
-//            timeLabel.setValue(new TimeAgo().toDuration(duration));
-//            timeLabel.addStyleName("notification-time");
-//            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
-//            listLayout.addComponent(vLayout);
-//            vLayout.addStyleName("switchbutton");
+//	private static final Logger log = LoggerFactory.getLogger(ImagingInputView.class);
 //
-//            removeMessage = new Callback() {
-//				@Override
-//				public void onSuccessful() {
-//					String openWith = matedataMap.get("openwith");
-//					// 如果发的是print和transaction打开方式，则有权彻底删除Messages表,因为一个消息只发一个人，即接收人可以永久删除message
-//					int deleteType = TB4MessagingSystem.ONLYDELETERECIPIENT;
-//					if(openWith.equals(Openwith.PRINT) || openWith.equals(Openwith.TRANSACTION)) {
-//						deleteType = TB4MessagingSystem.PERMANENTLYDELETE;
-//					}
-//					new TB4MessagingSystem().deleteMessage(messageUniqueId, loggedInUser.getUserUniqueId(), deleteType);
-//				}
-//            };
-//            
-//            vLayout.addLayoutClickListener(e -> {
-//            	notificationsWindow.close();
-//            	Callback callback = new Callback() {
-//
-//					@Override
-//					public void onSuccessful() {
-//						//更改已读状态
-//						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
-//						CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
-//					}
-//        		};
-//            	String openWith = matedataMap.get("openwith");
-//            	if(openWith.equals(Openwith.TRANSACTION)) {
-//            		String uuid = matedataMap.get("uuid");
-//            		String vin = matedataMap.get("vin");
-//            		if(editableTrans == null) {
-//            			editMode = 1;//进入更新模式
-//            			openTransaction(uuid,vin,callback);
-//            		}
-//            		else {
-//            			Notifications.warning("请确保完成当前任务，再执行下一操作。");
-//            		}
-//            	}
-//            	else if(openWith.equals(Openwith.PRINT)) {
-//            		
-//            	}
-//            	else if(openWith.equals(Openwith.MESSAGE)) {
-//            		MessageView.open(m, callback);
-//            	}
-//            	
-//            });
-//        }
-//        
-//        scrollPane.setContent(listLayout);
-//        mainVLayout.addComponent(scrollPane);
-//        mainVLayout.setExpandRatio(scrollPane, 0.9f);
-//        HorizontalLayout footer = new HorizontalLayout();
-//        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
-//        footer.setWidth("100%");
-//        footer.setSpacing(false);
-//        Button showAll = new Button("查看全部事件");
-//        showAll.addClickListener(e->{
-//        	notificationsWindow.close();
-//        	showAll(allMessages, 0);
+//    public ImagingInputView() {
+//        addStyleName(ValoTheme.PANEL_BORDERLESS);
+//        setSizeFull();
+//        DashboardEventBus.register(this);
+//        root = new VerticalLayout();
+//        root.setWidth("100%");
+//        root.setHeight("100%");
+//        root.setSpacing(false);
+//        root.addStyleName("dashboard-view");
+//        setContent(root);
+//        Responsive.makeResponsive(root);
+//        root.addComponent(buildHeader());
+//        root.addComponent(buildSparklines());
+//        main.addStyleName("dynamicallyVLayout");
+//        main.setWidth("100%");
+//        main.setHeight("100%");
+//        main.addComponents(blankLabel);
+//        main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
+//        root.addComponents(main);
+//        root.setExpandRatio(main, 7.0f);
+////		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+////		loggedInUser = ui.userService.getUserByUserName(username);
+//        // All the open sub-windows should be closed whenever the root layout
+//        // gets clicked.
+//        root.addLayoutClickListener(new LayoutClickListener() {
+//            @Override
+//            public void layoutClick(final LayoutClickEvent event) {
+//                DashboardEventBus.post(new DashboardEvent.CloseOpenWindowsEvent());
+//            }
 //        });
-//        
-//        showAll.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
-//        showAll.addStyleName(ValoTheme.BUTTON_SMALL);
-//        footer.addComponent(showAll);
-//        footer.setComponentAlignment(showAll, Alignment.TOP_CENTER);
-//        mainVLayout.addComponent(footer);
-//        mainVLayout.setExpandRatio(footer, 0.1f);
-//        if (notificationsWindow == null) {
-//            notificationsWindow = new Window();
-//            notificationsWindow.setWidth(300.0f, Unit.PIXELS);
-//            notificationsWindow.addStyleName("notifications");
-//            notificationsWindow.setClosable(false);
-//            notificationsWindow.setResizable(false);
-//            notificationsWindow.setDraggable(false);
-//            notificationsWindow.setCloseShortcut(KeyCode.ESCAPE, null);
-//            notificationsWindow.setContent(mainVLayout);
-//        } else {
-//        	notificationsWindow.setContent(mainVLayout);
-//        }
-//        if (!notificationsWindow.isAttached()) {
-//            notificationsWindow.setPositionY(event.getClientY() - event.getRelativeY() + 40);
-//            getUI().addWindow(notificationsWindow);
-//            notificationsWindow.focus();
-//        } else {
-//            notificationsWindow.close();
-//        }
+//
+//        // 开启轮询事件提醒
+//        startPolling();
+//
+//        ui.access(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//            	Callback2 verifyEvent = new Callback2() {
+//					@Override
+//					public void onSuccessful(Object... objects) {
+//						// fails
+//						if (objects[0].equals("")) {
+//
+//							LicenseHasExpiredWindow.open("您的许可证已经过期，请联系管理员及时更新许可证文件。", new Callback() {
+//
+//								@Override
+//								public void onSuccessful() {
+//									DashboardEventBus.post(new DashboardEvent.UserLoggedOutEvent());
+//								}
+//				        	});
+//
+//						} else {
+//
+//							LicenseContent content = (LicenseContent) objects[0];
+//					        long endTimes = content.getNotAfter().getTime();
+//					        long times = new Date().getTime();
+//					        long minusTimes = endTimes - times;
+//
+//					        int remainingDays = (int) (minusTimes / (1000 * 60 * 60 * 24));
+//					        if (remainingDays <= 15) {
+//					        	LicenseHasExpiredWindow.open("您的授权证书有效期剩余 "+remainingDays+" 天，请联系管理员及时更新许可文件。", null);
+//					        }
+//						}
+//					}
+//				};
+//				new Test().verify(verifyEvent);
+//
+//
+//            }
+//        });
 //    }
-
-    @Override
-    public void enter(final ViewChangeEvent event) {
-//    	getUnreadCount();
-    }
-
-    /**
-     * 
-     */
-    private void resetComponents() {
-    	main.removeAllComponents();
-    	main.setHeightUndefined();
- 
-    	fileGrid.removeAllRows();
-//    	businessTypePane.setSelectorEnabled(false);
-    	
-    	spliterSouth.setSizeFull();
-    	spliterSouth.addComponents(fileGrid, capturePane);
-    	
-    	spliterNorth.setSizeFull();
-    	spliterNorth.addComponents(basicInfoPane, businessTypePane);
-    	spliterNorth.setExpandRatio(basicInfoPane, 3);
-    	spliterNorth.setExpandRatio(businessTypePane, 1);
-    	main.addComponents(spliterNorth, spliterSouth);
-    	
-    	
-    	main.setExpandRatio(spliterNorth, 1);
-    	main.setExpandRatio(spliterSouth, 9);
-    }
-    
-    /**
-     * 
-     */
-    private void buildPrintButton() {
-    	btnPrint.setEnabled(true);
-    	btnPrint.setId(EDIT_ID);
-    	btnPrint.setIcon(VaadinIcons.PRINT);
-    	btnPrint.addStyleName("icon-edit");
-    	btnPrint.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
-    	btnPrint.addStyleName(ValoTheme.BUTTON_PRIMARY);
-    	btnPrint.setDescription("打印标签");
-    	btnPrint.addClickListener(e -> {
-    		if (!validate()) {
-    			return;
-    		}
-    		Callback2 callback = new Callback2() {
-				@Override
-				public void onSuccessful(Object... objects) {
-				}
-    		};
-    		SearchAndPrintWindow.open();
-        });
-    }
-    
-    /**
-     * 对当前用户做有效性验证
-     */
-    private boolean validate() {
-		int companyUniqueId = loggedInUser.getCompanyUniqueId();
-    	int communityUniqueId = loggedInUser.getCommunityUniqueId();
-    	if (companyUniqueId == 0) {
-    		Notifications.warning("当前用户没有加入任何机构，请联系管理员进行分配。");
-    		return false;
-    	}
-    	if (communityUniqueId == 0) {
-    		Notifications.warning("当前用户没有加入任何社区，请联系管理员进行分配。");
-    		return false;
-    	}
-    	editableCompany = ui.companyService.findById(companyUniqueId);
-    	List<Site> allSites = ui.siteService.getSites(communityUniqueId);
-    	for (int i = 0; i < allSites.size(); i++) {
-    		if (allSites.get(i).getRunningStatus() == 1) {
-    			editableSite = allSites.get(i);
-    			break;
-    		}
-    	}
-    	if (editableSite == null) {
-    		Notifications.warning("当前用户所在的社区不存在文件站点，或站点已关闭。请联系管理员进行设置。");
-    		return false;
-    	}
-    	return true;
-    }
-    
-    /**
-     * 添加按钮
-     * 
-     * @return
-     */
-    private void buildAddButton() {
-    	btnAdd.setEnabled(true);
-    	btnAdd.setId(EDIT_ID);
-    	btnAdd.setIcon(VaadinIcons.FILE_ADD);
-    	btnAdd.addStyleName("icon-edit");
-    	btnAdd.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
-    	btnAdd.addStyleName(ValoTheme.BUTTON_PRIMARY);
-    	btnAdd.setDescription("创建或补充流水号");
-    	btnAdd.addClickListener(e -> {
-    		if(editableTrans == null) {
-    			commitMode = "INSERT";
-    			startTransaction();
-    		}
-    		else {
-    			Notifications.warning("请确保完成当前任务，再执行下一操作。");
-    		}
-        });
-    }
-    
-    /**
-     * 提交按钮 
-     * 
-     * @return
-     */
-    private void buildCommitButton() {
-    	btnCommit.setId(EDIT_ID);
-        btnCommit.setIcon(VaadinIcons.CLOUD_UPLOAD);
-        btnCommit.addStyleName("icon-edit");
-        btnCommit.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
-        btnCommit.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        btnCommit.setDescription("保存并提交给质检");
-        btnCommit.addClickListener(e -> {
-        	if (commitMode.equals("INSERT")) {
-        		newTransaction();
-        	} else if(commitMode.equals("UPDATE")){
-        		updateTransaction();
-        	}
-        });
-    }
-    
-    /**
-     * 提醒按钮
-     * 
-     * @return
-     */
-    private void buildNotificationsButton() {
-        notificationsButton = new NotificationsButton();
-    	notificationsButton.addClickListener(new ClickListener() {
-            @Override
-            public void buttonClick(final ClickEvent event) {
-            	popup.open(event);
-            }
-        });
-    }
-    
-    /**
-     * 
-     */
-    private void startTransaction() {
-		int companyUniqueId = loggedInUser.getCompanyUniqueId();
-    	int communityUniqueId = loggedInUser.getCommunityUniqueId();
-    	if (companyUniqueId == 0) {
-    		Notifications.warning("当前用户没有加入任何机构，请联系管理员进行分配。");
-    		return;
-    	}
-    	if (communityUniqueId == 0) {
-    		Notifications.warning("当前用户没有加入任何社区，请联系管理员进行分配。");
-    		return;
-    	}
-    	editableCompany = ui.companyService.findById(companyUniqueId);
-    	List<Site> allSites = ui.siteService.getSites(communityUniqueId);
-    	for (int i = 0; i < allSites.size(); i++) {
-    		if (allSites.get(i).getRunningStatus() == 1) {
-    			editableSite = allSites.get(i);
-    			break;
-    		}
-    	}
-    	if (editableSite == null) {
-    		Notifications.warning("当前用户所在的社区不存在文件站点，或站点已关闭。请联系管理员进行设置。");
-    		return;
-    	}
-		//创建UUID
-    	uuid = UUID.randomUUID().toString();
-//		//如果站点文件夹装满则提醒用户
-//    	batch = ui.siteService.updateFolders(editableSite);
-//    	if (batch == 0) {
-//    		Notifications.warning("当前站点-"+editableSite.getSiteName()+"已满。请联系管理员进行重新分配。");
-//    		editableTrans = null;
-//    		editableSite = null;
-//    		return;
-//    	}
-    	
-    	editableTrans = new Transaction();
-    	editableTrans.setBarcode("");
-    	editableTrans.setPlateType("");
-    	editableTrans.setPlateNumber("");
-    	editableTrans.setVin("");
-    	basicInfoPane.populateFields(editableTrans);
-    	// validating the transaction information
-    	basicInfoPane.validatingFieldValues(binder);
-    	binder.setBean(editableTrans);
-    	
-    	resetComponents();
-    }
-    
-    /**
-     * 
-     * @param trans
-     */
-    private void updateCar(Transaction trans) {
-    	ui.carService.delete(trans.getVin());
-    	
-    	Car car = new Car();
-		car.setBarcode(trans.getBarcode());
-		car.setPlateType(trans.getPlateType());
-		car.setPlateNumber(trans.getPlateNumber());
-		car.setVin(trans.getVin());
-		ui.carService.insert(car);
-    }
-    
-    /**
-     * 
-     */
-   	public void openTransaction(Transaction transaction,int deletableMessageUniqueId, Callback callback) {
-   		commitMode = "UPDATE";
-    	editableTrans = transaction;
-    	this.deletableMessageUniqueId = deletableMessageUniqueId;
-    	editableSite = ui.siteService.findById(editableTrans.getSiteUniqueId());
-//    	uuid = editableTrans.getUuid();
-//    	batch = editableTrans.getBatch();
-    	vin = editableTrans.getVin();
-    	
-    	int companyUniqueId = loggedInUser.getCompanyUniqueId();
-    	int communityUniqueId = loggedInUser.getCommunityUniqueId();
-    	if (companyUniqueId == 0) {
-    		Notifications.warning("当前用户没有加入任何机构，请联系管理员进行分配。");
-    		return;
-    	}
-    	if (communityUniqueId == 0) {
-    		Notifications.warning("当前用户没有加入任何社区，请联系管理员进行分配。");
-    		return;
-    	}
-    	editableCompany = ui.companyService.findById(companyUniqueId);
-    	List<Site> allSites = ui.siteService.getSites(communityUniqueId);
-    	for (int i = 0; i < allSites.size(); i++) {
-    		if (allSites.get(i).getRunningStatus() == 1) {
-    			editableSite = allSites.get(i);
-    			break;
-    		}
-    	}
-    	if (editableSite == null) {
-    		Notifications.warning("当前用户所在的社区不存在文件站点，或站点已关闭。请联系管理员进行设置。");
-    		return;
-    	}
-    	
-    	// validating the transaction information
-    	basicInfoPane.validatingFieldValues(binder);
-    	binder.setBean(editableTrans);
-    	
-    	resetComponents();
-    	
-    	basicInfoPane.populateFields(editableTrans);
-//    	businessTypePane.populate(editableTrans.getBusinessCode());
-    	
-    	callback.onSuccessful();
-    }
-    
-    /**
-     * 提交异常
-     */
-    public void throwException(String exception) {
-    	this.exception = exception;
-    }
-
-    /**
-     * 
-     */
-    public void newTransaction() {
-//    	if(!StringUtils.isEmpty(exception)) {
-//    		Notifications.warning(exception);
-//    		return;
-//    	}
-//    	else if(editableTrans == null) {
-//    		Notifications.warning("提交异常。");
-//    		return;
-//    	}
-//    	//如果是新车注册业务则需要验证业务流水号
-//    	if(!basicInfoPane.emptyChecks(businessTypePane.getSelected().getName().contains("注册登记"))) {
-//			Notifications.warning("有效性验证失败。");
-//			return;
-//    	}
-//    	if (fileGrid.validationFails()) {
-//			Notifications.warning("请将必录材料上传完整。");
-//			return;
-//    	}
-//    	Community community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
-//    	LocationCode localCodes = new LocationCode(ui.locationService);
-//    	Map<String, String> l = new HashMap<>();
-//    	//新车注册流程
-//    	if (businessTypePane.getSelected().getName().contains("注册登记")) {
-//    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
-//        	editableTrans.setDateCreated(new Date());
-//        	editableTrans.setDateModified(new Date());
-//			editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
-//        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
-//        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-//        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-//        	editableTrans.setBatch(batch);
-//        	editableTrans.setUuid(uuid);
-//        	editableTrans.setCreator(loggedInUser.getUserName());
-//        	editableTrans.setIndexNumber(1);
-//        	editableTrans.setStatus(ui.state().getName("B7"));
-//        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
 //
-//        	// 获得社区内的全部机构
-//    		List<Company> companies = ui.communityService.findAllCompanies(loggedInUser.getCommunityUniqueId());
-//    		Company com = null;
-//    		for(int i = 0; i < companies.size(); i++) {
-//    			com = companies.get(i);
-//    			if (com.getCategory().trim().equals("车管所")) {
-//    				break;
-//    			}
-//    		}
-//    		FrameNumber frame = ui.frameService.getNewCode(com.getStorehouseName());
-//    		if(StringUtils.isEmpty(frame.getCode())) {
-//    			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
-//    			return;
-//    		} else {
-//    			//跳过质检，完成逻辑上架
-//    			editableTrans.setCode(frame.getCode()+"");//上架号
-//    			ui.frameService.updateVIN(basicInfoPane.getVIN(), frame.getCode());
-//    		}
-//    		ui.transactionService.insert(editableTrans);
-//    		//更改车辆信息
-//    		updateCar(editableTrans);
-//    		//操作记录
-//    		track(ui.state().getName("B7"));
-//    		// 清空舞台
-//        	cleanStage();
-//        	Notifications.bottomWarning("提交成功！等待质检检查。");
-//    	}
-//    	else {
-//    		// 取新车注册上架号
-//    		String code = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
-//    		if(StringUtils.isEmpty(code)) {
-//    			Notifications.warning("上架号不存在！请录入注册登记业务,确保先生成上架号。");
-//    			return;
-//    		}
-//    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
-//    		editableTrans.setDateCreated(new Date());
-//        	editableTrans.setDateModified(new Date());
-//        	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
-//        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
-//        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
-//        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
-//        	editableTrans.setUuid(uuid);
-//        	editableTrans.setCode(code);
-//        	editableTrans.setCreator(loggedInUser.getUserName());
-//        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
-//        	editableTrans.setIndexNumber(indexNumber + 1);
-//        	editableTrans.setStatus(ui.state().getName("B7"));
-//        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
+//    /**
+//     *
+//     */
+//	private void startPolling() {
+//		SystemConfiguration sc = Yaml.readSystemConfiguration();
+//		ui.setPollInterval(sc.getInterval());
+//		ui.addPollListener(new UIEvents.PollListener() {
+//			@Override
+//			public void poll(UIEvents.PollEvent event) {
+//				updateUnreadCount();
+//			}
+//		});
+//	}
 //
-//    		ui.transactionService.insert(editableTrans);
+//    private Component buildSparklines() {
+//        CssLayout sparks = new CssLayout();
+//        sparks.addStyleName("sparks");
+//        sparks.setWidth("100%");
+//        Responsive.makeResponsive(sparks);
+//        return sparks;
+//    }
 //
-//    		//更改车辆信息
-//    		updateCar(editableTrans);
+//    private Component buildHeader() {
+//        HorizontalLayout header = new HorizontalLayout();
+//        header.addStyleName("viewheader");
+//        titleLabel = new Label("影像录入");
+//        titleLabel.setId(TITLE_ID);
+//        titleLabel.setSizeUndefined();
+//        titleLabel.addStyleName(ValoTheme.LABEL_H1);
+//        titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
+//        header.addComponent(titleLabel);
+//        buildNotificationsButton();
+////        buildAddButton();
+//        buildCommitButton();
+//        buildPrintButton();
+//        HorizontalLayout tools = new HorizontalLayout(btnPrint,btnAdd, btnCommit, notificationsButton);
+//        tools.addStyleName("toolbar");
+//        header.addComponent(tools);
+//        return header;
+//    }
 //
-//    		//操作记录
-//    		track(ui.state().getName("B7"));
+////    private void openNotificationsPopup(final ClickEvent event) {
+////    	VerticalLayout mainVLayout = new VerticalLayout();
+////    	mainVLayout.setSpacing(false);
+////        Label title = new Label("事件提醒");
+////        title.addStyleName(ValoTheme.LABEL_H3);
+////        title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
+////        mainVLayout.addComponent(title);
+////        Panel scrollPane = new Panel();
+////    	scrollPane.addStyleName("reminder-scrollpane");
+////    	scrollPane.setHeight("220px");
+////    	scrollPane.setWidth("100%");
+////        VerticalLayout listLayout = new VerticalLayout();
+////        List<Map<String, Object>> allMessages = ui.messagingService.findAllMessagesByUser(loggedInUser, DashboardViewType.IMAGING_INPUT.getViewName());
+////        for (Map<String, Object> m : allMessages) {
+////        	VerticalLayout vLayout = new VerticalLayout();
+////        	vLayout.setMargin(false);
+////        	vLayout.setSpacing(false);
+////        	vLayout.addStyleName("notification-item");
+////            Label timeLabel = new Label();
+////            Label subjectLabel = new Label();
+////            subjectLabel.addStyleName("notification-title");
+////            int messageUniqueId = Integer.parseInt(m.get("messageuniqueid").toString());
+////            creatoruniqueid = Integer.parseInt(m.get("creatoruniqueid").toString());
+////            String subject = m.get("subject").toString();
+////            subjectLabel.setValue(subject);
+////            String content = m.get("content").toString();
+////            Label contentLabel = new Label(content);
+////            String matedata = m.get("matedata").toString();
+////            Map<String, String> matedataMap = jsonHelper.json2Map(matedata);
+////            contentLabel.addStyleName("notification-content");
+////            Date dateCreated = (Date) m.get("datecreated");
+////            long duration = new Date().getTime() - dateCreated.getTime();
+////            timeLabel.setValue(new TimeAgo().toDuration(duration));
+////            timeLabel.addStyleName("notification-time");
+////            vLayout.addComponents(subjectLabel,timeLabel,contentLabel);
+////            listLayout.addComponent(vLayout);
+////            vLayout.addStyleName("switchbutton");
+////
+////            removeMessage = new Callback() {
+////				@Override
+////				public void onSuccessful() {
+////					String openWith = matedataMap.get("openwith");
+////					// 如果发的是print和transaction打开方式，则有权彻底删除Messages表,因为一个消息只发一个人，即接收人可以永久删除message
+////					int deleteType = TB4MessagingSystem.ONLYDELETERECIPIENT;
+////					if(openWith.equals(Openwith.PRINT) || openWith.equals(Openwith.TRANSACTION)) {
+////						deleteType = TB4MessagingSystem.PERMANENTLYDELETE;
+////					}
+////					new TB4MessagingSystem().deleteMessage(messageUniqueId, loggedInUser.getUserUniqueId(), deleteType);
+////				}
+////            };
+////
+////            vLayout.addLayoutClickListener(e -> {
+////            	notificationsWindow.close();
+////            	Callback callback = new Callback() {
+////
+////					@Override
+////					public void onSuccessful() {
+////						//更改已读状态
+////						ui.messagingService.markAsRead(messageUniqueId, loggedInUser.getUserUniqueId());
+////						CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
+////					}
+////        		};
+////            	String openWith = matedataMap.get("openwith");
+////            	if(openWith.equals(Openwith.TRANSACTION)) {
+////            		String uuid = matedataMap.get("uuid");
+////            		String vin = matedataMap.get("vin");
+////            		if(editableTrans == null) {
+////            			editMode = 1;//进入更新模式
+////            			openTransaction(uuid,vin,callback);
+////            		}
+////            		else {
+////            			Notifications.warning("请确保完成当前任务，再执行下一操作。");
+////            		}
+////            	}
+////            	else if(openWith.equals(Openwith.PRINT)) {
+////
+////            	}
+////            	else if(openWith.equals(Openwith.MESSAGE)) {
+////            		MessageView.open(m, callback);
+////            	}
+////
+////            });
+////        }
+////
+////        scrollPane.setContent(listLayout);
+////        mainVLayout.addComponent(scrollPane);
+////        mainVLayout.setExpandRatio(scrollPane, 0.9f);
+////        HorizontalLayout footer = new HorizontalLayout();
+////        footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
+////        footer.setWidth("100%");
+////        footer.setSpacing(false);
+////        Button showAll = new Button("查看全部事件");
+////        showAll.addClickListener(e->{
+////        	notificationsWindow.close();
+////        	showAll(allMessages, 0);
+////        });
+////
+////        showAll.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+////        showAll.addStyleName(ValoTheme.BUTTON_SMALL);
+////        footer.addComponent(showAll);
+////        footer.setComponentAlignment(showAll, Alignment.TOP_CENTER);
+////        mainVLayout.addComponent(footer);
+////        mainVLayout.setExpandRatio(footer, 0.1f);
+////        if (notificationsWindow == null) {
+////            notificationsWindow = new Window();
+////            notificationsWindow.setWidth(300.0f, Unit.PIXELS);
+////            notificationsWindow.addStyleName("notifications");
+////            notificationsWindow.setClosable(false);
+////            notificationsWindow.setResizable(false);
+////            notificationsWindow.setDraggable(false);
+////            notificationsWindow.setCloseShortcut(KeyCode.ESCAPE, null);
+////            notificationsWindow.setContent(mainVLayout);
+////        } else {
+////        	notificationsWindow.setContent(mainVLayout);
+////        }
+////        if (!notificationsWindow.isAttached()) {
+////            notificationsWindow.setPositionY(event.getClientY() - event.getRelativeY() + 40);
+////            getUI().addWindow(notificationsWindow);
+////            notificationsWindow.focus();
+////        } else {
+////            notificationsWindow.close();
+////        }
+////    }
 //
-//    		// 清空舞台
-//        	cleanStage();
+//    @Override
+//    public void enter(final ViewChangeEvent event) {
+////    	getUnreadCount();
+//    }
 //
-//        	Notifications.bottomWarning("提交成功！等待质检检查。");
-//    	}
-    }
-    
-    /**
-     * 
-     */
-    private void updateTransaction() {
-    	if(editableTrans == null) {
-    		Notifications.warning("提交异常。");
-    		return;
-    	}
-    	//如果是新车注册业务则需要验证业务流水号
-    	if(!basicInfoPane.emptyChecks(businessTypePane.getSelected().getName().contains("注册登记"))) {
-			Notifications.warning("有效性验证失败。");
-			return;
-    	}
-    	if (fileGrid.validationFails()) {
-			Notifications.warning("请将必录材料上传完整。");
-			return;
-    	}
-    	//新车注册流程
-    	if (businessTypePane.getSelected().getName().contains("注册登记")) {
-    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
-        	editableTrans.setDateModified(new Date());
-        	editableTrans.setStatus(ui.state().getName("B7"));
-    		ui.transactionService.update(editableTrans);
-    		//操作记录
-    		track(ui.state().getName("B7"));
-    		//回复消息
-    		replyMessage(deletableMessageUniqueId);
-    		//清空舞台
-        	cleanStage();
-        	Notifications.bottomWarning("提交成功!等待质检检查。");
-    	}
-    	else {
-    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
-        	editableTrans.setDateModified(new Date());
-        	editableTrans.setStatus(ui.state().getName("B7"));
-    		ui.transactionService.update(editableTrans);
-    		//操作记录
-    		track(ui.state().getName("B7"));
-    		//回复消息
-    		replyMessage(deletableMessageUniqueId);
-    		// 清空舞台
-        	cleanStage();
-        	Notifications.bottomWarning("提交成功！等待质检检查。");
-    	}
-    	
-    	messageSys.deleteMessage(deletableMessageUniqueId, loggedInUser.getUserUniqueId(), TB4MessagingSystem.PERMANENTLYDELETE);
-    }
-
-	/**
-	 *
-	 * @param deletableMessageUniqueId
-	 */
-	private void replyMessage(int deletableMessageUniqueId) {
-//    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
-//    	Message msg = ui.messagingService.findById(deletableMessageUniqueId);
-//    	//发消息给影像化质检
-//		User receiver = ui.userService.findById(msg.getCreatorUniqueId());
-//		if (receiver.getUserUniqueId() == 0) {
-//			Notifications.warning("没有找到消息接收者");
-//			return;
-//		}
+//    /**
+//     *
+//     */
+//    private void resetComponents() {
+//    	main.removeAllComponents();
+//    	main.setHeightUndefined();
 //
-//		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
-//		String subject = loggedInUser.getUserName()+"修改了一笔业务";
-//		String plate = Yaml.readSystemConfiguration().getLicenseplate();
-//		String content = plate+" "+editableTrans.getPlateNumber()+",已完成修改，请再检查一遍。";
-//		Message newMessage = messageSystem.createNewMessage(loggedInUser,subject,content,matedata);
+//    	fileGrid.removeAllRows();
+////    	businessTypePane.setSelectorEnabled(false);
 //
-//		Set<Name> names = new HashSet<Name>();
-//		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
-//		names.add(target);
-//		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_QUALITY.getViewName());
-//		// 更新消息轮询的缓存
-//		CacheManager.getInstance().getNotificationsCache().refresh(receiver.getUserUniqueId());
-    }
-    
-    /**
-     * 
-     * @param status
-     * @return
-     */
-    private int track(String status) {
-    	// 插入移行表
-		Transition transition = new Transition();
-		transition.setTransactionUUID(uuid);
-		transition.setVin(basicInfoPane.getVIN());
-		transition.setActivity(status);
-		transition.setComments(null);
-		transition.setOperator(loggedInUser.getUserName());
-		transition.setDateCreated(new Date());
-		int transitionUniqueId = ui.transitionService.insert(transition,basicInfoPane.getVIN());
-		return transitionUniqueId;
-    }
-    
-	@Override
-	public void cleanStage() {
-		main.removeAllComponents();
-		main.setHeight("100%");
-		main.addComponents(blankLabel);
-		main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
-		//清空当前用户上传缓存
-		UploadFileServlet.IN_DTOs.remove(loggedInUser.getUserUniqueId());
-		UploadFileServlet.OUT_DTOs.remove(loggedInUser.getUserUniqueId());
-		try {
-			FileUtils.forceDelete(new File("devices/"+loggedInUser.getUserUniqueId()+".html"));
-		} catch (IOException e) {
-			log.info("删除"+"devices/"+loggedInUser.getUserUniqueId()+".html失败。");
-		}
-		
-		editableTrans = null;
-		exception = "";
-	}
-
-	@Override
-	public void updateUnreadCount() {
-		List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
-		int unreadCount = 0;
-		for (Notification n : notifications) {
-			if (n.getViewName().equals(DashboardViewType.IMAGING_INPUT.getViewName())
-					|| n.getViewName().equals("")) {
-				unreadCount++;
-			}
-		}
-		
-		
-		DashboardMenu.getInstance().imagingInputCount(unreadCount);
-		notificationsButton.setUnreadCount(unreadCount);
-	}
-    
-	@Override
-	public User loggedInUser() {
-		return loggedInUser;
-	}
-
-	@Override
-	public int batch() {
-		return batch;
-	}
-
-	@Override
-	public String uuid() {
-		return uuid;
-	}
-
-	@Override
-	public String vin() {
-		return basicInfoPane.getVIN();//vin;
-	}
-
-	@Override
-	public Site editableSite() {
-		return editableSite;
-	}
-
-	@Override
-	public BasicInfoPane basicInfoPane() {
-		return basicInfoPane;
-	}
-	
-	@Override
-	public BusinessTypePane businessTypePane() {
-		return businessTypePane;
-	}
-	
-	@Override
-	public ThumbnailGrid thumbnailGrid() {
-		return fileGrid;
-	}
-	
-	@Override
-	public CapturePane capturePane() {
-		return capturePane;
-	}
-	
-	private String commitMode = "INSERT";
-	public static final String EDIT_ID = "dashboard-edit";
-	public static final String TITLE_ID = "dashboard-title";
-	private Transaction editableTrans = null; 	//可编辑的编辑transaction
-	private Company editableCompany = null;	 	//前台所在机构
-	private User loggedInUser;	//登录用户
-	private Site editableSite;	//业务站点
-	private String uuid;	//UUID业务与原文关联号
-	private int batch;	//业务批次号。默认最大1000个批次，每批次最多放5000文件夹。
-	private String vin;// = "LGB12YEA9DY001226";	//车辆识别代码。用于分表。
-    private Label titleLabel;
-    private VerticalLayout root;
-    private VerticalLayout main = new VerticalLayout();
-    private DashboardUI ui = (DashboardUI) UI.getCurrent();
-    private Binder<Transaction> binder = new Binder<>();
-    //各个区域面板
-    private BasicInfoPane basicInfoPane = new BasicInfoPane(this);
-    private BusinessTypePane businessTypePane = new BusinessTypePane(this);
-    private ThumbnailGrid fileGrid = new ThumbnailGrid(this);
-    private CapturePane capturePane = new CapturePane();
-    private Button btnPrint = new Button("打印标签");
-    private Button btnAdd = new Button("录入新业务");
-    private Button btnCommit = new Button("提交业务");
-    private NotificationsButton notificationsButton;
-    private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
-    private HorizontalLayout spliterNorth = new HorizontalLayout();
-    private HorizontalLayout spliterSouth = new HorizontalLayout();
-    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.IMAGING_INPUT.getViewName(), this);
-    private TB4MessagingSystem messageSystem = new TB4MessagingSystem();
-    private int deletableMessageUniqueId;
-    private String exception;
-    private TB4MessagingSystem messageSys = new TB4MessagingSystem();
+//    	spliterSouth.setSizeFull();
+//    	spliterSouth.addComponents(fileGrid, capturePane);
+//
+//    	spliterNorth.setSizeFull();
+////    	spliterNorth.addComponents(basicInfoPane, businessTypePane);
+////    	spliterNorth.setExpandRatio(basicInfoPane, 3);
+//    	spliterNorth.setExpandRatio(businessTypePane, 1);
+//    	main.addComponents(spliterNorth, spliterSouth);
+//
+//
+//    	main.setExpandRatio(spliterNorth, 1);
+//    	main.setExpandRatio(spliterSouth, 9);
+//    }
+//
+//    /**
+//     *
+//     */
+//    private void buildPrintButton() {
+//    	btnPrint.setEnabled(true);
+//    	btnPrint.setId(EDIT_ID);
+//    	btnPrint.setIcon(VaadinIcons.PRINT);
+//    	btnPrint.addStyleName("icon-edit");
+//    	btnPrint.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+//    	btnPrint.addStyleName(ValoTheme.BUTTON_PRIMARY);
+//    	btnPrint.setDescription("打印标签");
+//    	btnPrint.addClickListener(e -> {
+////    		if (!validate()) {
+////    			return;
+////    		}
+////    		Callback2 callback = new Callback2() {
+////				@Override
+////				public void onSuccessful(Object... objects) {
+////				}
+////    		};
+////    		SearchAndPrintWindow.open();
+//        });
+//    }
+//
+//    /**
+//     * 对当前用户做有效性验证
+//     */
+////    private boolean validate() {
+////		int companyUniqueId = loggedInUser.getCompanyUniqueId();
+////    	int communityUniqueId = loggedInUser.getCommunityUniqueId();
+////    	if (companyUniqueId == 0) {
+////    		Notifications.warning("当前用户没有加入任何机构，请联系管理员进行分配。");
+////    		return false;
+////    	}
+////    	if (communityUniqueId == 0) {
+////    		Notifications.warning("当前用户没有加入任何社区，请联系管理员进行分配。");
+////    		return false;
+////    	}
+////    	editableCompany = ui.companyService.findById(companyUniqueId);
+////    	List<Site> allSites = ui.siteService.getSites(communityUniqueId);
+////    	for (int i = 0; i < allSites.size(); i++) {
+////    		if (allSites.get(i).getRunningStatus() == 1) {
+////    			editableSite = allSites.get(i);
+////    			break;
+////    		}
+////    	}
+////    	if (editableSite == null) {
+////    		Notifications.warning("当前用户所在的社区不存在文件站点，或站点已关闭。请联系管理员进行设置。");
+////    		return false;
+////    	}
+////    	return true;
+////    }
+//
+////    /**
+////     * 添加按钮
+////     *
+////     * @return
+////     */
+////    private void buildAddButton() {
+////    	btnAdd.setEnabled(true);
+////    	btnAdd.setId(EDIT_ID);
+////    	btnAdd.setIcon(VaadinIcons.FILE_ADD);
+////    	btnAdd.addStyleName("icon-edit");
+////    	btnAdd.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+////    	btnAdd.addStyleName(ValoTheme.BUTTON_PRIMARY);
+////    	btnAdd.setDescription("创建或补充流水号");
+////    	btnAdd.addClickListener(e -> {
+////    		if(editableTrans == null) {
+////    			commitMode = "INSERT";
+////    			startTransaction();
+////    		}
+////    		else {
+////    			Notifications.warning("请确保完成当前任务，再执行下一操作。");
+////    		}
+////        });
+////    }
+//
+//    /**
+//     * 提交按钮
+//     *
+//     * @return
+//     */
+//    private void buildCommitButton() {
+//    	btnCommit.setId(EDIT_ID);
+//        btnCommit.setIcon(VaadinIcons.CLOUD_UPLOAD);
+//        btnCommit.addStyleName("icon-edit");
+//        btnCommit.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+//        btnCommit.addStyleName(ValoTheme.BUTTON_PRIMARY);
+//        btnCommit.setDescription("保存并提交给质检");
+//        btnCommit.addClickListener(e -> {
+//        	if (commitMode.equals("INSERT")) {
+//        		newTransaction();
+//        	} else if(commitMode.equals("UPDATE")){
+////        		updateTransaction();
+//        	}
+//        });
+//    }
+//
+//    /**
+//     * 提醒按钮
+//     *
+//     * @return
+//     */
+//    private void buildNotificationsButton() {
+//        notificationsButton = new NotificationsButton();
+//    	notificationsButton.addClickListener(new ClickListener() {
+//            @Override
+//            public void buttonClick(final ClickEvent event) {
+////            	popup.open(event);
+//            }
+//        });
+//    }
+//
+//    /**
+//     *
+//     */
+//    private void startTransaction() {
+////		int companyUniqueId = loggedInUser.getCompanyUniqueId();
+////    	int communityUniqueId = loggedInUser.getCommunityUniqueId();
+////    	if (companyUniqueId == 0) {
+////    		Notifications.warning("当前用户没有加入任何机构，请联系管理员进行分配。");
+////    		return;
+////    	}
+////    	if (communityUniqueId == 0) {
+////    		Notifications.warning("当前用户没有加入任何社区，请联系管理员进行分配。");
+////    		return;
+////    	}
+////    	editableCompany = ui.companyService.findById(companyUniqueId);
+////    	List<Site> allSites = ui.siteService.getSites(communityUniqueId);
+////    	for (int i = 0; i < allSites.size(); i++) {
+////    		if (allSites.get(i).getRunningStatus() == 1) {
+////    			editableSite = allSites.get(i);
+////    			break;
+////    		}
+////    	}
+////    	if (editableSite == null) {
+////    		Notifications.warning("当前用户所在的社区不存在文件站点，或站点已关闭。请联系管理员进行设置。");
+////    		return;
+////    	}
+//		//创建UUID
+//    	uuid = UUID.randomUUID().toString();
+////		//如果站点文件夹装满则提醒用户
+////    	batch = ui.siteService.updateFolders(editableSite);
+////    	if (batch == 0) {
+////    		Notifications.warning("当前站点-"+editableSite.getSiteName()+"已满。请联系管理员进行重新分配。");
+////    		editableTrans = null;
+////    		editableSite = null;
+////    		return;
+////    	}
+//
+////    	editableTrans = new Transaction();
+////    	editableTrans.setBarcode("");
+////    	editableTrans.setPlateType("");
+////    	editableTrans.setPlateNumber("");
+////    	editableTrans.setVin("");
+////    	basicInfoPane.populateFields(editableTrans);
+////    	// validating the transaction information
+////    	basicInfoPane.validatingFieldValues(binder);
+////    	binder.setBean(editableTrans);
+//
+//    	resetComponents();
+//    }
+//
+////    /**
+////     *
+////     * @param trans
+////     */
+////    private void updateCar(Transaction trans) {
+////    	ui.carService.delete(trans.getVin());
+////
+////    	Car car = new Car();
+////		car.setBarcode(trans.getBarcode());
+////		car.setPlateType(trans.getPlateType());
+////		car.setPlateNumber(trans.getPlateNumber());
+////		car.setVin(trans.getVin());
+////		ui.carService.insert(car);
+////    }
+//
+//    /**
+//     *
+//     */
+////   	public void openTransaction(Transaction transaction,int deletableMessageUniqueId, Callback callback) {
+////   		commitMode = "UPDATE";
+////    	editableTrans = transaction;
+////    	this.deletableMessageUniqueId = deletableMessageUniqueId;
+////    	editableSite = ui.siteService.findById(editableTrans.getSiteUniqueId());
+//////    	uuid = editableTrans.getUuid();
+//////    	batch = editableTrans.getBatch();
+////    	vin = editableTrans.getVin();
+////
+////    	int companyUniqueId = loggedInUser.getCompanyUniqueId();
+////    	int communityUniqueId = loggedInUser.getCommunityUniqueId();
+////    	if (companyUniqueId == 0) {
+////    		Notifications.warning("当前用户没有加入任何机构，请联系管理员进行分配。");
+////    		return;
+////    	}
+////    	if (communityUniqueId == 0) {
+////    		Notifications.warning("当前用户没有加入任何社区，请联系管理员进行分配。");
+////    		return;
+////    	}
+////    	editableCompany = ui.companyService.findById(companyUniqueId);
+////    	List<Site> allSites = ui.siteService.getSites(communityUniqueId);
+////    	for (int i = 0; i < allSites.size(); i++) {
+////    		if (allSites.get(i).getRunningStatus() == 1) {
+////    			editableSite = allSites.get(i);
+////    			break;
+////    		}
+////    	}
+////    	if (editableSite == null) {
+////    		Notifications.warning("当前用户所在的社区不存在文件站点，或站点已关闭。请联系管理员进行设置。");
+////    		return;
+////    	}
+////
+////    	// validating the transaction information
+////    	basicInfoPane.validatingFieldValues(binder);
+////    	binder.setBean(editableTrans);
+////
+////    	resetComponents();
+////
+////    	basicInfoPane.populateFields(editableTrans);
+//////    	businessTypePane.populate(editableTrans.getBusinessCode());
+////
+////    	callback.onSuccessful();
+////    }
+//
+//    /**
+//     * 提交异常
+//     */
+//    public void throwException(String exception) {
+//    	this.exception = exception;
+//    }
+//
+//    /**
+//     *
+//     */
+//    public void newTransaction() {
+////    	if(!StringUtils.isEmpty(exception)) {
+////    		Notifications.warning(exception);
+////    		return;
+////    	}
+////    	else if(editableTrans == null) {
+////    		Notifications.warning("提交异常。");
+////    		return;
+////    	}
+////    	//如果是新车注册业务则需要验证业务流水号
+////    	if(!basicInfoPane.emptyChecks(businessTypePane.getSelected().getName().contains("注册登记"))) {
+////			Notifications.warning("有效性验证失败。");
+////			return;
+////    	}
+////    	if (fileGrid.validationFails()) {
+////			Notifications.warning("请将必录材料上传完整。");
+////			return;
+////    	}
+////    	Community community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
+////    	LocationCode localCodes = new LocationCode(ui.locationService);
+////    	Map<String, String> l = new HashMap<>();
+////    	//新车注册流程
+////    	if (businessTypePane.getSelected().getName().contains("注册登记")) {
+////    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
+////        	editableTrans.setDateCreated(new Date());
+////        	editableTrans.setDateModified(new Date());
+////			editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
+////        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
+////        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+////        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+////        	editableTrans.setBatch(batch);
+////        	editableTrans.setUuid(uuid);
+////        	editableTrans.setCreator(loggedInUser.getUserName());
+////        	editableTrans.setIndexNumber(1);
+////        	editableTrans.setStatus(ui.state().getName("B7"));
+////        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
+////
+////        	// 获得社区内的全部机构
+////    		List<Company> companies = ui.communityService.findAllCompanies(loggedInUser.getCommunityUniqueId());
+////    		Company com = null;
+////    		for(int i = 0; i < companies.size(); i++) {
+////    			com = companies.get(i);
+////    			if (com.getCategory().trim().equals("车管所")) {
+////    				break;
+////    			}
+////    		}
+////    		FrameNumber frame = ui.frameService.getNewCode(com.getStorehouseName());
+////    		if(StringUtils.isEmpty(frame.getCode())) {
+////    			Notifications.warning("没有可用的上架号，请联系管理员设置库房。");
+////    			return;
+////    		} else {
+////    			//跳过质检，完成逻辑上架
+////    			editableTrans.setCode(frame.getCode()+"");//上架号
+////    			ui.frameService.updateVIN(basicInfoPane.getVIN(), frame.getCode());
+////    		}
+////    		ui.transactionService.insert(editableTrans);
+////    		//更改车辆信息
+////    		updateCar(editableTrans);
+////    		//操作记录
+////    		track(ui.state().getName("B7"));
+////    		// 清空舞台
+////        	cleanStage();
+////        	Notifications.bottomWarning("提交成功！等待质检检查。");
+////    	}
+////    	else {
+////    		// 取新车注册上架号
+////    		String code = ui.transactionService.findTransactionCode(basicInfoPane.getVIN());
+////    		if(StringUtils.isEmpty(code)) {
+////    			Notifications.warning("上架号不存在！请录入注册登记业务,确保先生成上架号。");
+////    			return;
+////    		}
+////    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
+////    		editableTrans.setDateCreated(new Date());
+////        	editableTrans.setDateModified(new Date());
+////        	editableTrans.setSiteUniqueId(editableSite.getSiteUniqueId());
+////        	editableTrans.setBusinessCode(businessTypePane.getSelected().getCode());
+////        	editableTrans.setCommunityUniqueId(loggedInUser.getCommunityUniqueId());
+////        	editableTrans.setCompanyUniqueId(loggedInUser.getCompanyUniqueId());
+////        	editableTrans.setUuid(uuid);
+////        	editableTrans.setCode(code);
+////        	editableTrans.setCreator(loggedInUser.getUserName());
+////        	int indexNumber = ui.transactionService.findIndexNumber(basicInfoPane.getVIN());
+////        	editableTrans.setIndexNumber(indexNumber + 1);
+////        	editableTrans.setStatus(ui.state().getName("B7"));
+////        	editableTrans.setLocationCode(localCodes.getCompleteLocationCode(community));
+////
+////    		ui.transactionService.insert(editableTrans);
+////
+////    		//更改车辆信息
+////    		updateCar(editableTrans);
+////
+////    		//操作记录
+////    		track(ui.state().getName("B7"));
+////
+////    		// 清空舞台
+////        	cleanStage();
+////
+////        	Notifications.bottomWarning("提交成功！等待质检检查。");
+////    	}
+//    }
+//
+//    /**
+//     *
+//     */
+////    private void updateTransaction() {
+////    	if(editableTrans == null) {
+////    		Notifications.warning("提交异常。");
+////    		return;
+////    	}
+////    	//如果是新车注册业务则需要验证业务流水号
+////    	if(!basicInfoPane.emptyChecks(businessTypePane.getSelected().getName().contains("注册登记"))) {
+////			Notifications.warning("有效性验证失败。");
+////			return;
+////    	}
+////    	if (fileGrid.validationFails()) {
+////			Notifications.warning("请将必录材料上传完整。");
+////			return;
+////    	}
+////    	//新车注册流程
+////    	if (businessTypePane.getSelected().getName().contains("注册登记")) {
+////    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
+////        	editableTrans.setDateModified(new Date());
+////        	editableTrans.setStatus(ui.state().getName("B7"));
+////    		ui.transactionService.update(editableTrans);
+////    		//操作记录
+////    		track(ui.state().getName("B7"));
+////    		//回复消息
+////    		replyMessage(deletableMessageUniqueId);
+////    		//清空舞台
+////        	cleanStage();
+////        	Notifications.bottomWarning("提交成功!等待质检检查。");
+////    	}
+////    	else {
+////    		basicInfoPane.populateTransaction(editableTrans);//赋值基本信息
+////        	editableTrans.setDateModified(new Date());
+////        	editableTrans.setStatus(ui.state().getName("B7"));
+////    		ui.transactionService.update(editableTrans);
+////    		//操作记录
+////    		track(ui.state().getName("B7"));
+////    		//回复消息
+////    		replyMessage(deletableMessageUniqueId);
+////    		// 清空舞台
+////        	cleanStage();
+////        	Notifications.bottomWarning("提交成功！等待质检检查。");
+////    	}
+////
+////    	messageSys.deleteMessage(deletableMessageUniqueId, loggedInUser.getUserUniqueId(), TB4MessagingSystem.PERMANENTLYDELETE);
+////    }
+//
+//	/**
+//	 *
+//	 * @param deletableMessageUniqueId
+//	 */
+//	private void replyMessage(int deletableMessageUniqueId) {
+////    	Business business = ui.businessService.findByCode(editableTrans.getBusinessCode());
+////    	Message msg = ui.messagingService.findById(deletableMessageUniqueId);
+////    	//发消息给影像化质检
+////		User receiver = ui.userService.findById(msg.getCreatorUniqueId());
+////		if (receiver.getUserUniqueId() == 0) {
+////			Notifications.warning("没有找到消息接收者");
+////			return;
+////		}
+////
+////		String matedata = "{\"UUID\":\""+editableTrans.getUuid()+"\",\"VIN\":\""+editableTrans.getVin()+"\",\"STATE\":\""+editableTrans.getStatus()+"\",\"CHECKLEVEL\":\""+business.getCheckLevel()+"\"}";
+////		String subject = loggedInUser.getUserName()+"修改了一笔业务";
+////		String plate = Yaml.readSystemConfiguration().getLicenseplate();
+////		String content = plate+" "+editableTrans.getPlateNumber()+",已完成修改，请再检查一遍。";
+////		Message newMessage = messageSystem.createNewMessage(loggedInUser,subject,content,matedata);
+////
+////		Set<Name> names = new HashSet<Name>();
+////		Name target = new Name(receiver.getUserUniqueId(), Name.USER, receiver.getProfile().getLastName()+receiver.getProfile().getFirstName(), receiver.getProfile().getPicture());
+////		names.add(target);
+////		messageSystem.sendMessageTo(newMessage.getMessageUniqueId(), names, DashboardViewType.IMAGING_QUALITY.getViewName());
+////		// 更新消息轮询的缓存
+////		CacheManager.getInstance().getNotificationsCache().refresh(receiver.getUserUniqueId());
+//    }
+//
+//
+////    private int track(String status) {
+////    	// 插入移行表
+////		Transition transition = new Transition();
+////		transition.setTransactionUUID(uuid);
+////		transition.setVin(basicInfoPane.getVIN());
+////		transition.setActivity(status);
+////		transition.setComments(null);
+////		transition.setOperator(loggedInUser.getUserName());
+////		transition.setDateCreated(new Date());
+////		int transitionUniqueId = ui.transitionService.insert(transition,basicInfoPane.getVIN());
+////		return transitionUniqueId;
+////    }
+//
+//	@Override
+//	public void cleanStage() {
+////		main.removeAllComponents();
+////		main.setHeight("100%");
+////		main.addComponents(blankLabel);
+////		main.setComponentAlignment(blankLabel, Alignment.MIDDLE_CENTER);
+////		//清空当前用户上传缓存
+////		UploadFileServlet.IN_DTOs.remove(loggedInUser.getUserUniqueId());
+////		UploadFileServlet.OUT_DTOs.remove(loggedInUser.getUserUniqueId());
+////		try {
+////			FileUtils.forceDelete(new File("devices/"+loggedInUser.getUserUniqueId()+".html"));
+////		} catch (IOException e) {
+////			log.info("删除"+"devices/"+loggedInUser.getUserUniqueId()+".html失败。");
+////		}
+////
+////		editableTrans = null;
+////		exception = "";
+//	}
+//
+//	@Override
+//	public void updateUnreadCount() {
+////		List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
+////		int unreadCount = 0;
+////		for (Notification n : notifications) {
+////			if (n.getViewName().equals(DashboardViewType.IMAGING_INPUT.getViewName())
+////					|| n.getViewName().equals("")) {
+////				unreadCount++;
+////			}
+////		}
+////
+////
+////		DashboardMenu.getInstance().imagingInputCount(unreadCount);
+////		notificationsButton.setUnreadCount(unreadCount);
+//	}
+//
+//
+//
+//	@Override
+//	public int batch() {
+//		return batch;
+//	}
+//
+//	@Override
+//	public String uuid() {
+//		return uuid;
+//	}
+//
+//	@Override
+//	public String vin() {
+//		return "";// basicInfoPane.getVIN();//vin;
+//	}
+//
+//
+//
+//
+//
+//	@Override
+//	public BusinessTypePane businessTypePane() {
+//		return businessTypePane;
+//	}
+//
+//	@Override
+//	public ThumbnailGrid thumbnailGrid() {
+//		return fileGrid;
+//	}
+//
+//	@Override
+//	public CameraArea capturePane() {
+//		return capturePane;
+//	}
+//
+//	private String commitMode = "INSERT";
+//	public static final String EDIT_ID = "dashboard-edit";
+//	public static final String TITLE_ID = "dashboard-title";
+//
+//	private String uuid;	//UUID业务与原文关联号
+//	private int batch;	//业务批次号。默认最大1000个批次，每批次最多放5000文件夹。
+//	private String vin;// = "LGB12YEA9DY001226";	//车辆识别代码。用于分表。
+//    private Label titleLabel;
+//    private VerticalLayout root;
+//    private VerticalLayout main = new VerticalLayout();
+//    private DashboardUI ui = (DashboardUI) UI.getCurrent();
+//    //各个区域面板
+////    private BasicInfoPane basicInfoPane = new BasicInfoPane(this);
+//    private BusinessTypePane businessTypePane = new BusinessTypePane(this);
+//    private ThumbnailGrid fileGrid = new ThumbnailGrid();
+//    private CameraArea capturePane = new CameraArea();
+//    private Button btnPrint = new Button("打印标签");
+//    private Button btnAdd = new Button("录入新业务");
+//    private Button btnCommit = new Button("提交业务");
+//    private NotificationsButton notificationsButton;
+//    private Label blankLabel = new Label("<span style='font-size:24px;color: #8D99A6;font-family: Microsoft YaHei;'>暂无可编辑的信息</span>", ContentMode.HTML);
+//    private HorizontalLayout spliterNorth = new HorizontalLayout();
+//    private HorizontalLayout spliterSouth = new HorizontalLayout();
+////    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.IMAGING_INPUT.getViewName(), this);
+//    private TB4MessagingSystem messageSystem = new TB4MessagingSystem();
+//    private int deletableMessageUniqueId;
+//    private String exception;
+//    private TB4MessagingSystem messageSys = new TB4MessagingSystem();
 }

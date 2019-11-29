@@ -9,9 +9,6 @@ import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.domain.Business;
-import com.maxtree.automotive.dashboard.event.DashboardEvent;
-import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -123,27 +120,27 @@ public class EditBusinessTypesWindow extends Window {
 	 */
 	public static void open(Callback2 callback) {
 //        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        EditBusinessTypesWindow w = new EditBusinessTypesWindow();
-        w.btnAdd.addClickListener(e -> {
-        	if (StringUtils.isEmpty(w.codeField.getValue())
-        			|| w.codeField.getValue().length() != 4) {
-        		Notifications.warning("快捷编码输入有误，请输入4位字母或数字组合编码。");
-        		return;
-        	}
-        	w.btnAdd.setCaption("添加");
-			Business newInstance = new Business();
-			newInstance.setName(w.nameField.getValue());
-			newInstance.setCode(w.codeField.getValue());
-			newInstance.setCheckLevel(w.checkLevelBox.getValue());
-			newInstance.setUpdatePlateNumber(w.updatePlateNumberBox.getValue().equals("是")?true:false);
-			newInstance.setUploadPicture(w.uploadPictureBox.getValue().equals("是")?true:false);
-			
-			int businessuniqueid = ui.businessService.insert(newInstance);
-			w.close();
-			callback.onSuccessful(businessuniqueid);
-		});
-        UI.getCurrent().addWindow(w);
-        w.center();
+//        EditBusinessTypesWindow w = new EditBusinessTypesWindow();
+//        w.btnAdd.addClickListener(e -> {
+//        	if (StringUtils.isEmpty(w.codeField.getValue())
+//        			|| w.codeField.getValue().length() != 4) {
+//        		Notifications.warning("快捷编码输入有误，请输入4位字母或数字组合编码。");
+//        		return;
+//        	}
+//        	w.btnAdd.setCaption("添加");
+//			Business newInstance = new Business();
+//			newInstance.setName(w.nameField.getValue());
+//			newInstance.setCode(w.codeField.getValue());
+//			newInstance.setCheckLevel(w.checkLevelBox.getValue());
+//			newInstance.setUpdatePlateNumber(w.updatePlateNumberBox.getValue().equals("是")?true:false);
+//			newInstance.setUploadPicture(w.uploadPictureBox.getValue().equals("是")?true:false);
+//
+//			int businessuniqueid = ui.businessService.insert(newInstance);
+//			w.close();
+//			callback.onSuccessful(businessuniqueid);
+//		});
+//        UI.getCurrent().addWindow(w);
+//        w.center();
     }
 	
 	/**
@@ -151,39 +148,39 @@ public class EditBusinessTypesWindow extends Window {
 	 * @param business
 	 * @param callback
 	 */
-	public static void edit(Business business, Callback callback) {
+//	public static void edit(Business business, Callback callback) {
 //        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        EditBusinessTypesWindow w = new EditBusinessTypesWindow();
-        w.nameField.setValue(business.getName());
-        w.nameField.focus();
-        w.codeField.setValue(business.getCode());
-        w.checkLevelBox.setValue(business.getCheckLevel());
-        w.updatePlateNumberBox.setValue(business.getUpdatePlateNumber()?"是":"否");
-        w.uploadPictureBox.setValue(business.getUploadPicture()?"是":"否");
-        
-        w.btnAdd.setCaption("保存");
-        w.setCaption("编辑业务类型");
-        w.btnAdd.addClickListener(e -> {
-        	// 设置新名称
-        	if (StringUtils.isEmpty(w.codeField.getValue())
-        			|| w.codeField.getValue().length() != 4) {
-        		Notifications.warning("快捷编码输入有误，请输入4位字母或数字组合编码。");
-        		return;
-        	}
-        	
-        	business.setName(w.nameField.getValue());
-        	business.setCheckLevel(w.checkLevelBox.getValue());
-        	business.setCode(w.codeField.getValue());
-        	business.setUpdatePlateNumber(w.updatePlateNumberBox.getValue().equals("是")?true:false);
-        	business.setUploadPicture(w.uploadPictureBox.getValue().equals("是")?true:false);
-        	
-        	ui.businessService.update(business);
-			w.close();
-			callback.onSuccessful();
-		});
-        UI.getCurrent().addWindow(w);
-        w.center();
-    }
+//        EditBusinessTypesWindow w = new EditBusinessTypesWindow();
+//        w.nameField.setValue(business.getName());
+//        w.nameField.focus();
+//        w.codeField.setValue(business.getCode());
+//        w.checkLevelBox.setValue(business.getCheckLevel());
+//        w.updatePlateNumberBox.setValue(business.getUpdatePlateNumber()?"是":"否");
+//        w.uploadPictureBox.setValue(business.getUploadPicture()?"是":"否");
+//
+//        w.btnAdd.setCaption("保存");
+//        w.setCaption("编辑业务类型");
+//        w.btnAdd.addClickListener(e -> {
+//        	// 设置新名称
+//        	if (StringUtils.isEmpty(w.codeField.getValue())
+//        			|| w.codeField.getValue().length() != 4) {
+//        		Notifications.warning("快捷编码输入有误，请输入4位字母或数字组合编码。");
+//        		return;
+//        	}
+//
+//        	business.setName(w.nameField.getValue());
+//        	business.setCheckLevel(w.checkLevelBox.getValue());
+//        	business.setCode(w.codeField.getValue());
+//        	business.setUpdatePlateNumber(w.updatePlateNumberBox.getValue().equals("是")?true:false);
+//        	business.setUploadPicture(w.uploadPictureBox.getValue().equals("是")?true:false);
+//
+//        	ui.businessService.update(business);
+//			w.close();
+//			callback.onSuccessful();
+//		});
+//        UI.getCurrent().addWindow(w);
+//        w.center();
+//    }
 	
 	private TextField nameField; // 业务类型名
 	private TextField codeField; // 业务类型快捷编码

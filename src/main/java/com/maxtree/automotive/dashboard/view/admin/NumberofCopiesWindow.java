@@ -104,11 +104,7 @@ public class NumberofCopiesWindow extends Window {
 		return true;
 	}
 	
-	/**
-	 * 
-	 * @param frame
-	 * @param callback
-	 */
+
 	public static void open(Callback2 callback) {
 		// DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
 		NumberofCopiesWindow w = new NumberofCopiesWindow();

@@ -6,8 +6,8 @@ import java.util.List;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.domain.Notification;
-import com.maxtree.automotive.dashboard.domain.User;
+//import com.maxtree.automotive.dashboard.domain.Notification;
+//import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.service.AuthService;
 import com.maxtree.automotive.dashboard.view.InputViewIF;
 import com.vaadin.icons.VaadinIcons;
@@ -61,9 +61,9 @@ public class NotificationsManagementWindow extends Window {
 				close();
 			}
 		};
-		table = new NotificationTable("通知列表", inputView, closeBySelf, changeQueryRanges);
-		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		loggedInUser = ui.userService.getUserByUserName(username);
+//		table = new NotificationTable("通知列表", inputView, closeBySelf, changeQueryRanges);
+//		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//		loggedInUser = ui.userService.getUserByUserName(username);
 		progressBar.setIndeterminate(true);
 		Button send = new Button("发通知", VaadinIcons.FILE_ADD);
 		Button delete = new Button("删除", VaadinIcons.DEL_A);
@@ -77,25 +77,25 @@ public class NotificationsManagementWindow extends Window {
 		markAllAsRead.setWidth("110px");
 
 		markAllAsRead.addClickListener(e->{
-			ui.messagingService.allMarkAsRead(loggedInUser.getUserUniqueId());
-			if(unread.isSelected()) {
-				ui.access(new Runnable() {
-
-					@Override
-					public void run() {
-						loadUnreaded(10, 1);
-					}
-				});
-			}
-			else {
-				ui.access(new Runnable() {
-
-					@Override
-					public void run() {
-						loadAll(10, 1);
-					}
-				});
-			}
+//			ui.messagingService.allMarkAsRead(loggedInUser.getUserUniqueId());
+//			if(unread.isSelected()) {
+//				ui.access(new Runnable() {
+//
+//					@Override
+//					public void run() {
+//						loadUnreaded(10, 1);
+//					}
+//				});
+//			}
+//			else {
+//				ui.access(new Runnable() {
+//
+//					@Override
+//					public void run() {
+//						loadAll(10, 1);
+//					}
+//				});
+//			}
 		});
 		TabSheet tabSheet = new TabSheet();
 		tabSheet.setWidth(100.0f, Unit.PERCENTAGE);
@@ -249,17 +249,17 @@ public class NotificationsManagementWindow extends Window {
 	 * @param offset
 	 */
 	private void loadNotifications(boolean onlyShowingUnread, Callback hideProgressbar, int limit, int offset) {
-		if (onlyShowingUnread) {
-			List<Notification> notificationList = ui.messagingService.findAllNotificationsByPaging(loggedInUser.getUserUniqueId(),true,viewName,limit,offset);
-			table.setItems(notificationList);
-			unread.setUnreadCount(notificationList.size());
-			hideProgressbar.onSuccessful();
-		} else {
-			List<Notification> notificationList = ui.messagingService.findAllNotificationsByPaging(loggedInUser.getUserUniqueId(),false,viewName,limit,offset);
-			table.setItems(notificationList);
-			received.setUnreadCount(notificationList.size());
-			hideProgressbar.onSuccessful();
-		}
+//		if (onlyShowingUnread) {
+//			List<Notification> notificationList = ui.messagingService.findAllNotificationsByPaging(loggedInUser.getUserUniqueId(),true,viewName,limit,offset);
+//			table.setItems(notificationList);
+//			unread.setUnreadCount(notificationList.size());
+//			hideProgressbar.onSuccessful();
+//		} else {
+//			List<Notification> notificationList = ui.messagingService.findAllNotificationsByPaging(loggedInUser.getUserUniqueId(),false,viewName,limit,offset);
+//			table.setItems(notificationList);
+//			received.setUnreadCount(notificationList.size());
+//			hideProgressbar.onSuccessful();
+//		}
 	}
 	
 	/**
@@ -302,7 +302,6 @@ public class NotificationsManagementWindow extends Window {
 	private NavigationButton received = new NavigationButton("已接收通知",0);
 	private NavigationButton sent = new NavigationButton("已发送通知",0);
 	private NavigationButton deleted = new NavigationButton("已删除通知",0);
-	private User loggedInUser;
 	private ProgressBar progressBar = new ProgressBar(0.0f);
 	private List<NavigationButton> buttonGroup = new ArrayList<>();
 	private NotificationTable table;

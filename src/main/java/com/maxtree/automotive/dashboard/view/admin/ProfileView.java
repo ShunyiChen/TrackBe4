@@ -5,7 +5,6 @@ import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.ChangePasswordWindow;
-import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.service.AuthService;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
@@ -47,13 +46,13 @@ public class ProfileView extends ContentView {
 		main.setMargin(false);
 		main.addStyleName("ProfileView_main");
 		
-		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		User loggedinUser = ui.userService.getUserByUserName(username);
-		personalPhoto = new Image(null, new ThemeResource(loggedinUser.getProfile().getPicture()));
+//		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//		User loggedinUser = ui.userService.getUserByUserName(username);
+//		personalPhoto = new Image(null, new ThemeResource(loggedinUser.getProfile().getPicture()));
 		Label userNameLabel = new Label();
 		userNameLabel.setWidth("140px");
 		userNameLabel.setHeight("23px");
-		userNameLabel.setValue(username);
+//		userNameLabel.setValue(username);
 		HorizontalLayout userRow = new HorizontalLayout();
 		userRow.addComponents(personalPhoto, Box.createHorizontalBox(5), userNameLabel);
 		userRow.setComponentAlignment(personalPhoto, Alignment.MIDDLE_LEFT);
@@ -82,8 +81,8 @@ public class ProfileView extends ContentView {
 				personalPhoto = new Image(null, new ThemeResource(src));
 				userRow.addComponent(personalPhoto, 0);
 
-				loggedinUser.getProfile().setPicture(src);
-				ui.userService.updateProfile(loggedinUser.getProfile());
+//				loggedinUser.getProfile().setPicture(src);
+//				ui.userService.updateProfile(loggedinUser.getProfile());
 				
 				callback.onSuccessful(src);
 			});
@@ -96,7 +95,7 @@ public class ProfileView extends ContentView {
 		btnPass.addStyleName("ProfileView_btnPass");
 		btnPass.setCaption("更改密码");
 		btnPass.addClickListener(e -> {
-			ChangePasswordWindow.open(loggedinUser);
+//			ChangePasswordWindow.open(loggedinUser);
 		});
 		main.addComponents(Box.createVerticalBox(23),btnPass);
 		main.setComponentAlignment(btnPass, Alignment.TOP_LEFT);

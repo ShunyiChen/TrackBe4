@@ -8,10 +8,18 @@
         height:56px ;
         width:100%;
         box-shadow: 2px 4px 6px grey;
-
-//        position: fixed;
-//        @include animation(animate-in-scale-up 500ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards);
- 
     }
- 
+    .my-img-button {
+      cursor: pointer;
+    }
+    .my-formLayout{
+        background-color: rgb(224,224,224);
+        box-shadow: 2px 4px 6px grey;
+        padding-right: 10px;
+        padding-bottom: 10px;
+    }
+    .my-thumbnailGrid {
+        background-color: white;//rgb(224,224,224);
+        box-shadow: 2px 4px 6px grey;
+    }
 }

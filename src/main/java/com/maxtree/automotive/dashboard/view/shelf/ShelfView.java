@@ -20,10 +20,6 @@ import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
-import com.maxtree.automotive.dashboard.domain.Notification;
-import com.maxtree.automotive.dashboard.domain.Transaction;
-import com.maxtree.automotive.dashboard.domain.Transition;
-import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
@@ -205,8 +201,8 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
 	            // Get the tab caption from the tab object
 	            String caption = main.getTab(tab).getCaption();
 	        	if (caption.equals(TAB1_TITLE)) {
-	        		upgrid.setKeyword(searchField.getValue());
-	        		upgrid.execute();
+//	        		upgrid.setKeyword(searchField.getValue());
+//	        		upgrid.execute();
 	        	} else {
 	        		downgrid.setKeyword(searchField.getValue());
 	        		downgrid.execute();
@@ -221,8 +217,8 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
             // Get the tab caption from the tab object
             String caption = main.getTab(tab).getCaption();
         	if (caption.equals(TAB1_TITLE)) {
-        		upgrid.setKeyword(searchField.getValue());
-        		upgrid.execute();
+//        		upgrid.setKeyword(searchField.getValue());
+//        		upgrid.execute();
         	} else {
         		downgrid.setKeyword(searchField.getValue());
         		downgrid.execute();
@@ -278,61 +274,61 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
      * 上架
      */
     private void putaway() {
-    	if(upgrid.editableTrans == null) {
-    		Notifications.warning("请选择一行上架。");
-    	} else {
-    		upgrid.editableTrans.setStatus(ui.state().getName("B3"));
-    		upgrid.editableTrans.setDateModified(new Date());
-    		ui.transactionService.update(upgrid.editableTrans);
-    		track(ui.state().getName("B3"), upgrid.editableTrans);
-    		upgrid.clearSortOrder();
-    		Notifications.bottomWarning("操作成功。");
-    	}
+//    	if(upgrid.editableTrans == null) {
+//    		Notifications.warning("请选择一行上架。");
+//    	} else {
+////    		upgrid.editableTrans.setStatus(ui.state().getName("B3"));
+////    		upgrid.editableTrans.setDateModified(new Date());
+////    		ui.transactionService.update(upgrid.editableTrans);
+////    		track(ui.state().getName("B3"), upgrid.editableTrans);
+////    		upgrid.clearSortOrder();
+//    		Notifications.bottomWarning("操作成功。");
+//    	}
     }
     
     /**
      * 下架
      */
     private void removeOff() {
-    	if(downgrid.editableTrans == null) {
-    		Notifications.warning("请选择一行下架。");
-    	} else {
-    		Callback okEvent = new Callback() {
-
-				@Override
-				public void onSuccessful() {
-					//更新库房
-		    		ui.frameService.updateVIN(null, downgrid.editableTrans.getCode());
-		    		//更新transaction
-		    		downgrid.editableTrans.setStatus(ui.state().getName("B12"));
-		    		downgrid.editableTrans.setDateModified(new Date());
-		    		downgrid.editableTrans.setCode(null);
-		    		ui.transactionService.update(downgrid.editableTrans);
-		    		track(ui.state().getName("B12"),downgrid.editableTrans);
-		    		downgrid.clearSortOrder();
-		    		Notifications.bottomWarning("操作成功。");
-				}
-    		};
-    		MessageBox.showMessage("提示", "上架号为"+downgrid.editableTrans.getCode()+"，请确认是否下架？", MessageBox.WARNING, okEvent, "确定");
-    	}
+//    	if(downgrid.editableTrans == null) {
+//    		Notifications.warning("请选择一行下架。");
+//    	} else {
+//    		Callback okEvent = new Callback() {
+//
+//				@Override
+//				public void onSuccessful() {
+//					//更新库房
+//		    		ui.frameService.updateVIN(null, downgrid.editableTrans.getCode());
+//		    		//更新transaction
+//		    		downgrid.editableTrans.setStatus(ui.state().getName("B12"));
+//		    		downgrid.editableTrans.setDateModified(new Date());
+//		    		downgrid.editableTrans.setCode(null);
+//		    		ui.transactionService.update(downgrid.editableTrans);
+//		    		track(ui.state().getName("B12"),downgrid.editableTrans);
+//		    		downgrid.clearSortOrder();
+//		    		Notifications.bottomWarning("操作成功。");
+//				}
+//    		};
+//    		MessageBox.showMessage("提示", "上架号为"+downgrid.editableTrans.getCode()+"，请确认是否下架？", MessageBox.WARNING, okEvent, "确定");
+//    	}
     }
     
-    /**
-     * 
-     * @param status
-     * @param trans
-     */
-    private void track(String status, Transaction trans) {
-    	// 插入移行表
-		Transition transition = new Transition();
-//		transition.setTransactionUUID(trans.getUuid());
-		transition.setVin(trans.getVin());
-		transition.setActivity(status);
-		transition.setComments(null);
-		transition.setOperator(loggedInUser.getUserName());
-		transition.setDateCreated(new Date());
-		int transitionUniqueId = ui.transitionService.insert(transition,trans.getVin());
-    }
+//    /**
+//     *
+//     * @param status
+//     * @param trans
+//     */
+//    private void track(String status, Transaction trans) {
+//    	// 插入移行表
+//		Transition transition = new Transition();
+////		transition.setTransactionUUID(trans.getUuid());
+//		transition.setVin(trans.getVin());
+//		transition.setActivity(status);
+//		transition.setComments(null);
+//		transition.setOperator(loggedInUser.getUserName());
+//		transition.setDateCreated(new Date());
+//		int transitionUniqueId = ui.transitionService.insert(transition,trans.getVin());
+//    }
 
 //    private void openNotificationsPopup(final ClickEvent event) {
 //    	VerticalLayout mainVLayout = new VerticalLayout();
@@ -448,24 +444,24 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     	notificationsButton.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(final ClickEvent event) {
-                popup.open(event);
+//                popup.open(event);
             }
         });
     }
   
     @Override
    	public void updateUnreadCount() {
-   		List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
-    	int unreadCount = 0;
-		for (Notification n : notifications) {
-			if (n.getViewName().equals(DashboardViewType.SHELF.getViewName())
-					|| n.getViewName().equals("")) {
-				unreadCount++;
-			}
-		}
+//   		List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
+//    	int unreadCount = 0;
+//		for (Notification n : notifications) {
+//			if (n.getViewName().equals(DashboardViewType.SHELF.getViewName())
+//					|| n.getViewName().equals("")) {
+//				unreadCount++;
+//			}
+//		}
    		
-   		notificationsButton.setUnreadCount(unreadCount);
-   		DashboardMenu.getInstance().shelfCount(unreadCount);
+//   		notificationsButton.setUnreadCount(unreadCount);
+//   		DashboardMenu.getInstance().shelfCount(unreadCount);
    	}
 
    	@Override
@@ -476,7 +472,7 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     public static final String TITLE_ID = "dashboard-title";
     private static final String TAB1_TITLE = "上架";
     private static final String TAB2_TITLE = "下架";
-   	private User loggedInUser;
+//   	private User loggedInUser;
     private Label titleLabel;
     private VerticalLayout root;
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
@@ -487,5 +483,5 @@ public class ShelfView extends Panel implements View, FrontendViewIF{
     private TabSheet main = new TabSheet();
     private UpGrid upgrid = new UpGrid();
     private DownGrid downgrid = new DownGrid();
-    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.SHELF.getViewName());
+//    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.SHELF.getViewName());
 }

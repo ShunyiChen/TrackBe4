@@ -9,8 +9,6 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.PermissionCodes;
 import com.maxtree.automotive.dashboard.TB4Application;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.domain.EmbeddedServer;
-import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.service.AuthService;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.MenuItem;
@@ -29,222 +27,222 @@ import com.vaadin.ui.VerticalLayout;
  * @author Chen
  *
  */
-public class EmbeddedServerView extends ContentView {
+public class EmbeddedServerView{//} extends ContentView {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * 
-	 * @param parentTitle
-	 * @param rootView
-	 */
-	public EmbeddedServerView(String parentTitle, AdminMainView rootView) {
-		super(parentTitle, rootView);
-		this.setHeight((Page.getCurrent().getBrowserWindowHeight()-58)+"px");
-		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		loggedInUser = ui.userService.getUserByUserName(username);
-		main.setWidth("100%");
-		main.setHeightUndefined();
-		main.setSpacing(false);
-		main.setMargin(false);
-		
-		GridColumn[] columns = {new GridColumn("服务器",142), new GridColumn("类型",142),new GridColumn("端口",142),new GridColumn("运行状态",143),new GridColumn("", 20)}; 
-		List<CustomGridRow> data = new ArrayList<>();
-		List<EmbeddedServer> list = ui.embeddedServerService.findAll();
-		for (EmbeddedServer es : list) {
-			Object[] rowData = generateOneRow(es);
-			data.add(new CustomGridRow(rowData));
-		}
-		grid = new CustomGrid("服务器列表",columns, data);
-		Callback addEvent = new Callback() {
-
-			@Override
-			public void onSuccessful() {
-//				if (loggedInUser.isPermitted(PermissionCodes.F1)) {
-//					
-//				} else {
-//	        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
-//	        	}
-				
-				Callback2 callback = new Callback2() {
-
-					@Override
-					public void onSuccessful(Object... objects) {
-						int serverUniqueId = (int) objects[0];
-						EmbeddedServer server = ui.embeddedServerService.findById(serverUniqueId);
-						Object[] rowData = generateOneRow(server);
-						grid.insertRow(new CustomGridRow(rowData));
-					}
-				};
-				EditEmbeddedServerWindow.open(callback);
-			}
-		};
-		grid.setAddEvent(addEvent);
-		main.addComponents(grid);
-		main.setComponentAlignment(grid, Alignment.TOP_CENTER);
-		
-		this.addComponent(main);
-		this.setComponentAlignment(main, Alignment.TOP_CENTER);
-		this.setExpandRatio(main, 1);
-	}
-	
-	/**
-	 * 
-	 * @param es
-	 * @return
-	 */
-	private Object[] generateOneRow(EmbeddedServer es) {
-		Image img = new Image(null, new ThemeResource("img/adminmenu/menu.png"));
-		img.addStyleName("PeopleView_menuImage");
-		img.addClickListener(e->{
-			ContextMenu menu = new ContextMenu(img, true);
-			if (es.getRunningStatus() == RunningStatus.STOP) {
-				menu.addItem("启动", VaadinIcons.FILE_START, new Command() {
-					/**
-					 * 
-					 */
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void menuSelected(MenuItem selectedItem) {
-						if (loggedInUser.isPermitted(PermissionCodes.K6)) {
-							UI.getCurrent().access(() -> {
-//								boolean testTrue = new TB4FileSystem().testConnection(site);
-//								if (testTrue) {
-//									site.setRunningStatus(RunningStatus.RUNNING);
-//									ui.siteService.update(site);
-//									// 更新表格UI
-//									Site s = ui.siteService.findById(site.getSiteUniqueId());
-//									Object[] rowData = generateOneRow(s);
-//									grid.setValueAt(new CustomGridRow(rowData), site.getSiteUniqueId());
-//									
-//								} else {
-//									Notification.show("提示：","启动失败，无法创建连接。", Type.WARNING_MESSAGE);
-//								}
-							});
-						}
-						else {
-			        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
-			        	}
-						
-					}
-				});
-			} else {
-				menu.addItem("停止", VaadinIcons.STOP, new Command() {
-					/**
-					 * 
-					 */
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void menuSelected(MenuItem selectedItem) {
+//	/**
+//	 *
+//	 */
+//	private static final long serialVersionUID = 1L;
+//
+//	/**
+//	 *
+//	 * @param parentTitle
+//	 * @param rootView
+//	 */
+//	public EmbeddedServerView(String parentTitle, AdminMainView rootView) {
+//		super(parentTitle, rootView);
+//		this.setHeight((Page.getCurrent().getBrowserWindowHeight()-58)+"px");
+//		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//		loggedInUser = ui.userService.getUserByUserName(username);
+//		main.setWidth("100%");
+//		main.setHeightUndefined();
+//		main.setSpacing(false);
+//		main.setMargin(false);
+//
+//		GridColumn[] columns = {new GridColumn("服务器",142), new GridColumn("类型",142),new GridColumn("端口",142),new GridColumn("运行状态",143),new GridColumn("", 20)};
+//		List<CustomGridRow> data = new ArrayList<>();
+//		List<EmbeddedServer> list = ui.embeddedServerService.findAll();
+//		for (EmbeddedServer es : list) {
+//			Object[] rowData = generateOneRow(es);
+//			data.add(new CustomGridRow(rowData));
+//		}
+//		grid = new CustomGrid("服务器列表",columns, data);
+//		Callback addEvent = new Callback() {
+//
+//			@Override
+//			public void onSuccessful() {
+////				if (loggedInUser.isPermitted(PermissionCodes.F1)) {
+////
+////				} else {
+////	        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
+////	        	}
+//
+//				Callback2 callback = new Callback2() {
+//
+//					@Override
+//					public void onSuccessful(Object... objects) {
+//						int serverUniqueId = (int) objects[0];
+//						EmbeddedServer server = ui.embeddedServerService.findById(serverUniqueId);
+//						Object[] rowData = generateOneRow(server);
+//						grid.insertRow(new CustomGridRow(rowData));
+//					}
+//				};
+//				EditEmbeddedServerWindow.open(callback);
+//			}
+//		};
+//		grid.setAddEvent(addEvent);
+//		main.addComponents(grid);
+//		main.setComponentAlignment(grid, Alignment.TOP_CENTER);
+//
+//		this.addComponent(main);
+//		this.setComponentAlignment(main, Alignment.TOP_CENTER);
+//		this.setExpandRatio(main, 1);
+//	}
+//
+//	/**
+//	 *
+//	 * @param es
+//	 * @return
+//	 */
+//	private Object[] generateOneRow(EmbeddedServer es) {
+//		Image img = new Image(null, new ThemeResource("img/adminmenu/menu.png"));
+//		img.addStyleName("PeopleView_menuImage");
+//		img.addClickListener(e->{
+//			ContextMenu menu = new ContextMenu(img, true);
+//			if (es.getRunningStatus() == RunningStatus.STOP) {
+//				menu.addItem("启动", VaadinIcons.FILE_START, new Command() {
+//					/**
+//					 *
+//					 */
+//					private static final long serialVersionUID = 1L;
+//
+//					@Override
+//					public void menuSelected(MenuItem selectedItem) {
 //						if (loggedInUser.isPermitted(PermissionCodes.K6)) {
-//							site.setRunningStatus(RunningStatus.STOP);
-//							ui.siteService.update(site);
-//							// 更新表格UI
-//							Site s = ui.siteService.findById(site.getSiteUniqueId());
-//							Object[] rowData = generateOneRow(s);
-//							grid.setValueAt(new CustomGridRow(rowData), site.getSiteUniqueId());
+//							UI.getCurrent().access(() -> {
+////								boolean testTrue = new TB4FileSystem().testConnection(site);
+////								if (testTrue) {
+////									site.setRunningStatus(RunningStatus.RUNNING);
+////									ui.siteService.update(site);
+////									// 更新表格UI
+////									Site s = ui.siteService.findById(site.getSiteUniqueId());
+////									Object[] rowData = generateOneRow(s);
+////									grid.setValueAt(new CustomGridRow(rowData), site.getSiteUniqueId());
+////
+////								} else {
+////									Notification.show("提示：","启动失败，无法创建连接。", Type.WARNING_MESSAGE);
+////								}
+//							});
 //						}
 //						else {
 //			        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
 //			        	}
-					}
-				});
-			}
-			
-			menu.addItem("用户管理", VaadinIcons.USERS, new Command() {
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void menuSelected(MenuItem selectedItem) {
-					if (loggedInUser.isPermitted(PermissionCodes.K6)) {
-						UI.getCurrent().access(() -> {
-//							boolean testTrue = new TB4FileSystem().testConnection(site);
-//							if (testTrue) {
-//								Notification notification = new Notification("测试：", "连接成功", Type.HUMANIZED_MESSAGE);
-//								notification.setDelayMsec(2000);
-//								notification.show(Page.getCurrent());
-//							} else {
-//								Notification.show("测试：","连接失败", Type.WARNING_MESSAGE);
-//							}
-						});
-					}
-					else {
-		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
-		        	}
-				}
-			});
-			
-			menu.addSeparator();
-			
-			menu.addItem("编辑", VaadinIcons.EDIT, new Command() {
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void menuSelected(MenuItem selectedItem) {
-					if (loggedInUser.isPermitted(PermissionCodes.K2)) {
-						Callback callback = new Callback() {
-
-							@Override
-							public void onSuccessful() {
-								// 更新表格UI
-								EmbeddedServer s = ui.embeddedServerService.findById(es.getServerUniqueId());
-								Object[] rowData = generateOneRow(s);
-								grid.setValueAt(new CustomGridRow(rowData),es.getServerUniqueId());
-							}
-						};
-						EditEmbeddedServerWindow.edit(es, callback);
-					}
-					else {
-		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
-		        	}
-				}
-			});
-			menu.addItem("从列表删除", VaadinIcons.FILE_REMOVE, new Command() {
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void menuSelected(MenuItem selectedItem) {
-//					if (loggedInUser.isPermitted(PermissionCodes.K3)) {
-//						
-//						Callback okevent = new Callback() {
+//
+//					}
+//				});
+//			} else {
+//				menu.addItem("停止", VaadinIcons.STOP, new Command() {
+//					/**
+//					 *
+//					 */
+//					private static final long serialVersionUID = 1L;
+//
+//					@Override
+//					public void menuSelected(MenuItem selectedItem) {
+////						if (loggedInUser.isPermitted(PermissionCodes.K6)) {
+////							site.setRunningStatus(RunningStatus.STOP);
+////							ui.siteService.update(site);
+////							// 更新表格UI
+////							Site s = ui.siteService.findById(site.getSiteUniqueId());
+////							Object[] rowData = generateOneRow(s);
+////							grid.setValueAt(new CustomGridRow(rowData), site.getSiteUniqueId());
+////						}
+////						else {
+////			        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
+////			        	}
+//					}
+//				});
+//			}
+//
+//			menu.addItem("用户管理", VaadinIcons.USERS, new Command() {
+//				/**
+//				 *
+//				 */
+//				private static final long serialVersionUID = 1L;
+//
+//				@Override
+//				public void menuSelected(MenuItem selectedItem) {
+//					if (loggedInUser.isPermitted(PermissionCodes.K6)) {
+//						UI.getCurrent().access(() -> {
+////							boolean testTrue = new TB4FileSystem().testConnection(site);
+////							if (testTrue) {
+////								Notification notification = new Notification("测试：", "连接成功", Type.HUMANIZED_MESSAGE);
+////								notification.setDelayMsec(2000);
+////								notification.show(Page.getCurrent());
+////							} else {
+////								Notification.show("测试：","连接失败", Type.WARNING_MESSAGE);
+////							}
+//						});
+//					}
+//					else {
+//		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
+//		        	}
+//				}
+//			});
+//
+//			menu.addSeparator();
+//
+//			menu.addItem("编辑", VaadinIcons.EDIT, new Command() {
+//				/**
+//				 *
+//				 */
+//				private static final long serialVersionUID = 1L;
+//
+//				@Override
+//				public void menuSelected(MenuItem selectedItem) {
+//					if (loggedInUser.isPermitted(PermissionCodes.K2)) {
+//						Callback callback = new Callback() {
 //
 //							@Override
 //							public void onSuccessful() {
-//								ui.embeddedServerService.delete(es.getServerUniqueId());
 //								// 更新表格UI
-//								grid.deleteRow(es.getServerUniqueId());
+//								EmbeddedServer s = ui.embeddedServerService.findById(es.getServerUniqueId());
+//								Object[] rowData = generateOneRow(s);
+//								grid.setValueAt(new CustomGridRow(rowData),es.getServerUniqueId());
 //							}
 //						};
-//						MessageBox.showMessage("删除提示", "请确认是否要删除该服务器。", MessageBox.WARNING, okevent, "删除");
-//					
-//					} else {
+//						EditEmbeddedServerWindow.edit(es, callback);
+//					}
+//					else {
 //		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
 //		        	}
-					
-				}
-			});
-			menu.open(e.getClientX(), e.getClientY());
-		});
-		
-		return new Object[] {es.getServerName(),es.getServerType(),es.getPort(),es.getRunningStatus(),img,es.getServerUniqueId()};
-	}
-	
-	private DashboardUI ui = (DashboardUI) UI.getCurrent();
-	private VerticalLayout main = new VerticalLayout();
-	private User loggedInUser;
-	private CustomGrid grid;
+//				}
+//			});
+//			menu.addItem("从列表删除", VaadinIcons.FILE_REMOVE, new Command() {
+//				/**
+//				 *
+//				 */
+//				private static final long serialVersionUID = 1L;
+//
+//				@Override
+//				public void menuSelected(MenuItem selectedItem) {
+////					if (loggedInUser.isPermitted(PermissionCodes.K3)) {
+////
+////						Callback okevent = new Callback() {
+////
+////							@Override
+////							public void onSuccessful() {
+////								ui.embeddedServerService.delete(es.getServerUniqueId());
+////								// 更新表格UI
+////								grid.deleteRow(es.getServerUniqueId());
+////							}
+////						};
+////						MessageBox.showMessage("删除提示", "请确认是否要删除该服务器。", MessageBox.WARNING, okevent, "删除");
+////
+////					} else {
+////		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
+////		        	}
+//
+//				}
+//			});
+//			menu.open(e.getClientX(), e.getClientY());
+//		});
+//
+//		return new Object[] {es.getServerName(),es.getServerType(),es.getPort(),es.getRunningStatus(),img,es.getServerUniqueId()};
+//	}
+//
+//	private DashboardUI ui = (DashboardUI) UI.getCurrent();
+//	private VerticalLayout main = new VerticalLayout();
+//	private User loggedInUser;
+//	private CustomGrid grid;
 }

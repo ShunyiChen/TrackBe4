@@ -25,14 +25,14 @@ public class DataDictionaryRow extends FlexTableRow {
     private void initComponents() {
         this.addComponents(manageBusinessType, manageMaterialName, managePlatenumType);
         manageBusinessType.addLayoutClickListener(e -> {
-            rootView.forward(new BusinessView("管理业务类型", rootView));
+//            rootView.forward(new BusinessView("管理业务类型", rootView));
         });
-        manageMaterialName.addLayoutClickListener(e -> {
-            rootView.forward(new MaterialView("管理材料名称", rootView));
-        });
-        managePlatenumType.addLayoutClickListener(e -> {
-            rootView.forward(new NumberplateView("管理号牌种类", rootView));
-        });
+//        manageMaterialName.addLayoutClickListener(e -> {
+//            rootView.forward(new MaterialView("管理材料名称", rootView));
+//        });
+//        managePlatenumType.addLayoutClickListener(e -> {
+//            rootView.forward(new NumberplateView("管理号牌种类", rootView));
+//        });
     }
 
     @Override

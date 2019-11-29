@@ -11,9 +11,6 @@ import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.DoubleField;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.domain.Document;
-import com.maxtree.automotive.dashboard.domain.Site;
-import com.maxtree.automotive.dashboard.domain.Transaction;
 import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.automotive.dashboard.view.ImageViewIF;
 import com.maxtree.automotive.dashboard.view.quality.ImageStage;
@@ -43,489 +40,489 @@ import com.vaadin.ui.Button.ClickListener;
  * @author Chen
  *
  */
-public class Manual extends VerticalLayout implements ImageViewIF,ClickListener {
+public class Manual {//extends VerticalLayout implements ImageViewIF,ClickListener {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * 
-	 * @param transaction
-	 */
-	public Manual(Transaction transaction) {
-		this.transaction = transaction;
-		initComponents();
-	}
-	
-	/**
-	 * 
-	 */
-	private void initComponents() {
-		this.addStyleName("Manual");
-		// 减一
-		ShortcutListener upListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_DOWN, null) {
-	        /**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-	        public void handleAction(Object sender, Object target) {
-	        	double val = Double.parseDouble(numField.getValue());
-	        	numField.setValue((val-1) + "");
-	        }
-	    };
-	    // 加一
-	    ShortcutListener downListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_UP, null) {
-	        /**
-			 * 
-			 */
-			private static final long serialVersionUID = 1452330668715171164L;
-
-			@Override
-	        public void handleAction(Object sender, Object target) {
-	        	double val = Double.parseDouble(numField.getValue());
-	        	numField.setValue((val+1) + "");
-	        }
-	    };
-	    numField.addShortcutListener(upListener);
-	    numField.addShortcutListener(downListener);
-		numField.setWidth("80px");
-		numField.setHeight("25px");
-		numField.addValueChangeListener(e->{
-			String pattern = "^(-?\\d+)(\\.\\d+)?$";//判断是否是浮点数
-			boolean isMatch = Pattern.matches(pattern, e.getValue());
-			if(isMatch) {
-				double val = Double.parseDouble( e.getValue());
-				if(function.equals("伸缩")) {
-					if(val >= 1 && val <= 200) {
-						tool.scale(val);
-					}
-					
-				} else if(function.equals("旋转")) {
-					if(val >= -180 && val <= 180) {
-						tool.rotate(val);
-					}
-					
-				} else if(function.equals("透明度")) {
-					if(val >= 10 && val <= 100) {
-						tool.transparency(val);
-					}
-					
-				} else if(function.equals("亮度")) {
-					if(val >= 0 && val <= 255) {
-						tool.brightness(val);
-					}
-					
-				} else if(function.equals("对比度")) {
-					if(val >= 0 && val <= 255) {
-						tool.contrast(val);
-					}
-					
-				}
-			}
-			
-		});
-		
-		lineLabel_1.setIcon(VaadinIcons.LINE_V);
-		lineLabel_2.setIcon(VaadinIcons.LINE_V);
-		functionImg.setIcon(VaadinIcons.CURSOR);
-		
-		fittedSize.setIcon(VaadinIcons.EXPAND_FULL);
-		fittedSize.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		fittedSize.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-		fittedSize.setWidth("18px");
-		fittedSize.setHeight("18px");
-		fittedSize.setId("fittedSize");
-		fittedSize.setDescription("适应窗口大小");
-		fittedSize.addClickListener(this);
-		actualSize.setIcon(VaadinIcons.BULLSEYE);
-		actualSize.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		actualSize.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-		actualSize.setWidth("18px");
-		actualSize.setHeight("18px");
-		actualSize.setId("actualSize");
-		actualSize.setDescription("原图");
-		actualSize.addClickListener(this);
-		
-		subtoolbar.setSpacing(false);
-		subtoolbar.setMargin(false);
-		subtoolbar.setWidthUndefined();
-		subtoolbar.setHeight("25px");
-		subtoolbar.addComponents(fittedSize,Box.createHorizontalBox(5),actualSize,Box.createHorizontalBox(25),lineLabel_1,functionImg,lineLabel_2,functionDesc);
-//		subtoolbar.setComponentAlignment(fittedSize, Alignment.TOP_LEFT);
-//		subtoolbar.setComponentAlignment(actualSize, Alignment.TOP_LEFT);
-		subtoolbar.setComponentAlignment(lineLabel_1, Alignment.MIDDLE_CENTER);
-		subtoolbar.setComponentAlignment(functionImg, Alignment.MIDDLE_CENTER);
-		subtoolbar.setComponentAlignment(lineLabel_2, Alignment.MIDDLE_CENTER);
-		
-		HorizontalLayout toolbar = new HorizontalLayout();
-		toolbar.setSpacing(false);
-		toolbar.setMargin(false);
-		toolbar.setHeight("26px");
-		toolbar.setWidth("100%");
-		toolbar.setStyleName("Manual-toolbar");
-		toolbar.addComponents(subtoolbar);
-		
-		Panel scrollPane = new Panel();
-		scrollPane.setSizeFull();
-		// 右侧组件
-		HorizontalSplitPanel rightSplit = new HorizontalSplitPanel();
-		rightSplit.setSizeFull();
-		rightRoot.setAlias("历史记录");
-		rightTree.setSelectionMode(SelectionMode.SINGLE);
-		
-		rightTree.setSizeFull();
-		rightTreeData.addItem(null, rightRoot);
-		List<Transaction> list = ui.transactionService.findForList(transaction.getVin(),null,transaction.getTransactionUniqueId());
-		for(Transaction trans : list) {
-			Document businessDoc = new Document();
-			businessDoc.setAlias(trans.getBusinessName());
-			rightTreeData.addItem(rightRoot, businessDoc);
-//			List<Document> primaryDocs = ui.documentService.findAllDocument1(trans.getVin(),trans.getUuid());
-//	    	List<Document> secondaryDocs = ui.documentService.findAllDocument2(trans.getVin(),trans.getUuid());
-//	        for (Document d : primaryDocs) {
-//	        	rightTreeData.addItem(businessDoc, d);
+//	/**
+//	 *
+//	 */
+//	private static final long serialVersionUID = 1L;
+//
+//	/**
+//	 *
+//	 * @param transaction
+//	 */
+//	public Manual(Transaction transaction) {
+//		this.transaction = transaction;
+//		initComponents();
+//	}
+//
+//	/**
+//	 *
+//	 */
+//	private void initComponents() {
+//		this.addStyleName("Manual");
+//		// 减一
+//		ShortcutListener upListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_DOWN, null) {
+//	        /**
+//			 *
+//			 */
+//			private static final long serialVersionUID = 1L;
+//
+//			@Override
+//	        public void handleAction(Object sender, Object target) {
+//	        	double val = Double.parseDouble(numField.getValue());
+//	        	numField.setValue((val-1) + "");
 //	        }
-//	        for (Document d : secondaryDocs) {
-//	        	rightTreeData.addItem(businessDoc, d);
+//	    };
+//	    // 加一
+//	    ShortcutListener downListener = new ShortcutListener(null, com.vaadin.event.ShortcutAction.KeyCode.ARROW_UP, null) {
+//	        /**
+//			 *
+//			 */
+//			private static final long serialVersionUID = 1452330668715171164L;
+//
+//			@Override
+//	        public void handleAction(Object sender, Object target) {
+//	        	double val = Double.parseDouble(numField.getValue());
+//	        	numField.setValue((val+1) + "");
 //	        }
-		}
-		rightTree.setDataProvider(new TreeDataProvider<>(rightTreeData));
-		rightTree.expand(rightRoot);
-        rightTree.setItemIconGenerator(item -> {
-        	if(item.getThumbnail() == null) {
-        		return VaadinIcons.FOLDER;
-        	} else {
-        		return VaadinIcons.FILE_PICTURE;
-        	}
-        });
-        rightTree.setItemDescriptionGenerator(item -> {
-        	return item.getAlias();
-        });
-        rightTree.addContextClickListener(event -> {
-        	TreeContextClickEvent<Document> e = (TreeContextClickEvent<Document>) event;
-        	Document item = e.getItem();
-        	rightTree.select(item);
-        });
-        com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(rightTree, true);
-        menu.addItem("加入对比", new com.vaadin.contextmenu.Menu.Command() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
-				Set<Document> set = rightTree.getSelectedItems();
-				List<Document> list = new ArrayList<Document>(set);
-				Document selectedDocument = list.get(0);
-				addPictureForComparison(site, selectedDocument,true);
-				
-				tool.show();
-			}
-        });
-        rightSplit.setFirstComponent(imgStage);
-        rightSplit.setSecondComponent(rightTree);
-        // Set the position of the splitter as percentage
-        rightSplit.setSplitPosition(100, Unit.PERCENTAGE);
-		
-		//左侧组件
-		leftTree.setSelectionMode(SelectionMode.SINGLE);
-		leftTree.setSizeFull();
-    	site = ui.siteService.findById(transaction.getSiteUniqueId());
-    	leftRoot.setAlias("当前业务材料");
-        leftTreeData.addItem(null, leftRoot);
-//        List<Document> primaryDocs = ui.documentService.findAllDocument1(transaction.getVin(),transaction.getUuid());
-//    	List<Document> secondaryDocs = ui.documentService.findAllDocument2(transaction.getVin(),transaction.getUuid());
-//        for (Document d : primaryDocs) {
-//        	leftTreeData.addItem(leftRoot, d);
-//        }
-//        for (Document d : secondaryDocs) {
-//        	leftTreeData.addItem(leftRoot, d);
-//        }
-        leftTree.setDataProvider(new TreeDataProvider<>(leftTreeData));
-        // 展开树节点
-        leftTree.expand(leftRoot);
-        leftTree.setItemIconGenerator(item -> {
-        	if(item.getThumbnail() == null) {
-        		return VaadinIcons.FOLDER;
-        	} else {
-        		return VaadinIcons.FILE_PICTURE;
-        	}
-        });
-        leftTree.addContextClickListener(event -> {
-        	TreeContextClickEvent<Document> e = (TreeContextClickEvent<Document>) event;
-        	Document item = e.getItem();
-        	if(item != null) {
-        		leftTree.select(item);
-        	}
-        });
-        leftTree.addSelectionListener(e->{
-        	
-        	if(e.getFirstSelectedItem().isPresent()) {
-        		if(e.getFirstSelectedItem().get().getThumbnail() == null) {
-            		imgStage.clean();
-    				// Set the position of the splitter as percentage
-    		        rightSplit.setSplitPosition(75, Unit.PERCENTAGE);
-            	}
-            	else if ("拓印膜".equals(e.getFirstSelectedItem().get().getAlias())) {
-    				selectedNode = e.getFirstSelectedItem().get();
-    				imgStage.display(site, selectedNode);
-    				// Set the position of the splitter as percentage
-    		        rightSplit.setSplitPosition(75, Unit.PERCENTAGE);
-            	} else {
-            		selectedNode = e.getFirstSelectedItem().get();
-    				imgStage.display(site, selectedNode);
-    				// Set the position of the splitter as percentage
-    		        rightSplit.setSplitPosition(75, Unit.PERCENTAGE);
-            	}
-        	}
-        	
-        	
-        });
-        
-        com.vaadin.contextmenu.ContextMenu menu2 = new com.vaadin.contextmenu.ContextMenu(leftTree, true);
-        menu2.addItem("加入对比", new com.vaadin.contextmenu.Menu.Command() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
-				
-				imgStage.setBackground();// 显示背景颜色
-				
-				Set<Document> set = leftTree.getSelectedItems();
-				List<Document> list = new ArrayList<Document>(set);
-				Document selectedDocument = list.get(0);
-				addPictureForComparison(site, selectedDocument,false);
-				
-				tool.show();
-			}
-        });
-		HorizontalSplitPanel main = new HorizontalSplitPanel();
-		main.setSizeFull();
-		// Set the position of the splitter as percentage
-		main.setSplitPosition(25, Unit.PERCENTAGE);
-		main.setFirstComponent(leftTree);
-		main.setSecondComponent(rightSplit);
-//		main.addSplitPositionChangeListener(e->{
-//			
-//			
+//	    };
+//	    numField.addShortcutListener(upListener);
+//	    numField.addShortcutListener(downListener);
+//		numField.setWidth("80px");
+//		numField.setHeight("25px");
+//		numField.addValueChangeListener(e->{
+//			String pattern = "^(-?\\d+)(\\.\\d+)?$";//判断是否是浮点数
+//			boolean isMatch = Pattern.matches(pattern, e.getValue());
+//			if(isMatch) {
+//				double val = Double.parseDouble( e.getValue());
+//				if(function.equals("伸缩")) {
+//					if(val >= 1 && val <= 200) {
+//						tool.scale(val);
+//					}
+//
+//				} else if(function.equals("旋转")) {
+//					if(val >= -180 && val <= 180) {
+//						tool.rotate(val);
+//					}
+//
+//				} else if(function.equals("透明度")) {
+//					if(val >= 10 && val <= 100) {
+//						tool.transparency(val);
+//					}
+//
+//				} else if(function.equals("亮度")) {
+//					if(val >= 0 && val <= 255) {
+//						tool.brightness(val);
+//					}
+//
+//				} else if(function.equals("对比度")) {
+//					if(val >= 0 && val <= 255) {
+//						tool.contrast(val);
+//					}
+//
+//				}
+//			}
+//
 //		});
-		
-		
-		scrollPane.setContent(main);
-		this.setSpacing(false);
-		this.setMargin(false);
-		this.setSizeFull();
-		this.addComponents(toolbar,scrollPane);
-		this.setExpandRatio(scrollPane,1);
-	}
-	
-	/**
-	 * 
-	 * @param site
-	 * @param doc
-	 * @param isHistory
-	 */
-	private void addPictureForComparison(Site site, Document doc, boolean isHistory) {
-		if (doc.getFileFullPath() != null) {
-			try {
-				FileObject fobj = new VFSUtils().resolveFile(site, doc.getFileFullPath());
-				ImageWindow imageWindow = new ImageWindow(isHistory?"历史记录-"+doc.getAlias():doc.getAlias(), fobj, 1.0f);
-				tool.setEditingWindow(imageWindow);
-				imageWindow.addFocusListener(e -> {
-					tool.setEditingWindow(imageWindow);
-		        });
-				imageWindow.center();
-			} catch (FileException e) {
-				e.printStackTrace();
-				Notifications.warning("读取文件异常。"+e.getMessage());
-			}
-		}
-	}
-	
-	@Override
-	public void previous() {
-		List<Document> children = leftTreeData.getChildren(leftRoot);
-		for(int i=0; i < children.size(); i++) {
-			Document doc = children.get(i);
-			if(doc == selectedNode) {
-				i--;
-				if(i < 0) {
-					i = children.size() - 1;
-				}
-				selectedNode = children.get(i);
-				leftTree.select(selectedNode);
-				imgStage.display(site, selectedNode);
-				break;
-			}
-		}
-	}
-
-	@Override
-	public void next() {
-		List<Document> children = leftTreeData.getChildren(leftRoot);
-		for(int i=0; i < children.size(); i++) {
-			Document doc = children.get(i);
-			if(doc == selectedNode) {
-				i++;
-				if(i > children.size()-1) {
-					i = 0;
-				}
-				selectedNode = children.get(i);
-				leftTree.select(selectedNode);
-				imgStage.display(site, selectedNode);
-				break;
-			}
-		}
-	}
-	
-	@Override
-	public void buttonClick(ClickEvent event) {
-		if(event.getButton().getId().equals("actualSize")) {
-			imgStage.actualSize();
-			
-		} else if(event.getButton().getId().equals("fittedSize")) {
-			imgStage.fittedSize();
-		}
-	}
-	
-	/**
-	 * 
-	 * @param function
-	 * @param value
-	 */
-	public void updateToolbar(String function, double value) {
-		this.function = function;
-		subtoolbar.removeAllComponents();
-		if(function.equals("撤销")) {
-			functionImg.setIcon(VaadinIcons.ARROW_BACKWARD);
-			updateToolbarButtons(false);
-		} else if(function.equals("重做")) {
-			functionImg.setIcon(VaadinIcons.ARROW_FORWARD);
-			updateToolbarButtons(false);
-		} else if(function.equals("原图")) {
-			functionImg.setIcon(VaadinIcons.DOT_CIRCLE);
-			updateToolbarButtons(false);
-		} else if(function.equals("适应窗体")) {
-			functionImg.setIcon(VaadinIcons.EXPAND_FULL);
-			updateToolbarButtons(false);
-		} else if(function.equals("锐化")) {
-			functionImg.setIcon(VaadinIcons.EYE);
-			updateToolbarButtons(false);
-		} else if(function.equals("边缘")) {
-			functionImg.setIcon(VaadinIcons.STAR_HALF_RIGHT_O);
-			updateToolbarButtons(false);
-		} else if(function.equals("上阴影")) {
-			functionImg.setIcon(VaadinIcons.PADDING_TOP);
-			updateToolbarButtons(false);
-		} else if(function.equals("下阴影")) {
-			functionImg.setIcon(VaadinIcons.PADDING_BOTTOM);
-			updateToolbarButtons(false);
-		} else if(function.equals("左阴影")) {
-			functionImg.setIcon(VaadinIcons.PADDING_LEFT);
-			updateToolbarButtons(false);
-		} else if(function.equals("右阴影")) {
-			functionImg.setIcon(VaadinIcons.PADDING_RIGHT);
-			updateToolbarButtons(false);
-		} else if(function.equals("伸缩")) {
-			
-			initSlider(1,200,value);
-			functionImg.setIcon(VaadinIcons.EXPAND_SQUARE);
-			updateToolbarButtons(true);
-		
-		} else if(function.equals("旋转")) {
-			
-			initSlider(-180,180,value);
-			functionImg.setIcon(VaadinIcons.ROTATE_LEFT);
-			updateToolbarButtons(true);
-			
-		} else if(function.equals("透明度")) {
-			
-			initSlider(10,100,value);
-			functionImg.setIcon(VaadinIcons.COINS);
-			updateToolbarButtons(true);
-			
-		} else if(function.equals("亮度")) {
-			
-			initSlider(0,255,value);
-			functionImg.setIcon(VaadinIcons.MORNING);
-			updateToolbarButtons(true);
-			
-		} else if(function.equals("对比度")) {
-			
-			initSlider(0,255,value);
-			functionImg.setIcon(VaadinIcons.ADJUST);
-			updateToolbarButtons(true);
-		}
-	}
-	
-	/**
-	 * 
-	 * @param hasSlider
-	 */
-	private void updateToolbarButtons(boolean hasSlider) {
-		if(!hasSlider) {
-			subtoolbar.addComponents(fittedSize,Box.createHorizontalBox(5),actualSize,Box.createHorizontalBox(25),lineLabel_1,functionImg,lineLabel_2,functionDesc);
-			subtoolbar.setComponentAlignment(lineLabel_1, Alignment.MIDDLE_CENTER);
-			subtoolbar.setComponentAlignment(functionImg, Alignment.MIDDLE_CENTER);
-			subtoolbar.setComponentAlignment(lineLabel_2, Alignment.MIDDLE_CENTER);
-		}
-		else {
-			subtoolbar.addComponents(fittedSize,Box.createHorizontalBox(5),actualSize,Box.createHorizontalBox(25),lineLabel_1,functionImg,lineLabel_2,slider,numField);
-			subtoolbar.setComponentAlignment(lineLabel_1, Alignment.MIDDLE_CENTER);
-			subtoolbar.setComponentAlignment(functionImg, Alignment.MIDDLE_CENTER);
-			subtoolbar.setComponentAlignment(lineLabel_2, Alignment.MIDDLE_CENTER);
-		}
-	}
-	
-	/**
-	 * 
-	 * @param defaultValue
-	 */
-	private void initSlider(int min, int value, double defaultValue) {
-		slider = new Slider(min,value);
-		slider.setWidth("150px");
-		slider.addStyleName("v-slider");
-		slider.addValueChangeListener(e->{
-			numField.setValue(e.getValue()+"");
-		});
-		slider.setValue(defaultValue);
-		if(defaultValue == 0) {
-			numField.setValue(0.0d+"");
-		}
-	}
-	
-	public void closeToolWindow() {
-		tool.close();
-	}
-	
-	private String function;
-	private Label lineLabel_1 = new Label();
-	private Label lineLabel_2 = new Label();
-	private Button fittedSize = new Button();
-	private Button actualSize = new Button();
-	public Label functionDesc = new Label("此工具无其他选项");
-	public Label functionImg = new Label();
-	public DoubleField numField = new DoubleField();
-	public Slider slider = new Slider();
-	private Document leftRoot = new Document();
-	private Tree<Document> leftTree = new Tree<>();
-	private TreeData<Document> leftTreeData = new TreeData<Document>();
-	private Document rightRoot = new Document();
-	private Tree<Document> rightTree = new Tree<>();
-	private TreeData<Document> rightTreeData = new TreeData<Document>();
-	private ImageStage imgStage = new ImageStage(this,true);
-	private DashboardUI ui = (DashboardUI) UI.getCurrent();
-	private Transaction transaction;
-	private Site site;
-	private Document selectedNode;
-	private Tool tool = new Tool(this);
-	private HorizontalLayout subtoolbar = new HorizontalLayout();
+//
+//		lineLabel_1.setIcon(VaadinIcons.LINE_V);
+//		lineLabel_2.setIcon(VaadinIcons.LINE_V);
+//		functionImg.setIcon(VaadinIcons.CURSOR);
+//
+//		fittedSize.setIcon(VaadinIcons.EXPAND_FULL);
+//		fittedSize.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+//		fittedSize.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+//		fittedSize.setWidth("18px");
+//		fittedSize.setHeight("18px");
+//		fittedSize.setId("fittedSize");
+//		fittedSize.setDescription("适应窗口大小");
+//		fittedSize.addClickListener(this);
+//		actualSize.setIcon(VaadinIcons.BULLSEYE);
+//		actualSize.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+//		actualSize.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+//		actualSize.setWidth("18px");
+//		actualSize.setHeight("18px");
+//		actualSize.setId("actualSize");
+//		actualSize.setDescription("原图");
+//		actualSize.addClickListener(this);
+//
+//		subtoolbar.setSpacing(false);
+//		subtoolbar.setMargin(false);
+//		subtoolbar.setWidthUndefined();
+//		subtoolbar.setHeight("25px");
+//		subtoolbar.addComponents(fittedSize,Box.createHorizontalBox(5),actualSize,Box.createHorizontalBox(25),lineLabel_1,functionImg,lineLabel_2,functionDesc);
+////		subtoolbar.setComponentAlignment(fittedSize, Alignment.TOP_LEFT);
+////		subtoolbar.setComponentAlignment(actualSize, Alignment.TOP_LEFT);
+//		subtoolbar.setComponentAlignment(lineLabel_1, Alignment.MIDDLE_CENTER);
+//		subtoolbar.setComponentAlignment(functionImg, Alignment.MIDDLE_CENTER);
+//		subtoolbar.setComponentAlignment(lineLabel_2, Alignment.MIDDLE_CENTER);
+//
+//		HorizontalLayout toolbar = new HorizontalLayout();
+//		toolbar.setSpacing(false);
+//		toolbar.setMargin(false);
+//		toolbar.setHeight("26px");
+//		toolbar.setWidth("100%");
+//		toolbar.setStyleName("Manual-toolbar");
+//		toolbar.addComponents(subtoolbar);
+//
+//		Panel scrollPane = new Panel();
+//		scrollPane.setSizeFull();
+//		// 右侧组件
+//		HorizontalSplitPanel rightSplit = new HorizontalSplitPanel();
+//		rightSplit.setSizeFull();
+//		rightRoot.setAlias("历史记录");
+//		rightTree.setSelectionMode(SelectionMode.SINGLE);
+//
+//		rightTree.setSizeFull();
+//		rightTreeData.addItem(null, rightRoot);
+//		List<Transaction> list = ui.transactionService.findForList(transaction.getVin(),null,transaction.getTransactionUniqueId());
+//		for(Transaction trans : list) {
+//			Document businessDoc = new Document();
+//			businessDoc.setAlias(trans.getBusinessName());
+//			rightTreeData.addItem(rightRoot, businessDoc);
+////			List<Document> primaryDocs = ui.documentService.findAllDocument1(trans.getVin(),trans.getUuid());
+////	    	List<Document> secondaryDocs = ui.documentService.findAllDocument2(trans.getVin(),trans.getUuid());
+////	        for (Document d : primaryDocs) {
+////	        	rightTreeData.addItem(businessDoc, d);
+////	        }
+////	        for (Document d : secondaryDocs) {
+////	        	rightTreeData.addItem(businessDoc, d);
+////	        }
+//		}
+//		rightTree.setDataProvider(new TreeDataProvider<>(rightTreeData));
+//		rightTree.expand(rightRoot);
+//        rightTree.setItemIconGenerator(item -> {
+//        	if(item.getThumbnail() == null) {
+//        		return VaadinIcons.FOLDER;
+//        	} else {
+//        		return VaadinIcons.FILE_PICTURE;
+//        	}
+//        });
+//        rightTree.setItemDescriptionGenerator(item -> {
+//        	return item.getAlias();
+//        });
+//        rightTree.addContextClickListener(event -> {
+//        	TreeContextClickEvent<Document> e = (TreeContextClickEvent<Document>) event;
+//        	Document item = e.getItem();
+//        	rightTree.select(item);
+//        });
+//        com.vaadin.contextmenu.ContextMenu menu = new com.vaadin.contextmenu.ContextMenu(rightTree, true);
+//        menu.addItem("加入对比", new com.vaadin.contextmenu.Menu.Command() {
+//			/**
+//			 *
+//			 */
+//			private static final long serialVersionUID = 1L;
+//
+//			@Override
+//			public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+//				Set<Document> set = rightTree.getSelectedItems();
+//				List<Document> list = new ArrayList<Document>(set);
+//				Document selectedDocument = list.get(0);
+//				addPictureForComparison(site, selectedDocument,true);
+//
+//				tool.show();
+//			}
+//        });
+//        rightSplit.setFirstComponent(imgStage);
+//        rightSplit.setSecondComponent(rightTree);
+//        // Set the position of the splitter as percentage
+//        rightSplit.setSplitPosition(100, Unit.PERCENTAGE);
+//
+//		//左侧组件
+//		leftTree.setSelectionMode(SelectionMode.SINGLE);
+//		leftTree.setSizeFull();
+//    	site = ui.siteService.findById(transaction.getSiteUniqueId());
+//    	leftRoot.setAlias("当前业务材料");
+//        leftTreeData.addItem(null, leftRoot);
+////        List<Document> primaryDocs = ui.documentService.findAllDocument1(transaction.getVin(),transaction.getUuid());
+////    	List<Document> secondaryDocs = ui.documentService.findAllDocument2(transaction.getVin(),transaction.getUuid());
+////        for (Document d : primaryDocs) {
+////        	leftTreeData.addItem(leftRoot, d);
+////        }
+////        for (Document d : secondaryDocs) {
+////        	leftTreeData.addItem(leftRoot, d);
+////        }
+//        leftTree.setDataProvider(new TreeDataProvider<>(leftTreeData));
+//        // 展开树节点
+//        leftTree.expand(leftRoot);
+//        leftTree.setItemIconGenerator(item -> {
+//        	if(item.getThumbnail() == null) {
+//        		return VaadinIcons.FOLDER;
+//        	} else {
+//        		return VaadinIcons.FILE_PICTURE;
+//        	}
+//        });
+//        leftTree.addContextClickListener(event -> {
+//        	TreeContextClickEvent<Document> e = (TreeContextClickEvent<Document>) event;
+//        	Document item = e.getItem();
+//        	if(item != null) {
+//        		leftTree.select(item);
+//        	}
+//        });
+//        leftTree.addSelectionListener(e->{
+//
+//        	if(e.getFirstSelectedItem().isPresent()) {
+//        		if(e.getFirstSelectedItem().get().getThumbnail() == null) {
+//            		imgStage.clean();
+//    				// Set the position of the splitter as percentage
+//    		        rightSplit.setSplitPosition(75, Unit.PERCENTAGE);
+//            	}
+//            	else if ("拓印膜".equals(e.getFirstSelectedItem().get().getAlias())) {
+//    				selectedNode = e.getFirstSelectedItem().get();
+//    				imgStage.display(site, selectedNode);
+//    				// Set the position of the splitter as percentage
+//    		        rightSplit.setSplitPosition(75, Unit.PERCENTAGE);
+//            	} else {
+//            		selectedNode = e.getFirstSelectedItem().get();
+//    				imgStage.display(site, selectedNode);
+//    				// Set the position of the splitter as percentage
+//    		        rightSplit.setSplitPosition(75, Unit.PERCENTAGE);
+//            	}
+//        	}
+//
+//
+//        });
+//
+//        com.vaadin.contextmenu.ContextMenu menu2 = new com.vaadin.contextmenu.ContextMenu(leftTree, true);
+//        menu2.addItem("加入对比", new com.vaadin.contextmenu.Menu.Command() {
+//			/**
+//			 *
+//			 */
+//			private static final long serialVersionUID = 1L;
+//
+//			@Override
+//			public void menuSelected(com.vaadin.contextmenu.MenuItem selectedItem) {
+//
+//				imgStage.setBackground();// 显示背景颜色
+//
+//				Set<Document> set = leftTree.getSelectedItems();
+//				List<Document> list = new ArrayList<Document>(set);
+//				Document selectedDocument = list.get(0);
+//				addPictureForComparison(site, selectedDocument,false);
+//
+//				tool.show();
+//			}
+//        });
+//		HorizontalSplitPanel main = new HorizontalSplitPanel();
+//		main.setSizeFull();
+//		// Set the position of the splitter as percentage
+//		main.setSplitPosition(25, Unit.PERCENTAGE);
+//		main.setFirstComponent(leftTree);
+//		main.setSecondComponent(rightSplit);
+////		main.addSplitPositionChangeListener(e->{
+////
+////
+////		});
+//
+//
+//		scrollPane.setContent(main);
+//		this.setSpacing(false);
+//		this.setMargin(false);
+//		this.setSizeFull();
+//		this.addComponents(toolbar,scrollPane);
+//		this.setExpandRatio(scrollPane,1);
+//	}
+//
+//	/**
+//	 *
+//	 * @param site
+//	 * @param doc
+//	 * @param isHistory
+//	 */
+//	private void addPictureForComparison(Site site, Document doc, boolean isHistory) {
+//		if (doc.getFileFullPath() != null) {
+//			try {
+//				FileObject fobj = new VFSUtils().resolveFile(site, doc.getFileFullPath());
+//				ImageWindow imageWindow = new ImageWindow(isHistory?"历史记录-"+doc.getAlias():doc.getAlias(), fobj, 1.0f);
+//				tool.setEditingWindow(imageWindow);
+//				imageWindow.addFocusListener(e -> {
+//					tool.setEditingWindow(imageWindow);
+//		        });
+//				imageWindow.center();
+//			} catch (FileException e) {
+//				e.printStackTrace();
+//				Notifications.warning("读取文件异常。"+e.getMessage());
+//			}
+//		}
+//	}
+//
+//	@Override
+//	public void previous() {
+//		List<Document> children = leftTreeData.getChildren(leftRoot);
+//		for(int i=0; i < children.size(); i++) {
+//			Document doc = children.get(i);
+//			if(doc == selectedNode) {
+//				i--;
+//				if(i < 0) {
+//					i = children.size() - 1;
+//				}
+//				selectedNode = children.get(i);
+//				leftTree.select(selectedNode);
+//				imgStage.display(site, selectedNode);
+//				break;
+//			}
+//		}
+//	}
+//
+//	@Override
+//	public void next() {
+//		List<Document> children = leftTreeData.getChildren(leftRoot);
+//		for(int i=0; i < children.size(); i++) {
+//			Document doc = children.get(i);
+//			if(doc == selectedNode) {
+//				i++;
+//				if(i > children.size()-1) {
+//					i = 0;
+//				}
+//				selectedNode = children.get(i);
+//				leftTree.select(selectedNode);
+//				imgStage.display(site, selectedNode);
+//				break;
+//			}
+//		}
+//	}
+//
+//	@Override
+//	public void buttonClick(ClickEvent event) {
+//		if(event.getButton().getId().equals("actualSize")) {
+//			imgStage.actualSize();
+//
+//		} else if(event.getButton().getId().equals("fittedSize")) {
+//			imgStage.fittedSize();
+//		}
+//	}
+//
+//	/**
+//	 *
+//	 * @param function
+//	 * @param value
+//	 */
+//	public void updateToolbar(String function, double value) {
+//		this.function = function;
+//		subtoolbar.removeAllComponents();
+//		if(function.equals("撤销")) {
+//			functionImg.setIcon(VaadinIcons.ARROW_BACKWARD);
+//			updateToolbarButtons(false);
+//		} else if(function.equals("重做")) {
+//			functionImg.setIcon(VaadinIcons.ARROW_FORWARD);
+//			updateToolbarButtons(false);
+//		} else if(function.equals("原图")) {
+//			functionImg.setIcon(VaadinIcons.DOT_CIRCLE);
+//			updateToolbarButtons(false);
+//		} else if(function.equals("适应窗体")) {
+//			functionImg.setIcon(VaadinIcons.EXPAND_FULL);
+//			updateToolbarButtons(false);
+//		} else if(function.equals("锐化")) {
+//			functionImg.setIcon(VaadinIcons.EYE);
+//			updateToolbarButtons(false);
+//		} else if(function.equals("边缘")) {
+//			functionImg.setIcon(VaadinIcons.STAR_HALF_RIGHT_O);
+//			updateToolbarButtons(false);
+//		} else if(function.equals("上阴影")) {
+//			functionImg.setIcon(VaadinIcons.PADDING_TOP);
+//			updateToolbarButtons(false);
+//		} else if(function.equals("下阴影")) {
+//			functionImg.setIcon(VaadinIcons.PADDING_BOTTOM);
+//			updateToolbarButtons(false);
+//		} else if(function.equals("左阴影")) {
+//			functionImg.setIcon(VaadinIcons.PADDING_LEFT);
+//			updateToolbarButtons(false);
+//		} else if(function.equals("右阴影")) {
+//			functionImg.setIcon(VaadinIcons.PADDING_RIGHT);
+//			updateToolbarButtons(false);
+//		} else if(function.equals("伸缩")) {
+//
+//			initSlider(1,200,value);
+//			functionImg.setIcon(VaadinIcons.EXPAND_SQUARE);
+//			updateToolbarButtons(true);
+//
+//		} else if(function.equals("旋转")) {
+//
+//			initSlider(-180,180,value);
+//			functionImg.setIcon(VaadinIcons.ROTATE_LEFT);
+//			updateToolbarButtons(true);
+//
+//		} else if(function.equals("透明度")) {
+//
+//			initSlider(10,100,value);
+//			functionImg.setIcon(VaadinIcons.COINS);
+//			updateToolbarButtons(true);
+//
+//		} else if(function.equals("亮度")) {
+//
+//			initSlider(0,255,value);
+//			functionImg.setIcon(VaadinIcons.MORNING);
+//			updateToolbarButtons(true);
+//
+//		} else if(function.equals("对比度")) {
+//
+//			initSlider(0,255,value);
+//			functionImg.setIcon(VaadinIcons.ADJUST);
+//			updateToolbarButtons(true);
+//		}
+//	}
+//
+//	/**
+//	 *
+//	 * @param hasSlider
+//	 */
+//	private void updateToolbarButtons(boolean hasSlider) {
+//		if(!hasSlider) {
+//			subtoolbar.addComponents(fittedSize,Box.createHorizontalBox(5),actualSize,Box.createHorizontalBox(25),lineLabel_1,functionImg,lineLabel_2,functionDesc);
+//			subtoolbar.setComponentAlignment(lineLabel_1, Alignment.MIDDLE_CENTER);
+//			subtoolbar.setComponentAlignment(functionImg, Alignment.MIDDLE_CENTER);
+//			subtoolbar.setComponentAlignment(lineLabel_2, Alignment.MIDDLE_CENTER);
+//		}
+//		else {
+//			subtoolbar.addComponents(fittedSize,Box.createHorizontalBox(5),actualSize,Box.createHorizontalBox(25),lineLabel_1,functionImg,lineLabel_2,slider,numField);
+//			subtoolbar.setComponentAlignment(lineLabel_1, Alignment.MIDDLE_CENTER);
+//			subtoolbar.setComponentAlignment(functionImg, Alignment.MIDDLE_CENTER);
+//			subtoolbar.setComponentAlignment(lineLabel_2, Alignment.MIDDLE_CENTER);
+//		}
+//	}
+//
+//	/**
+//	 *
+//	 * @param defaultValue
+//	 */
+//	private void initSlider(int min, int value, double defaultValue) {
+//		slider = new Slider(min,value);
+//		slider.setWidth("150px");
+//		slider.addStyleName("v-slider");
+//		slider.addValueChangeListener(e->{
+//			numField.setValue(e.getValue()+"");
+//		});
+//		slider.setValue(defaultValue);
+//		if(defaultValue == 0) {
+//			numField.setValue(0.0d+"");
+//		}
+//	}
+//
+//	public void closeToolWindow() {
+//		tool.close();
+//	}
+//
+//	private String function;
+//	private Label lineLabel_1 = new Label();
+//	private Label lineLabel_2 = new Label();
+//	private Button fittedSize = new Button();
+//	private Button actualSize = new Button();
+//	public Label functionDesc = new Label("此工具无其他选项");
+//	public Label functionImg = new Label();
+//	public DoubleField numField = new DoubleField();
+//	public Slider slider = new Slider();
+//	private Document leftRoot = new Document();
+//	private Tree<Document> leftTree = new Tree<>();
+//	private TreeData<Document> leftTreeData = new TreeData<Document>();
+//	private Document rightRoot = new Document();
+//	private Tree<Document> rightTree = new Tree<>();
+//	private TreeData<Document> rightTreeData = new TreeData<Document>();
+//	private ImageStage imgStage = new ImageStage(this,true);
+//	private DashboardUI ui = (DashboardUI) UI.getCurrent();
+//	private Transaction transaction;
+//	private Site site;
+//	private Document selectedNode;
+//	private Tool tool = new Tool(this);
+//	private HorizontalLayout subtoolbar = new HorizontalLayout();
 }

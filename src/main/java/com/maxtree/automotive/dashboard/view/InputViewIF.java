@@ -1,13 +1,13 @@
 package com.maxtree.automotive.dashboard.view;
 
 import com.maxtree.automotive.dashboard.Callback;
-import com.maxtree.automotive.dashboard.domain.Site;
-import com.maxtree.automotive.dashboard.domain.Transaction;
-import com.maxtree.automotive.dashboard.domain.User;
+//import com.maxtree.automotive.dashboard.domain.Site;
+//import com.maxtree.automotive.dashboard.domain.Transaction;
+//import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.view.front.BasicInfoPane;
 import com.maxtree.automotive.dashboard.view.front.BusinessTypePane;
-import com.maxtree.automotive.dashboard.view.front.CapturePane;
-import com.maxtree.automotive.dashboard.view.front.ThumbnailGrid;
+import com.maxtree.automotive.dashboard.view.user.frontdesk.CameraArea;
+import com.maxtree.automotive.dashboard.view.user.frontdesk.ThumbnailGrid;
 
 /**
  * 
@@ -16,7 +16,7 @@ import com.maxtree.automotive.dashboard.view.front.ThumbnailGrid;
  */
 public interface InputViewIF extends FrontendViewIF {
 	
-	public User loggedInUser();
+//	public User loggedInUser();
 
 	public int batch();
 
@@ -24,7 +24,7 @@ public interface InputViewIF extends FrontendViewIF {
 
 	public String vin();
 
-	public Site editableSite();
+//	public Site editableSite();
 
 	public BasicInfoPane basicInfoPane();
 	
@@ -32,9 +32,9 @@ public interface InputViewIF extends FrontendViewIF {
 	
 	public ThumbnailGrid thumbnailGrid();
 	
-	public CapturePane capturePane();
+	public CameraArea capturePane();
 	
-	public void openTransaction(Transaction transaction,int deletableMessageUniqueId, Callback callback);
+//	public void openTransaction(Transaction transaction,int deletableMessageUniqueId, Callback callback);
 
 	public void throwException(String exception);
 }

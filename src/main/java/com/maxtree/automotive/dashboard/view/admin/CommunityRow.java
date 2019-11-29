@@ -19,15 +19,15 @@ public class CommunityRow extends FlexTableRow {
 	
 	private void initComponents() {
 		this.addComponents(manageCommunity,manageCompany,manageStore);
-		manageCommunity.addLayoutClickListener(e->{
-			rootView.forward(new CommunityView("管理社区", rootView));
-		});
-		manageCompany.addLayoutClickListener(e->{
-			rootView.forward(new CompanyView("管理机构", rootView));
-		});
-		manageStore.addLayoutClickListener(e->{
-			rootView.forward(new StorehouseView("管理库房", rootView));
-		});
+//		manageCommunity.addLayoutClickListener(e->{
+//			rootView.forward(new CommunityView("管理社区", rootView));
+//		});
+//		manageCompany.addLayoutClickListener(e->{
+//			rootView.forward(new CompanyView("管理机构", rootView));
+//		});
+//		manageStore.addLayoutClickListener(e->{
+//			rootView.forward(new StorehouseView("管理库房", rootView));
+//		});
 	}
 
 	@Override

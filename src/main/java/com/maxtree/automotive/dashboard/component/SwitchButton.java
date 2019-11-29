@@ -37,7 +37,6 @@ public class SwitchButton extends HorizontalLayout {
 	
 	/**
 	 * 
-	 * @param b
 	 */
 	public SwitchButton(boolean selected, int style) {
 		if (style == GRAY) {

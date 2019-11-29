@@ -24,10 +24,10 @@ public class FileTransferRow extends FlexTableRow {
 	private void initComponents() {
 		this.addComponents(manageSite,manageEmbeddedServer);
 		manageSite.addLayoutClickListener(e->{
-			rootView.forward(new SiteView("管理站点", rootView));
+//			rootView.forward(new SiteView("管理站点", rootView));
 		});
 		manageEmbeddedServer.addLayoutClickListener(e->{
-			rootView.forward(new EmbeddedServerView("FTP服务器", rootView));
+//			rootView.forward(new EmbeddedServerView("FTP服务器", rootView));
 		});
 	}
 

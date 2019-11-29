@@ -1,7 +1,6 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.service.AuthService;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
@@ -34,28 +33,28 @@ public class RowItemWithIcon extends FlexTableRowItem {
 	
 	private void initComponents() {
 		DashboardUI ui = (DashboardUI) UI.getCurrent();
-		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		User user = ui.userService.getUserByUserName(username);
-		Label separater = new Label();
-		separater.addStyleName("RowItemWithIcon_separater");
-		imageIcon = new Image(null, new ThemeResource(user.getProfile().getPicture()));
-		this.addComponents(imageIcon,name,arrowIcon,separater,btnExit);
+//		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//		User user = ui.userService.getUserByUserName(username);
+//		Label separater = new Label();
+//		separater.addStyleName("RowItemWithIcon_separater");
+//		imageIcon = new Image(null, new ThemeResource(user.getProfile().getPicture()));
+//		this.addComponents(imageIcon,name,arrowIcon,separater,btnExit);
 		this.setComponentAlignment(imageIcon, Alignment.TOP_LEFT);
 		this.setComponentAlignment(name, Alignment.MIDDLE_LEFT);
 		this.setComponentAlignment(arrowIcon, Alignment.MIDDLE_RIGHT);
 		this.setComponentAlignment(btnExit, Alignment.MIDDLE_RIGHT);
 		
-		this.setExpandRatio(imageIcon, 0);
-		this.setExpandRatio(name, 1);
-		name.setValue(username);
-		
-		btnExit.setIcon(VaadinIcons.EXIT);
-		btnExit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-		btnExit.setDescription("退出系统");
-		btnExit.addClickListener(e->{
-			LOGGER.info(username, "You have logged out successfully..");
-			ui.authService.logOut();
-		});
+//		this.setExpandRatio(imageIcon, 0);
+//		this.setExpandRatio(name, 1);
+//		name.setValue(username);
+//
+//		btnExit.setIcon(VaadinIcons.EXIT);
+//		btnExit.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+//		btnExit.setDescription("退出系统");
+//		btnExit.addClickListener(e->{
+//			LOGGER.info(username, "You have logged out successfully..");
+//			ui.authService.logOut();
+//		});
 	}
 
 	/**

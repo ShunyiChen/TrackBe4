@@ -19,9 +19,6 @@ import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
-import com.maxtree.automotive.dashboard.domain.Message;
-import com.maxtree.automotive.dashboard.domain.Notification;
-import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
@@ -92,8 +89,8 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
         root.setExpandRatio(main, 1.0f);
 //        root.addComponent(grid);
 //        root.setExpandRatio(grid, 1.0f);
-		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		loggedInUser = ui.userService.getUserByUserName(username);
+//		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//		loggedInUser = ui.userService.getUserByUserName(username);
         this.startPolling();
         
         UI.getCurrent().access(new Runnable() {
@@ -325,7 +322,7 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
 
 			@Override
             public void buttonClick(final ClickEvent event) {
-                popup.open(event);
+//                popup.open(event);
             }
         });
     }
@@ -339,42 +336,42 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
     
     @Override
 	public void updateUnreadCount() {
-    	List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
-		int unreadCount = 0;
-		for (Notification n : notifications) {
-			if (n.getViewName().equals(DashboardViewType.IMAGING_MANAGER.getViewName())) {
-				unreadCount++;
-				
-				Message message = ui.messagingService.findById(n.getMessageUniqueId());
-				if(!StringUtils.isEmpty(message.getMatedata())) {
-					Map<String, String> matedata = parser.json2Map(message.getMatedata());
-					String uuid = matedata.get("UUID");
-					String vin = matedata.get("VIN");
-					String state = matedata.get("STATE");
-					String checkLevel = matedata.get("CHECKLEVEL");
-					String popupAutomatically = matedata.get("POPUPAUTOMATICALLY");
-					if(!StringUtils.isEmpty(popupAutomatically)
-							&& popupAutomatically.equals("TRUE")) {
-						
-						Callback markAsRead = new Callback() {
-
-							@Override
-							public void onSuccessful() {
-								ui.messagingService.markAsRead(n.getNotificationUniqueId());
-								
-								CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
-							}
-						};
-						dia.showDialog(message.getSubject(), message.getContent(), markAsRead);
-					}
-				}
-				
-				
-			}
-		}
+//    	List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
+//		int unreadCount = 0;
+//		for (Notification n : notifications) {
+//			if (n.getViewName().equals(DashboardViewType.IMAGING_MANAGER.getViewName())) {
+//				unreadCount++;
+//
+//				Message message = ui.messagingService.findById(n.getMessageUniqueId());
+//				if(!StringUtils.isEmpty(message.getMatedata())) {
+//					Map<String, String> matedata = parser.json2Map(message.getMatedata());
+//					String uuid = matedata.get("UUID");
+//					String vin = matedata.get("VIN");
+//					String state = matedata.get("STATE");
+//					String checkLevel = matedata.get("CHECKLEVEL");
+//					String popupAutomatically = matedata.get("POPUPAUTOMATICALLY");
+//					if(!StringUtils.isEmpty(popupAutomatically)
+//							&& popupAutomatically.equals("TRUE")) {
+//
+//						Callback markAsRead = new Callback() {
+//
+//							@Override
+//							public void onSuccessful() {
+//								ui.messagingService.markAsRead(n.getNotificationUniqueId());
+//
+//								CacheManager.getInstance().getNotificationsCache().refresh(loggedInUser.getUserUniqueId());
+//							}
+//						};
+//						dia.showDialog(message.getSubject(), message.getContent(), markAsRead);
+//					}
+//				}
+//
+//
+//			}
+//		}
 		
-		DashboardMenu.getInstance().imagingAdminCount(unreadCount);
-		notificationsButton.setUnreadCount(unreadCount);
+//		DashboardMenu.getInstance().imagingAdminCount(unreadCount);
+//		notificationsButton.setUnreadCount(unreadCount);
     	
     	
 //    	// 显示未读消息数
@@ -426,8 +423,7 @@ public class ImagingManagerView extends Panel implements View, FrontendViewIF{
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private Button btnBasicRearch = new Button();
     private NotificationsButton notificationsButton;
-    private User loggedInUser;
-    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.IMAGING_MANAGER.getViewName());
+//    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.IMAGING_MANAGER.getViewName());
     private MatedataJsonParser parser = new MatedataJsonParser();
     private PopupAutomatically dia = new PopupAutomatically();
 }

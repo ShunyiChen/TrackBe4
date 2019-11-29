@@ -29,12 +29,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import com.maxtree.automotive.dashboard.domain.Document;
-import com.maxtree.automotive.dashboard.domain.DocumentHistory;
-import com.maxtree.automotive.dashboard.domain.Site;
-import com.maxtree.automotive.dashboard.domain.User;
-import com.maxtree.automotive.dashboard.service.DocumentService;
-import com.maxtree.automotive.dashboard.service.UserService;
 import com.maxtree.automotive.vfs.VFSUtils;
 
 import net.coobird.thumbnailator.Thumbnails;
@@ -56,10 +50,10 @@ public class CaptureServlet extends HttpServlet {
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 	
-	@Autowired
-	DocumentService documentService;
-	@Autowired
-	UserService userService;
+//	@Autowired
+//	DocumentService documentService;
+//	@Autowired
+//	UserService userService;
 	//userUniqueId作为Key
 	public static Map<Integer, UploadOutDTO> OUT_DTOs = new HashMap<Integer, UploadOutDTO>();
 	//userUniqueId作为Key
@@ -113,58 +107,58 @@ public class CaptureServlet extends HttpServlet {
 				if (!checkEmpty(p)) {
 					return;
 				}
-				
-				Site site = null;
-				String sql = "SELECT * FROM SITE WHERE CODE=?";
-				List<Site> results = jdbcTemplate.query(sql, new Object[] {p.getSiteUniqueId()}, new BeanPropertyRowMapper<Site>(Site.class));
-				if (results.size() > 0) {
-					site = results.get(0);
-				}
+//
+//				Site site = null;
+//				String sql = "SELECT * FROM SITE WHERE CODE=?";
+//				List<Site> results = jdbcTemplate.query(sql, new Object[] {p.getSiteUniqueId()}, new BeanPropertyRowMapper<Site>(Site.class));
+//				if (results.size() > 0) {
+//					site = results.get(0);
+//				}
 				
 				//准备document参数
 				InputStream inputStream = null;
-				String fileFullPath = p.getBatch()+"/"+p.getUuid()+"/"+name;
+				String fileFullPath =  "/"+p.getUuid()+"/"+name;
 				String dictionarycode = p.getDictionaryCode();
 				inputStream = fileItem.getInputStream();
 				byte[] bytes = IOUtils.toByteArray(inputStream);
 				inputStream.close();
 				//保存原图
 				ByteArrayInputStream is = new ByteArrayInputStream(bytes);
-				inputstreamtofile(is, fileFullPath, site);
+//				inputstreamtofile(is, fileFullPath, site);
 				//生成缩略图
 				is = new ByteArrayInputStream(bytes);
 				ByteArrayOutputStream smallOutputStream = new ByteArrayOutputStream();
 				Thumbnails.of(is).size(100, 100)/*.scale(0.033f)*/.toOutputStream(smallOutputStream);//.toFile("devices/"+userUniqueId+"/thumbnails/"+documentUniqueId+".jpg");  
 				is.close();
 				
-				//创建Document
-				Document document = new Document();
-				document.setDocumentUniqueId(p.getDocumentUniqueId());
-				document.setUuid(p.getUuid());
-				document.setDictionarycode(dictionarycode);
-				document.setFileFullPath(fileFullPath);
-				document.setThumbnail(smallOutputStream.toByteArray());
-				if(p.getDocumentUniqueId() != null) {
-					//做备份
-					User user = userService.findById(userUniqueId);
-					int tableId = getTableIndex(p.getVin());
-					Document doc1 = documentService.findById(p.getDocumentUniqueId(), tableId);
-					DocumentHistory history = new DocumentHistory();
-					history.setDictionarycode(doc1.getDictionarycode());
-					history.setFileFullPath(doc1.getFileFullPath());
-					history.setThumbnail(doc1.getThumbnail());
-					history.setUuid(doc1.getUuid());
-					history.setDocumentUniqueId(doc1.getDocumentUniqueId());
-					history.setUserName(user.getUserName());
-					history.setTableId(tableId);
-					documentService.insertHistory(history);
-					
-					documentService.update(document,p.getVin());
-				}
-				else {
-					int documentUniqueId = documentService.insert(document,p.getVin());
-					p.setDocumentUniqueId(documentUniqueId);
-				}
+//				//创建Document
+//				Document document = new Document();
+//				document.setDocumentUniqueId(p.getDocumentUniqueId());
+//				document.setUuid(p.getUuid());
+//				document.setDictionarycode(dictionarycode);
+//				document.setFileFullPath(fileFullPath);
+//				document.setThumbnail(smallOutputStream.toByteArray());
+//				if(p.getDocumentUniqueId() != null) {
+//					//做备份
+//					User user = userService.findById(userUniqueId);
+//					int tableId = getTableIndex(p.getVin());
+//					Document doc1 = documentService.findById(p.getDocumentUniqueId(), tableId);
+//					DocumentHistory history = new DocumentHistory();
+//					history.setDictionarycode(doc1.getDictionarycode());
+//					history.setFileFullPath(doc1.getFileFullPath());
+//					history.setThumbnail(doc1.getThumbnail());
+//					history.setUuid(doc1.getUuid());
+//					history.setDocumentUniqueId(doc1.getDocumentUniqueId());
+//					history.setUserName(user.getUserName());
+//					history.setTableId(tableId);
+//					documentService.insertHistory(history);
+//
+//					documentService.update(document,p.getVin());
+//				}
+//				else {
+//					int documentUniqueId = documentService.insert(document,p.getVin());
+//					p.setDocumentUniqueId(documentUniqueId);
+//				}
 				
 				UploadOutDTO ufq = new UploadOutDTO();
 				ufq.thumbnail = new ByteArrayInputStream(smallOutputStream.toByteArray());
@@ -190,8 +184,7 @@ public class CaptureServlet extends HttpServlet {
 		if (StringUtils.isEmpty(p.getVin())
 				|| StringUtils.isEmpty(p.getUuid())
 				|| StringUtils.isEmpty(p.getSiteID()+"")
-				|| StringUtils.isEmpty(p.getDictionaryCode())
-				|| StringUtils.isEmpty(p.getBatch())) {
+				|| StringUtils.isEmpty(p.getDictionaryCode())) {
 			return false;
 		}
 		else {
@@ -212,25 +205,25 @@ public class CaptureServlet extends HttpServlet {
 		return sum % 256;
 	}
 	
-	/**
-	 * 
-	 * @param ins
-	 * @param fileFullPath
-	 * @param site
-	 */
-	public static void inputstreamtofile(InputStream ins, String fileFullPath, Site site) {
-		try {
-			VFSUtils vfs2 = new VFSUtils();
-			OutputStream os = vfs2.receiveUpload(site, fileFullPath);
-			int bytesRead = 0;
-			byte[] buffer = new byte[8192];
-			while ((bytesRead = ins.read(buffer, 0, 8192)) != -1) {
-				os.write(buffer, 0, bytesRead);
-			}
-			os.close();
-			ins.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	/**
+//	 *
+//	 * @param ins
+//	 * @param fileFullPath
+//	 * @param site
+//	 */
+//	public static void inputstreamtofile(InputStream ins, String fileFullPath, Site site) {
+//		try {
+//			VFSUtils vfs2 = new VFSUtils();
+//			OutputStream os = vfs2.receiveUpload(site, fileFullPath);
+//			int bytesRead = 0;
+//			byte[] buffer = new byte[8192];
+//			while ((bytesRead = ins.read(buffer, 0, 8192)) != -1) {
+//				os.write(buffer, 0, bytesRead);
+//			}
+//			os.close();
+//			ins.close();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 }

@@ -34,15 +34,15 @@ public class PeopleRow extends FlexTableRow {
 			rootView.forward(new ProfileView("编辑个人信息", rootView, callback));
 		});
 		
-		manageUser.addLayoutClickListener(e->{
-			rootView.forward(new PeopleView("管理用户", rootView));
-		});
-		manageRole.addLayoutClickListener(e->{
-			rootView.forward(new RoleView("管理角色", rootView));
-		});
-		managePermission.addLayoutClickListener(e->{
-			rootView.forward(new PermissionView("管理权限", rootView));
-		});
+//		manageUser.addLayoutClickListener(e->{
+//			rootView.forward(new PeopleView("管理用户", rootView));
+//		});
+//		manageRole.addLayoutClickListener(e->{
+//			rootView.forward(new RoleView("管理角色", rootView));
+//		});
+//		managePermission.addLayoutClickListener(e->{
+//			rootView.forward(new PermissionView("管理权限", rootView));
+//		});
 	}
 
 	@Override

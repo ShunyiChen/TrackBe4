@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.domain.FrameNumber;
+//import com.maxtree.automotive.dashboard.domain.FrameNumber;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.vaadin.ui.FormLayout;
@@ -58,30 +58,30 @@ public class ShelfPropertiesWindow extends Window {
 
 			@Override
 			public void run() {
-				List<FrameNumber> allShelf = ui.frameService.findAllFrame(storename);
-				name.setValue(storename);
-				shelfCount.setValue(allShelf.size()+"");
-				int cellAllCount = ui.frameService.findCellTotalCount(storename);
-				cellCount.setValue(cellAllCount+"");
-				recordPerCellCount.setValue("300");
-				int folderCount = ui.frameService.findFolderTotalCount(storename, false);
-				recordCount.setValue(folderCount+"");
-				int usedFolderCount = ui.frameService.findFolderTotalCount(storename, true);
-				usedCount.setValue(usedFolderCount+"");
+//				List<FrameNumber> allShelf = ui.frameService.findAllFrame(storename);
+//				name.setValue(storename);
+//				shelfCount.setValue(allShelf.size()+"");
+//				int cellAllCount = ui.frameService.findCellTotalCount(storename);
+//				cellCount.setValue(cellAllCount+"");
+//				recordPerCellCount.setValue("300");
+//				int folderCount = ui.frameService.findFolderTotalCount(storename, false);
+//				recordCount.setValue(folderCount+"");
+//				int usedFolderCount = ui.frameService.findFolderTotalCount(storename, true);
+//				usedCount.setValue(usedFolderCount+"");
 			}
 			
 		});
 		
 	} 
 	
-	public static void open(FrameNumber store) {
-        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
-        ShelfPropertiesWindow w = new ShelfPropertiesWindow();
-        w.populate(store.getStorehouseName());
-//        int frameCode = ui.frameService.findNextCodeOfFrame(store.getStorehouseName());
-        UI.getCurrent().addWindow(w);
-        w.center();
-    }
+//	public static void open(FrameNumber store) {
+//        DashboardEventBus.post(new DashboardEvent.BrowserResizeEvent());
+//        ShelfPropertiesWindow w = new ShelfPropertiesWindow();
+//        w.populate(store.getStorehouseName());
+////        int frameCode = ui.frameService.findNextCodeOfFrame(store.getStorehouseName());
+//        UI.getCurrent().addWindow(w);
+//        w.center();
+//    }
 	
 	
 	private Label name = new Label();

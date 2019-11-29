@@ -1,33 +1,25 @@
 package com.maxtree.automotive.dashboard.jpa.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "cameras")
 public class Camera {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String description;
-    private Boolean inUse;
+    private Boolean enable;
+    private String templatePath;
 
     public Camera() {}
 
-    /**
-     * Constructor
-     *
-     * @param name
-     * @param description
-     * @param inUse
-     */
-    public Camera(String name, String description, Boolean inUse) {
+    public Camera(Long id, String name, Boolean enable, String templatePath) {
+        this.id = id;
         this.name = name;
-        this.description = description;
-        this.inUse = inUse;
+        this.enable = enable;
+        this.templatePath = templatePath;
     }
 
     public Long getId() {
@@ -46,26 +38,24 @@ public class Camera {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public Boolean getEnable() {
+        return enable;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setEnable(Boolean enable) {
+        this.enable = enable;
     }
 
-    public Boolean getInUse() {
-        return inUse;
+    public String getTemplatePath() {
+        return templatePath;
     }
 
-    public void setInUse(Boolean inUse) {
-        this.inUse = inUse;
+    public void setTemplatePath(String templatePath) {
+        this.templatePath = templatePath;
     }
 
     @Override
     public String toString() {
-        return String.format(
-                "Camera[id=%d, name='%s', description='%s', inUse='%s']",
-                id, name, description, inUse);
+        return name;
     }
 }

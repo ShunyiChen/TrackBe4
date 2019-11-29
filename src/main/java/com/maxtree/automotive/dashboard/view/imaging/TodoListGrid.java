@@ -5,7 +5,7 @@ import java.util.List;
 import com.maxtree.automotive.dashboard.Callback;
 import com.maxtree.automotive.dashboard.DashboardUI;
 import com.maxtree.automotive.dashboard.component.MessageBox;
-import com.maxtree.automotive.dashboard.domain.Imaging;
+//import com.maxtree.automotive.dashboard.domain.Imaging;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.Menu.Command;
 import com.vaadin.contextmenu.MenuItem;
@@ -36,44 +36,44 @@ public class TodoListGrid extends VerticalLayout {
 		this.setSpacing(false);
 		this.setMargin(false);
 		this.setSizeFull();
-		grid.setSizeFull();
-		grid.addColumn(Imaging::getPlateType).setCaption("号牌种类");
-		grid.addColumn(Imaging::getPlateNumber).setCaption("号码号牌");
-		grid.addColumn(Imaging::getVin).setCaption("车辆识别代码");
-		grid.addColumn(Imaging::getStatus).setCaption("状态");
+//		grid.setSizeFull();
+//		grid.addColumn(Imaging::getPlateType).setCaption("号牌种类");
+//		grid.addColumn(Imaging::getPlateNumber).setCaption("号码号牌");
+//		grid.addColumn(Imaging::getVin).setCaption("车辆识别代码");
+//		grid.addColumn(Imaging::getStatus).setCaption("状态");
 		// Set the selection mode
-        grid.setSelectionMode(SelectionMode.SINGLE);
-        grid.addContextClickListener(e->{
-        	GridContextClickEvent<Imaging> event = (GridContextClickEvent<Imaging>) e;
-        	selectedItem = event.getItem();
-        	if(selectedItem != null) {
-        		grid.select(selectedItem);
-        	}
-        	
-        });
-        this.addComponents(grid, controls);
-        this.setExpandRatio(grid, 1);
-        this.setExpandRatio(controls, 0);
+//        grid.setSelectionMode(SelectionMode.SINGLE);
+//        grid.addContextClickListener(e->{
+////        	GridContextClickEvent<Imaging> event = (GridContextClickEvent<Imaging>) e;
+////        	selectedItem = event.getItem();
+//        	if(selectedItem != null) {
+//        		grid.select(selectedItem);
+//        	}
+//
+//        });
+//        this.addComponents(grid, controls);
+//        this.setExpandRatio(grid, 1);
+//        this.setExpandRatio(controls, 0);
         
-        ContextMenu menu = new ContextMenu(grid, true);
-		menu.addItem("待提档", new Command() {
-			@Override
-			public void menuSelected(MenuItem selectedItem) {
-				updateStatus("待提档");
-			}
-		});
-		menu.addItem("待归档", new Command() {
-			@Override
-			public void menuSelected(MenuItem selectedItem) {
-				updateStatus("待归档");
-			}
-		});
-		menu.addItem("完成", new Command() {
-			@Override
-			public void menuSelected(MenuItem selectedItem) {
-				updateStatus("完成");
-			}
-		});
+//        ContextMenu menu = new ContextMenu(grid, true);
+//		menu.addItem("待提档", new Command() {
+//			@Override
+//			public void menuSelected(MenuItem selectedItem) {
+//				updateStatus("待提档");
+//			}
+//		});
+//		menu.addItem("待归档", new Command() {
+//			@Override
+//			public void menuSelected(MenuItem selectedItem) {
+//				updateStatus("待归档");
+//			}
+//		});
+//		menu.addItem("完成", new Command() {
+//			@Override
+//			public void menuSelected(MenuItem selectedItem) {
+//				updateStatus("完成");
+//			}
+//		});
 	}
 	
 	/**
@@ -86,10 +86,10 @@ public class TodoListGrid extends VerticalLayout {
 
 			@Override
 			public void onSuccessful() {
-				ui.imagingService.updateImaging(selectedItem.getImagingUniqueId(), newStatus);
-				selectedItem.setStatus(newStatus);
-				grid.getSelectionModel().deselectAll();
-				grid.select(selectedItem);
+//				ui.imagingService.updateImaging(selectedItem.getImagingUniqueId(), newStatus);
+//				selectedItem.setStatus(newStatus);
+//				grid.getSelectionModel().deselectAll();
+//				grid.select(selectedItem);
 			}
 		};
 		Callback onCancel = new Callback() {
@@ -106,27 +106,27 @@ public class TodoListGrid extends VerticalLayout {
 	 * 
 	 * @param perPageData
 	 */
-	public void setPerPageData(List<Imaging> perPageData) {
-    	grid.setItems(perPageData);
-    }
+//	public void setPerPageData(List<Imaging> perPageData) {
+//    	grid.setItems(perPageData);
+//    }
 	
 	/**
 	 * 
 	 * @param imagingUniqueId
 	 */
 	public void select(int imagingUniqueId) {
-		ListDataProvider<Imaging> listDataProvider = (ListDataProvider<Imaging>) grid.getDataProvider();
-		for (Imaging img : listDataProvider.getItems()) {
-			if (img.getImagingUniqueId() == imagingUniqueId) {
-				grid.select(img);
-				break;
-			}
-		}
+//		ListDataProvider<Imaging> listDataProvider = (ListDataProvider<Imaging>) grid.getDataProvider();
+//		for (Imaging img : listDataProvider.getItems()) {
+//			if (img.getImagingUniqueId() == imagingUniqueId) {
+//				grid.select(img);
+//				break;
+//			}
+//		}
 	}
 	
 
-	private Imaging selectedItem;
-	private Grid<Imaging> grid = new Grid<>();
+//	private Imaging selectedItem;
+//	private Grid<Imaging> grid = new Grid<>();
 	public String keyword ="";
 	public ControlsLayout controls = new ControlsLayout(this);
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();

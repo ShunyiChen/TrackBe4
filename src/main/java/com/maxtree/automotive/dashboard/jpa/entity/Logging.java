@@ -1,13 +1,11 @@
 package com.maxtree.automotive.dashboard.jpa.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
+@Table(name = "logs")
 public class Logging {
 
     @Id

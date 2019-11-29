@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.domain.DataDictionary;
 import com.maxtree.automotive.dashboard.view.admin.DataDictionaryType;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -34,18 +33,18 @@ public class PopupNameSelector extends Window {
 		this.setResizable(false);
 		this.setCaption("选择材料名称");
 		
-		list = ui.dataItemService.findAllByType(DataDictionaryType.MATERIAL);
-		namebox.setItems(list);
-		namebox.setTextInputAllowed(true);
-		namebox.setEmptySelectionAllowed(false);
-		namebox.setWidth("100%");
-		namebox.setHeight("30px");
-		namebox.setCaption("请选择材料名称：");
-		
-		toolbar.setWidth("100%");
-		toolbar.addStyleName("PopupCaptureWindow-toolbar");
-		toolbar.addComponents(namebox);
-		toolbar.setComponentAlignment(namebox, Alignment.MIDDLE_LEFT);
+//		list = ui.dataItemService.findAllByType(DataDictionaryType.MATERIAL);
+//		namebox.setItems(list);
+//		namebox.setTextInputAllowed(true);
+//		namebox.setEmptySelectionAllowed(false);
+//		namebox.setWidth("100%");
+//		namebox.setHeight("30px");
+//		namebox.setCaption("请选择材料名称：");
+//
+//		toolbar.setWidth("100%");
+//		toolbar.addStyleName("PopupCaptureWindow-toolbar");
+//		toolbar.addComponents(namebox);
+//		toolbar.setComponentAlignment(namebox, Alignment.MIDDLE_LEFT);
 		
 		main.setWidth("100%");
 		main.setHeightUndefined();
@@ -54,21 +53,16 @@ public class PopupNameSelector extends Window {
 		main.setComponentAlignment(ok, Alignment.BOTTOM_RIGHT);
 		this.setContent(main);
 	}
-	
-	/**
-	 * 
-	 * @param trans
-	 * @param callback
-	 */
+
 	public static void open(Callback2 callback) {
 		PopupNameSelector w = new PopupNameSelector();
 		UI.getCurrent().addWindow(w);
 		w.center();
 		w.callback = callback;
-		w.namebox.setValue(w.list.get(0));
+//		w.namebox.setValue(w.list.get(0));
 		w.ok.addClickListener(e->{
-			callback.onSuccessful(w.namebox.getValue());
-			w.close();
+//			callback.onSuccessful(w.namebox.getValue());
+//			w.close();
 		});
 		
 //		w.p.setBatch(trans.getBatch()+"");
@@ -80,9 +74,9 @@ public class PopupNameSelector extends Window {
 //		CaptureServlet.IN_DTOs.put(w.loggedInUser.getUserUniqueId(), w.p);
 	}
 	
-	private List<DataDictionary> list;
+//	private List<DataDictionary> list;
 	private DashboardUI ui = (DashboardUI) UI.getCurrent();
-	private ComboBox<DataDictionary> namebox = new ComboBox<>();
+//	private ComboBox<DataDictionary> namebox = new ComboBox<>();
 	private Button ok = new Button("确定");
 	private HorizontalLayout toolbar = new HorizontalLayout();
 	private VerticalLayout main = new VerticalLayout();

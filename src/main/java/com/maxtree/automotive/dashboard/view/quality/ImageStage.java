@@ -13,9 +13,6 @@ import org.apache.commons.vfs2.FileSystemException;
 import com.maxtree.automotive.dashboard.Callback2;
 import com.maxtree.automotive.dashboard.component.Box;
 import com.maxtree.automotive.dashboard.component.Notifications;
-import com.maxtree.automotive.dashboard.domain.Document;
-import com.maxtree.automotive.dashboard.domain.Site;
-import com.maxtree.automotive.dashboard.exception.FileException;
 import com.maxtree.automotive.dashboard.view.ImageViewIF;
 import com.maxtree.automotive.vfs.VFSUtils;
 import com.vaadin.icons.VaadinIcons;
@@ -161,15 +158,15 @@ public class ImageStage extends VerticalLayout implements ClickListener {
 		initBackground();
 	}
 	
-	/**
-	 * 
-	 * @param site
-	 * @param doc
-	 */
-	public void display(Site site, Document doc) {
-		document2Image(site, doc);
-		fittedSize();
-	}
+//	/**
+//	 *
+//	 * @param site
+//	 * @param doc
+//	 */
+//	public void display(Site site, Document doc) {
+//		document2Image(site, doc);
+//		fittedSize();
+//	}
 	
 	public void clean() {
 		scroll.setContent(new Label(""));
@@ -308,52 +305,47 @@ public class ImageStage extends VerticalLayout implements ClickListener {
 		JavaScript.getCurrent().execute("myGetPanelSize(document.getElementById('" + scroll.getId() + "').clientWidth,document.getElementById('" + scroll.getId() + "').clientHeight);");
 	}
 	
-	/**
-	 * 
-	 * @param site
-	 * @param document
-	 */
-	private void document2Image(Site site, Document document) {
-		try {
-			FileObject fileObj = new VFSUtils().resolveFile(site, document.getFileFullPath());
-			com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public InputStream getStream() {
-					try {
-						return fileObj.getContent().getInputStream();
-					} catch (FileSystemException e) {
-						Notifications.warning("读取文件失败。"+e.getMessage());
-					}
-					return null;
-				}
-			};
-			StreamResource streamResource = new StreamResource(streamSource, fileObj.getName().getBaseName());
-			streamResource.setCacheTime(0);
-			picture = new Image(null, streamResource);
-			
-			if(pictureSizes.get(document.getDocumentUniqueId()) == null) {
-				// 获取图像实际大小
-				InputStream is = fileObj.getContent().getInputStream();
-			    java.awt.Image img = ImageIO.read(is);
-			    pictureSizes.put(document.getDocumentUniqueId(), new int[] {img.getWidth(null), img.getHeight(null)});
-			}
-			
-			int[] size = pictureSizes.get(document.getDocumentUniqueId());
-		    pictureActualWidth = size[0];
-		    pictureActualHeight = size[1];
-		} catch (FileException e) {
-			Notifications.warning(e.getMessage());
-		} catch (FileSystemException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	private void document2Image(Site site, Document document) {
+//		try {
+//			FileObject fileObj = new VFSUtils().resolveFile(site, document.getFileFullPath());
+//			com.vaadin.server.StreamResource.StreamSource streamSource = new com.vaadin.server.StreamResource.StreamSource() {
+//				/**
+//				 *
+//				 */
+//				private static final long serialVersionUID = 1L;
+//
+//				@Override
+//				public InputStream getStream() {
+//					try {
+//						return fileObj.getContent().getInputStream();
+//					} catch (FileSystemException e) {
+//						Notifications.warning("读取文件失败。"+e.getMessage());
+//					}
+//					return null;
+//				}
+//			};
+//			StreamResource streamResource = new StreamResource(streamSource, fileObj.getName().getBaseName());
+//			streamResource.setCacheTime(0);
+//			picture = new Image(null, streamResource);
+//
+//			if(pictureSizes.get(document.getDocumentUniqueId()) == null) {
+//				// 获取图像实际大小
+//				InputStream is = fileObj.getContent().getInputStream();
+//			    java.awt.Image img = ImageIO.read(is);
+//			    pictureSizes.put(document.getDocumentUniqueId(), new int[] {img.getWidth(null), img.getHeight(null)});
+//			}
+//
+//			int[] size = pictureSizes.get(document.getDocumentUniqueId());
+//		    pictureActualWidth = size[0];
+//		    pictureActualHeight = size[1];
+//		} catch (FileException e) {
+//			Notifications.warning(e.getMessage());
+//		} catch (FileSystemException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 	@Override
 	public void buttonClick(ClickEvent event) {

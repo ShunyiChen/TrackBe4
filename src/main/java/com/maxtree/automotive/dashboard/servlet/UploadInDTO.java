@@ -8,24 +8,24 @@ package com.maxtree.automotive.dashboard.servlet;
  */
 public class UploadInDTO {
 
-	/**
-	 * 
-	 * @param userUniqueId
-	 * @param vin
-	 * @param batch
-	 * @param siteID
-	 * @param uuid
-	 * @param dictionaryCode
-	 */
-	public UploadInDTO(int userUniqueId,String vin,String batch,int siteID,String uuid,String dictionaryCode) {
+	private int userUniqueId;
+	private String vin;
+	private int siteID;
+	private String uuid;
+	private String dictionaryCode;
+	private int siteUniqueId;
+	private Integer documentUniqueId;
+
+	public UploadInDTO(int userUniqueId, String vin, int siteID, String uuid, String dictionaryCode, int siteUniqueId, Integer documentUniqueId) {
 		this.userUniqueId = userUniqueId;
 		this.vin = vin;
-		this.batch = batch;
 		this.siteID = siteID;
 		this.uuid = uuid;
 		this.dictionaryCode = dictionaryCode;
+		this.siteUniqueId = siteUniqueId;
+		this.documentUniqueId = documentUniqueId;
 	}
-	
+
 	public UploadInDTO() {}
 	
 	public int getUserUniqueId() {
@@ -42,14 +42,6 @@ public class UploadInDTO {
 
 	public void setVin(String vin) {
 		this.vin = vin;
-	}
-
-	public String getBatch() {
-		return batch;
-	}
-
-	public void setBatch(String batch) {
-		this.batch = batch;
 	}
 
 	public int getSiteID() {
@@ -94,16 +86,14 @@ public class UploadInDTO {
 
 	@Override
 	public String toString() {
-		return String.format("UploadParameters[userUniqueId=%d,vin='%s',batch='%s',siteID=%d, uuid='%s',dictionaryCode='%s',siteUniqueId='%s']",
-				userUniqueId,vin,batch,siteID,uuid,dictionaryCode,siteUniqueId);
+		return "UploadInDTO{" +
+				"userUniqueId=" + userUniqueId +
+				", vin='" + vin + '\'' +
+				", siteID=" + siteID +
+				", uuid='" + uuid + '\'' +
+				", dictionaryCode='" + dictionaryCode + '\'' +
+				", siteUniqueId=" + siteUniqueId +
+				", documentUniqueId=" + documentUniqueId +
+				'}';
 	}
-
-	private int userUniqueId;
-	private String vin;
-	private String batch;
-	private int siteID;
-	private String uuid;
-	private String dictionaryCode;
-	private int siteUniqueId;
-	private Integer documentUniqueId = null;
 }

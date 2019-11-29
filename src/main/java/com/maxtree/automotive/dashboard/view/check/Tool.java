@@ -150,96 +150,96 @@ public class Tool extends Window{
 			UI.getCurrent().removeWindow(this);
 		});
 		// Undo
-		undo.addClickListener(e -> {
-			if (editWindow != null) {
-				manual.updateToolbar("撤销", 0);
-				editWindow.undo();
-			}
-		});
-		// redo
-		redo.addClickListener(e -> {
-			if (editWindow != null) {
-				manual.updateToolbar("重做", 0);
-				editWindow.redo();
-			}
-		});
-		original.addClickListener(e ->{
-			if (editWindow != null) {
-				manual.updateToolbar("原图", 0);
-				editWindow.getParameters().reset();
-				setEditingWindow(editWindow);
-				editWindow.original();
-			}
-		});
-		fixed.addClickListener(e -> {
-			if (editWindow != null) {
-				manual.updateToolbar("适应窗体", 0);
-				editWindow.fit();
-			}
-		});
-		// 锐化
-		sharpen.addClickListener(e -> {
-			if (editWindow != null) {
-				manual.updateToolbar("锐化", 0);
-				editWindow.sharpen();
-			}
-		});
-		// 寻找边缘
-		edge.addClickListener(e -> {
-			if (editWindow != null) {
-				manual.updateToolbar("边缘", 0);
-				editWindow.findEdges();
-			}
-		});
-		shadowUp.addClickListener(e ->{
-			if (editWindow != null) {
-				manual.updateToolbar("上阴影", 0);
-				editWindow.shadows("north");
-			}
-		});
-		shadowDown.addClickListener(e ->{
-			if (editWindow != null) {
-				manual.updateToolbar("下阴影", 0);
-				editWindow.shadows("south");
-			}
-		});
-		shadowLeft.addClickListener(e ->{
-			if (editWindow != null) {
-				manual.updateToolbar("左阴影", 0);
-				editWindow.shadows("west");
-			}
-		});
-		shadowRight.addClickListener(e ->{
-			if (editWindow != null) {
-				manual.updateToolbar("右阴影", 0);
-				editWindow.shadows("east");
-			}
-		});
-		scale.addClickListener(e ->{
-			if (editWindow != null) {
-				manual.updateToolbar("伸缩", editWindow.getParameters().getScale());
-			}
-		});
-		rotate.addClickListener(e ->{
-			if (editWindow != null) {
-				manual.updateToolbar("旋转", editWindow.getParameters().getRotate());
-			}
-		});
-		transparency.addClickListener(e ->{
-			if (editWindow != null) {
-				manual.updateToolbar("透明度", editWindow.getParameters().getTransparency());
-			}
-		});
-		brightness.addClickListener(e ->{
-			if (editWindow != null) {
-				manual.updateToolbar("亮度", editWindow.getParameters().getBrightness());
-			}
-		});
-		contrast.addClickListener(e ->{
-			if (editWindow != null) {
-				manual.updateToolbar("对比度", editWindow.getParameters().getContrast());
-			}
-		});
+//		undo.addClickListener(e -> {
+//			if (editWindow != null) {
+//				manual.updateToolbar("撤销", 0);
+//				editWindow.undo();
+//			}
+//		});
+//		// redo
+//		redo.addClickListener(e -> {
+//			if (editWindow != null) {
+//				manual.updateToolbar("重做", 0);
+//				editWindow.redo();
+//			}
+//		});
+//		original.addClickListener(e ->{
+//			if (editWindow != null) {
+//				manual.updateToolbar("原图", 0);
+//				editWindow.getParameters().reset();
+//				setEditingWindow(editWindow);
+//				editWindow.original();
+//			}
+//		});
+//		fixed.addClickListener(e -> {
+//			if (editWindow != null) {
+//				manual.updateToolbar("适应窗体", 0);
+//				editWindow.fit();
+//			}
+//		});
+//		// 锐化
+//		sharpen.addClickListener(e -> {
+//			if (editWindow != null) {
+//				manual.updateToolbar("锐化", 0);
+//				editWindow.sharpen();
+//			}
+//		});
+//		// 寻找边缘
+//		edge.addClickListener(e -> {
+//			if (editWindow != null) {
+//				manual.updateToolbar("边缘", 0);
+//				editWindow.findEdges();
+//			}
+//		});
+//		shadowUp.addClickListener(e ->{
+//			if (editWindow != null) {
+//				manual.updateToolbar("上阴影", 0);
+//				editWindow.shadows("north");
+//			}
+//		});
+//		shadowDown.addClickListener(e ->{
+//			if (editWindow != null) {
+//				manual.updateToolbar("下阴影", 0);
+//				editWindow.shadows("south");
+//			}
+//		});
+//		shadowLeft.addClickListener(e ->{
+//			if (editWindow != null) {
+//				manual.updateToolbar("左阴影", 0);
+//				editWindow.shadows("west");
+//			}
+//		});
+//		shadowRight.addClickListener(e ->{
+//			if (editWindow != null) {
+//				manual.updateToolbar("右阴影", 0);
+//				editWindow.shadows("east");
+//			}
+//		});
+//		scale.addClickListener(e ->{
+//			if (editWindow != null) {
+//				manual.updateToolbar("伸缩", editWindow.getParameters().getScale());
+//			}
+//		});
+//		rotate.addClickListener(e ->{
+//			if (editWindow != null) {
+//				manual.updateToolbar("旋转", editWindow.getParameters().getRotate());
+//			}
+//		});
+//		transparency.addClickListener(e ->{
+//			if (editWindow != null) {
+//				manual.updateToolbar("透明度", editWindow.getParameters().getTransparency());
+//			}
+//		});
+//		brightness.addClickListener(e ->{
+//			if (editWindow != null) {
+//				manual.updateToolbar("亮度", editWindow.getParameters().getBrightness());
+//			}
+//		});
+//		contrast.addClickListener(e ->{
+//			if (editWindow != null) {
+//				manual.updateToolbar("对比度", editWindow.getParameters().getContrast());
+//			}
+//		});
 	}
 	
 	public void scale(double val) {

@@ -19,10 +19,6 @@ import com.maxtree.automotive.dashboard.component.NotificationsPopup;
 import com.maxtree.automotive.dashboard.component.Test;
 import com.maxtree.automotive.dashboard.data.SystemConfiguration;
 import com.maxtree.automotive.dashboard.data.Yaml;
-import com.maxtree.automotive.dashboard.domain.Community;
-import com.maxtree.automotive.dashboard.domain.Notification;
-import com.maxtree.automotive.dashboard.domain.Transaction;
-import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.event.DashboardEvent;
 import com.maxtree.automotive.dashboard.event.DashboardEventBus;
 import com.maxtree.automotive.dashboard.view.DashboardMenu;
@@ -72,9 +68,9 @@ public class SearchView extends Panel implements View, FrontendViewIF{
 	private static final Logger log = LoggerFactory.getLogger(SearchView.class);
 	
 	public SearchView() {
-        String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-        User loggedInUser = ui.userService.getUserByUserName(username);
-		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
+//        String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//        User loggedInUser = ui.userService.getUserByUserName(username);
+//		community = ui.communityService.findById(loggedInUser.getCommunityUniqueId());
         addStyleName(ValoTheme.PANEL_BORDERLESS);
         setSizeFull();
         DashboardEventBus.register(this);
@@ -272,8 +268,8 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     			return;
     		}
     	}
-    	grid.setKeyword(keywordField.getValue());
-    	grid.executeByKeyword();
+//    	grid.setKeyword(keywordField.getValue());
+//    	grid.executeByKeyword();
     }
     
     /**
@@ -393,39 +389,39 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     	notificationsButton.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(final ClickEvent event) {
-                popup.open(event);
+//                popup.open(event);
             }
         });
     }
     
     @Override
 	public void updateUnreadCount() {
-    	List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
-		int unreadCount = 0;
-		for (Notification n : notifications) {
-			if (n.getViewName().equals(DashboardViewType.SEARCH.getViewName())
-					|| n.getViewName().equals("")) {
-				unreadCount++;
-			}
-		}
+//    	List<Notification> notifications = CacheManager.getInstance().getNotificationsCache().get(loggedInUser.getUserUniqueId());
+//		int unreadCount = 0;
+//		for (Notification n : notifications) {
+//			if (n.getViewName().equals(DashboardViewType.SEARCH.getViewName())
+//					|| n.getViewName().equals("")) {
+//				unreadCount++;
+//			}
+//		}
 		
-		DashboardMenu.getInstance().searchCount(unreadCount);
-		notificationsButton.setUnreadCount(unreadCount);
+//		DashboardMenu.getInstance().searchCount(unreadCount);
+//		notificationsButton.setUnreadCount(unreadCount);
 	}
 
 	@Override
 	public void cleanStage() {
 	}
 	
-    public Transaction getCurrentTransaction() {
-    	return transaction;
-    }
-    
-    
+//    public Transaction getCurrentTransaction() {
+//    	return transaction;
+//    }
+
+
     private ComboBox<String> type = new ComboBox<>();
     private TextField keywordField = new TextField();
-    private User loggedInUser;	//登录用户
-    private Community community;//登录用户社区
+//    private User loggedInUser;	//登录用户
+//    private Community community;//登录用户社区
     private Label titleLabel;
     private Window notificationsWindow;
     public static final String EDIT_ID = "dashboard-edit";
@@ -433,9 +429,9 @@ public class SearchView extends Panel implements View, FrontendViewIF{
     private VerticalLayout root;
     private DashboardUI ui = (DashboardUI) UI.getCurrent();
     private NotificationsButton notificationsButton;
-    private Transaction transaction = null;
+//    private Transaction transaction = null;
     private SearchResultsGrid grid = new SearchResultsGrid();
     private Label blankLabel = new Label("<span style='font-size:30px;color: #8D99A6;font-family: Microsoft YaHei;'>无查询结果</span>", ContentMode.HTML);
-    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.SEARCH.getViewName());
+//    private NotificationsPopup popup = new NotificationsPopup(DashboardViewType.SEARCH.getViewName());
     private MatedataJsonParser jsonHelper = new MatedataJsonParser();
 }

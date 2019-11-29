@@ -1,7 +1,6 @@
 package com.maxtree.automotive.dashboard.view.admin;
 
 import com.maxtree.automotive.dashboard.DashboardUI;
-import com.maxtree.automotive.dashboard.domain.User;
 import com.maxtree.automotive.dashboard.service.AuthService;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinSession;
@@ -17,90 +16,90 @@ import java.util.List;
  * @author chens
  *
  */
-public class SystemSettingsView extends ContentView {
+public class SystemSettingsView{//} extends ContentView {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * 
-	 * @param parentTitle
-	 * @param rootView
-	 */
-	public SystemSettingsView(String parentTitle, AdminMainView rootView) {
-		super(parentTitle, rootView);
-		this.setHeight((Page.getCurrent().getBrowserWindowHeight()-58)+"px");
-		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-		loggedInUser = ui.userService.getUserByUserName(username);
-		main.setWidth("100%");
-		main.setHeightUndefined();
-		main.setSpacing(false);
-		main.setMargin(false);
-		
-		GridColumn[] columns = {new GridColumn("参数名",190), new GridColumn("值",190),new GridColumn("注释",190),new GridColumn("", 20)}; 
-		List<CustomGridRow> data = new ArrayList<>();
-//		List<SystemSettings> lst = ui.settingsService.findAll();
-//		for (SystemSettings ss : lst) {
-//			Object[] rowData = generateOneRow(ss);
-//			data.add(new CustomGridRow(rowData));
-//		}
-		grid = new CustomGrid("系统参数列表",columns, data,false);
-		main.addComponents(grid);
-		main.setComponentAlignment(grid, Alignment.TOP_CENTER);
-		
-		this.addComponent(main);
-		this.setComponentAlignment(main, Alignment.TOP_CENTER);
-		this.setExpandRatio(main, 1);
-	}
-	
-	/**
-	 * Generate one row
-	 * @param ss
-	 * @return
-	 */
-//	private Object[] generateOneRow(SystemSettings ss) {
-//		Image img = new Image(null, new ThemeResource("img/adminmenu/menu.png"));
-//		img.addStyleName("PeopleView_menuImage");
-//		img.addClickListener(e->{
-//			ContextMenu menu = new ContextMenu(img, true);
-//			menu.addItem("编辑", new Command() {
-//				/**
-//				 *
-//				 */
-//				private static final long serialVersionUID = 1L;
+//	/**
+//	 *
+//	 */
+//	private static final long serialVersionUID = 1L;
 //
-//				@Override
-//				public void menuSelected(MenuItem selectedItem) {
-//					String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
-//					User loginUser = ui.userService.getUserByUserName(username);
-//					if (loginUser.isPermitted(PermissionCodes.N2)) {
-//						Callback callback = new Callback() {
+//	/**
+//	 *
+//	 * @param parentTitle
+//	 * @param rootView
+//	 */
+//	public SystemSettingsView(String parentTitle, AdminMainView rootView) {
+//		super(parentTitle, rootView);
+//		this.setHeight((Page.getCurrent().getBrowserWindowHeight()-58)+"px");
+//		String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+//		loggedInUser = ui.userService.getUserByUserName(username);
+//		main.setWidth("100%");
+//		main.setHeightUndefined();
+//		main.setSpacing(false);
+//		main.setMargin(false);
 //
-//							@Override
-//							public void onSuccessful() {
-//								SystemSettings settings = ui.settingsService.findById(ss.getSettingUniqueId());
-//								Object[] rowData = generateOneRow(settings);
-//								grid.setValueAt(new CustomGridRow(rowData),ss.getSettingUniqueId());
-//							}
-//						};
-//						EditSystemSettingsWindow.edit(ss, callback);
-//					}
-//					else {
-//		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
-//		        	}
+//		GridColumn[] columns = {new GridColumn("参数名",190), new GridColumn("值",190),new GridColumn("注释",190),new GridColumn("", 20)};
+//		List<CustomGridRow> data = new ArrayList<>();
+////		List<SystemSettings> lst = ui.settingsService.findAll();
+////		for (SystemSettings ss : lst) {
+////			Object[] rowData = generateOneRow(ss);
+////			data.add(new CustomGridRow(rowData));
+////		}
+//		grid = new CustomGrid("系统参数列表",columns, data,false);
+//		main.addComponents(grid);
+//		main.setComponentAlignment(grid, Alignment.TOP_CENTER);
 //
-//				}
-//			});
-//			menu.open(e.getClientX(), e.getClientY());
-//		});
-//
-//		return new Object[] {ss.getName(),ss.getValue(),ss.getComments(),img,ss.getSettingUniqueId()};
+//		this.addComponent(main);
+//		this.setComponentAlignment(main, Alignment.TOP_CENTER);
+//		this.setExpandRatio(main, 1);
 //	}
-	
-	private DashboardUI ui = (DashboardUI) UI.getCurrent();
-	private VerticalLayout main = new VerticalLayout();
-	private User loggedInUser;
-	private CustomGrid grid;
+//
+//	/**
+//	 * Generate one row
+//	 * @param ss
+//	 * @return
+//	 */
+////	private Object[] generateOneRow(SystemSettings ss) {
+////		Image img = new Image(null, new ThemeResource("img/adminmenu/menu.png"));
+////		img.addStyleName("PeopleView_menuImage");
+////		img.addClickListener(e->{
+////			ContextMenu menu = new ContextMenu(img, true);
+////			menu.addItem("编辑", new Command() {
+////				/**
+////				 *
+////				 */
+////				private static final long serialVersionUID = 1L;
+////
+////				@Override
+////				public void menuSelected(MenuItem selectedItem) {
+////					String username = (String) VaadinSession.getCurrent().getAttribute(AuthService.SESSION_USERNAME);
+////					User loginUser = ui.userService.getUserByUserName(username);
+////					if (loginUser.isPermitted(PermissionCodes.N2)) {
+////						Callback callback = new Callback() {
+////
+////							@Override
+////							public void onSuccessful() {
+////								SystemSettings settings = ui.settingsService.findById(ss.getSettingUniqueId());
+////								Object[] rowData = generateOneRow(settings);
+////								grid.setValueAt(new CustomGridRow(rowData),ss.getSettingUniqueId());
+////							}
+////						};
+////						EditSystemSettingsWindow.edit(ss, callback);
+////					}
+////					else {
+////		        		Notifications.warning(TB4Application.PERMISSION_DENIED_MESSAGE);
+////		        	}
+////
+////				}
+////			});
+////			menu.open(e.getClientX(), e.getClientY());
+////		});
+////
+////		return new Object[] {ss.getName(),ss.getValue(),ss.getComments(),img,ss.getSettingUniqueId()};
+////	}
+//
+//	private DashboardUI ui = (DashboardUI) UI.getCurrent();
+//	private VerticalLayout main = new VerticalLayout();
+//	private User loggedInUser;
+//	private CustomGrid grid;
 }

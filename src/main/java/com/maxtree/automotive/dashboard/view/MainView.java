@@ -24,9 +24,12 @@ public class MainView extends HorizontalLayout {
         content.setSizeFull();
         addComponent(content);
         setExpandRatio(content, 1.0f);
-
         new DashboardNavigator(content);
     }
-    
+
+    public void hideMenu(boolean bool) {
+        menu.setVisible(!bool);
+    }
+
     private DashboardMenu menu;
 }
